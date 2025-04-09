@@ -2,15 +2,33 @@ import LeanSportyLogo from "./lean-sporty-logo";
 
 export default function Header() {
   return (
+    
     <div className="flex flex-col gap-16 items-center">
       <div className="flex gap-8 justify-center items-center">
       <LeanSportyLogo />
       </div>
+
+      <div className="w-full max-w-5xl mx-auto aspect-video rounded-xl overflow-hidden">        
+            <iframe
+        src="https://www.youtube.com/embed/PWauX9QceBY??rel=0&modestbranding=1&autoplay=1&mute=1&controls=1"
+        title="YouTube video player"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowFullScreen
+        className="w-full h-full border-0"></iframe>
+        </div>
+
+
       {/* <h1 className="sr-only">Supabase and Next.js Starter Template</h1> */}
       <p className="text-3l lg:text-2xl !leading-tight mx-auto max-w-2xl text-center">
       A new way to get fit and energized through dance is coming soon. We're almost ready – be the first to try it!{" "}
 
       </p>
+
+
+
+
+
+
       <form action="https://formspree.io/f/maneookv" method="POST" className="space-y-4">
           <input 
             type="email" 
@@ -31,17 +49,27 @@ export default function Header() {
 
       <div className="w-full p-[1px] bg-gradient-to-r from-transparent via-foreground/10 to-transparent my-8" />
 
-      <section
+
+      {/* <section
       className="bg-cover bg-center bg-no-repeat h-screen w-full items-center justify-center py-12 px-6 pt-48"
       style={{ backgroundImage: "url('pexels-rdne-8929826.jpg')" }} /
     >
+ */}
+
+
 
       {/* <!-- 🌟 Benefits Section --> */}
-    <section className="bg-yellow-300 py-12 px-6">
-      <div className="max-w-4xl mx-auto text-center mb-10">
+    <section className="bg-white py-12 px-6" >
+    <div className="max-w-4xl mx-auto text-center mb-10">
         <h2 className="text-3xl font-bold mb-4 text-gray-900">Why LeanSporty?</h2>
         <p className="text-gray-600">We’re combining fun and fitness to make movement something you’ll look forward to.</p>
       </div>
+      </section>
+    <section
+  className="bg-cover bg-center bg-no-repeat py-12 px-6 min-h-[500px] lg:min-h-[800px]"
+  style={{ backgroundImage: "url('pexels-rdne-8929826.jpg')" }}
+>
+
       <div className="grid gap-8 md:grid-cols-3 max-w-5xl mx-auto">
         {/* <!-- Benefit 1 --> */}
         <div className="bg-white p-6 rounded-xl shadow text-center">
