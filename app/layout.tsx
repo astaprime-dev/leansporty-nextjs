@@ -61,6 +61,9 @@ export default function RootLayout({
                       Streams
                     </Link> */}
 
+                    {/* Auth Buttons */}
+                    <HeaderAuth />
+
                     {/* CTA Button */}
                     <a
                       href="https://apps.apple.com/app/id6745218800"
