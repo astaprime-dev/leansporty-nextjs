@@ -42,7 +42,7 @@ export const updateSession = async (request: NextRequest) => {
     // protected routes
     if ((request.nextUrl.pathname.startsWith("/workouts") ||
          request.nextUrl.pathname.startsWith("/activity")) && user.error) {
-      return NextResponse.redirect(new URL("/sign-in", request.url));
+      return NextResponse.redirect(new URL("/", request.url));
     }
 
     if (request.nextUrl.pathname === "/" && !user.error) {

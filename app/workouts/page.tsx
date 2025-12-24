@@ -1,272 +1,116 @@
-// app/gallery/page.tsx
-'use client';
+import { getWorkouts } from "@/app/actions";
+import Image from "next/image";
 
-import { useState } from 'react';
-import VideoPlayer from '../../components/VideoPlayer';
+export default async function WorkoutsPage() {
+  const workouts = await getWorkouts();
 
-type VideoItem = {
-  title: string;
-  playbackId: string;
-  duration: string;
-  level: string;
-  style: string;
-  focus: string;
-  energy: string;
-  categories: string[];
-};
-
-
-const videos = [
-  {
-    title: "Full Body Warm-Up",
-    playbackId: "mux_playback_id_1",
-    duration: "5 min",
-    level: "Beginner",
-    style: "Gentle Warm-Up",
-    focus: "Loosen the body",
-    energy: "Low",
-    categories: ["Quick Workouts", "Beginner Workouts"],
-  },
-  {
-    title: "Beginner Dance Cardio - Latin Style",
-    playbackId: "mux_playback_id_2",
-    duration: "15 min",
-    level: "Beginner",
-    style: "Latin",
-    focus: "Light intensity cardio",
-    energy: "Medium",
-    categories: ["Beginner Workouts", "Full-Body Dance Workouts"],
-  },
-  {
-    title: "Dance & Stretch",
-    playbackId: "mux_playback_id_3",
-    duration: "10 min",
-    level: "Beginner",
-    style: "Stretch",
-    focus: "Flexibility",
-    energy: "Low",
-    categories: ["Quick Workouts", "Beginner Workouts", "Targeted Workouts"],
-  },
-  {
-    title: "Step-by-Step Groove Tutorial",
-    playbackId: "mux_playback_id_4",
-    duration: "10 min",
-    level: "Beginner",
-    style: "Groove",
-    focus: "Step learning",
-    energy: "Low",
-    categories: ["Quick Workouts", "Beginner Workouts"],
-  },
-  {
-    title: "Low Impact Happy Dance",
-    playbackId: "mux_playback_id_5",
-    duration: "15 min",
-    level: "Beginner",
-    style: "Uplifting",
-    focus: "Joint-friendly cardio",
-    energy: "Medium",
-    categories: ["Beginner Workouts", "Full-Body Dance Workouts"],
-  },
-  {
-    title: "Hip-Hop Inspired Workout",
-    playbackId: "mux_playback_id_6",
-    duration: "20 min",
-    level: "Intermediate",
-    style: "Hip-Hop",
-    focus: "Cardio",
-    energy: "High",
-    categories: ["Full-Body Dance Workouts", "Longer Sessions"],
-  },
-  {
-    title: "Body Sculpt Dance Fusion",
-    playbackId: "mux_playback_id_7",
-    duration: "20 min",
-    level: "Intermediate",
-    style: "Dance + Strength",
-    focus: "Sculpting",
-    energy: "Medium-High",
-    categories: ["Targeted Workouts", "Longer Sessions"],
-  },
-  {
-    title: "Retro Dance Party",
-    playbackId: "mux_playback_id_8",
-    duration: "20 min",
-    level: "Intermediate",
-    style: "80s/90s",
-    focus: "Fun cardio",
-    energy: "Medium",
-    categories: ["Full-Body Dance Workouts", "Longer Sessions"],
-  },
-  {
-    title: "Salsa Burn",
-    playbackId: "mux_playback_id_9",
-    duration: "15 min",
-    level: "Intermediate",
-    style: "Salsa",
-    focus: "Core and rhythm",
-    energy: "High",
-    categories: ["Targeted Workouts", "Full-Body Dance Workouts"],
-  },
-  {
-    title: "Afrobeat Vibes",
-    playbackId: "mux_playback_id_10",
-    duration: "20 min",
-    level: "Intermediate",
-    style: "Afrobeat",
-    focus: "Legs and rhythm",
-    energy: "High",
-    categories: ["Targeted Workouts", "Full-Body Dance Workouts", "Longer Sessions"],
-  },
-  {
-    title: "Cardio Dance Intervals",
-    playbackId: "mux_playback_id_11",
-    duration: "20 min",
-    level: "Intermediate",
-    style: "Interval Training",
-    focus: "Heart rate variability",
-    energy: "Medium-High",
-    categories: ["Full-Body Dance Workouts", "Longer Sessions"],
-  },
-  {
-    title: "Power Moves Dance HIIT",
-    playbackId: "mux_playback_id_12",
-    duration: "20 min",
-    level: "Advanced",
-    style: "HIIT",
-    focus: "Intense cardio",
-    energy: "High",
-    categories: ["Full-Body Dance Workouts", "Longer Sessions"],
-  },
-  {
-    title: "Fast-Paced Choreo Challenge",
-    playbackId: "mux_playback_id_13",
-    duration: "15 min",
-    level: "Advanced",
-    style: "Choreography",
-    focus: "Memory + speed",
-    energy: "High",
-    categories: ["Full-Body Dance Workouts"],
-  },
-  {
-    title: "Full Body Burnout",
-    playbackId: "mux_playback_id_14",
-    duration: "25 min",
-    level: "Advanced",
-    style: "Strength + Cardio",
-    focus: "Endurance",
-    energy: "Very High",
-    categories: ["Full-Body Dance Workouts", "Longer Sessions"],
-  },
-  {
-    title: "Freestyle Dance Jam",
-    playbackId: "mux_playback_id_15",
-    duration: "20 min",
-    level: "Advanced",
-    style: "Freestyle",
-    focus: "Flow + Expression",
-    energy: "Medium-High",
-    categories: ["Full-Body Dance Workouts", "Longer Sessions"],
-  },
-];
-
-
-// app/gallery/page.tsx
-
-const gradientPresets = [
-  "from-rose-400 to-pink-300",
-  "from-fuchsia-500 to-rose-400",
-  "from-purple-400 to-indigo-300",
-  "from-pink-400 to-amber-200",
-  "from-cyan-300 to-blue-400",
-];
-
-
-const levels = ['Beginner', 'Intermediate', 'Advanced'];
-const energies = ['Low', 'Medium', 'Medium-High', 'High', 'Very High'];
-
-export default function DanceGallery() {
-  const [selectedLevel, setSelectedLevel] = useState<string | null>(null);
-  const [selectedEnergy, setSelectedEnergy] = useState<string | null>(null);
-
-  const filteredVideos = videos.filter(video => {
-    const levelMatch = !selectedLevel || video.level === selectedLevel;
-    const energyMatch = !selectedEnergy || video.energy === selectedEnergy;
-    return levelMatch && energyMatch;
-  });
+  // Helper function to format duration from seconds to MM:SS
+  const formatDuration = (seconds: number | null) => {
+    if (!seconds) return '0:00';
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
 
   return (
-    <section className="pt-22 pb-28 px-6 bg-white min-w-full lg:min-w-[1024px]">
-
-
-      <div className="w-full max-w-7xl mx-auto text-left seelf-left">
-        <h1 className="text-6xl font-extrabold text-center mb-12 tracking-tight text-gray-900">
-          Workouts
+    <div className="flex-1 w-full flex flex-col gap-8 px-4 py-8 max-w-7xl mx-auto">
+      {/* Header */}
+      <div>
+        <h1 className="text-5xl font-bold mb-2 bg-gradient-to-r from-pink-500 to-rose-400 bg-clip-text text-transparent">
+          Latest Dance Workouts
         </h1>
+        <p className="text-muted-foreground">Choose a workout to get started</p>
+      </div>
 
-        {/* ✅ STEP 1: FILTER UI */}
-        <div className="mb-8 space-y-4">
-          <div className="flex gap-4 flex-wrap">
-            {levels.map(level => (
-              <button
-                key={level}
-                onClick={() => setSelectedLevel(level)}
-                className={`px-4 py-2 rounded-full border ${
-                  selectedLevel === level ? 'bg-black text-white' : 'bg-gray-100 text-gray-700'
-                }`}
-              >
-                {level}
-              </button>
-            ))}
-            <button
-              onClick={() => setSelectedLevel(null)}
-              className="px-4 py-2 rounded-full bg-gray-200 text-gray-600"
-            >
-              Clear Level
-            </button>
-          </div>
-
-          <div className="flex gap-4 flex-wrap">
-            {energies.map(energy => (
-              <button
-                key={energy}
-                onClick={() => setSelectedEnergy(energy)}
-                className={`px-4 py-2 rounded-full border ${
-                  selectedEnergy === energy ? 'bg-black text-white' : 'bg-gray-100 text-gray-700'
-                }`}
-              >
-                {energy}
-              </button>
-            ))}
-            <button
-              onClick={() => setSelectedEnergy(null)}
-              className="px-4 py-2 rounded-full bg-gray-200 text-gray-600"
-            >
-              Clear Energy
-            </button>
-          </div>
+      {/* Workouts Grid */}
+      {workouts.length === 0 ? (
+        <div className="text-center py-12">
+          <p className="text-lg text-muted-foreground">No workouts available yet.</p>
+          <p className="text-sm text-muted-foreground mt-2">
+            Check back soon for new dance workouts!
+          </p>
         </div>
+      ) : (
+        <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-1">
+          {workouts.map((workout) => (
+            <div
+              key={workout.id}
+              className="group relative bg-white rounded-2xl border border-pink-100 hover:border-pink-300 shadow-sm hover:shadow-lg hover:shadow-pink-200/50 transition-all duration-300 overflow-hidden"
+            >
+              <div className="flex flex-col sm:flex-row gap-0 sm:gap-6">
+                {/* Thumbnail */}
+                <div className="relative w-full sm:w-64 h-48 sm:h-auto flex-shrink-0 bg-gradient-to-br from-pink-50 to-rose-50">
+                  {workout.thumbnailUrl ? (
+                    <Image
+                      src={workout.thumbnailUrl}
+                      alt={workout.title || 'Workout'}
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 640px) 100vw, 256px"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center">
+                      <span className="text-6xl">💃</span>
+                    </div>
+                  )}
 
-        {/* ✅ STEP 2: FILTERED VIDEO GRID */}
-        <div className="space-y-20">
-          {filteredVideos.map((video, idx) => (
-            <div key={idx} className="flex flex-col lg:flex-row lg:gap-10">
-              <VideoPlayer
-                playbackId={video.playbackId}
-                title={video.title}
-                duration={video.duration}
-                gradientClass={gradientPresets[idx % gradientPresets.length]}
-              />
-              <div className="mt-6 lg:mt-0 lg:w-1/2 text-gray-800 space-y-2 text-lg">
-                <div><strong>Level:</strong> {video.level}</div>
-                <div><strong>Style:</strong> {video.style}</div>
-                <div><strong>Focus:</strong> {video.focus}</div>
-                <div><strong>Energy:</strong> {video.energy}</div>
-                <div><strong>Categories:</strong> {video.categories.join(', ')}</div>
+                  {/* Duration Badge */}
+                  <div className="absolute bottom-3 left-3 bg-gradient-to-r from-pink-500 to-rose-400 text-white px-4 py-2 rounded-lg font-semibold shadow-lg">
+                    {formatDuration(workout.durationInSec)}
+                  </div>
+                </div>
+
+                {/* Content */}
+                <div className="flex-1 p-6 flex flex-col justify-center">
+                  <h2 className="text-2xl font-bold mb-3 text-gray-800 group-hover:text-pink-500 transition-colors">
+                    {workout.title || 'Untitled Workout'}
+                  </h2>
+
+                  {workout.subtitle && (
+                    <p className="text-gray-600 mb-4 text-lg">
+                      {workout.subtitle}
+                    </p>
+                  )}
+
+                  {workout.description && workout.description !== 'workout' && (
+                    <p className="text-gray-500 mb-4">
+                      {workout.description}
+                    </p>
+                  )}
+
+                  {/* Stats */}
+                  <div className="flex flex-wrap gap-4 text-sm text-gray-600">
+                    {workout.calories > 0 && (
+                      <div className="flex items-center gap-2">
+                        <span className="text-pink-500">🔥</span>
+                        <span>{workout.calories} cal</span>
+                      </div>
+                    )}
+                    {workout.moves > 0 && (
+                      <div className="flex items-center gap-2">
+                        <span className="text-pink-500">💫</span>
+                        <span>{workout.moves} moves</span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Featured Badge */}
+                  {workout.featured && (
+                    <div className="mt-4">
+                      <span className="inline-flex items-center gap-2 px-3 py-1 bg-gradient-to-r from-pink-500 to-rose-400 text-white text-xs font-semibold rounded-full">
+                        ⭐ Featured
+                      </span>
+                    </div>
+                  )}
+                </div>
               </div>
+
+              {/* Hover Effect Overlay */}
+              <div className="absolute inset-0 bg-gradient-to-br from-pink-50/50 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
             </div>
           ))}
         </div>
-      </div>
-    </section>
+      )}
+    </div>
   );
 }

@@ -4,7 +4,7 @@ import { encodedRedirect } from "@/utils/utils";
 import { createClient } from "@/utils/supabase/server";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { WorkoutHistoryItem } from "@/types/database";
+import { WorkoutHistoryItem, Workout } from "@/types/database";
 
 // Commented out - no longer needed with Apple OAuth
 // Keeping for reference in case of migration needs
@@ -134,7 +134,7 @@ import { WorkoutHistoryItem } from "@/types/database";
 export const signOutAction = async () => {
   const supabase = await createClient();
   await supabase.auth.signOut();
-  return redirect("/sign-in");
+  return redirect("/");
 };
 
 export const signInWithAppleAction = async () => {
@@ -149,7 +149,7 @@ export const signInWithAppleAction = async () => {
   });
 
   if (error) {
-    return encodedRedirect("error", "/sign-in", error.message);
+    return encodedRedirect("error", "/", error.message);
   }
 
   return redirect(data.url);
@@ -182,4 +182,21 @@ export const getWorkoutHistory = async (): Promise<WorkoutHistoryItem[]> => {
   }
 
   return data as WorkoutHistoryItem[];
+};
+
+export const getWorkouts = async (): Promise<Workout[]> => {
+  const supabase = await createClient();
+
+  // Fetch all workouts, ordered by created_at (newest first)
+  const { data, error } = await supabase
+    .from('workouts')
+    .select('*')
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error("Error fetching workouts:", error);
+    return [];
+  }
+
+  return data as Workout[];
 };

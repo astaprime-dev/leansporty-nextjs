@@ -1,6 +1,7 @@
 import DeployButton from "@/components/deploy-button";
 import { EnvVarWarning } from "@/components/env-var-warning";
 import HeaderAuth from "@/components/header-auth";
+import HeaderNav from "@/components/header-nav";
 import { ThemeSwitcher } from "@/components/theme-switcher";
 import { hasEnvVars } from "@/utils/supabase/check-env-vars";
 import { Geist } from "next/font/google";
@@ -54,12 +55,8 @@ export default function RootLayout({
 
                   {/* Navigation Links */}
                   <div className="flex items-center gap-8">
-                    {/* <Link href={"/workouts"} className="text-sm font-light text-gray-600 hover:text-pink-500 transition-colors duration-300">
-                      Workouts
-                    </Link>
-                    <Link href={"/streams"} className="text-sm font-light text-gray-600 hover:text-pink-500 transition-colors duration-300">
-                      Streams
-                    </Link> */}
+                    {/* Authenticated user navigation */}
+                    <HeaderNav />
 
                     {/* Auth Buttons */}
                     <HeaderAuth />

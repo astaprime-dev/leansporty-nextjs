@@ -16,7 +16,7 @@ export async function GET(request: Request) {
 
     if (error) {
       return NextResponse.redirect(
-        `${origin}/sign-in?error=${encodeURIComponent(error.message)}`
+        `${origin}/?error=${encodeURIComponent(error.message)}`
       );
     }
   }
