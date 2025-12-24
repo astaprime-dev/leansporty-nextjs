@@ -5,7 +5,7 @@ export interface Workout {
   created_at: string;
   videoUrl: string | null;
   title: string | null;
-  durationInSec: number | null;
+  durationInSeconds: number | null;
   thumbnailUrl: string | null;
   calories: number;
   moves: number;

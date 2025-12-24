@@ -5,8 +5,8 @@ export default async function WorkoutsPage() {
   const workouts = await getWorkouts();
 
   // Helper function to format duration from seconds to MM:SS
-  const formatDuration = (seconds: number | null) => {
-    if (!seconds) return '0:00';
+  const formatDuration = (seconds: number | null | undefined) => {
+    if (!seconds || seconds === 0) return '0:00';
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return `${mins}:${secs.toString().padStart(2, '0')}`;
@@ -56,7 +56,7 @@ export default async function WorkoutsPage() {
 
                   {/* Duration Badge */}
                   <div className="absolute bottom-3 left-3 bg-gradient-to-r from-pink-500 to-rose-400 text-white px-4 py-2 rounded-lg font-semibold shadow-lg">
-                    {formatDuration(workout.durationInSec)}
+                    {formatDuration(workout.durationInSeconds)}
                   </div>
                 </div>
 
