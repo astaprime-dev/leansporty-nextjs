@@ -4,6 +4,7 @@ import { encodedRedirect } from "@/utils/utils";
 import { createClient } from "@/utils/supabase/server";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { WorkoutHistoryItem } from "@/types/database";
 
 // Commented out - no longer needed with Apple OAuth
 // Keeping for reference in case of migration needs
@@ -152,4 +153,33 @@ export const signInWithAppleAction = async () => {
   }
 
   return redirect(data.url);
+};
+
+export const getWorkoutHistory = async (): Promise<WorkoutHistoryItem[]> => {
+  const supabase = await createClient();
+
+  // Get current user
+  const { data: { user }, error: userError } = await supabase.auth.getUser();
+
+  if (userError || !user) {
+    console.error("Error getting user:", userError);
+    return [];
+  }
+
+  // Fetch workout sessions with workout details
+  const { data, error } = await supabase
+    .from('workout_sessions')
+    .select(`
+      *,
+      workouts (*)
+    `)
+    .eq('user_id', user.id)
+    .order('workout_date', { ascending: false });
+
+  if (error) {
+    console.error("Error fetching workout history:", error);
+    return [];
+  }
+
+  return data as WorkoutHistoryItem[];
 };
