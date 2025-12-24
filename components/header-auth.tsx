@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
 import { createClient } from "@/utils/supabase/server";
+import { AppleSignInModal } from "./apple-signin-modal";
 
 export default async function AuthButton() {
   const supabase = await createClient();
@@ -58,10 +59,10 @@ export default async function AuthButton() {
       </form>
     </div>
   ) : (
-    <div className="flex gap-2">
-      <Button asChild size="sm" variant={"outline"}>
-        <Link href="/sign-in">Sign in</Link>
+    <AppleSignInModal>
+      <Button size="sm" variant={"outline"}>
+        Sign in
       </Button>
-    </div>
+    </AppleSignInModal>
   );
 }
