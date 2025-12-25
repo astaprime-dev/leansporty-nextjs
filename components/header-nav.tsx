@@ -50,6 +50,12 @@ export default async function HeaderNav() {
       {isInstructor && (
         <>
           <Link
+            href="/instructor"
+            className="text-sm font-light text-gray-600 hover:text-pink-500 transition-colors duration-300"
+          >
+            Dashboard
+          </Link>
+          <Link
             href="/instructor/streams"
             className="text-sm font-light text-gray-600 hover:text-pink-500 transition-colors duration-300"
           >

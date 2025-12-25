@@ -24,7 +24,7 @@ export default function InstructorLoginPage() {
       });
 
       if (response.ok) {
-        router.push("/instructor/streams");
+        router.push("/instructor");
       } else {
         setError("Invalid access token. Please try again.");
       }

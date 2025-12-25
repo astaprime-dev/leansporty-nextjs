@@ -47,12 +47,18 @@ export default async function InstructorLayout({
       <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-8">
-            <Link href="/instructor/streams">
+            <Link href="/instructor">
               <h1 className="text-xl font-bold bg-gradient-to-r from-pink-500 to-rose-400 bg-clip-text text-transparent">
                 Instructor Dashboard
               </h1>
             </Link>
             <nav className="flex items-center gap-4">
+              <Link
+                href="/instructor"
+                className="text-sm font-medium text-gray-600 hover:text-pink-500 transition-colors"
+              >
+                Dashboard
+              </Link>
               <Link
                 href="/instructor/streams"
                 className="text-sm font-medium text-gray-600 hover:text-pink-500 transition-colors"

@@ -18,7 +18,7 @@ export default async function InstructorLoginPage() {
 
     // If they have an instructor profile, redirect to dashboard
     if (instructorProfile) {
-      redirect("/instructor/streams");
+      redirect("/instructor");
     }
   }
 
