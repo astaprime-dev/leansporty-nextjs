@@ -157,25 +157,21 @@ export function BrowserBroadcast({
       console.log("First 3 SDP lines:", lines.slice(0, 3));
       console.log("Last 5 SDP lines:", lines.slice(-5));
 
-      // Send offer to Cloudflare Stream
+      // Send offer to Cloudflare Stream using WHIP protocol (RFC 9725)
       console.log("Connecting to Cloudflare WebRTC URL:", webrtcUrl);
-
-      const payload = {
-        sdp: sdp,
-        streamKey: webrtcToken,
-      };
-      console.log("Payload to Cloudflare:", {
-        sdpLength: payload.sdp.length,
-        sdpEndsWithCRLF: payload.sdp.endsWith("\r\n"),
-        hasStreamKey: !!payload.streamKey
+      console.log("SDP being sent:", {
+        length: sdp.length,
+        endsWithCRLF: sdp.endsWith("\r\n"),
+        hasToken: !!webrtcToken
       });
 
       const response = await fetch(webrtcUrl, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type": "application/sdp",
+          ...(webrtcToken ? { "Authorization": `Bearer ${webrtcToken}` } : {}),
         },
-        body: JSON.stringify(payload),
+        body: sdp, // Send raw SDP text, not JSON!
       });
 
       if (!response.ok) {
