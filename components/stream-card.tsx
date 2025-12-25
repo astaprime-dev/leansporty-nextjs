@@ -8,6 +8,7 @@ import Link from "next/link";
 import { Calendar, Clock, Coins, Users, Download } from "lucide-react";
 import { enrollInStream } from "@/app/actions";
 import { downloadICS } from "@/lib/ics-generator";
+import { AppleSignInModal } from "@/components/apple-signin-modal";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
@@ -153,12 +154,12 @@ export function StreamCard({ stream, enrollment, isLive, isAuthenticated }: Stre
               </>
             ) : !isAuthenticated ? (
               <>
-                {/* Not authenticated - show sign in button */}
-                <Link href="/">
+                {/* Not authenticated - show sign in modal */}
+                <AppleSignInModal>
                   <Button className="bg-gradient-to-r from-pink-500 to-rose-400 hover:from-pink-600 hover:to-rose-500">
                     Sign in to Enroll
                   </Button>
-                </Link>
+                </AppleSignInModal>
                 <div className="flex items-center gap-2 text-gray-700">
                   <Coins className="w-5 h-5 text-amber-500" />
                   <span className="font-semibold">{stream.price_in_tokens} tokens</span>
