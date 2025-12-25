@@ -1,4 +1,4 @@
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -37,8 +37,15 @@ export default async function InstructorLayout({
       redirect("/instructor/login");
     }
 
-    // They have the invite token but no profile - redirect to profile creation
-    redirect("/instructor/profile");
+    // They have the invite token but no profile
+    // Check current path - only redirect if NOT already on profile page
+    const headersList = await headers();
+    const pathname = headersList.get("x-pathname") || headersList.get("referer") || "";
+
+    if (!pathname.includes("/instructor/profile")) {
+      // Redirect to profile creation if trying to access other instructor pages
+      redirect("/instructor/profile");
+    }
   }
 
   return (
