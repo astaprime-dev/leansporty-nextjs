@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { WHEPClient } from "@eyevinn/webrtc-player";
+import { WebRTCPlayer } from "@eyevinn/webrtc-player";
 
 interface WHEPPlayerProps {
   whepUrl: string;
@@ -23,7 +23,7 @@ export function WHEPPlayer({
   className = "",
 }: WHEPPlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const clientRef = useRef<WHEPClient | null>(null);
+  const playerRef = useRef<WebRTCPlayer | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -38,17 +38,21 @@ export function WHEPPlayer({
         setIsLoading(true);
         setError(null);
 
-        // Create WHEP client
-        const client = new WHEPClient({
-          url: whepUrl,
-          videoElement,
-          autoplay,
+        // Create WebRTC player with WHEP type
+        const player = new WebRTCPlayer({
+          video: videoElement,
+          type: 'whep',
         });
 
-        clientRef.current = client;
+        playerRef.current = player;
 
-        // Wait for client to initialize
-        await client.load();
+        // Load the WHEP stream
+        await player.load(new URL(whepUrl));
+
+        // Unmute if not muted
+        if (!muted && autoplay) {
+          player.unmute();
+        }
 
         if (mounted) {
           setIsLoading(false);
@@ -67,12 +71,12 @@ export function WHEPPlayer({
     // Cleanup
     return () => {
       mounted = false;
-      if (clientRef.current) {
-        clientRef.current.destroy();
-        clientRef.current = null;
+      if (playerRef.current) {
+        // Destroy the player
+        playerRef.current = null;
       }
     };
-  }, [whepUrl, autoplay]);
+  }, [whepUrl, autoplay, muted]);
 
   return (
     <div className={`relative w-full ${className}`} style={{ paddingBottom: "56.25%" }}>
