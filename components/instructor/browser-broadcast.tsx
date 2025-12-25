@@ -106,6 +106,12 @@ export function BrowserBroadcast({
       const offer = await peerConnection.createOffer();
       await peerConnection.setLocalDescription(offer);
 
+      // Ensure SDP has proper termination (Cloudflare requirement)
+      let sdp = offer.sdp || "";
+      if (!sdp.endsWith("\r\n")) {
+        sdp += "\r\n";
+      }
+
       // Send offer to Cloudflare Stream
       console.log("Connecting to Cloudflare WebRTC URL:", webrtcUrl);
 
@@ -115,7 +121,7 @@ export function BrowserBroadcast({
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          sdp: offer.sdp,
+          sdp: sdp,
           streamKey: webrtcToken,
         }),
       });
