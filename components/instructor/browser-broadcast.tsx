@@ -114,11 +114,16 @@ export function BrowserBroadcast({
       const offer = await peerConnection.createOffer();
       await peerConnection.setLocalDescription(offer);
 
-      // Ensure SDP has proper termination (Cloudflare requirement)
+      // Normalize SDP line endings for Cloudflare (requires \r\n, not \n)
       let sdp = offer.sdp || "";
+      // Replace all \n that aren't preceded by \r with \r\n
+      sdp = sdp.replace(/([^\r])\n/g, "$1\r\n");
+      // Ensure final line ending
       if (!sdp.endsWith("\r\n")) {
         sdp += "\r\n";
       }
+
+      console.log("SDP ends with CRLF:", sdp.endsWith("\r\n"), "Length:", sdp.length);
 
       // Send offer to Cloudflare Stream
       console.log("Connecting to Cloudflare WebRTC URL:", webrtcUrl);
