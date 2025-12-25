@@ -180,13 +180,15 @@ export function BrowserBroadcast({
         throw new Error(`Cloudflare error (${response.status}): ${errorText || "Connection failed"}`);
       }
 
-      const answer = await response.json();
+      // WHIP protocol returns SDP answer as plain text (application/sdp), not JSON
+      const answerSdp = await response.text();
+      console.log("Received SDP answer from Cloudflare:", answerSdp.substring(0, 100) + "...");
 
       // Set remote description
       await peerConnection.setRemoteDescription(
         new RTCSessionDescription({
           type: "answer",
-          sdp: answer.sdp,
+          sdp: answerSdp,
         })
       );
 
