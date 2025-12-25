@@ -3,9 +3,25 @@ import { Button } from "@/components/ui/button";
 import { createClient } from "@/utils/supabase/server";
 import { LiveStreamSession } from "@/types/streaming";
 import { Plus } from "lucide-react";
+import { redirect } from "next/navigation";
 
 export default async function InstructorStreamsPage() {
   const supabase = await createClient();
+
+  // Check if instructor has profile
+  const { data: { user } } = await supabase.auth.getUser();
+  if (user) {
+    const { data: instructorProfile } = await supabase
+      .from("instructors")
+      .select("id")
+      .eq("user_id", user.id)
+      .single();
+
+    if (!instructorProfile) {
+      // No profile yet, redirect to create one
+      redirect("/instructor/profile");
+    }
+  }
 
   // Fetch all streams (sorted by scheduled time)
   const { data: streams } = await supabase
