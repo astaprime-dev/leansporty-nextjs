@@ -42,6 +42,7 @@ export async function POST(request: NextRequest) {
         streamId: cloudflare.streamId,
         hasWebrtcUrl: !!cloudflare.webrtcUrl,
         hasToken: !!cloudflare.webrtcToken,
+        hasWhepUrl: !!cloudflare.whepPlaybackUrl,
       });
     } catch (cloudflareError: any) {
       console.error("Cloudflare API error:", cloudflareError);
@@ -66,6 +67,7 @@ export async function POST(request: NextRequest) {
         cloudflare_webrtc_url: cloudflare.webrtcUrl,
         cloudflare_webrtc_token: cloudflare.webrtcToken,
         cloudflare_playback_id: cloudflare.playbackId,
+        cloudflare_whep_playback_url: cloudflare.whepPlaybackUrl,
         status: "scheduled",
       })
       .select()

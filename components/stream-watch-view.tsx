@@ -2,6 +2,7 @@
 
 import { LiveStreamSession, StreamEnrollment } from "@/types/streaming";
 import { CloudflareStreamPlayer } from "@/components/CloudflareStreamPlayer";
+import { WHEPPlayer } from "@/components/whep-player";
 import { Badge } from "@/components/ui/badge";
 import { Calendar, Users, Clock } from "lucide-react";
 
@@ -16,20 +17,32 @@ export function StreamWatchView({
   enrollment,
   isLive,
 }: StreamWatchViewProps) {
-  // Determine which playback ID to use
-  const playbackId = isLive
-    ? stream.cloudflare_playback_id
-    : stream.recording_cloudflare_video_id;
+  // For live streams, we need the WHEP playback URL
+  // For recordings, we use the regular playback ID
+  const whepUrl = isLive ? stream.cloudflare_whep_playback_url : null;
+  const recordingPlaybackId = !isLive ? stream.recording_cloudflare_video_id : null;
 
-  if (!playbackId) {
+  // Check if we have the necessary URLs
+  if (isLive && !whepUrl) {
     return (
       <div className="flex-1 w-full flex items-center justify-center p-8">
         <div className="text-center max-w-md">
           <p className="text-xl text-gray-600 mb-4">Stream not available</p>
           <p className="text-sm text-gray-500">
-            {isLive
-              ? "The stream is not broadcasting yet. Please check back at the scheduled time."
-              : "The recording is not available at this time."}
+            The stream is not broadcasting yet. Please check back at the scheduled time.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isLive && !recordingPlaybackId) {
+    return (
+      <div className="flex-1 w-full flex items-center justify-center p-8">
+        <div className="text-center max-w-md">
+          <p className="text-xl text-gray-600 mb-4">Recording not available</p>
+          <p className="text-sm text-gray-500">
+            The recording is not available at this time.
           </p>
         </div>
       </div>
@@ -54,12 +67,23 @@ export function StreamWatchView({
     <div className="flex-1 w-full flex flex-col gap-6 px-4 py-8 max-w-7xl mx-auto">
       {/* Video Player */}
       <div className="w-full">
-        <CloudflareStreamPlayer
-          playbackId={playbackId}
-          autoplay={isLive}
-          controls={true}
-          poster={stream.thumbnail_url || undefined}
-        />
+        {isLive && whepUrl ? (
+          /* Live stream uses WHEP (WebRTC) for sub-second latency */
+          <WHEPPlayer
+            whepUrl={whepUrl}
+            autoplay={true}
+            muted={false}
+            poster={stream.thumbnail_url || undefined}
+          />
+        ) : recordingPlaybackId ? (
+          /* Recordings use regular HLS playback */
+          <CloudflareStreamPlayer
+            playbackId={recordingPlaybackId}
+            autoplay={false}
+            controls={true}
+            poster={stream.thumbnail_url || undefined}
+          />
+        ) : null}
       </div>
 
       {/* Stream Info */}

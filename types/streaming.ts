@@ -22,9 +22,10 @@ export interface LiveStreamSession {
 
   // Cloudflare Stream
   cloudflare_stream_id: string | null;
-  cloudflare_webrtc_url: string | null; // For browser streaming
+  cloudflare_webrtc_url: string | null; // WHIP URL for browser streaming (ingestion)
   cloudflare_webrtc_token: string | null;
   cloudflare_playback_id: string | null;
+  cloudflare_whep_playback_url: string | null; // WHEP URL for WebRTC playback (egress)
 
   // Recording
   recording_available: boolean;
@@ -87,10 +88,15 @@ export interface LiveStreamWithEnrollment extends LiveStreamSession {
 export interface CloudflareStreamLiveInput {
   uid: string;
 
-  // WebRTC connection info (for browser streaming)
+  // WebRTC connection info (for browser streaming - WHIP ingestion)
   webRTC: {
     url: string;
     streamKey?: string;
+  };
+
+  // WebRTC playback info (for viewing - WHEP egress)
+  webRTCPlayback?: {
+    url: string;
   };
 
   // RTMPS info (for OBS - optional/future)

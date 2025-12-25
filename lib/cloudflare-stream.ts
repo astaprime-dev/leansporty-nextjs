@@ -54,6 +54,7 @@ export async function createLiveInput(streamName: string): Promise<{
   webrtcUrl: string;
   webrtcToken?: string;
   playbackId: string;
+  whepPlaybackUrl: string;
 }> {
   const result = await callCloudflareAPI<CloudflareStreamLiveInput>('/stream/live_inputs', {
     method: 'POST',
@@ -74,6 +75,7 @@ export async function createLiveInput(streamName: string): Promise<{
     webrtcUrl: result.webRTC.url,
     webrtcToken: result.webRTC.streamKey,
     playbackId: result.uid, // Same as stream ID for live inputs
+    whepPlaybackUrl: result.webRTCPlayback?.url || '', // WHEP URL for playback
   };
 }
 
