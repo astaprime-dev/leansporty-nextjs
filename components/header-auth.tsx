@@ -1,10 +1,10 @@
-import { signOutAction } from "@/app/actions";
 import { hasEnvVars } from "@/utils/supabase/check-env-vars";
 import Link from "next/link";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
 import { createClient } from "@/utils/supabase/server";
 import { OAuthSignInModal } from "./oauth-signin-modal";
+import { UserMenu } from "./user-menu";
 
 export default async function AuthButton() {
   const supabase = await createClient();
@@ -50,14 +50,7 @@ export default async function AuthButton() {
     );
   }
   return user ? (
-    <div className="flex items-center gap-4">
-      Hey, {user.email}!
-      <form action={signOutAction}>
-        <Button type="submit" variant={"outline"}>
-          Sign out
-        </Button>
-      </form>
-    </div>
+    <UserMenu user={user} />
   ) : (
     <OAuthSignInModal>
       <Button size="sm" variant={"outline"}>

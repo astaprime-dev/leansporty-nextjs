@@ -14,12 +14,27 @@ export default async function WorkoutsPage() {
 
   return (
     <div className="flex-1 w-full flex flex-col gap-8 px-4 py-8 max-w-7xl mx-auto">
+      {/* iOS-only Notice */}
+      <div className="bg-gradient-to-r from-pink-50 to-rose-50 border-2 border-pink-200 rounded-xl p-6 shadow-sm">
+        <div className="flex items-start gap-4">
+          <div className="text-4xl">📱</div>
+          <div className="flex-1">
+            <h3 className="text-lg font-semibold text-gray-800 mb-2">
+              Available on iOS
+            </h3>
+            <p className="text-gray-600">
+              Dance workouts are currently available only in our iOS app. Download LeanSporty from the App Store to access these workouts and start your fitness journey!
+            </p>
+          </div>
+        </div>
+      </div>
+
       {/* Header */}
       <div>
         <h1 className="text-5xl font-bold mb-2 bg-gradient-to-r from-pink-500 to-rose-400 bg-clip-text text-transparent">
           Latest Dance Workouts
         </h1>
-        <p className="text-muted-foreground">Choose a workout to get started</p>
+        <p className="text-muted-foreground">Preview our workout collection</p>
       </div>
 
       {/* Workouts Grid */}

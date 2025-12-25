@@ -17,6 +17,14 @@ export default async function HeaderNav() {
         Streams
       </Link>
 
+      {/* Workouts - visible to everyone */}
+      <Link
+        href="/workouts"
+        className="text-sm font-light text-gray-600 hover:text-pink-500 transition-colors duration-300"
+      >
+        Workouts
+      </Link>
+
       {/* Authenticated user links */}
       {user && (
         <>
@@ -25,12 +33,6 @@ export default async function HeaderNav() {
             className="text-sm font-light text-gray-600 hover:text-pink-500 transition-colors duration-300"
           >
             Activity
-          </Link>
-          <Link
-            href="/workouts"
-            className="text-sm font-light text-gray-600 hover:text-pink-500 transition-colors duration-300"
-          >
-            Workouts
           </Link>
           <Link
             href="/settings"
