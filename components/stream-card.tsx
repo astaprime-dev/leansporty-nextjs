@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
 import Link from "next/link";
-import { Calendar, Clock, Coins, Users, Download } from "lucide-react";
+import { Calendar, Clock, Coins, Users, Download, Video, Check } from "lucide-react";
 import { enrollInStream } from "@/app/actions";
 import { downloadICS } from "@/lib/ics-generator";
 import { OAuthSignInModal } from "@/components/oauth-signin-modal";
@@ -79,7 +79,7 @@ export function StreamCard({ stream, enrollment, isLive, isAuthenticated }: Stre
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center">
-              <span className="text-6xl">🎥</span>
+              <Video className="w-16 h-16 text-pink-400" strokeWidth={1.5} />
             </div>
           )}
 
@@ -148,8 +148,9 @@ export function StreamCard({ stream, enrollment, isLive, isAuthenticated }: Stre
                     {isLive ? "Watch Live" : "View Details"}
                   </Button>
                 </Link>
-                <Badge variant="outline" className="border-green-500 text-green-700 bg-green-50">
-                  ✓ Enrolled
+                <Badge variant="outline" className="border-green-500 text-green-700 bg-green-50 flex items-center gap-1">
+                  <Check className="w-3 h-3" strokeWidth={2.5} />
+                  Enrolled
                 </Badge>
               </>
             ) : !isAuthenticated ? (

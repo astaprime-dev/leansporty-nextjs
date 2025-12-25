@@ -1,5 +1,6 @@
 import { getWorkouts } from "@/app/actions";
 import Image from "next/image";
+import { Smartphone, Sparkles, Flame, Zap, Star } from "lucide-react";
 
 export default async function WorkoutsPage() {
   const workouts = await getWorkouts();
@@ -17,7 +18,9 @@ export default async function WorkoutsPage() {
       {/* iOS-only Notice */}
       <div className="bg-gradient-to-r from-pink-50 to-rose-50 border-2 border-pink-200 rounded-xl p-6 shadow-sm">
         <div className="flex items-start gap-4">
-          <div className="text-4xl">📱</div>
+          <div className="flex-shrink-0">
+            <Smartphone className="w-10 h-10 text-pink-500" strokeWidth={1.5} />
+          </div>
           <div className="flex-1">
             <h3 className="text-lg font-semibold text-gray-800 mb-2">
               Available on iOS
@@ -65,7 +68,7 @@ export default async function WorkoutsPage() {
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">
-                      <span className="text-6xl">💃</span>
+                      <Sparkles className="w-16 h-16 text-pink-400" strokeWidth={1.5} />
                     </div>
                   )}
 
@@ -97,13 +100,13 @@ export default async function WorkoutsPage() {
                   <div className="flex flex-wrap gap-4 text-sm text-gray-600">
                     {workout.calories > 0 && (
                       <div className="flex items-center gap-2">
-                        <span className="text-pink-500">🔥</span>
+                        <Flame className="w-4 h-4 text-pink-500" strokeWidth={2} />
                         <span>{workout.calories} cal</span>
                       </div>
                     )}
                     {workout.moves > 0 && (
                       <div className="flex items-center gap-2">
-                        <span className="text-pink-500">💫</span>
+                        <Zap className="w-4 h-4 text-pink-500" strokeWidth={2} />
                         <span>{workout.moves} moves</span>
                       </div>
                     )}
@@ -113,7 +116,8 @@ export default async function WorkoutsPage() {
                   {workout.featured && (
                     <div className="mt-4">
                       <span className="inline-flex items-center gap-2 px-3 py-1 bg-gradient-to-r from-pink-500 to-rose-400 text-white text-xs font-semibold rounded-full">
-                        ⭐ Featured
+                        <Star className="w-3 h-3" strokeWidth={2} fill="currentColor" />
+                        Featured
                       </span>
                     </div>
                   )}
