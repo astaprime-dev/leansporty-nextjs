@@ -1,21 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
 import { createLiveInput } from "@/lib/cloudflare-stream";
-import { cookies } from "next/headers";
 
 export async function POST(request: NextRequest) {
   try {
-    // Check instructor authentication
-    const cookieStore = await cookies();
-    const instructorToken = cookieStore.get("instructor_token");
-
-    if (instructorToken?.value !== process.env.INSTRUCTOR_ACCESS_TOKEN) {
-      return NextResponse.json(
-        { error: "Unauthorized" },
-        { status: 401 }
-      );
-    }
-
     const data = await request.json();
 
     // Check Cloudflare environment variables
@@ -52,14 +40,41 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Create stream session in database
+    // Get authenticated user and instructor profile
     const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      return NextResponse.json(
+        { error: "User not authenticated" },
+        { status: 401 }
+      );
+    }
+
+    // Get instructor profile
+    const { data: instructorProfile } = await supabase
+      .from("instructors")
+      .select("id, display_name")
+      .eq("user_id", user.id)
+      .single();
+
+    if (!instructorProfile) {
+      return NextResponse.json(
+        { error: "Instructor profile not found. Please create your profile first." },
+        { status: 400 }
+      );
+    }
+
+    // Create stream session in database
     const { data: stream, error } = await supabase
       .from("live_stream_sessions")
       .insert({
         title: data.title,
         description: data.description,
-        instructor_name: data.instructorName,
+        instructor_name: instructorProfile.display_name,
+        instructor_id: instructorProfile.id,
         scheduled_start_time: data.scheduledStartTime,
         scheduled_duration_seconds: data.durationMinutes * 60,
         price_in_tokens: data.priceInTokens,

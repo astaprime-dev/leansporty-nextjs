@@ -1,6 +1,7 @@
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import { DeleteAccountButton } from "@/components/delete-account-button";
+import { UserProfileForm } from "@/components/user-profile-form";
 
 export default async function AccountSettingsPage() {
   const supabase = await createClient();
@@ -9,6 +10,13 @@ export default async function AccountSettingsPage() {
   if (!user) {
     return redirect("/");
   }
+
+  // Get user profile if exists
+  const { data: userProfile } = await supabase
+    .from("user_profiles")
+    .select("*")
+    .eq("user_id", user.id)
+    .single();
 
   // Get provider info from user metadata
   const provider = user.app_metadata?.provider || 'Unknown';
@@ -22,8 +30,19 @@ export default async function AccountSettingsPage() {
     <div className="min-h-screen bg-gradient-to-b from-pink-50 to-white">
       <div className="max-w-3xl mx-auto px-4 py-12">
         <h1 className="text-4xl font-bold bg-gradient-to-r from-pink-500 to-rose-400 bg-clip-text text-transparent mb-8">
-          Account Settings
+          Settings
         </h1>
+
+        {/* Public Profile Card */}
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8 mb-6">
+          <h2 className="text-2xl font-semibold text-gray-900 mb-6">Public Profile</h2>
+          <p className="text-gray-600 mb-6">
+            {userProfile
+              ? "Update your public profile information"
+              : "Create your public profile to connect with other members"}
+          </p>
+          <UserProfileForm initialData={userProfile} userId={user.id} />
+        </div>
 
         {/* Account Information Card */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8 mb-6">

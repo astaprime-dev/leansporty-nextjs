@@ -20,12 +20,25 @@ export default async function InstructorLayout({
     redirect("/instructor/login");
   }
 
-  // Check if user has valid instructor token
-  const cookieStore = await cookies();
-  const instructorToken = cookieStore.get("instructor_token");
+  // Check if instructor profile exists (this is the real authorization check)
+  const { data: instructorProfile } = await supabase
+    .from("instructors")
+    .select("*")
+    .eq("user_id", user.id)
+    .single();
 
-  if (instructorToken?.value !== process.env.INSTRUCTOR_ACCESS_TOKEN) {
-    redirect("/instructor/login");
+  // If no instructor profile exists, check if they have a valid invite token
+  if (!instructorProfile) {
+    const cookieStore = await cookies();
+    const instructorToken = cookieStore.get("instructor_token");
+
+    // If they don't have the invite token, redirect to login
+    if (instructorToken?.value !== process.env.INSTRUCTOR_ACCESS_TOKEN) {
+      redirect("/instructor/login");
+    }
+
+    // They have the invite token but no profile - redirect to profile creation
+    redirect("/instructor/profile");
   }
 
   return (
@@ -52,6 +65,12 @@ export default async function InstructorLayout({
               >
                 Create Stream
               </Link>
+              <Link
+                href="/instructor/profile"
+                className="text-sm font-medium text-gray-600 hover:text-pink-500 transition-colors"
+              >
+                My Profile
+              </Link>
             </nav>
           </div>
 
@@ -61,15 +80,6 @@ export default async function InstructorLayout({
                 View Site
               </Button>
             </Link>
-            <form action="/api/instructor/login" method="DELETE">
-              <Button
-                variant="ghost"
-                size="sm"
-                className="text-gray-600 hover:text-red-500"
-              >
-                Logout
-              </Button>
-            </form>
           </div>
         </div>
       </header>

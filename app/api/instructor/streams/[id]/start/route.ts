@@ -1,21 +1,32 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
-import { cookies } from "next/headers";
 
 export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    // Check instructor authentication
-    const cookieStore = await cookies();
-    const instructorToken = cookieStore.get("instructor_token");
+    const supabase = await createClient();
 
-    if (instructorToken?.value !== process.env.INSTRUCTOR_ACCESS_TOKEN) {
+    // Check if user is authenticated and has instructor profile
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const supabase = await createClient();
+    const { data: instructorProfile } = await supabase
+      .from("instructors")
+      .select("id")
+      .eq("user_id", user.id)
+      .single();
+
+    if (!instructorProfile) {
+      return NextResponse.json({ error: "Not an instructor" }, { status: 403 });
+    }
+
     const { id } = await params;
 
     // Update stream status to 'live'
