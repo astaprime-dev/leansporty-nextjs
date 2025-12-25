@@ -118,6 +118,8 @@ export default function RootLayout({
                       <span>•</span>
                       <Link href="/terms" className="hover:text-pink-500 transition-colors">Terms of Service</Link>
                       <span>•</span>
+                      <Link href="/instructor/login" className="hover:text-pink-500 transition-colors">Instructor</Link>
+                      <span>•</span>
                       <a href="mailto:team@leansporty.com" className="hover:text-pink-500 transition-colors">Contact</a>
                     </div>
 
