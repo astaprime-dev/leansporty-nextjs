@@ -148,21 +148,34 @@ export function BrowserBroadcast({
         length: sdp.length,
         endsWithCRLF: sdp.endsWith("\r\n"),
         lineCount: sdp.split("\r\n").length - 1,
-        lastChars: sdp.slice(-10).split("").map(c => c.charCodeAt(0))
+        lastChars: sdp.slice(-10).split("").map(c => c.charCodeAt(0)),
+        last20Chars: sdp.slice(-20).split("").map(c => c.charCodeAt(0))
       });
+
+      // Log first and last few lines to verify structure
+      const lines = sdp.split("\r\n");
+      console.log("First 3 SDP lines:", lines.slice(0, 3));
+      console.log("Last 5 SDP lines:", lines.slice(-5));
 
       // Send offer to Cloudflare Stream
       console.log("Connecting to Cloudflare WebRTC URL:", webrtcUrl);
+
+      const payload = {
+        sdp: sdp,
+        streamKey: webrtcToken,
+      };
+      console.log("Payload to Cloudflare:", {
+        sdpLength: payload.sdp.length,
+        sdpEndsWithCRLF: payload.sdp.endsWith("\r\n"),
+        hasStreamKey: !!payload.streamKey
+      });
 
       const response = await fetch(webrtcUrl, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          sdp: sdp,
-          streamKey: webrtcToken,
-        }),
+        body: JSON.stringify(payload),
       });
 
       if (!response.ok) {
