@@ -32,6 +32,12 @@ export default async function HeaderNav() {
           >
             Workouts
           </Link>
+          <Link
+            href="/settings"
+            className="text-sm font-light text-gray-600 hover:text-pink-500 transition-colors duration-300"
+          >
+            Settings
+          </Link>
         </>
       )}
     </div>

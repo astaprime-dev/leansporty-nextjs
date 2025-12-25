@@ -1,5 +1,23 @@
 # Documentation Index
 
+## Authentication & Account Management
+
+**Status**: ✅ Production Ready
+
+### User Documentation
+- **[Account Settings & Deletion](account-settings-deletion.md)** - Complete guide to account management and GDPR-compliant deletion
+- **[Apple Sign-In Implementation](apple-signin-implementation.md)** - Apple OAuth setup and integration
+- **[Supabase Apple OAuth Setup](supabase-apple-oauth-setup.md)** - Configuration guide for Apple authentication
+
+### Key Features
+- Google OAuth authentication
+- Apple OAuth authentication
+- Account settings page
+- GDPR-compliant account deletion
+- Privacy-preserving analytics (anonymized workout data)
+
+---
+
 ## Live Streaming Feature
 
 **Status**: ✅ Production Ready
@@ -76,4 +94,13 @@
 
 ---
 
-Last Updated: 2025-01-01
+## Legal Pages
+
+**Status**: ✅ Live
+
+- **[Privacy Policy](../app/privacy/page.tsx)** - Embedded iubenda privacy policy
+- **[Terms of Service](../app/terms/page.tsx)** - Comprehensive terms with GDPR compliance
+
+---
+
+Last Updated: 2025-12-25

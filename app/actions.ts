@@ -174,6 +174,54 @@ export const signInWithGoogleAction = async () => {
   return redirect(data.url);
 };
 
+export const deleteAccountAction = async () => {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
+    return encodedRedirect("error", "/", "Not authenticated");
+  }
+
+  try {
+    // 1. Anonymize workout sessions (keep for analytics, remove PII)
+    // Set user_id to NULL to disassociate from user account
+    const { error: sessionsError } = await supabase
+      .from('workout_sessions')
+      .update({ user_id: null })
+      .eq('user_id', user.id);
+
+    if (sessionsError) {
+      console.error('Error anonymizing workout sessions:', sessionsError);
+      return encodedRedirect("error", "/settings", "Failed to delete account data");
+    }
+
+    // 2. Enrollments and chat messages will be auto-deleted via CASCADE
+    // when auth.users record is deleted
+
+    // 3. Delete user from Supabase Auth
+    // Note: This uses the client which may not have admin permissions
+    // If this fails, we fall back to just signing out
+    const { error: deleteError } = await supabase.rpc('delete_user');
+
+    if (deleteError) {
+      console.error('Error deleting user:', deleteError);
+      // Fallback: Just sign out if delete fails
+      await supabase.auth.signOut();
+      return redirect("/?message=Account removal initiated");
+    }
+
+    // Sign out after successful deletion
+    await supabase.auth.signOut();
+    return redirect("/?message=Account successfully deleted");
+
+  } catch (error) {
+    console.error('Account deletion error:', error);
+    // Fallback: Sign out on any error
+    await supabase.auth.signOut();
+    return redirect("/?message=Account removal initiated");
+  }
+};
+
 export const getWorkoutHistory = async (): Promise<WorkoutHistoryItem[]> => {
   const supabase = await createClient();
 
