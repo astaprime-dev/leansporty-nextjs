@@ -5,14 +5,17 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 interface ProfilePageProps {
   params: Promise<{
-    slug: string;
+    username: string;
   }>;
 }
 
 export default async function ProfilePage({
   params,
 }: ProfilePageProps) {
-  const { slug } = await params;
+  const { username } = await params;
+
+  // Remove @ prefix if present (for /@username URLs)
+  const slug = username.startsWith('@') ? username.slice(1) : username;
 
   const supabase = await createClient();
 
