@@ -46,34 +46,14 @@ export default async function HeaderNav() {
         </Link>
       )}
 
-      {/* Instructor links - only visible to instructors */}
+      {/* Instructor dashboard link - only visible to instructors */}
       {isInstructor && (
-        <>
-          <Link
-            href="/instructor"
-            className="text-sm font-light text-gray-600 hover:text-pink-500 transition-colors duration-300"
-          >
-            Dashboard
-          </Link>
-          <Link
-            href="/instructor/streams"
-            className="text-sm font-light text-gray-600 hover:text-pink-500 transition-colors duration-300"
-          >
-            My Streams
-          </Link>
-          <Link
-            href="/instructor/streams/create"
-            className="text-sm font-light text-gray-600 hover:text-pink-500 transition-colors duration-300"
-          >
-            Create Stream
-          </Link>
-          <Link
-            href="/instructor/profile"
-            className="text-sm font-light text-gray-600 hover:text-pink-500 transition-colors duration-300"
-          >
-            My Profile
-          </Link>
-        </>
+        <Link
+          href="/instructor"
+          className="text-sm font-semibold text-gray-900 hover:text-pink-500 transition-colors duration-300"
+        >
+          Instructor Dashboard
+        </Link>
       )}
     </div>
   );
