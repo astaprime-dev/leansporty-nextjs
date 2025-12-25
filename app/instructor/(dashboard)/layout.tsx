@@ -2,16 +2,28 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { createClient } from "@/utils/supabase/server";
 
 export default async function InstructorLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  // Check if user is authenticated with Supabase first
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    // Not logged in as regular user - redirect to instructor login
+    redirect("/instructor/login");
+  }
+
+  // Check if user has valid instructor token
   const cookieStore = await cookies();
   const instructorToken = cookieStore.get("instructor_token");
 
-  // Check if user has valid instructor token
   if (instructorToken?.value !== process.env.INSTRUCTOR_ACCESS_TOKEN) {
     redirect("/instructor/login");
   }
