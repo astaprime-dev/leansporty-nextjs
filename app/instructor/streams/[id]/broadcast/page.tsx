@@ -6,14 +6,15 @@ import { BroadcastManagementView } from "@/components/instructor/broadcast-manag
 export default async function BroadcastPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
   const supabase = await createClient();
+  const { id } = await params;
 
   const { data: stream, error } = await supabase
     .from("live_stream_sessions")
     .select("*")
-    .eq("id", params.id)
+    .eq("id", id)
     .single();
 
   if (error || !stream) {

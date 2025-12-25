@@ -6,9 +6,9 @@ import { StreamWatchView } from "@/components/stream-watch-view";
 export default async function StreamWatchPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
-  const streamId = params.id;
+  const { id: streamId } = await params;
 
   // Check authentication
   const supabase = await createClient();

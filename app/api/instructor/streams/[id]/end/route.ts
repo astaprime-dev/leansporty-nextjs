@@ -4,7 +4,7 @@ import { cookies } from "next/headers";
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Check instructor authentication
@@ -16,6 +16,7 @@ export async function POST(
     }
 
     const supabase = await createClient();
+    const { id } = await params;
 
     // Update stream status to 'ended'
     // The trigger will automatically set recording_expires_at and migration_scheduled_at
@@ -26,7 +27,7 @@ export async function POST(
         actual_end_time: new Date().toISOString(),
         recording_available: true, // Recording will be available after Cloudflare processes it
       })
-      .eq("id", params.id);
+      .eq("id", id);
 
     if (error) {
       console.error("Error ending stream:", error);
