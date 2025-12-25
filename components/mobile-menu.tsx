@@ -75,6 +75,19 @@ export function MobileMenu({ user, isInstructor }: MobileMenuProps) {
                   </Link>
                 </>
               )}
+
+              {/* Download App CTA */}
+              <div className="border-t border-pink-100 my-2" />
+              <a
+                href="https://apps.apple.com/app/id6745218800"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-pink-500 to-rose-400 text-white text-sm font-light rounded-full hover:shadow-lg transition-all"
+                onClick={() => setIsOpen(false)}
+              >
+                <span>Download App</span>
+                <span className="text-xs">✧</span>
+              </a>
             </div>
           </div>
         </>
