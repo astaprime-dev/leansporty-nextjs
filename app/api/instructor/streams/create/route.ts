@@ -31,6 +31,18 @@ export async function POST(request: NextRequest) {
     let cloudflare;
     try {
       cloudflare = await createLiveInput(data.title);
+
+      // Validate Cloudflare response
+      if (!cloudflare.webrtcUrl || !cloudflare.streamId) {
+        console.error("Invalid Cloudflare response:", cloudflare);
+        throw new Error("Cloudflare returned invalid data - missing webrtcUrl or streamId");
+      }
+
+      console.log("Cloudflare live input created:", {
+        streamId: cloudflare.streamId,
+        hasWebrtcUrl: !!cloudflare.webrtcUrl,
+        hasToken: !!cloudflare.webrtcToken,
+      });
     } catch (cloudflareError: any) {
       console.error("Cloudflare API error:", cloudflareError);
       return NextResponse.json(
