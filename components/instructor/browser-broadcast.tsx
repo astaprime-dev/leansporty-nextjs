@@ -114,8 +114,27 @@ export function BrowserBroadcast({
       const offer = await peerConnection.createOffer();
       await peerConnection.setLocalDescription(offer);
 
+      // Wait for ICE gathering to complete (important for Cloudflare)
+      await new Promise<void>((resolve) => {
+        if (peerConnection.iceGatheringState === "complete") {
+          resolve();
+        } else {
+          peerConnection.addEventListener("icegatheringstatechange", () => {
+            if (peerConnection.iceGatheringState === "complete") {
+              resolve();
+            }
+          });
+        }
+      });
+
+      // Get the complete SDP after ICE gathering
+      const localDesc = peerConnection.localDescription;
+      if (!localDesc || !localDesc.sdp) {
+        throw new Error("Failed to get local description");
+      }
+
       // Normalize SDP line endings for Cloudflare (requires \r\n, not \n)
-      let sdp = offer.sdp || "";
+      let sdp = localDesc.sdp;
       // Replace all \n that aren't preceded by \r with \r\n
       sdp = sdp.replace(/([^\r])\n/g, "$1\r\n");
       // Ensure final line ending
@@ -123,7 +142,7 @@ export function BrowserBroadcast({
         sdp += "\r\n";
       }
 
-      console.log("SDP ends with CRLF:", sdp.endsWith("\r\n"), "Length:", sdp.length);
+      console.log("SDP after ICE gathering - ends with CRLF:", sdp.endsWith("\r\n"), "Length:", sdp.length);
 
       // Send offer to Cloudflare Stream
       console.log("Connecting to Cloudflare WebRTC URL:", webrtcUrl);
