@@ -7,6 +7,17 @@ export default async function HeaderNav() {
     data: { user },
   } = await supabase.auth.getUser();
 
+  // Check if user is an instructor
+  let isInstructor = false;
+  if (user) {
+    const { data: instructorProfile } = await supabase
+      .from("instructors")
+      .select("id")
+      .eq("user_id", user.id)
+      .single();
+    isInstructor = !!instructorProfile;
+  }
+
   return (
     <div className="flex items-center gap-6">
       {/* Streams - visible to everyone for discovery */}
@@ -33,6 +44,30 @@ export default async function HeaderNav() {
         >
           Activity
         </Link>
+      )}
+
+      {/* Instructor links - only visible to instructors */}
+      {isInstructor && (
+        <>
+          <Link
+            href="/instructor/streams"
+            className="text-sm font-light text-gray-600 hover:text-pink-500 transition-colors duration-300"
+          >
+            My Streams
+          </Link>
+          <Link
+            href="/instructor/streams/create"
+            className="text-sm font-light text-gray-600 hover:text-pink-500 transition-colors duration-300"
+          >
+            Create Stream
+          </Link>
+          <Link
+            href="/instructor/profile"
+            className="text-sm font-light text-gray-600 hover:text-pink-500 transition-colors duration-300"
+          >
+            My Profile
+          </Link>
+        </>
       )}
     </div>
   );
