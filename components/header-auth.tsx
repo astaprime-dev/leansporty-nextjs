@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
 import { createClient } from "@/utils/supabase/server";
-import { AppleSignInModal } from "./apple-signin-modal";
+import { OAuthSignInModal } from "./oauth-signin-modal";
 
 export default async function AuthButton() {
   const supabase = await createClient();
@@ -59,10 +59,10 @@ export default async function AuthButton() {
       </form>
     </div>
   ) : (
-    <AppleSignInModal>
+    <OAuthSignInModal>
       <Button size="sm" variant={"outline"}>
         Sign in
       </Button>
-    </AppleSignInModal>
+    </OAuthSignInModal>
   );
 }

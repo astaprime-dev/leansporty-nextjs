@@ -114,11 +114,11 @@ export default function RootLayout({
 
                     {/* Social Links or Additional Info */}
                     <div className="flex items-center gap-6 text-xs text-gray-400 font-light">
-                      {/* <a href="#" className="hover:text-pink-500 transition-colors">Privacy</a>
+                      <Link href="/privacy" className="hover:text-pink-500 transition-colors">Privacy Policy</Link>
                       <span>•</span>
-                      <a href="#" className="hover:text-pink-500 transition-colors">Terms</a>
+                      <Link href="/terms" className="hover:text-pink-500 transition-colors">Terms of Service</Link>
                       <span>•</span>
-                      <a href="#" className="hover:text-pink-500 transition-colors">Contact</a> */}
+                      <a href="mailto:team@leansporty.com" className="hover:text-pink-500 transition-colors">Contact</a>
                     </div>
 
                     {/* Theme Switcher */}

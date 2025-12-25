@@ -156,6 +156,24 @@ export const signInWithAppleAction = async () => {
   return redirect(data.url);
 };
 
+export const signInWithGoogleAction = async () => {
+  const supabase = await createClient();
+  const origin = (await headers()).get("origin");
+
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: 'google',
+    options: {
+      redirectTo: `${origin}/auth/callback`,
+    },
+  });
+
+  if (error) {
+    return encodedRedirect("error", "/", error.message);
+  }
+
+  return redirect(data.url);
+};
+
 export const getWorkoutHistory = async (): Promise<WorkoutHistoryItem[]> => {
   const supabase = await createClient();
 
