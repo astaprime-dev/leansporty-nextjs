@@ -5,6 +5,7 @@ import { createClient } from "@/utils/supabase/server";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { WorkoutHistoryItem, Workout } from "@/types/database";
+import { LiveStreamSession, StreamEnrollment } from "@/types/streaming";
 
 // Commented out - no longer needed with Apple OAuth
 // Keeping for reference in case of migration needs
@@ -199,4 +200,188 @@ export const getWorkouts = async (): Promise<Workout[]> => {
   }
 
   return data as Workout[];
+};
+
+// ============================================
+// LIVE STREAMING ACTIONS
+// ============================================
+
+/**
+ * Get live and upcoming streams
+ */
+export const getStreams = async (): Promise<{
+  liveStreams: LiveStreamSession[];
+  upcomingStreams: LiveStreamSession[];
+}> => {
+  const supabase = await createClient();
+  const now = new Date().toISOString();
+
+  // Get live streams
+  const { data: liveData, error: liveError } = await supabase
+    .from('live_stream_sessions')
+    .select('*')
+    .eq('status', 'live')
+    .order('actual_start_time', { ascending: false });
+
+  if (liveError) {
+    console.error("Error fetching live streams:", liveError);
+  }
+
+  // Get upcoming streams (scheduled, not yet started)
+  const { data: upcomingData, error: upcomingError } = await supabase
+    .from('live_stream_sessions')
+    .select('*')
+    .eq('status', 'scheduled')
+    .gte('scheduled_start_time', now)
+    .order('scheduled_start_time', { ascending: true });
+
+  if (upcomingError) {
+    console.error("Error fetching upcoming streams:", upcomingError);
+  }
+
+  return {
+    liveStreams: (liveData || []) as LiveStreamSession[],
+    upcomingStreams: (upcomingData || []) as LiveStreamSession[],
+  };
+};
+
+/**
+ * Get user's stream enrollments
+ */
+export const getUserEnrollments = async (): Promise<StreamEnrollment[]> => {
+  const supabase = await createClient();
+
+  const { data: { user }, error: userError } = await supabase.auth.getUser();
+
+  if (userError || !user) {
+    return [];
+  }
+
+  const { data, error } = await supabase
+    .from('stream_enrollments')
+    .select('*')
+    .eq('user_id', user.id)
+    .order('enrolled_at', { ascending: false });
+
+  if (error) {
+    console.error("Error fetching enrollments:", error);
+    return [];
+  }
+
+  return data as StreamEnrollment[];
+};
+
+/**
+ * Check if user is enrolled in a specific stream
+ */
+export const checkStreamEnrollment = async (
+  streamId: string
+): Promise<StreamEnrollment | null> => {
+  const supabase = await createClient();
+
+  const { data: { user }, error: userError } = await supabase.auth.getUser();
+
+  if (userError || !user) {
+    return null;
+  }
+
+  const { data, error } = await supabase
+    .from('stream_enrollments')
+    .select('*')
+    .eq('stream_id', streamId)
+    .eq('user_id', user.id)
+    .single();
+
+  if (error) {
+    // Not enrolled (expected for this query)
+    return null;
+  }
+
+  return data as StreamEnrollment;
+};
+
+/**
+ * Enroll user in a stream
+ * TODO: Integrate with existing token deduction API/function
+ */
+export const enrollInStream = async (
+  streamId: string
+): Promise<{ success: boolean; error?: string }> => {
+  const supabase = await createClient();
+
+  const { data: { user }, error: userError } = await supabase.auth.getUser();
+
+  if (userError || !user) {
+    return { success: false, error: 'Not authenticated' };
+  }
+
+  // Get stream details
+  const { data: stream, error: streamError } = await supabase
+    .from('live_stream_sessions')
+    .select('*')
+    .eq('id', streamId)
+    .single();
+
+  if (streamError || !stream) {
+    return { success: false, error: 'Stream not found' };
+  }
+
+  // Check if already enrolled
+  const existing = await checkStreamEnrollment(streamId);
+  if (existing) {
+    return { success: false, error: 'Already enrolled' };
+  }
+
+  // TODO: Call existing token deduction API here
+  // For now, this is a placeholder - you'll need to replace this with your actual token API
+  // Example: await deductTokens(user.id, stream.price_in_tokens, streamId);
+
+  // Calculate replay expiry (7 days from now, or from actual stream end)
+  const replayExpiresAt = stream.recording_expires_at ||
+    new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
+
+  // Create enrollment
+  const { error: enrollError } = await supabase
+    .from('stream_enrollments')
+    .insert({
+      stream_id: streamId,
+      user_id: user.id,
+      tokens_paid: stream.price_in_tokens,
+      replay_access_expires_at: replayExpiresAt,
+    });
+
+  if (enrollError) {
+    console.error("Error creating enrollment:", enrollError);
+    return { success: false, error: 'Enrollment failed' };
+  }
+
+  // Update stream enrollment count
+  await supabase
+    .from('live_stream_sessions')
+    .update({ total_enrollments: stream.total_enrollments + 1 })
+    .eq('id', streamId);
+
+  return { success: true };
+};
+
+/**
+ * Get a single stream by ID
+ */
+export const getStreamById = async (
+  streamId: string
+): Promise<LiveStreamSession | null> => {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from('live_stream_sessions')
+    .select('*')
+    .eq('id', streamId)
+    .single();
+
+  if (error) {
+    console.error("Error fetching stream:", error);
+    return null;
+  }
+
+  return data as LiveStreamSession;
 };

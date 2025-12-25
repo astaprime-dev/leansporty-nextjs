@@ -29,9 +29,8 @@ export function AppleSignInModal({ children }: { children: React.ReactNode }) {
         </DialogHeader>
 
         <div className="flex flex-col gap-4 py-4">
-          <form>
+          <form action={signInWithAppleAction}>
             <SubmitButton
-              formAction={signInWithAppleAction}
               pendingText="Connecting to Apple..."
               className="w-full h-12 bg-black hover:bg-gray-900 text-white font-medium rounded-lg transition-all flex items-center justify-center gap-3"
             >
