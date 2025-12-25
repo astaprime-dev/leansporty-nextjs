@@ -31,7 +31,13 @@ export function BrowserBroadcast({
   // Clean up on unmount
   useEffect(() => {
     return () => {
-      stopBroadcast();
+      // Clean up without triggering end stream dialog on page navigation
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach((track) => track.stop());
+      }
+      if (peerConnectionRef.current) {
+        peerConnectionRef.current.close();
+      }
     };
   }, []);
 
@@ -96,9 +102,11 @@ export function BrowserBroadcast({
         if (state === "connected") {
           setConnectionState("connected");
           onStreamStart?.();
-        } else if (state === "failed" || state === "disconnected" || state === "closed") {
+        } else if (state === "failed" || state === "disconnected") {
           setConnectionState("failed");
-          setError("Connection failed. Please try again.");
+          setError("Connection lost. Please try reconnecting.");
+          // Clean up without triggering end stream dialog
+          cleanupBroadcast();
         }
       };
 
@@ -151,11 +159,12 @@ export function BrowserBroadcast({
           ? err.message
           : "Failed to start broadcast. Please check camera/microphone permissions."
       );
-      stopBroadcast();
+      // Clean up without triggering onStreamEnd (this is an error, not intentional stop)
+      cleanupBroadcast();
     }
   };
 
-  const stopBroadcast = () => {
+  const cleanupBroadcast = () => {
     // Stop all media tracks
     if (streamRef.current) {
       streamRef.current.getTracks().forEach((track) => track.stop());
@@ -174,6 +183,12 @@ export function BrowserBroadcast({
     }
 
     setConnectionState("idle");
+  };
+
+  const stopBroadcast = () => {
+    // Clean up resources
+    cleanupBroadcast();
+    // Notify parent component (only when user intentionally stops)
     onStreamEnd?.();
   };
 
