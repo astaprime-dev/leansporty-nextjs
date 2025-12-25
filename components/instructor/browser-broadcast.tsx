@@ -40,6 +40,11 @@ export function BrowserBroadcast({
       setError(null);
       setConnectionState("requesting");
 
+      // Validate Cloudflare WebRTC URL
+      if (!webrtcUrl) {
+        throw new Error("WebRTC URL not configured. Stream may not have been created properly.");
+      }
+
       // Request camera and microphone permissions
       const stream = await navigator.mediaDevices.getUserMedia({
         video: {
@@ -102,6 +107,8 @@ export function BrowserBroadcast({
       await peerConnection.setLocalDescription(offer);
 
       // Send offer to Cloudflare Stream
+      console.log("Connecting to Cloudflare WebRTC URL:", webrtcUrl);
+
       const response = await fetch(webrtcUrl, {
         method: "POST",
         headers: {
@@ -114,7 +121,9 @@ export function BrowserBroadcast({
       });
 
       if (!response.ok) {
-        throw new Error("Failed to connect to Cloudflare Stream");
+        const errorText = await response.text();
+        console.error("Cloudflare response error:", response.status, errorText);
+        throw new Error(`Cloudflare error (${response.status}): ${errorText || "Connection failed"}`);
       }
 
       const answer = await response.json();
