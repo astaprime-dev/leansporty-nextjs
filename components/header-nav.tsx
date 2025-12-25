@@ -19,7 +19,7 @@ export default async function HeaderNav() {
   }
 
   return (
-    <div className="flex items-center gap-6">
+    <div className="hidden md:flex items-center gap-3 lg:gap-6">
       {/* Streams - visible to everyone for discovery */}
       <Link
         href="/streams"
@@ -50,7 +50,7 @@ export default async function HeaderNav() {
       {isInstructor && (
         <Link
           href="/instructor"
-          className="text-sm font-semibold text-gray-900 hover:text-pink-500 transition-colors duration-300"
+          className="text-sm font-semibold text-gray-900 hover:text-pink-500 transition-colors duration-300 whitespace-nowrap"
         >
           Instructor Dashboard
         </Link>
