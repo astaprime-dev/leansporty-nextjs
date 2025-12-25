@@ -1,5 +1,13 @@
--- Live Streaming Feature Database Migration
+-- Live Streaming Feature - Complete Database Migration
 -- Created: 2025-01-01
+-- Updated: 2025-01-01 - Added WHIP/WHEP WebRTC support, RLS fixes, public viewing
+--
+-- This migration sets up the complete live streaming infrastructure using:
+-- - Cloudflare Stream with WebRTC (WHIP for ingestion, WHEP for playback)
+-- - Token-based enrollment system
+-- - 7-day replay access
+-- - Optional live chat
+-- - Automatic migration to workout catalog after 2-3 months
 
 -- ============================================
 -- TABLES
@@ -26,13 +34,14 @@ CREATE TABLE IF NOT EXISTS live_stream_sessions (
   -- Pricing
   price_in_tokens INTEGER NOT NULL DEFAULT 0,
 
-  -- Cloudflare Stream IDs
+  -- Cloudflare Stream - WebRTC (WHIP/WHEP)
   cloudflare_stream_id VARCHAR(255), -- Live input ID
-  cloudflare_webrtc_url TEXT, -- WebRTC URL for browser streaming
-  cloudflare_webrtc_token TEXT, -- WebRTC connection token
-  cloudflare_playback_id VARCHAR(255), -- For HLS/DASH playback
+  cloudflare_webrtc_url TEXT, -- WHIP URL for browser streaming (ingestion)
+  cloudflare_webrtc_token TEXT, -- WHIP authentication token
+  cloudflare_whep_playback_url TEXT, -- WHEP URL for WebRTC playback (egress)
+  cloudflare_playback_id VARCHAR(255), -- Fallback HLS/DASH playback ID
 
-  -- Recording
+  -- Recording (auto-recorded, available for 7 days)
   recording_available BOOLEAN DEFAULT false,
   recording_expires_at TIMESTAMPTZ, -- 7 days after stream ends
   recording_cloudflare_video_id VARCHAR(255), -- Recorded video ID
@@ -104,24 +113,39 @@ CREATE INDEX IF NOT EXISTS idx_live_streams_migration ON live_stream_sessions(mi
 CREATE INDEX IF NOT EXISTS idx_enrollments_user_id ON stream_enrollments(user_id);
 CREATE INDEX IF NOT EXISTS idx_enrollments_stream_id ON stream_enrollments(stream_id);
 
--- Chat messages (if implemented)
+-- Chat messages
 CREATE INDEX IF NOT EXISTS idx_chat_stream_id ON stream_chat_messages(stream_id, sent_at DESC);
 
 -- ============================================
 -- ROW LEVEL SECURITY (RLS)
 -- ============================================
 
--- Enable RLS
+-- Enable RLS on all tables
 ALTER TABLE live_stream_sessions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE stream_enrollments ENABLE ROW LEVEL SECURITY;
 ALTER TABLE stream_chat_messages ENABLE ROW LEVEL SECURITY;
 
--- live_stream_sessions: All authenticated users can view sessions
-CREATE POLICY "Authenticated users can view streams"
+-- live_stream_sessions: Anyone (including anonymous) can view streams for discovery
+CREATE POLICY "Anyone can view streams"
   ON live_stream_sessions
   FOR SELECT
-  TO authenticated
+  TO anon, authenticated
   USING (true);
+
+-- live_stream_sessions: Authenticated users can create streams (instructor dashboard handles auth)
+CREATE POLICY "Authenticated users can create streams"
+  ON live_stream_sessions
+  FOR INSERT
+  TO authenticated
+  WITH CHECK (true);
+
+-- live_stream_sessions: Authenticated users can update streams (for marking live/ended)
+CREATE POLICY "Authenticated users can update streams"
+  ON live_stream_sessions
+  FOR UPDATE
+  TO authenticated
+  USING (true)
+  WITH CHECK (true);
 
 -- stream_enrollments: Users can view their own enrollments
 CREATE POLICY "Users can view own enrollments"
@@ -129,7 +153,7 @@ CREATE POLICY "Users can view own enrollments"
   FOR SELECT
   USING (auth.uid() = user_id);
 
--- stream_enrollments: Users can create enrollments (enrollment flow handles deduction)
+-- stream_enrollments: Users can create enrollments (enrollment flow handles token deduction)
 CREATE POLICY "Users can create enrollments"
   ON stream_enrollments
   FOR INSERT
@@ -177,7 +201,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- Trigger to call the function
+-- Trigger to call the migration schedule function
 CREATE TRIGGER trigger_set_migration_schedule
   BEFORE UPDATE ON live_stream_sessions
   FOR EACH ROW
@@ -202,11 +226,34 @@ CREATE TRIGGER trigger_update_live_streams_updated_at
 -- COMMENTS
 -- ============================================
 
-COMMENT ON TABLE live_stream_sessions IS 'Stores scheduled, live, and completed streaming sessions';
+COMMENT ON TABLE live_stream_sessions IS 'Stores scheduled, live, and completed streaming sessions using Cloudflare Stream WebRTC';
 COMMENT ON TABLE stream_enrollments IS 'Tracks user enrollments in live streams (paid via tokens)';
 COMMENT ON TABLE stream_chat_messages IS 'Optional: Live chat messages during streams';
 
 COMMENT ON COLUMN live_stream_sessions.status IS 'scheduled, live, ended, cancelled';
-COMMENT ON COLUMN live_stream_sessions.cloudflare_webrtc_url IS 'WebRTC URL for browser-based streaming';
+COMMENT ON COLUMN live_stream_sessions.cloudflare_webrtc_url IS 'WHIP URL for browser-based streaming (ingestion)';
+COMMENT ON COLUMN live_stream_sessions.cloudflare_whep_playback_url IS 'WHEP URL for WebRTC playback (egress) - required for WHIP streams';
 COMMENT ON COLUMN live_stream_sessions.migration_scheduled_at IS 'Auto-set to actual_end_time + 2 months';
 COMMENT ON COLUMN stream_enrollments.replay_access_expires_at IS 'Set to recording_expires_at (7 days)';
+
+-- ============================================
+-- NOTES
+-- ============================================
+
+-- WHIP/WHEP Protocol:
+-- - WHIP (WebRTC HTTP Ingestion Protocol) is used for broadcasting from browser
+-- - WHEP (WebRTC HTTP Egress Protocol) is used for playback
+-- - Cloudflare requires WHIP and WHEP to be used together
+-- - HLS/DASH playback is NOT supported for WebRTC live streams
+-- - Recordings use HLS/DASH after stream ends
+
+-- Token System:
+-- - Token balance and transactions managed by existing backend
+-- - Enrollment creates transaction record with stream reference
+-- - Users must be authenticated to enroll and watch
+
+-- Security:
+-- - Anonymous users can browse streams (discovery)
+-- - Authentication required to enroll and watch
+-- - Enrollment verified before playback access
+-- - Instructor dashboard requires both Supabase auth + instructor token
