@@ -88,7 +88,9 @@ export function BroadcastManagementView({ stream }: BroadcastManagementViewProps
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div className="flex items-center gap-2">
                 <Calendar className="w-4 h-4 text-gray-400" />
-                <span>{formatDate(stream.scheduled_start_time)}</span>
+                <span suppressHydrationWarning>
+                  {formatDate(stream.scheduled_start_time)}
+                </span>
               </div>
               <div className="flex items-center gap-2">
                 <Clock className="w-4 h-4 text-gray-400" />
