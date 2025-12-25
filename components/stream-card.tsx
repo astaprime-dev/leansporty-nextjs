@@ -15,9 +15,10 @@ interface StreamCardProps {
   stream: LiveStreamSession;
   enrollment?: StreamEnrollment;
   isLive: boolean;
+  isAuthenticated: boolean;
 }
 
-export function StreamCard({ stream, enrollment, isLive }: StreamCardProps) {
+export function StreamCard({ stream, enrollment, isLive, isAuthenticated }: StreamCardProps) {
   const [isEnrolling, setIsEnrolling] = useState(false);
   const router = useRouter();
 
@@ -150,9 +151,22 @@ export function StreamCard({ stream, enrollment, isLive }: StreamCardProps) {
                   ✓ Enrolled
                 </Badge>
               </>
+            ) : !isAuthenticated ? (
+              <>
+                {/* Not authenticated - show sign in button */}
+                <Link href="/">
+                  <Button className="bg-gradient-to-r from-pink-500 to-rose-400 hover:from-pink-600 hover:to-rose-500">
+                    Sign in to Enroll
+                  </Button>
+                </Link>
+                <div className="flex items-center gap-2 text-gray-700">
+                  <Coins className="w-5 h-5 text-amber-500" />
+                  <span className="font-semibold">{stream.price_in_tokens} tokens</span>
+                </div>
+              </>
             ) : (
               <>
-                {/* Not enrolled - show enroll button */}
+                {/* Authenticated but not enrolled - show enroll button */}
                 <Button
                   onClick={handleEnroll}
                   disabled={isEnrolling}

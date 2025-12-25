@@ -7,31 +7,33 @@ export default async function HeaderNav() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // Only show navigation for authenticated users
-  if (!user) {
-    return null;
-  }
-
   return (
     <div className="flex items-center gap-6">
-      <Link
-        href="/activity"
-        className="text-sm font-light text-gray-600 hover:text-pink-500 transition-colors duration-300"
-      >
-        Activity
-      </Link>
-      <Link
-        href="/workouts"
-        className="text-sm font-light text-gray-600 hover:text-pink-500 transition-colors duration-300"
-      >
-        Workouts
-      </Link>
+      {/* Streams - visible to everyone for discovery */}
       <Link
         href="/streams"
         className="text-sm font-light text-gray-600 hover:text-pink-500 transition-colors duration-300"
       >
         Streams
       </Link>
+
+      {/* Authenticated user links */}
+      {user && (
+        <>
+          <Link
+            href="/activity"
+            className="text-sm font-light text-gray-600 hover:text-pink-500 transition-colors duration-300"
+          >
+            Activity
+          </Link>
+          <Link
+            href="/workouts"
+            className="text-sm font-light text-gray-600 hover:text-pink-500 transition-colors duration-300"
+          >
+            Workouts
+          </Link>
+        </>
+      )}
     </div>
   );
 }

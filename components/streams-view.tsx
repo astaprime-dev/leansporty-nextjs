@@ -10,12 +10,14 @@ interface StreamsViewProps {
   liveStreams: LiveStreamSession[];
   upcomingStreams: LiveStreamSession[];
   enrollments: StreamEnrollment[];
+  isAuthenticated: boolean;
 }
 
 export function StreamsView({
   liveStreams,
   upcomingStreams,
   enrollments,
+  isAuthenticated,
 }: StreamsViewProps) {
   // Create a map of enrollments for quick lookup
   const enrollmentMap = new Map(enrollments.map((e) => [e.stream_id, e]));
@@ -62,6 +64,7 @@ export function StreamsView({
                 stream={stream}
                 enrollment={enrollmentMap.get(stream.id)}
                 isLive={true}
+                isAuthenticated={isAuthenticated}
               />
             ))}
           </div>
@@ -88,6 +91,7 @@ export function StreamsView({
                 stream={stream}
                 enrollment={enrollmentMap.get(stream.id)}
                 isLive={false}
+                isAuthenticated={isAuthenticated}
               />
             ))}
           </div>
