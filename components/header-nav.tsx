@@ -26,13 +26,12 @@ export default async function HeaderNav() {
       >
         Workouts
       </Link>
-      {/* Uncomment when streams page is ready */}
-      {/* <Link
+      <Link
         href="/streams"
         className="text-sm font-light text-gray-600 hover:text-pink-500 transition-colors duration-300"
       >
         Streams
-      </Link> */}
+      </Link>
     </div>
   );
 }
