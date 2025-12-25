@@ -18,8 +18,26 @@ export async function POST(request: NextRequest) {
 
     const data = await request.json();
 
+    // Check Cloudflare environment variables
+    if (!process.env.CLOUDFLARE_ACCOUNT_ID || !process.env.CLOUDFLARE_API_TOKEN) {
+      console.error("Missing Cloudflare credentials");
+      return NextResponse.json(
+        { error: "Cloudflare not configured. Please contact support." },
+        { status: 500 }
+      );
+    }
+
     // Create Cloudflare live input
-    const cloudflare = await createLiveInput(data.title);
+    let cloudflare;
+    try {
+      cloudflare = await createLiveInput(data.title);
+    } catch (cloudflareError: any) {
+      console.error("Cloudflare API error:", cloudflareError);
+      return NextResponse.json(
+        { error: `Cloudflare error: ${cloudflareError.message || "Failed to create live input"}` },
+        { status: 500 }
+      );
+    }
 
     // Create stream session in database
     const supabase = await createClient();
@@ -44,16 +62,16 @@ export async function POST(request: NextRequest) {
     if (error) {
       console.error("Database error:", error);
       return NextResponse.json(
-        { error: "Failed to create stream" },
+        { error: `Database error: ${error.message || "Failed to save stream"}` },
         { status: 500 }
       );
     }
 
     return NextResponse.json({ streamId: stream.id, success: true });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Stream creation error:", error);
     return NextResponse.json(
-      { error: "Failed to create stream" },
+      { error: error.message || "Failed to create stream" },
       { status: 500 }
     );
   }
