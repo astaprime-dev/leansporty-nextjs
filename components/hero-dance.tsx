@@ -1,4 +1,5 @@
 import LeanSportyLogo from "./lean-sporty-logo";
+import { Sparkles, Zap, Music, Clock, TrendingUp, Home, Video, Users, Star, Calendar } from "lucide-react";
 
 export default function Header() {
   return (
@@ -113,23 +114,114 @@ export default function Header() {
           {/* Feature Cards Grid */}
           <div className="w-full max-w-7xl mx-auto grid gap-10 md:grid-cols-2 lg:grid-cols-3">
             {[
-              { emoji: "💃", title: "Easy-to-Follow Dance Routines", desc: "Fun moves that anyone can do, regardless of experience level." },
-              { emoji: "🔥", title: "Cardio + Strength in Every Session", desc: "Burn calories and build strength with every beat." },
-              { emoji: "🎵", title: "Uplifting Music & Motivation", desc: "Energizing playlists and a motivating instructor to keep you going." },
-              { emoji: "⏱️", title: "Quick Workouts", desc: "Fit fitness into any schedule with short, effective sessions." },
-              { emoji: "📊", title: "Track Your Progress", desc: "Stay inspired by watching your fitness journey unfold." },
-              { emoji: "🏠", title: "Train From Home", desc: "Cardio, aerobics, and weight loss dance workouts — all from your living room." }
-            ].map((feature, idx) => (
-              <div key={idx} className="relative group bg-white/80 backdrop-blur-sm p-8 rounded-3xl border border-pink-100 hover:border-pink-300 shadow-lg hover:shadow-pink-200/50 transition-all duration-300">
-                <div className="absolute inset-0 bg-gradient-to-br from-pink-50/50 to-transparent rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                <div className="absolute -top-2 -right-2 text-pink-200/30 text-4xl">✦</div>
-                <div className="relative text-5xl mb-6 transform group-hover:scale-110 transition-transform duration-300">{feature.emoji}</div>
-                <h3 className="relative font-semibold text-xl mb-4 text-gray-800">{feature.title}</h3>
-                <p className="relative text-gray-500 leading-relaxed font-light">{feature.desc}</p>
-              </div>
-            ))}
+              { icon: Sparkles, title: "Easy-to-Follow Dance Routines", desc: "Fun moves that anyone can do, regardless of experience level." },
+              { icon: Zap, title: "Cardio + Strength in Every Session", desc: "Burn calories and build strength with every beat." },
+              { icon: Music, title: "Uplifting Music & Motivation", desc: "Energizing playlists and a motivating instructor to keep you going." },
+              { icon: Clock, title: "Quick Workouts", desc: "Fit fitness into any schedule with short, effective sessions." },
+              { icon: TrendingUp, title: "Track Your Progress", desc: "Stay inspired by watching your fitness journey unfold." },
+              { icon: Home, title: "Train From Home", desc: "Cardio, aerobics, and weight loss dance workouts — all from your living room." }
+            ].map((feature, idx) => {
+              const Icon = feature.icon;
+              return (
+                <div key={idx} className="relative group bg-white/80 backdrop-blur-sm p-8 rounded-3xl border border-pink-100 hover:border-pink-300 shadow-lg hover:shadow-pink-200/50 transition-all duration-300">
+                  <div className="absolute inset-0 bg-gradient-to-br from-pink-50/50 to-transparent rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <div className="absolute -top-2 -right-2 text-pink-200/30 text-4xl">✦</div>
+                  <div className="relative mb-6 transform group-hover:scale-110 transition-transform duration-300">
+                    <Icon className="w-12 h-12 text-pink-500" strokeWidth={1.5} />
+                  </div>
+                  <h3 className="relative font-semibold text-xl mb-4 text-gray-800">{feature.title}</h3>
+                  <p className="relative text-gray-500 leading-relaxed font-light">{feature.desc}</p>
+                </div>
+              );
+            })}
           </div>
         </section>
+
+        {/* Live Streaming Section */}
+        <section className="w-full px-6 py-16">
+          <div className="w-full max-w-6xl mx-auto">
+            {/* Section Header */}
+            <div className="text-center mb-16">
+              <div className="flex justify-center mb-6">
+                <span className="text-3xl text-pink-300/50">✧</span>
+              </div>
+              <h2 className="text-4xl lg:text-5xl font-light mb-6 text-gray-800 tracking-tight">
+                Join <span className="font-semibold text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-rose-400">Live Classes</span>
+              </h2>
+              <p className="text-lg text-gray-500 font-light max-w-2xl mx-auto">
+                Connect with expert instructors in real-time for an interactive, community-driven fitness experience.
+              </p>
+              <div className="flex justify-center mt-8">
+                <div className="w-32 h-px bg-gradient-to-r from-transparent via-pink-300 to-transparent"></div>
+              </div>
+            </div>
+
+            {/* Live Streaming Features */}
+            <div className="grid md:grid-cols-2 gap-8 mb-12">
+              {/* Feature 1 */}
+              <div className="relative group bg-gradient-to-br from-pink-50 to-white p-8 rounded-3xl border border-pink-100 hover:border-pink-300 shadow-lg hover:shadow-pink-200/50 transition-all duration-300">
+                <div className="absolute -top-2 -right-2 text-pink-200/30 text-4xl">✦</div>
+                <div className="relative mb-6 transform group-hover:scale-110 transition-transform duration-300">
+                  <Video className="w-12 h-12 text-pink-500" strokeWidth={1.5} />
+                </div>
+                <h3 className="relative font-semibold text-xl mb-4 text-gray-800">Real-Time Interaction</h3>
+                <p className="relative text-gray-600 leading-relaxed font-light">
+                  Stream live dance workouts with certified instructors. Get real-time feedback, motivation, and guidance as you move.
+                </p>
+              </div>
+
+              {/* Feature 2 */}
+              <div className="relative group bg-gradient-to-br from-pink-50 to-white p-8 rounded-3xl border border-pink-100 hover:border-pink-300 shadow-lg hover:shadow-pink-200/50 transition-all duration-300">
+                <div className="absolute -top-2 -right-2 text-pink-200/30 text-4xl">✦</div>
+                <div className="relative mb-6 transform group-hover:scale-110 transition-transform duration-300">
+                  <Users className="w-12 h-12 text-pink-500" strokeWidth={1.5} />
+                </div>
+                <h3 className="relative font-semibold text-xl mb-4 text-gray-800">Community Energy</h3>
+                <p className="relative text-gray-600 leading-relaxed font-light">
+                  Work out alongside others in a supportive, energizing environment. Share the journey and stay motivated together.
+                </p>
+              </div>
+
+              {/* Feature 3 */}
+              <div className="relative group bg-gradient-to-br from-pink-50 to-white p-8 rounded-3xl border border-pink-100 hover:border-pink-300 shadow-lg hover:shadow-pink-200/50 transition-all duration-300">
+                <div className="absolute -top-2 -right-2 text-pink-200/30 text-4xl">✦</div>
+                <div className="relative mb-6 transform group-hover:scale-110 transition-transform duration-300">
+                  <Star className="w-12 h-12 text-pink-500" strokeWidth={1.5} />
+                </div>
+                <h3 className="relative font-semibold text-xl mb-4 text-gray-800">Expert Instructors</h3>
+                <p className="relative text-gray-600 leading-relaxed font-light">
+                  Learn from passionate, certified dance fitness instructors who bring expertise, creativity, and positive vibes to every session.
+                </p>
+              </div>
+
+              {/* Feature 4 */}
+              <div className="relative group bg-gradient-to-br from-pink-50 to-white p-8 rounded-3xl border border-pink-100 hover:border-pink-300 shadow-lg hover:shadow-pink-200/50 transition-all duration-300">
+                <div className="absolute -top-2 -right-2 text-pink-200/30 text-4xl">✦</div>
+                <div className="relative mb-6 transform group-hover:scale-110 transition-transform duration-300">
+                  <Calendar className="w-12 h-12 text-pink-500" strokeWidth={1.5} />
+                </div>
+                <h3 className="relative font-semibold text-xl mb-4 text-gray-800">Scheduled Sessions</h3>
+                <p className="relative text-gray-600 leading-relaxed font-light">
+                  Browse upcoming live classes, book your spot, and join from anywhere. Flexible scheduling to fit your lifestyle.
+                </p>
+              </div>
+            </div>
+
+            {/* CTA Button */}
+            <div className="text-center">
+              <a
+                href="/streams"
+                className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-pink-500 to-rose-400 text-white text-lg font-light rounded-full hover:shadow-lg hover:shadow-pink-200/50 transform hover:scale-105 transition-all duration-300"
+              >
+                <span>Browse Live Streams</span>
+                <span className="text-xl">→</span>
+              </a>
+            </div>
+          </div>
+        </section>
+
+        {/* Elegant Divider */}
+        <div className="w-24 h-1 bg-gradient-to-r from-pink-300 via-rose-300 to-pink-300 rounded-full"></div>
 
       </div>
 
