@@ -133,16 +133,23 @@ export function BrowserBroadcast({
         throw new Error("Failed to get local description");
       }
 
-      // Normalize SDP line endings for Cloudflare (requires \r\n, not \n)
+      // Normalize SDP line endings for Cloudflare (strict CRLF requirement)
       let sdp = localDesc.sdp;
-      // Replace all \n that aren't preceded by \r with \r\n
-      sdp = sdp.replace(/([^\r])\n/g, "$1\r\n");
-      // Ensure final line ending
-      if (!sdp.endsWith("\r\n")) {
-        sdp += "\r\n";
-      }
 
-      console.log("SDP after ICE gathering - ends with CRLF:", sdp.endsWith("\r\n"), "Length:", sdp.length);
+      // Method 1: Remove all \r first, then replace all \n with \r\n
+      sdp = sdp.replace(/\r/g, ""); // Remove existing \r
+      sdp = sdp.replace(/\n/g, "\r\n"); // Replace all \n with \r\n
+
+      // Ensure ends with exactly one \r\n
+      sdp = sdp.replace(/(\r\n)+$/, ""); // Remove trailing CRLFs
+      sdp += "\r\n"; // Add single final CRLF
+
+      console.log("Normalized SDP:", {
+        length: sdp.length,
+        endsWithCRLF: sdp.endsWith("\r\n"),
+        lineCount: sdp.split("\r\n").length - 1,
+        lastChars: sdp.slice(-10).split("").map(c => c.charCodeAt(0))
+      });
 
       // Send offer to Cloudflare Stream
       console.log("Connecting to Cloudflare WebRTC URL:", webrtcUrl);
