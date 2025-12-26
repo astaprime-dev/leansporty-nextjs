@@ -81,9 +81,9 @@ export default async function InstructorLayout({
           </div>
 
           <div className="flex items-center gap-4">
-            <Link href="/" target="_blank">
+            <Link href={`/@${instructorProfile.slug}`} target="_blank">
               <Button variant="outline" size="sm">
-                View Site
+                View Public Profile
               </Button>
             </Link>
           </div>

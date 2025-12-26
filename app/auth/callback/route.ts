@@ -19,6 +19,19 @@ export async function GET(request: Request) {
         `${origin}/?error=${encodeURIComponent(error.message)}`
       );
     }
+
+    // Check if user has instructor role to determine redirect
+    const { data: { user } } = await supabase.auth.getUser();
+    const roles = user?.app_metadata?.roles || [];
+    const isInstructor = roles.includes('instructor');
+
+    if (redirectTo) {
+      return NextResponse.redirect(`${origin}${redirectTo}`);
+    }
+
+    // Redirect instructors to dashboard, regular users to activity
+    const defaultRedirect = isInstructor ? '/instructor' : '/activity';
+    return NextResponse.redirect(`${origin}${defaultRedirect}`);
   }
 
   if (redirectTo) {
