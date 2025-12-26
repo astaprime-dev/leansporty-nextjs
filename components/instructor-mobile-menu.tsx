@@ -35,7 +35,7 @@ export function InstructorMobileMenu({
           />
 
           {/* Menu Panel */}
-          <div className="fixed top-[73px] right-0 left-0 bg-white border-b border-pink-100 shadow-lg z-50 md:hidden">
+          <div className="fixed top-[73px] right-0 left-0 bg-white border-b border-pink-100 shadow-lg z-[60] md:hidden">
             <div className="flex flex-col p-4 space-y-3">
               {/* Navigation Links */}
               <Link

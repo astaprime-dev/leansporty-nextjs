@@ -34,7 +34,7 @@ export function MobileMenu({ user, isInstructor }: MobileMenuProps) {
           />
 
           {/* Menu Panel */}
-          <div className="fixed top-16 right-0 w-64 bg-white border-l border-pink-100 shadow-lg z-50 md:hidden">
+          <div className="fixed top-16 right-0 w-64 bg-white border-l border-pink-100 shadow-lg z-[60] md:hidden">
             <div className="flex flex-col p-4 space-y-4">
               {/* Navigation Links */}
               <Link
