@@ -55,15 +55,24 @@ export function ReactionButtons({
       {/* Reaction Buttons Container */}
       <div
         className={cn(
+          // Mobile: Bottom horizontal layout
           'fixed bottom-0 left-0 right-0 z-10',
-          'flex items-center justify-center gap-2 sm:gap-3',
-          'p-4 pb-6 sm:pb-8',
+          'flex items-center justify-center',
+          'p-4 pb-6',
           'bg-gradient-to-t from-black/50 to-transparent',
-          'pointer-events-none', // Allow clicks to pass through container
+          // Desktop: Right side vertical layout
+          'lg:top-0 lg:bottom-auto lg:left-auto lg:right-0',
+          'lg:flex-col lg:justify-center',
+          'lg:p-4 lg:pr-6',
+          'lg:bg-gradient-to-l lg:from-black/50 lg:to-transparent',
+          'pointer-events-none',
           className
         )}
       >
-        <div className="flex items-center gap-2 sm:gap-3 pointer-events-auto">
+        <div className={cn(
+          'flex gap-2 sm:gap-3 pointer-events-auto',
+          'lg:flex-col lg:gap-3'
+        )}>
           {REACTION_BUTTONS.map((button) => {
             const colorClasses = REACTION_COLOR_CLASSES[button.color];
             const isPressed = lastReaction === button.type;
@@ -121,27 +130,26 @@ export function ReactionButtons({
         </div>
       )}
 
-      {/* Button Labels (Desktop Only) */}
+      {/* Button Labels (Desktop Only - positioned to the left of buttons) */}
       <div
         className={cn(
-          'hidden lg:block',
-          'fixed bottom-20 left-0 right-0 z-10',
-          'flex items-center justify-center gap-2 sm:gap-3',
+          'hidden lg:flex',
+          'fixed top-0 right-24 z-10',
+          'flex-col justify-center gap-3',
+          'h-full',
           'pointer-events-none'
         )}
       >
-        <div className="flex items-center gap-2 sm:gap-3">
-          {REACTION_BUTTONS.map((button) => (
-            <div
-              key={button.type}
-              className="min-w-[60px] sm:min-w-[70px] text-center"
-            >
-              <p className="text-xs text-white/90 font-medium drop-shadow-md">
-                {button.label}
-              </p>
-            </div>
-          ))}
-        </div>
+        {REACTION_BUTTONS.map((button) => (
+          <div
+            key={button.type}
+            className="h-[70px] flex items-center justify-end"
+          >
+            <p className="text-sm text-white font-medium drop-shadow-md bg-black/30 px-3 py-1 rounded-lg">
+              {button.label}
+            </p>
+          </div>
+        ))}
       </div>
     </>
   );
