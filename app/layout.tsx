@@ -119,8 +119,6 @@ export default async function RootLayout({
                           <Link href="/instructor/activate" className="hover:text-pink-500 transition-colors">Become an instructor</Link>
                         </>
                       )}
-                      <span className="hidden md:inline">•</span>
-                      <a href="mailto:team@leansporty.com" className="hover:text-pink-500 transition-colors">Contact</a>
                     </div>
 
                     {/* Theme Switcher */}
