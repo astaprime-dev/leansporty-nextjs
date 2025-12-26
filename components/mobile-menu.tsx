@@ -71,7 +71,7 @@ export function MobileMenu({ user, isInstructor }: MobileMenuProps) {
                     className="text-base font-semibold text-gray-900 hover:text-pink-500 transition-colors py-2"
                     onClick={() => setIsOpen(false)}
                   >
-                    Instructor Dashboard
+                    Instructor Studio
                   </Link>
                 </>
               )}

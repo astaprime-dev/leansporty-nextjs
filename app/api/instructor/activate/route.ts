@@ -6,8 +6,16 @@ export async function POST(request: NextRequest) {
   try {
     const { token } = await request.json();
 
-    // Validate activation token
-    if (token !== process.env.INSTRUCTOR_ACCESS_TOKEN) {
+    // Validate activation token - trim both to handle whitespace
+    const trimmedToken = token?.trim();
+    const expectedToken = process.env.INSTRUCTOR_ACCESS_TOKEN?.trim();
+
+    console.log('Received token:', `"${token}"`, 'length:', token?.length);
+    console.log('Trimmed token:', `"${trimmedToken}"`, 'length:', trimmedToken?.length);
+    console.log('Expected token:', `"${expectedToken}"`, 'length:', expectedToken?.length);
+    console.log('Tokens match:', trimmedToken === expectedToken);
+
+    if (trimmedToken !== expectedToken) {
       return NextResponse.json(
         { error: "Invalid activation code" },
         { status: 401 }

@@ -43,7 +43,7 @@ export default async function InstructorLayout({
           <div className="flex items-center gap-8">
             <Link href="/instructor">
               <h1 className="text-xl font-bold bg-gradient-to-r from-pink-500 to-rose-400 bg-clip-text text-transparent">
-                Instructor Dashboard
+                Instructor Studio
               </h1>
             </Link>
             <nav className="flex items-center gap-4">

@@ -52,7 +52,7 @@ export default async function HeaderNav() {
           href="/instructor"
           className="text-sm font-semibold text-gray-900 hover:text-pink-500 transition-colors duration-300 whitespace-nowrap"
         >
-          Instructor Dashboard
+          Instructor Studio
         </Link>
       )}
     </div>
