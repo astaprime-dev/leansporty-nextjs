@@ -1,6 +1,7 @@
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import { InstructorProfileForm } from "@/components/instructor/profile-form";
+import GalleryManager from "@/components/instructor/gallery-manager";
 
 export default async function InstructorProfilePage() {
   const supabase = await createClient();
@@ -37,6 +38,12 @@ export default async function InstructorProfilePage() {
         initialData={instructorProfile}
         userId={user.id}
       />
+
+      {instructorProfile && (
+        <div className="mt-12">
+          <GalleryManager instructorId={instructorProfile.id} />
+        </div>
+      )}
     </div>
   );
 }

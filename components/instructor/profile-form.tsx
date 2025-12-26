@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Instructor } from "@/types/instructor";
 import { createClient } from "@/utils/supabase/client";
+import ProfilePhotoUpload from "@/components/ui/profile-photo-upload";
 
 interface InstructorProfileFormProps {
   initialData: Instructor | null;
@@ -171,23 +172,16 @@ export function InstructorProfileForm({
         />
       </div>
 
-      {/* Profile Photo URL */}
+      {/* Profile Photo */}
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">
-          Profile Photo URL
+          Profile Photo
         </label>
-        <Input
-          type="url"
-          value={formData.profile_photo_url}
-          onChange={(e) =>
-            setFormData({ ...formData, profile_photo_url: e.target.value })
-          }
-          placeholder="https://example.com/photo.jpg"
-          disabled={isLoading}
+        <ProfilePhotoUpload
+          currentPhotoUrl={formData.profile_photo_url}
+          onPhotoChange={(url) => setFormData({ ...formData, profile_photo_url: url })}
+          isLoading={isLoading}
         />
-        <p className="text-xs text-gray-500 mt-1">
-          Direct URL to your profile photo
-        </p>
       </div>
 
       {/* Instagram Handle */}

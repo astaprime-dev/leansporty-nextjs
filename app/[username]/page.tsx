@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { getStreams, getUserEnrollments } from "@/app/actions";
 import { StreamCard } from "@/components/stream-card";
+import GalleryDisplay from "@/components/instructor/gallery-display";
 
 interface ProfilePageProps {
   params: Promise<{
@@ -78,6 +79,15 @@ export default async function ProfilePage({
         .eq("status", "ended")
         .order("scheduled_start_time", { ascending: false })
         .limit(6)
+    : { data: null };
+
+  // Get instructor's gallery items
+  const { data: galleryItems } = isInstructor
+    ? await supabase
+        .from("instructor_gallery_items")
+        .select("*")
+        .eq("instructor_id", instructor.id)
+        .order("display_order", { ascending: true })
     : { data: null };
 
   const formatDate = (dateString: string) => {
@@ -196,6 +206,13 @@ export default async function ProfilePage({
             </div>
           </div>
         </div>
+
+        {/* Gallery (Instructors only) */}
+        {isInstructor && galleryItems && galleryItems.length > 0 && (
+          <div className="mb-8">
+            <GalleryDisplay galleryItems={galleryItems} />
+          </div>
+        )}
 
         {/* Upcoming Streams (Instructors only) */}
         {isInstructor && upcomingStreams && upcomingStreams.length > 0 && (
