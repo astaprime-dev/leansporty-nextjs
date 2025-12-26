@@ -247,24 +247,34 @@ export default function InstructorHelpPage() {
             </div>
 
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-3">Going live</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-3">Going live & broadcasting</h3>
               <ol className="space-y-2 ml-6 list-decimal text-gray-700">
                 <li>Navigate to "My Streams" before your scheduled start time</li>
-                <li>Click "Manage →" on your scheduled stream</li>
-                <li>Click the "Start Stream" button when ready to broadcast</li>
-                <li>Your stream status changes to "LIVE" and students can join</li>
-                <li>Click "End Stream" when your class finishes</li>
+                <li>Click "Manage →" on your scheduled stream to open the broadcast page</li>
+                <li>Click "Start Broadcast" and allow camera/microphone access in your browser</li>
+                <li>Once connected, click "Mark as Live" so students can join</li>
+                <li>Your stream status changes to "LIVE" and enrolled students can watch</li>
+                <li>Conduct your class as normal</li>
+                <li>Click "Stop Broadcast" then "End Stream" when finished</li>
               </ol>
+
+              <div className="mt-4 bg-green-50 border border-green-200 rounded-lg p-4">
+                <p className="font-semibold text-green-900 mb-1">Browser Requirements</p>
+                <p className="text-sm text-green-800">
+                  Works best in Chrome, Firefox, or Safari. Make sure you have a stable internet connection
+                  (at least 5 Mbps upload speed recommended) and good lighting for the best experience.
+                </p>
+              </div>
             </div>
 
-            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
               <div className="flex items-start gap-3">
-                <AlertCircle className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" />
+                <AlertCircle className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
                 <div>
-                  <p className="font-semibold text-yellow-900 mb-1">Coming Soon</p>
-                  <p className="text-yellow-800 text-sm">
-                    Video streaming integration with Cloudflare Stream is currently being implemented.
-                    This guide will be updated with detailed broadcasting instructions once available.
+                  <p className="font-semibold text-blue-900 mb-1">Broadcasting Technology</p>
+                  <p className="text-blue-800 text-sm">
+                    Lean Sporty uses Cloudflare WebRTC for browser-based streaming. No special software required -
+                    just allow camera and microphone access in your browser and you're ready to broadcast!
                   </p>
                 </div>
               </div>
@@ -499,9 +509,18 @@ export default function InstructorHelpPage() {
 
             <div>
               <h3 className="text-lg font-semibold text-gray-900 mb-2">Do I need special equipment?</h3>
-              <p className="text-gray-700">
-                For broadcasting, you'll need a device with a camera and stable internet connection.
-                Detailed technical requirements will be provided when video streaming launches.
+              <p className="text-gray-700 mb-2">
+                You only need basic equipment to broadcast:
+              </p>
+              <ul className="ml-6 list-disc text-gray-700 space-y-1">
+                <li>A computer, tablet, or phone with a camera</li>
+                <li>Built-in or external microphone</li>
+                <li>Stable internet connection (5+ Mbps upload recommended)</li>
+                <li>Modern web browser (Chrome, Firefox, or Safari)</li>
+                <li>Good lighting (natural light or a ring light works great)</li>
+              </ul>
+              <p className="text-gray-700 mt-2">
+                No special broadcasting software is needed - everything works directly in your browser!
               </p>
             </div>
 
