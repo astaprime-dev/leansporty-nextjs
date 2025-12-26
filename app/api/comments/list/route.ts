@@ -38,7 +38,7 @@ export async function GET(request: NextRequest) {
         edited_at,
         created_at,
         updated_at,
-        user_profiles!inner(display_name, username, profile_photo_url)
+        user_profiles(display_name, username, profile_photo_url)
       `)
       .eq('stream_id', streamId)
       .eq('is_hidden', false)
@@ -73,7 +73,7 @@ export async function GET(request: NextRequest) {
         edited_at,
         created_at,
         updated_at,
-        instructors!inner(display_name, profile_photo_url)
+        instructors(display_name, profile_photo_url)
       `)
       .in('comment_id', commentIds)
       .order('created_at', { ascending: true });
@@ -95,7 +95,9 @@ export async function GET(request: NextRequest) {
 
       return {
         ...comment,
-        user_profiles: Array.isArray(comment.user_profiles) ? comment.user_profiles[0] : comment.user_profiles,
+        user_profiles: Array.isArray(comment.user_profiles)
+          ? (comment.user_profiles[0] || { display_name: 'Unknown User', username: 'unknown', profile_photo_url: null })
+          : (comment.user_profiles || { display_name: 'Unknown User', username: 'unknown', profile_photo_url: null }),
         replies: commentReplies,
       };
     });
