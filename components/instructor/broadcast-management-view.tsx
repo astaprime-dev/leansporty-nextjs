@@ -171,7 +171,7 @@ export function BroadcastManagementView({ stream }: BroadcastManagementViewProps
           </div>
 
           {/* WebRTC Info Card */}
-          {stream.cloudflare_webrtc_url && (
+          {/* {stream.cloudflare_webrtc_url && (
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
               <h4 className="font-medium text-blue-900 mb-2 flex items-center gap-2">
                 <span>🌐</span>
@@ -197,7 +197,7 @@ export function BroadcastManagementView({ stream }: BroadcastManagementViewProps
                 </div>
               </div>
             </div>
-          )}
+          )} */}
 
           {/* Help Card */}
           <div className="bg-gray-50 border rounded-lg p-4">
