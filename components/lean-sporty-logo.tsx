@@ -3,11 +3,11 @@ import Image from 'next/image';
 export default function LeanSportyLogo() {
   return (
     <Image
-      src="/logo-1080-round-b.png"
+      src="/logo1024.png"
       alt="Lean Sporty Logo"
-      width={1080}
-      height={1080}
-      className="w-64 h-64"
+      width={160}
+      height={160}
+      className="rounded-[22%]"
     />
   );
 }
