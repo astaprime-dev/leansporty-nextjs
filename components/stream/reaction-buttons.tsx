@@ -83,10 +83,10 @@ export function ReactionButtons({
                   className={cn(
                     // Base styles
                     'relative flex items-center justify-center',
-                    'w-[56px] h-[56px] lg:w-[64px] lg:h-[64px]',
+                    'w-[40px] h-[40px] lg:w-[45px] lg:h-[45px]',
                     'rounded-full',
                     'transition-all duration-300',
-                    'border-3 border-white',
+                    'border-2 border-white',
 
                     // Shadow and effects
                     'shadow-2xl hover:shadow-3xl',
@@ -113,19 +113,19 @@ export function ReactionButtons({
                   {/* SVG Icon */}
                   <ReactionIcon
                     iconName={button.icon}
-                    className="w-7 h-7 lg:w-8 lg:h-8 text-white drop-shadow-lg"
+                    className="w-5 h-5 lg:w-6 lg:h-6 text-white drop-shadow-lg"
                   />
 
                   {/* Cooldown Timer */}
                   {isOnCooldown && (
-                    <span className="absolute -top-2 -right-2 bg-white text-gray-800 rounded-full w-7 h-7 flex items-center justify-center text-xs font-bold shadow-lg border-2 border-gray-200">
+                    <span className="absolute -top-1 -right-1 bg-white text-gray-800 rounded-full w-5 h-5 flex items-center justify-center text-[10px] font-bold shadow-lg border border-gray-200">
                       {cooldownRemaining}
                     </span>
                   )}
                 </button>
 
                 {/* Label below button */}
-                <span className="text-xs font-semibold text-white drop-shadow-md text-center px-2 py-1 bg-black/40 rounded-lg backdrop-blur-sm">
+                <span className="text-[10px] font-semibold text-white drop-shadow-md text-center px-2 py-0.5 bg-black/40 rounded backdrop-blur-sm">
                   {button.label}
                 </span>
               </div>

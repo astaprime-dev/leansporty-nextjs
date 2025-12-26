@@ -4,6 +4,7 @@ import { useState, useCallback } from 'react';
 import { useStreamReactions, playAlertSound } from '@/hooks/use-stream-reactions';
 import {
   getReactionConfig,
+  REACTION_COLOR_CLASSES,
   type ReactionType,
   type ReactionEvent,
 } from '@/types/reactions';
@@ -144,6 +145,7 @@ export function ReactionDisplay({
  */
 function FloatingReactionBubble({ event }: { event: ReactionEvent }) {
   const config = getReactionConfig(event.reaction_type);
+  const colorClasses = REACTION_COLOR_CLASSES[config.color];
 
   // Random horizontal position (20% to 80% of width)
   const leftPosition = Math.random() * 60 + 20;
@@ -158,7 +160,10 @@ function FloatingReactionBubble({ event }: { event: ReactionEvent }) {
       }}
     >
       <div className="flex items-center gap-2 drop-shadow-2xl">
-        <div className="bg-white/20 backdrop-blur-sm rounded-full p-4 border-2 border-white/40">
+        <div className={cn(
+          "rounded-full p-4 border-2 border-white shadow-2xl",
+          colorClasses.bg
+        )}>
           <ReactionIcon iconName={config.icon} className="w-12 h-12 sm:w-16 sm:h-16 text-white" />
         </div>
         {event.isAggregate && (
