@@ -13,16 +13,9 @@ export default async function AuthButton() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // Check if user is an instructor
-  let isInstructor = false;
-  if (user) {
-    const { data: instructorProfile } = await supabase
-      .from("instructors")
-      .select("id")
-      .eq("user_id", user.id)
-      .single();
-    isInstructor = !!instructorProfile;
-  }
+  // Check if user has instructor role (from app_metadata - no DB query)
+  const roles = user?.app_metadata?.roles || [];
+  const isInstructor = roles.includes('instructor');
 
   if (!hasEnvVars) {
     return (

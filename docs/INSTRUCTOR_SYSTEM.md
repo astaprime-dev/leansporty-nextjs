@@ -21,23 +21,23 @@ The Lean Sporty platform features a comprehensive instructor system that allows 
 
 ### Invite-Based System
 
-Instructors gain access through an invite-only token system:
+Instructors gain access through an invite-only activation code system:
 
-- **Initial Access**: Instructors must enter the `INSTRUCTOR_ACCESS_TOKEN` (from `.env`) on the `/instructor/login` page
-- **Token Storage**: Token is stored in cookies for session persistence
-- **Profile Creation**: After token validation, instructors create their profile at `/instructor/profile`
-- **Role Verification**: Once profile exists, authorization is based on profile existence, not token
+- **Initial Access**: Instructors must first authenticate with regular OAuth (Google/Apple), then enter the `INSTRUCTOR_ACCESS_TOKEN` (from `.env`) on the `/instructor/activate` page
+- **Profile Creation**: Upon activation, a profile is automatically created in the database with data from OAuth (name, email)
+- **Slug Generation**: Initial slug is generated from their name (e.g., "John Doe" → `john-doe`), can be customized later
+- **Authorization**: Role verification is based solely on profile existence in database - no cookies needed
 
 ### Authentication Flow
 
 ```
 1. User logs in with OAuth (Google/Apple) → Regular user access
-2. User navigates to /instructor/login (footer link)
-3. User enters instructor access token
-4. Token validated → cookie set
-5. Redirect to /instructor (dashboard)
-6. If no profile → redirect to /instructor/profile
-7. Create profile → Full instructor access granted
+2. User navigates to /instructor/activate (footer link or direct URL)
+3. User enters instructor activation code
+4. Code validated → cookie set
+5. Redirect to /instructor/profile (must create profile first!)
+6. User creates profile (display_name, slug, bio, etc.)
+7. Full instructor access granted → can access dashboard
 ```
 
 ### Authorization Checks
@@ -658,9 +658,9 @@ Disallow: /instructor/
 ### Common Issues
 
 **Issue:** Instructor can't access dashboard
-- **Check:** Profile exists in `instructors` table
-- **Check:** `instructor_token` cookie is set
-- **Fix:** Re-enter token at `/instructor/login`
+- **Check:** Profile exists in `instructors` table with `user_id` matching authenticated user
+- **Check:** User is authenticated with Supabase (OAuth session)
+- **Fix:** If no profile exists, go to `/instructor/activate` and enter activation code
 
 **Issue:** Profile page shows 404
 - **Check:** Slug/username exists and is correct

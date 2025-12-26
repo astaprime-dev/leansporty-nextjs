@@ -4,32 +4,38 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { createClient } from "@/utils/supabase/client";
 
-export default function InstructorLoginPage() {
+export default function InstructorActivateForm() {
   const [token, setToken] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleActivation = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     setIsLoading(true);
 
     try {
-      const response = await fetch("/api/instructor/login", {
+      const response = await fetch("/api/instructor/activate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ token }),
       });
 
       if (response.ok) {
-        router.push("/instructor");
+        // CRITICAL: Refresh session to get new JWT with updated roles
+        const supabase = createClient();
+        await supabase.auth.refreshSession();
+
+        // Now redirect with fresh token
+        router.push("/instructor/profile");
       } else {
-        setError("Invalid access token. Please try again.");
+        setError("Invalid activation code. Please try again.");
       }
     } catch (err) {
-      setError("Login failed. Please try again.");
+      setError("Activation failed. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -40,21 +46,21 @@ export default function InstructorLoginPage() {
       <div className="max-w-md w-full bg-white rounded-2xl shadow-lg p-8 border border-pink-100">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold mb-2 bg-gradient-to-r from-pink-500 to-rose-400 bg-clip-text text-transparent">
-            Instructor Login
+            Activate Instructor Status
           </h1>
-          <p className="text-gray-600">Enter your access token to continue</p>
+          <p className="text-gray-600">Enter your activation code to enable instructor features</p>
         </div>
 
-        <form onSubmit={handleLogin} className="space-y-4">
+        <form onSubmit={handleActivation} className="space-y-4">
           <div>
             <label className="block text-sm font-medium mb-2 text-gray-700">
-              Access Token
+              Activation Code
             </label>
             <Input
               type="password"
               value={token}
               onChange={(e) => setToken(e.target.value)}
-              placeholder="Enter your instructor access token"
+              placeholder="Enter your instructor activation code"
               className="w-full"
               required
               disabled={isLoading}
@@ -72,14 +78,14 @@ export default function InstructorLoginPage() {
             className="w-full bg-gradient-to-r from-pink-500 to-rose-400 hover:from-pink-600 hover:to-rose-500"
             disabled={isLoading}
           >
-            {isLoading ? "Logging in..." : "Login"}
+            {isLoading ? "Activating..." : "Activate Instructor Status"}
           </Button>
         </form>
 
         <div className="mt-6 pt-6 border-t border-gray-200">
           <p className="text-xs text-gray-500 text-center">
-            This is a secure instructor-only area. If you don't have an access
-            token, please contact the administrator.
+            This is a secure instructor-only area. If you don't have an activation
+            code, please contact the administrator.
           </p>
         </div>
       </div>

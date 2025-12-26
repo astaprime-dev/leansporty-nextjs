@@ -1,4 +1,3 @@
-import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -16,30 +15,25 @@ export default async function InstructorLayout({
   } = await supabase.auth.getUser();
 
   if (!user) {
-    // Not logged in as regular user - redirect to instructor login
-    redirect("/instructor/login");
+    // Not logged in as regular user - redirect to main login with return URL
+    redirect("/?redirect=/instructor/activate");
   }
 
-  // Check if instructor profile exists (this is the real authorization check)
+  // Check if instructor profile exists
+  // Profile creation happens automatically during activation
   const { data: instructorProfile } = await supabase
     .from("instructors")
     .select("*")
     .eq("user_id", user.id)
     .single();
 
-  // If no instructor profile exists, check if they have a valid invite token
+  // If no instructor profile exists, redirect to activation page
   if (!instructorProfile) {
-    const cookieStore = await cookies();
-    const instructorToken = cookieStore.get("instructor_token");
-
-    // If they don't have the invite token, redirect to login
-    if (instructorToken?.value !== process.env.INSTRUCTOR_ACCESS_TOKEN) {
-      redirect("/instructor/login");
-    }
-
-    // They have the invite token but no profile - allow access to create it
-    // Individual pages will handle requiring the profile if needed
+    redirect("/instructor/activate");
   }
+
+  // Profile exists - user is activated and can access instructor dashboard
+  // Individual pages may redirect to profile page if profile needs completion
 
   return (
     <div className="min-h-screen bg-gray-50">

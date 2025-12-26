@@ -70,7 +70,7 @@ See `/supabase/migrations/20250101000000_live_streaming_complete.sql` for the co
 See `/app/api/instructor/` for implementation.
 
 ### Instructor
-- `POST /api/instructor/login` - Set instructor token cookie
+- `POST /api/instructor/activate` - Set instructor token cookie
 - `POST /api/instructor/streams/create` - Create stream + Cloudflare Live Input
 - `POST /api/instructor/streams/[id]/start` - Mark stream as live
 - `POST /api/instructor/streams/[id]/end` - End stream, trigger cleanup

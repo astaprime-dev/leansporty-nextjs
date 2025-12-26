@@ -18,16 +18,27 @@
 
 ### Step 1: Log In
 
-1. Open your web browser and go to:
+1. First, sign in to your account:
+   - Click "Sign in with Apple" or "Sign in with Google"
+   - Complete the authentication
+
+2. Then, activate your instructor status by going to:
    ```
-   https://leansporty.com/instructor/login
+   https://leansporty.com/instructor/activate
    ```
 
-2. You'll see a login page with one field:
-   - **Enter your Instructor Access Code** (the code we provided you)
-   - Click **"Sign In"**
+3. You'll see an activation page with one field:
+   - **Enter your Instructor Activation Code** (the code we provided you)
+   - Click **"Activate Instructor Status"**
 
-3. If successful, you'll see the Instructor Dashboard
+4. After successful activation, you'll be taken to **Create Your Profile**:
+   - Enter your display name
+   - Choose your unique instructor URL (slug)
+   - Write a bio about yourself
+   - Add profile photo and social links (optional)
+   - Click **"Save Profile"**
+
+5. Once your profile is complete, you'll see the Instructor Dashboard
 
 ---
 
@@ -394,7 +405,7 @@ When you open a stream, you'll see:
 ```
 📱 INSTRUCTOR QUICK REFERENCE
 
-Login: leansporty.com/instructor/login
+Activate: leansporty.com/instructor/activate
 Dashboard: leansporty.com/instructor/streams
 
 STREAMING STEPS:

@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Instructor Login - Lean Sporty",
+  title: "Activate Instructor Status - Lean Sporty",
   robots: {
     index: false,
     follow: false,
@@ -13,7 +13,7 @@ export const metadata: Metadata = {
   },
 };
 
-export default function InstructorLoginLayout({
+export default function InstructorActivateLayout({
   children,
 }: {
   children: React.ReactNode;

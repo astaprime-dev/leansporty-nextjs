@@ -33,7 +33,7 @@
    - Watch replays: HLS player (7-day access)
 
 5. **Instructor Dashboard**:
-   - Login: `/instructor/login` (Supabase auth + instructor token)
+   - Activate: `/instructor/activate` (Supabase auth + instructor activation code)
    - Create stream: `/instructor/streams/create`
    - Broadcast: `/instructor/streams/[id]/broadcast`
    - Mark as Live / End Stream buttons
@@ -454,7 +454,7 @@ npm run dev
 
 # Open pages:
 # - http://localhost:3000/streams (public)
-# - http://localhost:3000/instructor/login (instructor)
+# - http://localhost:3000/instructor/activate (instructor)
 ```
 
 ---

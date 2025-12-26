@@ -10,7 +10,7 @@ export default async function InstructorProfilePage() {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    redirect("/instructor/login");
+    redirect("/?redirect=/instructor/activate");
   }
 
   // Get instructor profile if exists

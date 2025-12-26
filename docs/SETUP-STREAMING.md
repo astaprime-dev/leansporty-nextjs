@@ -76,9 +76,9 @@ git push origin main
 
 ### Test Broadcasting
 
-1. Go to `/instructor/login`
-2. Login with Apple
-3. Enter instructor access token
+1. Login with Apple
+2. Go to `/instructor/activate`
+3. Enter instructor activation code
 4. Create a test stream
 5. Click "Start Broadcast"
 6. Allow camera/microphone
