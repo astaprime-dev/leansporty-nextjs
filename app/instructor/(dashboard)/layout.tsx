@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/utils/supabase/server";
+import { InstructorMobileMenu } from "@/components/instructor-mobile-menu";
 
 export default async function InstructorLayout({
   children,
@@ -46,7 +47,7 @@ export default async function InstructorLayout({
                 Instructor Studio
               </h1>
             </Link>
-            <nav className="flex items-center gap-4">
+            <nav className="hidden md:flex items-center gap-4">
               <Link
                 href="/instructor"
                 className="text-sm font-medium text-gray-600 hover:text-pink-500 transition-colors"
@@ -83,11 +84,12 @@ export default async function InstructorLayout({
           <div className="flex items-center gap-4">
             {instructorProfile.slug && (
               <Link href={`/@${instructorProfile.slug}`} target="_blank">
-                <Button variant="outline" size="sm">
+                <Button variant="outline" size="sm" className="hidden sm:inline-flex">
                   View Public Profile
                 </Button>
               </Link>
             )}
+            <InstructorMobileMenu instructorSlug={instructorProfile.slug} />
           </div>
         </div>
       </header>
