@@ -109,9 +109,15 @@ export function StreamCard({ stream, enrollment, isLive, isAuthenticated }: Stre
               {stream.title}
             </h2>
 
-            {stream.instructor_name && (
+            {stream.instructor && (
               <p className="text-gray-600 mb-3">
-                with <span className="font-semibold">{stream.instructor_name}</span>
+                with{" "}
+                <Link
+                  href={`/${stream.instructor.slug}`}
+                  className="font-semibold hover:text-pink-500 transition-colors"
+                >
+                  {stream.instructor.display_name}
+                </Link>
               </p>
             )}
 

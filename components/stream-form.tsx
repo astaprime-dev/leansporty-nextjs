@@ -8,7 +8,6 @@ import { Input } from "@/components/ui/input";
 interface StreamFormData {
   title: string;
   description: string;
-  instructorName: string;
   scheduledStartTime: string;
   durationMinutes: number;
   priceInTokens: number;
@@ -26,7 +25,6 @@ export function StreamForm({ initialData, streamId, mode }: StreamFormProps) {
   const [formData, setFormData] = useState<StreamFormData>({
     title: initialData?.title || "",
     description: initialData?.description || "",
-    instructorName: initialData?.instructorName || "",
     scheduledStartTime: initialData?.scheduledStartTime || "",
     durationMinutes: initialData?.durationMinutes || 60,
     priceInTokens: initialData?.priceInTokens || 5,
@@ -100,20 +98,6 @@ export function StreamForm({ initialData, streamId, mode }: StreamFormProps) {
               setFormData({ ...formData, description: e.target.value })
             }
             placeholder="Tell users what to expect in this workout..."
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium mb-2">
-            Instructor Name *
-          </label>
-          <Input
-            required
-            value={formData.instructorName}
-            onChange={(e) =>
-              setFormData({ ...formData, instructorName: e.target.value })
-            }
-            placeholder="Your name"
           />
         </div>
 

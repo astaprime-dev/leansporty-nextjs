@@ -84,7 +84,6 @@ export async function POST(request: NextRequest) {
       .insert({
         title: data.title,
         description: data.description,
-        instructor_name: instructorProfile.display_name,
         instructor_id: instructorProfile.id,
         scheduled_start_time: data.scheduledStartTime,
         scheduled_duration_seconds: data.durationMinutes * 60,

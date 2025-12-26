@@ -54,7 +54,6 @@ export default async function EditStreamPage({ params }: EditStreamPageProps) {
   const initialData = {
     title: stream.title,
     description: stream.description || "",
-    instructorName: stream.instructor_name,
     scheduledStartTime,
     durationMinutes: Math.floor(stream.scheduled_duration_seconds / 60),
     priceInTokens: stream.price_in_tokens,

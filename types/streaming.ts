@@ -1,12 +1,21 @@
 // Live Streaming TypeScript Types
 
+export interface Instructor {
+  id: string;
+  display_name: string;
+  slug: string;
+  profile_photo_url: string | null;
+}
+
 export interface LiveStreamSession {
   id: string;
 
   // Basic Info
   title: string;
   description: string | null;
-  instructor_name: string | null;
+  instructor_id: string;
+  instructor_name: string | null; // Deprecated, use instructor relation
+  instructor?: Instructor; // Joined instructor data
 
   // Scheduling
   scheduled_start_time: string; // ISO 8601 timestamp

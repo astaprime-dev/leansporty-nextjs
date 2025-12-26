@@ -60,14 +60,13 @@ export async function PATCH(
     const {
       title,
       description,
-      instructorName,
       scheduledStartTime,
       durationMinutes,
       priceInTokens,
     } = body;
 
     // Validate required fields
-    if (!title || !instructorName || !scheduledStartTime || !durationMinutes) {
+    if (!title || !scheduledStartTime || !durationMinutes) {
       return NextResponse.json(
         { error: "Missing required fields" },
         { status: 400 }
@@ -98,7 +97,6 @@ export async function PATCH(
       .update({
         title,
         description: description || null,
-        instructor_name: instructorName,
         scheduled_start_time: scheduledDate.toISOString(),
         scheduled_duration_seconds: durationMinutes * 60,
         price_in_tokens: priceInTokens || 0,

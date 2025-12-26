@@ -291,10 +291,13 @@ export const getStreams = async (options?: {
   const supabase = await createClient();
   const now = new Date().toISOString();
 
-  // Build live streams query
+  // Build live streams query with instructor data
   let liveQuery = supabase
     .from('live_stream_sessions')
-    .select('*')
+    .select(`
+      *,
+      instructor:instructors(id, display_name, slug, profile_photo_url)
+    `)
     .eq('status', 'live');
 
   if (options?.instructorId) {
@@ -308,10 +311,13 @@ export const getStreams = async (options?: {
     console.error("Error fetching live streams:", liveError);
   }
 
-  // Build scheduled streams query
+  // Build scheduled streams query with instructor data
   let scheduledQuery = supabase
     .from('live_stream_sessions')
-    .select('*')
+    .select(`
+      *,
+      instructor:instructors(id, display_name, slug, profile_photo_url)
+    `)
     .eq('status', 'scheduled');
 
   if (options?.instructorId) {
