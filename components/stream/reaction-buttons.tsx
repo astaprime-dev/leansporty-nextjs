@@ -78,42 +78,58 @@ export function ReactionButtons({
             const isPressed = lastReaction === button.type;
 
             return (
-              <button
-                key={button.type}
-                onClick={() => handleReaction(button.type)}
-                disabled={isOnCooldown}
-                className={cn(
-                  // Base styles
-                  'relative flex flex-col items-center justify-center',
-                  'min-w-[60px] min-h-[60px] sm:min-w-[70px] sm:min-h-[70px]',
-                  'rounded-full',
-                  'transition-all duration-200',
-                  'shadow-lg',
+              <div key={button.type} className="flex flex-col items-center gap-2">
+                <button
+                  onClick={() => handleReaction(button.type)}
+                  disabled={isOnCooldown}
+                  className={cn(
+                    // Base styles
+                    'relative flex items-center justify-center',
+                    'w-[70px] h-[70px] lg:w-[80px] lg:h-[80px]',
+                    'rounded-full',
+                    'transition-all duration-300',
+                    'border-4 border-white',
 
-                  // Color styles
-                  isOnCooldown
-                    ? 'bg-gray-400 cursor-not-allowed'
-                    : `${colorClasses.bg} ${colorClasses.hover} cursor-pointer`,
+                    // Shadow and effects
+                    'shadow-2xl hover:shadow-3xl',
 
-                  // Pressed state
-                  isPressed && 'scale-90',
+                    // Color styles
+                    isOnCooldown
+                      ? 'bg-gray-400 cursor-not-allowed'
+                      : `${colorClasses.bg} ${colorClasses.hover} cursor-pointer hover:scale-110`,
 
-                  // Disabled state
-                  isOnCooldown && 'opacity-50'
-                )}
-                aria-label={button.label}
-                title={button.label}
-              >
-                {/* Emoji */}
-                <span className="text-2xl sm:text-3xl">{button.emoji}</span>
+                    // Pressed state
+                    isPressed && 'scale-95',
 
-                {/* Cooldown Timer */}
-                {isOnCooldown && (
-                  <span className="absolute -top-2 -right-2 bg-white text-gray-800 rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold shadow-md">
-                    {cooldownRemaining}
+                    // Disabled state
+                    isOnCooldown && 'opacity-50',
+
+                    // Glow effect for non-disabled
+                    !isOnCooldown && button.color === 'green' && 'hover:shadow-green-500/50',
+                    !isOnCooldown && button.color === 'yellow' && 'hover:shadow-yellow-500/50',
+                    !isOnCooldown && button.color === 'red' && 'hover:shadow-red-500/50'
+                  )}
+                  aria-label={button.label}
+                  title={button.label}
+                >
+                  {/* Emoji */}
+                  <span className="text-3xl lg:text-4xl filter drop-shadow-lg">
+                    {button.emoji}
                   </span>
-                )}
-              </button>
+
+                  {/* Cooldown Timer */}
+                  {isOnCooldown && (
+                    <span className="absolute -top-2 -right-2 bg-white text-gray-800 rounded-full w-7 h-7 flex items-center justify-center text-xs font-bold shadow-lg border-2 border-gray-200">
+                      {cooldownRemaining}
+                    </span>
+                  )}
+                </button>
+
+                {/* Label below button */}
+                <span className="text-xs font-semibold text-white drop-shadow-md text-center px-2 py-1 bg-black/40 rounded-lg backdrop-blur-sm">
+                  {button.label}
+                </span>
+              </div>
             );
           })}
         </div>
@@ -130,27 +146,6 @@ export function ReactionButtons({
         </div>
       )}
 
-      {/* Button Labels (Desktop Only - positioned to the left of buttons) */}
-      <div
-        className={cn(
-          'hidden lg:flex',
-          'fixed top-0 right-24 z-10',
-          'flex-col justify-center gap-3',
-          'h-full',
-          'pointer-events-none'
-        )}
-      >
-        {REACTION_BUTTONS.map((button) => (
-          <div
-            key={button.type}
-            className="h-[70px] flex items-center justify-end"
-          >
-            <p className="text-sm text-white font-medium drop-shadow-md bg-black/30 px-3 py-1 rounded-lg">
-              {button.label}
-            </p>
-          </div>
-        ))}
-      </div>
     </>
   );
 }
