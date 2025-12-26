@@ -27,12 +27,17 @@ export async function GET(request: NextRequest) {
       .from('stream_comments')
       .select(`
         id,
+        stream_id,
+        enrollment_id,
+        user_id,
         star_rating,
         comment_text,
-        created_at,
-        edited_at,
         is_hidden,
-        user_id,
+        hidden_at,
+        hidden_by,
+        edited_at,
+        created_at,
+        updated_at,
         user_profiles!inner(display_name, username, profile_photo_url)
       `)
       .eq('stream_id', streamId)
@@ -61,10 +66,13 @@ export async function GET(request: NextRequest) {
       .select(`
         id,
         comment_id,
-        reply_text,
-        created_at,
-        edited_at,
+        stream_id,
         instructor_id,
+        user_id,
+        reply_text,
+        edited_at,
+        created_at,
+        updated_at,
         instructors!inner(display_name, profile_photo_url)
       `)
       .in('comment_id', commentIds)
