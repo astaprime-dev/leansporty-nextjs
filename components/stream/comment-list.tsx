@@ -134,7 +134,7 @@ export function CommentList({ streamId, averageRating = 0, totalComments = 0 }: 
                     </div>
                     <div className="text-right">
                       <StarRating value={comment.star_rating} readonly size="sm" />
-                      <p className="text-xs text-gray-500 mt-1">
+                      <p className="text-xs text-gray-500 mt-1" suppressHydrationWarning>
                         {formatRelativeTime(comment.created_at)}
                         {comment.edited_at && (
                           <span className="ml-1 text-gray-400">(edited)</span>
@@ -189,7 +189,7 @@ export function CommentList({ streamId, averageRating = 0, totalComments = 0 }: 
                             </Badge>
                           </div>
                           <p className="text-sm text-gray-700">{reply.reply_text}</p>
-                          <p className="text-xs text-gray-500 mt-1">
+                          <p className="text-xs text-gray-500 mt-1" suppressHydrationWarning>
                             {formatRelativeTime(reply.created_at)}
                             {reply.edited_at && (
                               <span className="ml-1 text-gray-400">(edited)</span>
