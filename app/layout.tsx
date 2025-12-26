@@ -5,6 +5,7 @@ import HeaderNav from "@/components/header-nav";
 import MobileMenuWrapper from "@/components/mobile-menu-wrapper";
 import { ThemeSwitcher } from "@/components/theme-switcher";
 import { hasEnvVars } from "@/utils/supabase/check-env-vars";
+import { createClient } from "@/utils/supabase/server";
 import { Geist } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import Link from "next/link";
@@ -25,11 +26,14 @@ const geistSans = Geist({
   subsets: ["latin"],
 });
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
   return (
     <html lang="en" className={geistSans.className} suppressHydrationWarning>
       <body className="bg-background text-foreground">
@@ -109,8 +113,12 @@ export default function RootLayout({
                       <Link href="/privacy" className="hover:text-pink-500 transition-colors">Privacy Policy</Link>
                       <span className="hidden md:inline">•</span>
                       <Link href="/terms" className="hover:text-pink-500 transition-colors">Terms of Service</Link>
-                      <span className="hidden md:inline">•</span>
-                      <Link href="/instructor/activate" className="hover:text-pink-500 transition-colors">Become an instructor</Link>
+                      {user && (
+                        <>
+                          <span className="hidden md:inline">•</span>
+                          <Link href="/instructor/activate" className="hover:text-pink-500 transition-colors">Become an instructor</Link>
+                        </>
+                      )}
                       <span className="hidden md:inline">•</span>
                       <a href="mailto:team@leansporty.com" className="hover:text-pink-500 transition-colors">Contact</a>
                     </div>
