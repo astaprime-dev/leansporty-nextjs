@@ -17,13 +17,9 @@ export default async function ProfilePage({
 }: ProfilePageProps) {
   const { username } = await params;
 
-  // Require @ prefix - show 404 if missing
-  if (!username.startsWith('@')) {
-    notFound();
-  }
-
-  // Remove @ prefix for database lookup
-  const slug = username.slice(1);
+  // Note: The @ prefix is stripped by the rewrite rule in next.config.ts
+  // So username here is just the slug without @
+  const slug = username;
 
   const supabase = await createClient();
 
