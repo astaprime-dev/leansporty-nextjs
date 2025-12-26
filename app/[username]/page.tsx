@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { getStreams, getUserEnrollments } from "@/app/actions";
 import { StreamCard } from "@/components/stream-card";
-import GalleryDisplay from "@/components/instructor/gallery-display";
+// import GalleryDisplay from "@/components/instructor/gallery-display";
 
 interface ProfilePageProps {
   params: Promise<{
@@ -213,11 +213,11 @@ export default async function ProfilePage({
         </div>
 
         {/* Gallery (Instructors only) */}
-        {isInstructor && galleryItems && galleryItems.length > 0 && (
+        {/* {isInstructor && galleryItems && galleryItems.length > 0 && (
           <div className="mb-8">
             <GalleryDisplay galleryItems={galleryItems} />
           </div>
-        )}
+        )} */}
 
         {/* Upcoming Streams (Instructors only) */}
         {isInstructor && upcomingStreams && upcomingStreams.length > 0 && (
