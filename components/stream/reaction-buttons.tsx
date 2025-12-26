@@ -41,9 +41,9 @@ export function ReactionButtons({
     const result = await sendReaction(reactionType);
 
     if (result?.success) {
-      // Show success feedback
+      // Show success feedback for 2 seconds
       setLastReaction(reactionType);
-      setTimeout(() => setLastReaction(null), 300);
+      setTimeout(() => setLastReaction(null), 2000);
     } else if (result?.error === 'rate_limit') {
       // Show rate limit toast
       setShowToast(true);
@@ -92,15 +92,15 @@ export function ReactionButtons({
                     'shadow-2xl hover:shadow-3xl',
 
                     // Color styles
-                    isOnCooldown
+                    isOnCooldown && !isPressed
                       ? 'bg-gray-400 cursor-not-allowed'
                       : `${colorClasses.bg} ${colorClasses.hover} cursor-pointer hover:scale-110`,
 
-                    // Pressed state
-                    isPressed && 'scale-95',
+                    // Pressed state - keep colorful and scale up
+                    isPressed && 'scale-125 ring-4 ring-white/50',
 
                     // Disabled state
-                    isOnCooldown && 'opacity-50',
+                    isOnCooldown && !isPressed && 'opacity-50',
 
                     // Glow effect for non-disabled
                     !isOnCooldown && button.color === 'green' && 'hover:shadow-green-500/50',
