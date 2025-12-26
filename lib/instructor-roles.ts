@@ -102,8 +102,8 @@ export async function grantInstructorRole(userId: string) {
     }
 
     // 9. Add instructor role to app_metadata (don't replace existing roles)
-    const currentRoles = user.app_metadata?.roles || [];
-    const updatedRoles = currentRoles.includes('instructor')
+    // Reuse currentRoles from step 3 - it hasn't changed
+    const updatedRoles = hasRole
       ? currentRoles
       : [...currentRoles, 'instructor'];
 
