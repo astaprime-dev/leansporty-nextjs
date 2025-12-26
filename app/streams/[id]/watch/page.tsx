@@ -34,20 +34,6 @@ export default async function StreamWatchPage({
     redirect("/streams");
   }
 
-  // Check if user has access (live or replay within 7 days)
-  const now = new Date();
-  const replayExpires = enrollment.replay_access_expires_at
-    ? new Date(enrollment.replay_access_expires_at)
-    : null;
-
-  const canWatch =
-    stream.status === "live" ||
-    (stream.recording_available && replayExpires && now < replayExpires);
-
-  if (!canWatch) {
-    redirect("/streams");
-  }
-
   return (
     <StreamWatchView
       stream={stream}
