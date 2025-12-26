@@ -7,10 +7,10 @@ import { createClient } from '@/utils/supabase/server';
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { streamId: string } }
+  { params }: { params: Promise<{ streamId: string }> }
 ) {
   try {
-    const { streamId } = params;
+    const { streamId } = await params;
     const { searchParams } = new URL(request.url);
     const includeDetails = searchParams.get('details') === 'true';
 
