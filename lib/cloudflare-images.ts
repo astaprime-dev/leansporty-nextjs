@@ -96,11 +96,14 @@ export async function uploadImage(
     }
   );
 
-  // Get account hash for image delivery URL
-  const accountId = process.env.CLOUDFLARE_ACCOUNT_ID;
+  // Cloudflare returns the full URLs in the variants array
+  // Find the public variant URL (or use the first variant if public doesn't exist)
+  const publicVariant = result.variants.find(url => url.includes('/public'));
+  const imageUrl = publicVariant || result.variants[0];
 
-  // Construct delivery URL
-  const imageUrl = `https://imagedelivery.net/${accountId}/${result.id}/public`;
+  if (!imageUrl) {
+    throw new Error('No image URL returned from Cloudflare');
+  }
 
   return {
     imageId: result.id,
@@ -154,6 +157,10 @@ export async function deleteMedia(imageId: string): Promise<boolean> {
  * @param imageId - The Cloudflare image ID
  * @param options - Transformation options
  * @returns Optimized image URL
+ *
+ * NOTE: Requires CLOUDFLARE_ACCOUNT_HASH environment variable
+ * This is different from CLOUDFLARE_ACCOUNT_ID - it's the hash used in imagedelivery.net URLs
+ * You can find it in any Cloudflare Images URL or in your Cloudflare dashboard
  */
 export function getImageUrl(
   imageId: string,
@@ -165,14 +172,18 @@ export function getImageUrl(
     quality?: number;
   }
 ): string {
-  const accountId = process.env.CLOUDFLARE_ACCOUNT_ID;
+  const accountHash = process.env.CLOUDFLARE_ACCOUNT_HASH;
+
+  if (!accountHash) {
+    throw new Error('CLOUDFLARE_ACCOUNT_HASH environment variable is required for image transformations');
+  }
 
   if (!options || Object.keys(options).length === 0) {
     // Return public URL without transformations
-    return `https://imagedelivery.net/${accountId}/${imageId}/public`;
+    return `https://imagedelivery.net/${accountHash}/${imageId}/public`;
   }
 
-  // Build transformation string
+  // Build transformation string for flexible variants
   const transformParams: string[] = [];
 
   if (options.width) transformParams.push(`width=${options.width}`);
@@ -183,8 +194,8 @@ export function getImageUrl(
 
   const transformString = transformParams.join(',');
 
-  // Use Cloudflare's image transformation service
-  return `https://imagedelivery.net/${accountId}/${imageId}/${transformString}`;
+  // Use Cloudflare's flexible variant transformation service
+  return `https://imagedelivery.net/${accountHash}/${imageId}/${transformString}`;
 }
 
 /**
