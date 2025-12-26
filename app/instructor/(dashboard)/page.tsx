@@ -72,16 +72,14 @@ export default async function InstructorDashboard() {
     .order("enrolled_at", { ascending: false })
     .limit(5);
 
-  // Check profile completion
+  // Check profile completion (only essential fields)
   const profileCompletion = {
     hasPhoto: !!instructorProfile.profile_photo_url,
     hasBio: !!instructorProfile.bio,
-    hasSocial: !!(instructorProfile.instagram_handle || instructorProfile.website_url),
   };
   const completionPercentage = Math.round(
     ((profileCompletion.hasPhoto ? 1 : 0) +
-     (profileCompletion.hasBio ? 1 : 0) +
-     (profileCompletion.hasSocial ? 1 : 0)) / 3 * 100
+     (profileCompletion.hasBio ? 1 : 0)) / 2 * 100
   );
 
   return (
@@ -104,8 +102,7 @@ export default async function InstructorDashboard() {
               </h3>
               <p className="text-sm text-yellow-700">
                 {!profileCompletion.hasPhoto && "Add a profile photo. "}
-                {!profileCompletion.hasBio && "Write a bio. "}
-                {!profileCompletion.hasSocial && "Add social links."}
+                {!profileCompletion.hasBio && "Write a bio."}
               </p>
             </div>
             <Link href="/instructor/profile">
