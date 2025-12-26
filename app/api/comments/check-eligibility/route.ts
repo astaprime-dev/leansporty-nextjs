@@ -78,41 +78,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json(response);
     }
 
-    // Check attendance threshold using database function (live only)
-    const { data: meetsThreshold, error: thresholdError } = await supabase
-      .rpc('check_attendance_threshold', {
-        p_enrollment_id: enrollment.id,
-        p_threshold_percent: 50,
-      });
-
-    if (thresholdError) {
-      console.error('Threshold check error:', thresholdError);
-      throw thresholdError;
-    }
-
-    if (!meetsThreshold) {
-      // Get actual watch duration for feedback
-      const { data: watchDuration } = await supabase
-        .rpc('get_total_watch_duration', {
-          p_enrollment_id: enrollment.id,
-        });
-
-      const streamDuration = stream.actual_end_time && stream.actual_start_time
-        ? (new Date(stream.actual_end_time).getTime() - new Date(stream.actual_start_time).getTime()) / 1000
-        : stream.scheduled_duration_seconds;
-
-      const attendancePercent = streamDuration > 0
-        ? Math.round((watchDuration / streamDuration) * 100)
-        : 0;
-
-      const response: CommentEligibility = {
-        eligible: false,
-        reason: 'insufficient_attendance',
-        message: `You must attend at least 50% of the LIVE stream to comment. You attended ${attendancePercent}%.`,
-        attendancePercent,
-      };
-      return NextResponse.json(response);
-    }
+    // ATTENDANCE CHECK REMOVED - If enrolled, can comment!
 
     // Check if already commented
     const { data: existingComment } = await supabase
