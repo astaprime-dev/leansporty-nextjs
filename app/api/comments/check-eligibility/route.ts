@@ -43,42 +43,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json(response);
     }
 
-    // Check if stream has ended
-    const { data: stream, error: streamError } = await supabase
-      .from('live_stream_sessions')
-      .select('actual_end_time, scheduled_duration_seconds, actual_start_time')
-      .eq('id', streamId)
-      .single();
-
-    if (streamError || !stream) {
-      const response: CommentEligibility = {
-        eligible: false,
-        reason: 'stream_not_found',
-      };
-      return NextResponse.json(response);
-    }
-
-    if (!stream.actual_end_time) {
-      const response: CommentEligibility = {
-        eligible: false,
-        reason: 'stream_not_ended',
-        message: 'You can comment after the stream ends',
-      };
-      return NextResponse.json(response);
-    }
-
-    // Check 7-day window
-    const daysSinceEnd = (Date.now() - new Date(stream.actual_end_time).getTime()) / (1000 * 60 * 60 * 24);
-    if (daysSinceEnd > 7) {
-      const response: CommentEligibility = {
-        eligible: false,
-        reason: 'window_closed',
-        message: 'Comments can only be posted within 7 days after the stream ends',
-      };
-      return NextResponse.json(response);
-    }
-
-    // ATTENDANCE CHECK REMOVED - If enrolled, can comment!
+    // ALL RESTRICTIONS REMOVED - If enrolled, can comment anytime!
 
     // Check if already commented
     const { data: existingComment } = await supabase

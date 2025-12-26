@@ -188,26 +188,24 @@ export function StreamWatchView({
           </p>
         </div>
 
-        {/* Comments Section - Show for all non-live streams */}
-        {!isLive && (
-          <div className="mt-12 pt-8 border-t">
-            <h2 className="text-2xl font-bold mb-6 text-gray-800">Reviews & Comments</h2>
+        {/* Comments Section - Always visible */}
+        <div className="mt-12 pt-8 border-t">
+          <h2 className="text-2xl font-bold mb-6 text-gray-800">Reviews & Comments</h2>
 
-            {/* Comment Form */}
-            <div className="mb-8">
-              <CommentForm
-                streamId={stream.id}
-                onSuccess={() => {
-                  // Refresh the page to show new comment
-                  window.location.reload();
-                }}
-              />
-            </div>
-
-            {/* Comment List */}
-            <CommentList streamId={stream.id} />
+          {/* Comment Form */}
+          <div className="mb-8">
+            <CommentForm
+              streamId={stream.id}
+              onSuccess={() => {
+                // Refresh the page to show new comment
+                window.location.reload();
+              }}
+            />
           </div>
-        )}
+
+          {/* Comment List */}
+          <CommentList streamId={stream.id} />
+        </div>
       </div>
     </div>
   );
