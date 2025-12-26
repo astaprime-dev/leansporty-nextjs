@@ -29,7 +29,7 @@ export function MobileMenu({ user, isInstructor }: MobileMenuProps) {
         <>
           {/* Backdrop */}
           <div
-            className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40 md:hidden"
+            className="fixed inset-0 bg-black/20 backdrop-blur-sm z-[55] md:hidden"
             onClick={() => setIsOpen(false)}
           />
 
