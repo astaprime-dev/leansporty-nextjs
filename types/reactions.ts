@@ -46,6 +46,7 @@ export interface StreamReactionAggregate {
 export interface ReactionButtonConfig {
   type: ReactionType;
   emoji: string;
+  icon: string; // Lucide icon name
   label: string;
   color: ReactionColor;
   isTechnical?: boolean;   // True for technical alerts (cant_see, no_audio)
@@ -104,6 +105,7 @@ export const REACTION_BUTTONS: ReactionButtonConfig[] = [
   {
     type: 'love_it',
     emoji: '👍',
+    icon: 'ThumbsUp',
     label: 'Love it!',
     color: 'green',
     isTechnical: false,
@@ -111,6 +113,7 @@ export const REACTION_BUTTONS: ReactionButtonConfig[] = [
   {
     type: 'feeling_burn',
     emoji: '🔥',
+    icon: 'Flame',
     label: 'Feeling the burn!',
     color: 'green',
     isTechnical: false,
@@ -118,6 +121,7 @@ export const REACTION_BUTTONS: ReactionButtonConfig[] = [
   {
     type: 'need_slower',
     emoji: '😅',
+    icon: 'Gauge',
     label: 'Need slower',
     color: 'yellow',
     isTechnical: false,
@@ -125,6 +129,7 @@ export const REACTION_BUTTONS: ReactionButtonConfig[] = [
   {
     type: 'cant_see',
     emoji: '⚠️',
+    icon: 'EyeOff',
     label: "Can't see you",
     color: 'red',
     isTechnical: true,
@@ -132,6 +137,7 @@ export const REACTION_BUTTONS: ReactionButtonConfig[] = [
   {
     type: 'no_audio',
     emoji: '🔇',
+    icon: 'VolumeX',
     label: 'No audio',
     color: 'red',
     isTechnical: true,

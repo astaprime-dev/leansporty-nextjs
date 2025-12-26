@@ -19,6 +19,7 @@ import {
   type ReactionType,
   type ReactionTimelineData,
 } from '@/types/reactions';
+import { ReactionIcon } from '@/components/stream/reaction-icon';
 import { AlertCircle, TrendingUp, Users, Clock } from 'lucide-react';
 
 // Register Chart.js components
@@ -278,7 +279,9 @@ export function StreamAnalytics({ streamId }: StreamAnalyticsProps) {
             const config = getReactionConfig(item.reaction_type);
             return (
               <div key={item.reaction_type} className="flex items-center gap-4">
-                <span className="text-3xl">{config.emoji}</span>
+                <div className="w-12 h-12 flex items-center justify-center">
+                  <ReactionIcon iconName={config.icon} className="w-8 h-8 text-gray-700" />
+                </div>
                 <div className="flex-1">
                   <div className="flex justify-between mb-1">
                     <span className="font-medium">{config.label}</span>
@@ -324,7 +327,9 @@ export function StreamAnalytics({ streamId }: StreamAnalyticsProps) {
                   className="bg-white rounded-lg p-4 border border-red-200"
                 >
                   <div className="flex items-start gap-3">
-                    <span className="text-3xl">{config.emoji}</span>
+                    <div className="w-12 h-12 flex items-center justify-center">
+                      <ReactionIcon iconName={config.icon} className="w-8 h-8 text-red-600" />
+                    </div>
                     <div className="flex-1">
                       <h4 className="font-semibold text-red-800">
                         {config.label}

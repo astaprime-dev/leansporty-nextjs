@@ -7,6 +7,7 @@ import {
   REACTION_COLOR_CLASSES,
   type ReactionType,
 } from '@/types/reactions';
+import { ReactionIcon } from '@/components/stream/reaction-icon';
 import { cn } from '@/lib/utils';
 
 interface ReactionButtonsProps {
@@ -112,10 +113,11 @@ export function ReactionButtons({
                   aria-label={button.label}
                   title={button.label}
                 >
-                  {/* Emoji */}
-                  <span className="text-3xl lg:text-4xl filter drop-shadow-lg">
-                    {button.emoji}
-                  </span>
+                  {/* SVG Icon */}
+                  <ReactionIcon
+                    iconName={button.icon}
+                    className="w-9 h-9 lg:w-11 lg:h-11 text-white drop-shadow-lg"
+                  />
 
                   {/* Cooldown Timer */}
                   {isOnCooldown && (

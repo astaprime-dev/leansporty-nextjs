@@ -7,6 +7,7 @@ import {
   type ReactionType,
   type ReactionEvent,
 } from '@/types/reactions';
+import { ReactionIcon } from '@/components/stream/reaction-icon';
 import { cn } from '@/lib/utils';
 import { X } from 'lucide-react';
 
@@ -93,7 +94,7 @@ export function ReactionDisplay({
                   key={reactionType}
                   className="flex items-center gap-2 bg-black/70 text-white px-3 py-2 rounded-full shadow-lg animate-in fade-in zoom-in-95 duration-200"
                 >
-                  <span className="text-2xl">{config.emoji}</span>
+                  <ReactionIcon iconName={config.icon} className="w-6 h-6 text-white" />
                   <span className="text-lg font-bold">{count}</span>
                 </div>
               );
@@ -113,7 +114,7 @@ export function ReactionDisplay({
               className="absolute bottom-4 left-1/2 -translate-x-1/2 pointer-events-auto animate-in fade-in slide-in-from-bottom-4 duration-300"
             >
               <div className="flex items-center gap-3 bg-red-500 text-white px-4 py-3 rounded-lg shadow-xl border-2 border-red-400 animate-pulse">
-                <span className="text-3xl">{config.emoji}</span>
+                <ReactionIcon iconName={config.icon} className="w-8 h-8 text-white" />
                 <div>
                   <p className="font-bold text-sm">
                     {count} {count === 1 ? 'user' : 'users'} reporting:
@@ -156,10 +157,12 @@ function FloatingReactionBubble({ event }: { event: ReactionEvent }) {
         animationTimingFunction: 'ease-out',
       }}
     >
-      <div className="text-6xl sm:text-7xl drop-shadow-lg">
-        {config.emoji}
+      <div className="flex items-center gap-2 drop-shadow-2xl">
+        <div className="bg-white/20 backdrop-blur-sm rounded-full p-4 border-2 border-white/40">
+          <ReactionIcon iconName={config.icon} className="w-12 h-12 sm:w-16 sm:h-16 text-white" />
+        </div>
         {event.isAggregate && (
-          <span className="text-2xl font-bold text-white ml-1">
+          <span className="text-2xl font-bold text-white bg-black/50 px-3 py-1 rounded-full">
             {event.count}
           </span>
         )}
