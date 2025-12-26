@@ -188,8 +188,8 @@ export function StreamWatchView({
           </p>
         </div>
 
-        {/* Comments Section - Only show after stream ends */}
-        {!isLive && stream.actual_end_time && (
+        {/* Comments Section - Show for all non-live streams */}
+        {!isLive && (
           <div className="mt-12 pt-8 border-t">
             <h2 className="text-2xl font-bold mb-6 text-gray-800">Reviews & Comments</h2>
 
