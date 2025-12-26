@@ -466,13 +466,13 @@ export function BrowserBroadcast({
       )}
 
       {/* Video Preview */}
-      <div className="relative bg-black rounded-lg overflow-hidden" style={{ paddingBottom: "56.25%" }}>
+      <div className="relative bg-black rounded-lg overflow-hidden w-full max-w-full" style={{ paddingBottom: "56.25%" }}>
         <video
           ref={videoRef}
           autoPlay
           playsInline
           muted
-          className="absolute top-0 left-0 w-full h-full object-cover"
+          className="absolute top-0 left-0 w-full h-full object-contain"
         />
 
         {connectionState === "idle" && (
