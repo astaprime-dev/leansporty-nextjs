@@ -99,7 +99,7 @@ export function InstructorProfileForm({
       }
 
       router.refresh();
-      router.push("/instructor/streams");
+      router.push("/instructor");
     } catch (err: any) {
       console.error("Profile save error:", err);
       if (err.code === "23505") {
