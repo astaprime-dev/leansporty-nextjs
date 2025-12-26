@@ -20,11 +20,17 @@ export default async function InstructorActivatePage() {
     .eq("user_id", user.id)
     .single();
 
-  // If they have an instructor profile, redirect to dashboard
-  if (instructorProfile) {
+  // Check if they have instructor role in app_metadata
+  const roles = user?.app_metadata?.roles || [];
+  const hasRole = roles.includes('instructor');
+
+  // If they have BOTH profile and role, they're fully activated
+  if (instructorProfile && hasRole) {
     redirect("/instructor");
   }
 
-  // Show activation form (user is logged in but not activated)
+  // Show activation form - handles both:
+  // 1. New instructors (no profile, no role)
+  // 2. Existing instructors from before role system (has profile, missing role)
   return <InstructorActivateForm />;
 }
