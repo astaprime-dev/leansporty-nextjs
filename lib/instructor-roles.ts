@@ -1,11 +1,21 @@
-import { createClient } from "@/utils/supabase/server";
+import { createClient } from "@supabase/supabase-js";
 
 /**
  * Grant instructor role to a user
  * Creates instructor profile and sets role in app_metadata
  */
 export async function grantInstructorRole(userId: string) {
-  const supabase = await createClient();
+  // Create admin client with service role key for auth.admin methods
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false
+      }
+    }
+  );
 
   try {
     // 1. Get user details
@@ -136,7 +146,17 @@ export async function grantInstructorRole(userId: string) {
  * Deletes instructor profile and removes 'instructor' from roles array
  */
 export async function revokeInstructorRole(userId: string) {
-  const supabase = await createClient();
+  // Create admin client with service role key for auth.admin methods
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false
+      }
+    }
+  );
 
   try {
     // 1. Get user to access current roles
@@ -185,7 +205,17 @@ export async function revokeInstructorRole(userId: string) {
  * Fast check using app_metadata (no DB query)
  */
 export async function hasInstructorRole(userId: string): Promise<boolean> {
-  const supabase = await createClient();
+  // Create admin client with service role key for auth.admin methods
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false
+      }
+    }
+  );
 
   const { data: { user } } = await supabase.auth.admin.getUserById(userId);
 
@@ -198,7 +228,11 @@ export async function hasInstructorRole(userId: string): Promise<boolean> {
  * Authoritative check for actual profile existence
  */
 export async function verifyInstructorProfile(userId: string): Promise<boolean> {
-  const supabase = await createClient();
+  // For database queries, regular client is fine (doesn't need service role)
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  );
 
   const { data: profile } = await supabase
     .from("instructors")
