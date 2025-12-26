@@ -10,23 +10,26 @@ export default async function InstructorStreamsPage() {
 
   // Check if instructor has profile
   const { data: { user } } = await supabase.auth.getUser();
-  if (user) {
-    const { data: instructorProfile } = await supabase
-      .from("instructors")
-      .select("id")
-      .eq("user_id", user.id)
-      .single();
-
-    if (!instructorProfile) {
-      // No profile yet, redirect to create one
-      redirect("/instructor/profile");
-    }
+  if (!user) {
+    redirect("/login");
   }
 
-  // Fetch all streams (sorted by scheduled time)
+  const { data: instructorProfile } = await supabase
+    .from("instructors")
+    .select("id")
+    .eq("user_id", user.id)
+    .single();
+
+  if (!instructorProfile) {
+    // No profile yet, redirect to create one
+    redirect("/instructor/profile");
+  }
+
+  // Fetch only this instructor's streams (sorted by scheduled time)
   const { data: streams } = await supabase
     .from("live_stream_sessions")
     .select("*")
+    .eq("instructor_id", instructorProfile.id)
     .order("scheduled_start_time", { ascending: false });
 
   const streamsList = (streams || []) as LiveStreamSession[];

@@ -2,6 +2,7 @@ import { createClient } from "@/utils/supabase/server";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { getStreams, getUserEnrollments } from "@/app/actions";
 
 interface ProfilePageProps {
   params: Promise<{
@@ -43,16 +44,18 @@ export default async function ProfilePage({
   const isInstructor = !!instructor;
   const profile = instructor || userProfile;
 
-  // Only fetch streams if this is an instructor profile
-  const { data: upcomingStreams } = isInstructor
-    ? await supabase
-        .from("live_stream_sessions")
-        .select("*")
-        .eq("instructor_id", instructor.id)
-        .in("status", ["scheduled", "live"])
-        .gte("scheduled_start_time", new Date().toISOString())
-        .order("scheduled_start_time", { ascending: true })
-    : { data: null };
+  // Fetch user enrollments to show past scheduled streams if enrolled
+  const enrollments = await getUserEnrollments();
+  const enrolledStreamIds = enrollments.map(e => e.stream_id);
+
+  // Fetch streams using shared business logic
+  // If instructor profile: shows ALL their scheduled/live streams
+  // Otherwise: shows future scheduled + enrolled past scheduled
+  const streams = isInstructor
+    ? await getStreams({ enrolledStreamIds, instructorId: instructor.id })
+    : { liveStreams: [], upcomingStreams: [] };
+
+  const upcomingStreams = [...streams.liveStreams, ...streams.upcomingStreams];
 
   // Get instructor's past streams (for reference/portfolio)
   const { data: pastStreams } = isInstructor

@@ -273,41 +273,77 @@ export const getWorkouts = async (): Promise<Workout[]> => {
 // ============================================
 
 /**
- * Get live and upcoming streams
+ * Get live and upcoming streams with enrollment-aware filtering
+ *
+ * Business logic:
+ * - Not authenticated: show only future scheduled streams
+ * - Authenticated but not enrolled: show only future scheduled streams
+ * - Enrolled users: show future scheduled + their past enrolled scheduled streams
+ * - Instructor profile pages (when instructorId provided): show ALL instructor's scheduled streams
  */
-export const getStreams = async (): Promise<{
+export const getStreams = async (options?: {
+  enrolledStreamIds?: string[];
+  instructorId?: string;
+}): Promise<{
   liveStreams: LiveStreamSession[];
   upcomingStreams: LiveStreamSession[];
 }> => {
   const supabase = await createClient();
   const now = new Date().toISOString();
 
-  // Get live streams
-  const { data: liveData, error: liveError } = await supabase
+  // Build live streams query
+  let liveQuery = supabase
     .from('live_stream_sessions')
     .select('*')
-    .eq('status', 'live')
+    .eq('status', 'live');
+
+  if (options?.instructorId) {
+    liveQuery = liveQuery.eq('instructor_id', options.instructorId);
+  }
+
+  const { data: liveData, error: liveError } = await liveQuery
     .order('actual_start_time', { ascending: false });
 
   if (liveError) {
     console.error("Error fetching live streams:", liveError);
   }
 
-  // Get upcoming streams (scheduled, not yet started)
-  const { data: upcomingData, error: upcomingError } = await supabase
+  // Build scheduled streams query
+  let scheduledQuery = supabase
     .from('live_stream_sessions')
     .select('*')
-    .eq('status', 'scheduled')
-    .gte('scheduled_start_time', now)
+    .eq('status', 'scheduled');
+
+  if (options?.instructorId) {
+    scheduledQuery = scheduledQuery.eq('instructor_id', options.instructorId);
+  }
+
+  const { data: allScheduledData, error: upcomingError } = await scheduledQuery
     .order('scheduled_start_time', { ascending: true });
 
   if (upcomingError) {
     console.error("Error fetching upcoming streams:", upcomingError);
   }
 
+  // Filter upcoming streams based on context:
+  // - If viewing instructor profile: show ALL their scheduled streams
+  // - Otherwise: show future scheduled OR enrolled past scheduled
+  const upcomingData = (allScheduledData || []).filter((stream) => {
+    if (options?.instructorId) {
+      // On instructor profile: show all scheduled streams
+      return true;
+    }
+
+    const isFutureScheduled = stream.scheduled_start_time >= now;
+    const isEnrolled = options?.enrolledStreamIds?.includes(stream.id);
+
+    // Show if future scheduled OR user is enrolled (even if past scheduled)
+    return isFutureScheduled || isEnrolled;
+  });
+
   return {
     liveStreams: (liveData || []) as LiveStreamSession[],
-    upcomingStreams: (upcomingData || []) as LiveStreamSession[],
+    upcomingStreams: upcomingData as LiveStreamSession[],
   };
 };
 

@@ -149,6 +149,76 @@ INSTRUCTOR_ACCESS_TOKEN=your_secure_token
 3. Enroll → Tokens deducted
 4. Watch Live (WHEP) or Replay (HLS within 7 days)
 
+## Stream Visibility Business Logic
+
+The `getStreams()` function in `/app/actions.ts` implements enrollment-aware filtering to control which streams are visible to different user types:
+
+### Visibility Rules
+
+#### Public Streams Page (`/streams`)
+
+**Not Authenticated Users**:
+- ✅ Can see LIVE streams (status = 'live')
+- ✅ Can see SCHEDULED streams with future `scheduled_start_time`
+- ❌ Cannot see SCHEDULED streams with past `scheduled_start_time`
+- ❌ Cannot see ENDED or CANCELLED streams
+
+**Authenticated Users (Not Enrolled)**:
+- ✅ Can see LIVE streams (status = 'live')
+- ✅ Can see SCHEDULED streams with future `scheduled_start_time`
+- ❌ Cannot see SCHEDULED streams with past `scheduled_start_time` (unless enrolled)
+- ❌ Cannot see ENDED or CANCELLED streams
+
+**Authenticated Users (Enrolled)**:
+- ✅ Can see LIVE streams (status = 'live')
+- ✅ Can see SCHEDULED streams with future `scheduled_start_time`
+- ✅ Can see SCHEDULED streams they're enrolled in (even if `scheduled_start_time` is in the past)
+- ❌ Cannot see ENDED or CANCELLED streams (unless enrolled for replay access)
+
+#### Instructor Profile Pages (`/[username]`)
+
+**All Users** (when viewing an instructor's profile):
+- ✅ Can see ALL of that instructor's SCHEDULED streams (regardless of `scheduled_start_time`)
+- ✅ Can see ALL of that instructor's LIVE streams
+- ✅ Can see past streams (status = 'ended') for instructor's portfolio
+
+#### Instructor Dashboard (`/instructor/streams`)
+
+**Instructors** (viewing their own dashboard):
+- ✅ Can see ALL of their own streams (SCHEDULED, LIVE, ENDED, CANCELLED)
+- ❌ Cannot see other instructors' streams
+
+### Implementation Details
+
+```typescript
+getStreams(options?: {
+  enrolledStreamIds?: string[];  // Pass enrolled stream IDs for enrolled users
+  instructorId?: string;          // Pass to show ALL instructor's streams
+})
+```
+
+**Filtering Logic**:
+```typescript
+// For instructor profiles: show all their scheduled streams
+if (options?.instructorId) {
+  return true;  // No time filtering
+}
+
+// For public pages: filter by time and enrollment
+const isFutureScheduled = stream.scheduled_start_time >= now;
+const isEnrolled = options?.enrolledStreamIds?.includes(stream.id);
+
+// Show if future scheduled OR user is enrolled (even if past scheduled)
+return isFutureScheduled || isEnrolled;
+```
+
+### Timezone Handling
+
+- All times are stored and compared in **UTC** (ISO 8601 format)
+- `scheduled_start_time` example: `2025-12-26T04:05:00+00:00`
+- Current time generated via: `new Date().toISOString()`
+- **Important**: When creating streams, ensure the scheduled time is correctly converted to UTC
+
 ## Troubleshooting
 
 ### WHIP Broadcasting
