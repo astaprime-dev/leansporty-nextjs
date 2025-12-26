@@ -6,6 +6,17 @@ export async function POST(request: NextRequest) {
   try {
     const data = await request.json();
 
+    // Validate scheduled time is in the future
+    const scheduledDate = new Date(data.scheduledStartTime);
+    const now = new Date();
+
+    if (scheduledDate <= now) {
+      return NextResponse.json(
+        { error: "Scheduled start time must be in the future" },
+        { status: 400 }
+      );
+    }
+
     // Check Cloudflare environment variables
     if (!process.env.CLOUDFLARE_ACCOUNT_ID || !process.env.CLOUDFLARE_API_TOKEN) {
       console.error("Missing Cloudflare credentials");

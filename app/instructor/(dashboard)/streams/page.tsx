@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/utils/supabase/server";
 import { LiveStreamSession } from "@/types/streaming";
-import { Plus } from "lucide-react";
+import { Plus, Edit, Radio, Calendar, Coins, Users } from "lucide-react";
 import { redirect } from "next/navigation";
 
 export default async function InstructorStreamsPage() {
@@ -61,46 +61,71 @@ export default async function InstructorStreamsPage() {
       ) : (
         <div className="grid gap-4">
           {streamsList.map((stream) => (
-            <Link
+            <div
               key={stream.id}
-              href={`/instructor/streams/${stream.id}/broadcast`}
-              className="block"
+              className="bg-white rounded-lg border border-gray-200 p-6 hover:border-pink-300 hover:shadow-md transition-all"
             >
-              <div className="bg-white rounded-lg border border-gray-200 p-6 hover:border-pink-300 hover:shadow-md transition-all">
-                <div className="flex justify-between items-start">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-3 mb-2">
-                      <h3 className="text-xl font-semibold text-gray-900">
-                        {stream.title}
-                      </h3>
-                      <span
-                        className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                          stream.status === "live"
-                            ? "bg-red-100 text-red-700"
-                            : stream.status === "scheduled"
-                            ? "bg-blue-100 text-blue-700"
-                            : "bg-gray-100 text-gray-700"
-                        }`}
-                      >
-                        {stream.status.toUpperCase()}
-                      </span>
-                    </div>
-                    <p className="text-gray-600 mb-3">{stream.description}</p>
-                    <div className="flex gap-6 text-sm text-gray-500">
-                      <span>
-                        📅{" "}
-                        {new Date(stream.scheduled_start_time).toLocaleString()}
-                      </span>
-                      <span>💰 {stream.price_in_tokens} tokens</span>
-                      <span>👥 {stream.total_enrollments} enrolled</span>
-                    </div>
+              <div className="flex justify-between items-start">
+                <div className="flex-1">
+                  <div className="flex items-center gap-3 mb-2">
+                    <h3 className="text-xl font-semibold text-gray-900">
+                      {stream.title}
+                    </h3>
+                    <span
+                      className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                        stream.status === "live"
+                          ? "bg-red-100 text-red-700"
+                          : stream.status === "scheduled"
+                          ? "bg-blue-100 text-blue-700"
+                          : "bg-gray-100 text-gray-700"
+                      }`}
+                    >
+                      {stream.status.toUpperCase()}
+                    </span>
                   </div>
-                  <Button variant="outline" size="sm">
-                    Manage →
-                  </Button>
+                  <p className="text-gray-600 mb-3">{stream.description}</p>
+                  <div className="flex gap-6 text-sm text-gray-500">
+                    <span className="flex items-center gap-1">
+                      <Calendar className="w-4 h-4" />
+                      {new Date(stream.scheduled_start_time).toLocaleString()}
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <Coins className="w-4 h-4" />
+                      {stream.price_in_tokens} tokens
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <Users className="w-4 h-4" />
+                      {stream.total_enrollments} enrolled
+                    </span>
+                  </div>
+                </div>
+                <div className="flex gap-2">
+                  {stream.status === "scheduled" && (
+                    <Link href={`/instructor/streams/${stream.id}/edit`}>
+                      <Button variant="outline" size="sm">
+                        <Edit className="w-4 h-4 mr-1" />
+                        Edit
+                      </Button>
+                    </Link>
+                  )}
+                  <Link href={`/instructor/streams/${stream.id}/broadcast`}>
+                    <Button
+                      variant={stream.status === "scheduled" ? "outline" : "default"}
+                      size="sm"
+                    >
+                      {stream.status === "scheduled" ? (
+                        <>
+                          <Radio className="w-4 h-4 mr-1" />
+                          Broadcast
+                        </>
+                      ) : (
+                        "Manage →"
+                      )}
+                    </Button>
+                  </Link>
                 </div>
               </div>
-            </Link>
+            </div>
           ))}
         </div>
       )}
