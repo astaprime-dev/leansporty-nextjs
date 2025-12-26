@@ -3,7 +3,13 @@
 -- Run this entire file in Supabase SQL Editor
 -- ============================================================================
 
--- Drop existing functions first to avoid conflicts
+-- Drop existing triggers first (they depend on functions)
+DROP TRIGGER IF EXISTS before_insert_comment ON stream_comments;
+DROP TRIGGER IF EXISTS before_update_comment ON stream_comments;
+DROP TRIGGER IF EXISTS update_comments_timestamp ON stream_comments;
+DROP TRIGGER IF EXISTS update_replies_timestamp ON stream_comment_replies;
+
+-- Now drop existing functions
 DROP FUNCTION IF EXISTS increment_watch_duration(UUID, INTEGER);
 DROP FUNCTION IF EXISTS get_total_watch_duration(UUID);
 DROP FUNCTION IF EXISTS check_attendance_threshold(UUID, INTEGER);
