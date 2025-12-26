@@ -90,14 +90,24 @@ export async function GET(request: NextRequest) {
         .filter(r => r.comment_id === comment.id)
         .map(reply => ({
           ...reply,
-          instructors: Array.isArray(reply.instructors) ? reply.instructors[0] : reply.instructors,
+          instructors: Array.isArray(reply.instructors)
+            ? (reply.instructors[0] || { display_name: 'Instructor', profile_photo_url: null })
+            : (reply.instructors || { display_name: 'Instructor', profile_photo_url: null }),
         }));
+
+      // Handle user_profiles (can be array, object, or null)
+      let userProfile;
+      if (Array.isArray(comment.user_profiles)) {
+        userProfile = comment.user_profiles[0] || { display_name: 'Unknown User', username: 'unknown', profile_photo_url: null };
+      } else if (comment.user_profiles) {
+        userProfile = comment.user_profiles;
+      } else {
+        userProfile = { display_name: 'Unknown User', username: 'unknown', profile_photo_url: null };
+      }
 
       return {
         ...comment,
-        user_profiles: Array.isArray(comment.user_profiles)
-          ? (comment.user_profiles[0] || { display_name: 'Unknown User', username: 'unknown', profile_photo_url: null })
-          : (comment.user_profiles || { display_name: 'Unknown User', username: 'unknown', profile_photo_url: null }),
+        user_profiles: userProfile,
         replies: commentReplies,
       };
     });
