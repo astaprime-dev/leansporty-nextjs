@@ -1,11 +1,16 @@
 "use client";
 
+import { useState } from "react";
 import { LiveStreamSession, StreamEnrollment } from "@/types/streaming";
 import { CloudflareStreamPlayer } from "@/components/CloudflareStreamPlayer";
 import { WHEPPlayer } from "@/components/whep-player";
 import { ReactionButtons } from "@/components/stream/reaction-buttons";
+import { LiveViewerCount } from "@/components/stream/live-viewer-count";
 import { Badge } from "@/components/ui/badge";
 import { Calendar, Users, Clock } from "lucide-react";
+import { useWatchSession } from "@/hooks/use-watch-session";
+import { CommentForm } from "@/components/stream/comment-form";
+import { CommentList } from "@/components/stream/comment-list";
 
 interface StreamWatchViewProps {
   stream: LiveStreamSession;
@@ -18,6 +23,17 @@ export function StreamWatchView({
   enrollment,
   isLive,
 }: StreamWatchViewProps) {
+  // Track playing state for attendance tracking
+  const [isPlaying, setIsPlaying] = useState(false);
+
+  // Track watch session for attendance (only tracks live sessions for commenting)
+  useWatchSession({
+    streamId: stream.id,
+    enrollmentId: enrollment.id,
+    sessionType: isLive ? 'live' : 'replay',
+    enabled: isPlaying,
+  });
+
   // For live streams, we need the WHEP playback URL
   // For recordings, we use the regular playback ID
   const whepUrl = isLive ? stream.cloudflare_whep_playback_url : null;
@@ -77,6 +93,7 @@ export function StreamWatchView({
               autoplay={true}
               muted={false}
               poster={stream.thumbnail_url || undefined}
+              onPlayStateChange={setIsPlaying}
             />
           ) : recordingPlaybackId ? (
             /* Recordings use regular HLS playback */
@@ -85,6 +102,7 @@ export function StreamWatchView({
               autoplay={false}
               controls={true}
               poster={stream.thumbnail_url || undefined}
+              onPlayStateChange={setIsPlaying}
             />
           ) : null}
         </div>
@@ -107,16 +125,26 @@ export function StreamWatchView({
             )}
           </div>
 
-          {/* Live badge */}
-          {isLive && (
-            <Badge className="bg-red-500 text-white px-4 py-2 text-base flex items-center gap-2">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-white"></span>
-              </span>
-              LIVE
-            </Badge>
-          )}
+          <div className="flex items-center gap-3">
+            {/* Live viewer count badge */}
+            {isLive && (
+              <LiveViewerCount
+                streamId={stream.id}
+                variant="badge"
+              />
+            )}
+
+            {/* Live badge */}
+            {isLive && (
+              <Badge className="bg-red-500 text-white px-4 py-2 text-base flex items-center gap-2">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-white"></span>
+                </span>
+                LIVE
+              </Badge>
+            )}
+          </div>
         </div>
 
         {/* Description */}
@@ -159,6 +187,27 @@ export function StreamWatchView({
             ✓ You're enrolled in this stream ({enrollment.tokens_paid} tokens)
           </p>
         </div>
+
+        {/* Comments Section - Only show after stream ends */}
+        {!isLive && stream.actual_end_time && (
+          <div className="mt-12 pt-8 border-t">
+            <h2 className="text-2xl font-bold mb-6 text-gray-800">Reviews & Comments</h2>
+
+            {/* Comment Form */}
+            <div className="mb-8">
+              <CommentForm
+                streamId={stream.id}
+                onSuccess={() => {
+                  // Refresh the page to show new comment
+                  window.location.reload();
+                }}
+              />
+            </div>
+
+            {/* Comment List */}
+            <CommentList streamId={stream.id} />
+          </div>
+        )}
       </div>
     </div>
   );

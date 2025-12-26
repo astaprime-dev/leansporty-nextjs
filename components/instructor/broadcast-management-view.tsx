@@ -3,6 +3,7 @@
 import { LiveStreamSession } from "@/types/streaming";
 import { BrowserBroadcast } from "@/components/instructor/browser-broadcast";
 import { ReactionDisplay } from "@/components/instructor/reaction-display";
+import { LiveViewerCount } from "@/components/stream/live-viewer-count";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -154,6 +155,15 @@ export function BroadcastManagementView({ stream }: BroadcastManagementViewProps
               )}
             </div>
           </div>
+
+          {/* Live Viewer Count - Only show when stream is live */}
+          {streamStatus === "live" && (
+            <LiveViewerCount
+              streamId={stream.id}
+              showDetails={true}
+              variant="full"
+            />
+          )}
 
           {/* Stats Card */}
           <div className="bg-white rounded-lg border p-6">

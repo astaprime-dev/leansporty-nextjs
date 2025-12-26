@@ -13,6 +13,7 @@ interface CloudflareStreamPlayerProps {
   onPlay?: () => void;
   onPause?: () => void;
   onEnded?: () => void;
+  onPlayStateChange?: (isPlaying: boolean) => void;
 }
 
 /**
@@ -30,6 +31,7 @@ export function CloudflareStreamPlayer({
   onPlay,
   onPause,
   onEnded,
+  onPlayStateChange,
 }: CloudflareStreamPlayerProps) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [embedUrl, setEmbedUrl] = useState<string>("");
@@ -75,6 +77,34 @@ export function CloudflareStreamPlayer({
       iframe.removeEventListener("load", handleLoad);
     };
   }, [onReady]);
+
+  // Listen for Cloudflare Stream player events via postMessage
+  useEffect(() => {
+    const handleMessage = (event: MessageEvent) => {
+      // Verify the message is from Cloudflare Stream
+      if (!event.origin.includes('cloudflarestream.com')) return;
+
+      const data = event.data;
+
+      // Handle different event types from Cloudflare Stream
+      if (data.event === 'play') {
+        onPlay?.();
+        onPlayStateChange?.(true);
+      } else if (data.event === 'pause') {
+        onPause?.();
+        onPlayStateChange?.(false);
+      } else if (data.event === 'ended') {
+        onEnded?.();
+        onPlayStateChange?.(false);
+      }
+    };
+
+    window.addEventListener('message', handleMessage);
+
+    return () => {
+      window.removeEventListener('message', handleMessage);
+    };
+  }, [onPlay, onPause, onEnded, onPlayStateChange]);
 
   if (!embedUrl) {
     return (

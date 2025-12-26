@@ -9,6 +9,7 @@ interface WHEPPlayerProps {
   muted?: boolean;
   poster?: string;
   className?: string;
+  onPlayStateChange?: (isPlaying: boolean) => void;
 }
 
 /**
@@ -21,6 +22,7 @@ export function WHEPPlayer({
   muted = false,
   poster,
   className = "",
+  onPlayStateChange,
 }: WHEPPlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const playerRef = useRef<WebRTCPlayer | null>(null);
@@ -77,6 +79,26 @@ export function WHEPPlayer({
       }
     };
   }, [whepUrl, autoplay, muted]);
+
+  // Track play/pause state for attendance tracking
+  useEffect(() => {
+    const videoElement = videoRef.current;
+    if (!videoElement || !onPlayStateChange) return;
+
+    const handlePlay = () => onPlayStateChange(true);
+    const handlePause = () => onPlayStateChange(false);
+    const handleEnded = () => onPlayStateChange(false);
+
+    videoElement.addEventListener('play', handlePlay);
+    videoElement.addEventListener('pause', handlePause);
+    videoElement.addEventListener('ended', handleEnded);
+
+    return () => {
+      videoElement.removeEventListener('play', handlePlay);
+      videoElement.removeEventListener('pause', handlePause);
+      videoElement.removeEventListener('ended', handleEnded);
+    };
+  }, [onPlayStateChange]);
 
   return (
     <div className={`relative w-full ${className}`} style={{ paddingBottom: "56.25%" }}>
