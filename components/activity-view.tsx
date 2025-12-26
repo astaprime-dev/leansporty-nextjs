@@ -1,16 +1,35 @@
 "use client";
 
 import { WorkoutHistoryItem } from "@/types/database";
+import { LiveStreamSession, StreamEnrollment } from "@/types/streaming";
 import { useState, useMemo } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Radio, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { StreamCard } from "@/components/stream-card";
+import Link from "next/link";
 
 interface ActivityViewProps {
   workoutHistory: WorkoutHistoryItem[];
+  upcomingStreams: LiveStreamSession[];
+  liveStreams: LiveStreamSession[];
+  enrollments: StreamEnrollment[];
+  isAuthenticated: boolean;
 }
 
-export function ActivityView({ workoutHistory }: ActivityViewProps) {
+export function ActivityView({
+  workoutHistory,
+  upcomingStreams,
+  liveStreams,
+  enrollments,
+  isAuthenticated
+}: ActivityViewProps) {
   const [selectedDate, setSelectedDate] = useState(new Date());
+
+  // Create enrollment map
+  const enrollmentMap = new Map(enrollments.map((e) => [e.stream_id, e]));
+
+  // Combine live and upcoming streams, limit to 3
+  const featuredStreams = [...liveStreams, ...upcomingStreams].slice(0, 3);
 
   // Helper function to format duration from seconds to HH:MM:SS or MM:SS
   const formatDuration = (seconds: number) => {
@@ -96,6 +115,42 @@ export function ActivityView({ workoutHistory }: ActivityViewProps) {
         <h1 className="text-4xl font-bold mb-2">Activity</h1>
         <p className="text-muted-foreground">Your workout history and progress</p>
       </div>
+
+      {/* Live Streams Section */}
+      {featuredStreams.length > 0 && (
+        <div className="bg-gradient-to-br from-pink-50 to-rose-50 rounded-2xl p-6 border border-pink-100">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h2 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
+                {liveStreams.length > 0 && (
+                  <Radio className="w-6 h-6 text-red-500 animate-pulse" />
+                )}
+                <Calendar className="w-6 h-6 text-pink-500" />
+                Join Live Classes
+              </h2>
+              <p className="text-sm text-gray-600 mt-1">
+                Connect with instructors in real-time dance workouts
+              </p>
+            </div>
+            <Link href="/streams">
+              <Button variant="outline" size="sm" className="border-pink-300 text-pink-600 hover:bg-pink-100">
+                View All Streams
+              </Button>
+            </Link>
+          </div>
+          <div className="grid gap-4">
+            {featuredStreams.map((stream) => (
+              <StreamCard
+                key={stream.id}
+                stream={stream}
+                enrollment={enrollmentMap.get(stream.id)}
+                isLive={stream.status === "live"}
+                isAuthenticated={isAuthenticated}
+              />
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Month Navigation */}
       <div className="flex items-center justify-between">
