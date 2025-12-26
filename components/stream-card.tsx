@@ -113,7 +113,7 @@ export function StreamCard({ stream, enrollment, isLive, isAuthenticated }: Stre
               <p className="text-gray-600 mb-3">
                 with{" "}
                 <Link
-                  href={`/${stream.instructor.slug}`}
+                  href={`/@${stream.instructor.slug}`}
                   className="font-semibold hover:text-pink-500 transition-colors"
                 >
                   {stream.instructor.display_name}

@@ -15,8 +15,13 @@ export default async function ProfilePage({
 }: ProfilePageProps) {
   const { username } = await params;
 
-  // Remove @ prefix if present (for /@username URLs)
-  const slug = username.startsWith('@') ? username.slice(1) : username;
+  // Require @ prefix - show 404 if missing
+  if (!username.startsWith('@')) {
+    notFound();
+  }
+
+  // Remove @ prefix for database lookup
+  const slug = username.slice(1);
 
   const supabase = await createClient();
 
