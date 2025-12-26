@@ -3,6 +3,7 @@
 import { LiveStreamSession, StreamEnrollment } from "@/types/streaming";
 import { CloudflareStreamPlayer } from "@/components/CloudflareStreamPlayer";
 import { WHEPPlayer } from "@/components/whep-player";
+import { ReactionButtons } from "@/components/stream/reaction-buttons";
 import { Badge } from "@/components/ui/badge";
 import { Calendar, Users, Clock } from "lucide-react";
 
@@ -66,7 +67,7 @@ export function StreamWatchView({
   return (
     <div className="flex-1 w-full flex flex-col gap-6 px-4 py-8 max-w-7xl mx-auto">
       {/* Video Player */}
-      <div className="w-full">
+      <div className="w-full relative">
         {isLive && whepUrl ? (
           /* Live stream uses WHEP (WebRTC) for sub-second latency */
           <WHEPPlayer
@@ -84,6 +85,9 @@ export function StreamWatchView({
             poster={stream.thumbnail_url || undefined}
           />
         ) : null}
+
+        {/* Reaction Buttons - Only shown during live streams */}
+        <ReactionButtons streamId={stream.id} isLive={isLive} />
       </div>
 
       {/* Stream Info */}

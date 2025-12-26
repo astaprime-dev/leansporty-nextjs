@@ -2,6 +2,7 @@
 
 import { LiveStreamSession } from "@/types/streaming";
 import { BrowserBroadcast } from "@/components/instructor/browser-broadcast";
+import { ReactionDisplay } from "@/components/instructor/reaction-display";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -74,12 +75,19 @@ export function BroadcastManagementView({ stream }: BroadcastManagementViewProps
 
           {/* Broadcast Component */}
           {stream.cloudflare_webrtc_url && (
-            <BrowserBroadcast
-              webrtcUrl={stream.cloudflare_webrtc_url}
-              webrtcToken={stream.cloudflare_webrtc_token || undefined}
-              onStreamStart={handleMarkLive}
-              onStreamEnd={handleEndStream}
-            />
+            <div className="relative">
+              <BrowserBroadcast
+                webrtcUrl={stream.cloudflare_webrtc_url}
+                webrtcToken={stream.cloudflare_webrtc_token || undefined}
+                onStreamStart={handleMarkLive}
+                onStreamEnd={handleEndStream}
+              />
+              {/* Reaction Display Overlay - Shows viewer reactions in real-time */}
+              <ReactionDisplay
+                streamId={stream.id}
+                isLive={streamStatus === "live"}
+              />
+            </div>
           )}
 
           {/* Stream Info */}

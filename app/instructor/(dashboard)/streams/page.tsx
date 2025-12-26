@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/utils/supabase/server";
 import { LiveStreamSession } from "@/types/streaming";
-import { Plus, Edit, Radio, Calendar, Coins, Users } from "lucide-react";
+import { Plus, Edit, Radio, Calendar, Coins, Users, TrendingUp } from "lucide-react";
 import { redirect } from "next/navigation";
 
 export default async function InstructorStreamsPage() {
@@ -111,22 +111,35 @@ export default async function InstructorStreamsPage() {
                       </Button>
                     </Link>
                   )}
-                  <Link href={`/instructor/streams/${stream.id}/broadcast`} className="flex-1 sm:flex-initial">
-                    <Button
-                      variant={stream.status === "scheduled" ? "outline" : "default"}
-                      size="sm"
-                      className="w-full"
-                    >
-                      {stream.status === "scheduled" ? (
-                        <>
-                          <Radio className="w-4 h-4 mr-1" />
-                          Broadcast
-                        </>
-                      ) : (
-                        "Manage →"
-                      )}
-                    </Button>
-                  </Link>
+                  {stream.status === "ended" ? (
+                    <Link href={`/instructor/streams/${stream.id}`} className="flex-1 sm:flex-initial">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="w-full"
+                      >
+                        <TrendingUp className="w-4 h-4 mr-1" />
+                        View Analytics
+                      </Button>
+                    </Link>
+                  ) : (
+                    <Link href={`/instructor/streams/${stream.id}/broadcast`} className="flex-1 sm:flex-initial">
+                      <Button
+                        variant={stream.status === "scheduled" ? "outline" : "default"}
+                        size="sm"
+                        className="w-full"
+                      >
+                        {stream.status === "scheduled" ? (
+                          <>
+                            <Radio className="w-4 h-4 mr-1" />
+                            Broadcast
+                          </>
+                        ) : (
+                          "Manage →"
+                        )}
+                      </Button>
+                    </Link>
+                  )}
                 </div>
               </div>
             </div>
