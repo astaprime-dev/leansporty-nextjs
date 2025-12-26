@@ -15,9 +15,10 @@ import Link from "next/link";
 
 interface UserMenuProps {
   user: User;
+  isInstructor?: boolean;
 }
 
-export function UserMenu({ user }: UserMenuProps) {
+export function UserMenu({ user, isInstructor = false }: UserMenuProps) {
   // Get profile picture from OAuth provider metadata
   const avatarUrl =
     user.user_metadata?.avatar_url ||
@@ -31,12 +32,18 @@ export function UserMenu({ user }: UserMenuProps) {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <button className="flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2 rounded-full">
-          <Avatar className="h-9 w-9 cursor-pointer hover:ring-2 hover:ring-pink-500 transition-all">
-            {avatarUrl && <AvatarImage src={avatarUrl} alt={user.email || ""} />}
-            <AvatarFallback className="bg-gradient-to-br from-pink-500 to-purple-500 text-white font-medium">
-              {firstLetter}
-            </AvatarFallback>
-          </Avatar>
+          <div className={isInstructor ? 'relative p-0.5 rounded-full bg-gradient-to-br from-pink-500 via-rose-400 to-pink-500' : ''}>
+            <Avatar className={`h-9 w-9 cursor-pointer transition-all ${
+              isInstructor
+                ? 'ring-2 ring-white hover:ring-pink-300'
+                : 'hover:ring-2 hover:ring-pink-500'
+            }`}>
+              {avatarUrl && <AvatarImage src={avatarUrl} alt={user.email || ""} />}
+              <AvatarFallback className="bg-gradient-to-br from-pink-500 to-purple-500 text-white font-medium">
+                {firstLetter}
+              </AvatarFallback>
+            </Avatar>
+          </div>
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56">

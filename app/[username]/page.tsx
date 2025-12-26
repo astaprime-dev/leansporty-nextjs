@@ -86,23 +86,34 @@ export default async function ProfilePage({
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-pink-50/30 to-white">
+    <div className={`min-h-screen ${isInstructor
+      ? 'bg-gradient-to-b from-pink-100/40 via-rose-50/30 to-white'
+      : 'bg-gradient-to-b from-pink-50/30 to-white'}`}>
       <div className="max-w-5xl mx-auto px-4 py-12">
         {/* Profile Header */}
-        <div className="bg-white rounded-2xl border border-pink-100 shadow-sm p-8 mb-8">
-          <div className="flex flex-col md:flex-row gap-6 items-start md:items-center">
-            {/* Profile Photo */}
-            <Avatar className="h-32 w-32">
-              {profile.profile_photo_url && (
-                <AvatarImage
-                  src={profile.profile_photo_url}
-                  alt={profile.display_name}
-                />
-              )}
-              <AvatarFallback className="bg-gradient-to-br from-pink-500 to-purple-500 text-white text-4xl font-medium">
-                {profile.display_name.charAt(0).toUpperCase()}
-              </AvatarFallback>
-            </Avatar>
+        <div className={`bg-white rounded-2xl border shadow-sm p-8 mb-8 ${isInstructor
+          ? 'border-pink-200 shadow-pink-100/50 shadow-lg relative overflow-hidden'
+          : 'border-pink-100'}`}>
+          {/* Premium glow effect for instructors */}
+          {isInstructor && (
+            <div className="absolute inset-0 bg-gradient-to-br from-pink-50/60 via-transparent to-rose-50/60 pointer-events-none" />
+          )}
+
+          <div className="flex flex-col md:flex-row gap-6 items-start md:items-center relative z-10">
+            {/* Profile Photo with gradient ring for instructors */}
+            <div className={isInstructor ? 'relative p-1 rounded-full bg-gradient-to-br from-pink-500 via-rose-400 to-pink-500 animate-pulse' : ''}>
+              <Avatar className={`h-32 w-32 ${isInstructor ? 'ring-4 ring-white' : ''}`}>
+                {profile.profile_photo_url && (
+                  <AvatarImage
+                    src={profile.profile_photo_url}
+                    alt={profile.display_name}
+                  />
+                )}
+                <AvatarFallback className="bg-gradient-to-br from-pink-500 to-purple-500 text-white text-4xl font-medium">
+                  {profile.display_name.charAt(0).toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
+            </div>
 
             {/* Profile Info */}
             <div className="flex-1">
@@ -184,7 +195,9 @@ export default async function ProfilePage({
                   href={`/streams/${stream.id}`}
                   className="block group"
                 >
-                  <div className="bg-white rounded-xl border border-pink-100 hover:border-pink-300 shadow-sm hover:shadow-md transition-all p-6">
+                  <div className="bg-white rounded-xl border border-pink-200 hover:border-pink-400 shadow-md hover:shadow-lg hover:shadow-pink-200/50 transition-all p-6 relative overflow-hidden">
+                    {/* Premium glow effect */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-pink-50/40 via-transparent to-rose-50/40 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
                         <h3 className="text-xl font-semibold text-gray-800 group-hover:text-pink-500 transition-colors mb-2">

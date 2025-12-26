@@ -13,6 +13,17 @@ export default async function AuthButton() {
     data: { user },
   } = await supabase.auth.getUser();
 
+  // Check if user is an instructor
+  let isInstructor = false;
+  if (user) {
+    const { data: instructorProfile } = await supabase
+      .from("instructors")
+      .select("id")
+      .eq("user_id", user.id)
+      .single();
+    isInstructor = !!instructorProfile;
+  }
+
   if (!hasEnvVars) {
     return (
       <>
@@ -50,7 +61,7 @@ export default async function AuthButton() {
     );
   }
   return user ? (
-    <UserMenu user={user} />
+    <UserMenu user={user} isInstructor={isInstructor} />
   ) : (
     <OAuthSignInModal>
       <Button size="sm" variant={"outline"}>
