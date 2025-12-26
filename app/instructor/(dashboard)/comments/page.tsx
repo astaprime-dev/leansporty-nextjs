@@ -21,7 +21,7 @@ export default async function InstructorCommentsPage() {
   }
 
   // Get all comments on instructor's streams
-  const { data: comments } = await supabase
+  const { data: rawComments } = await supabase
     .from('stream_comments')
     .select(`
       id,
@@ -36,6 +36,17 @@ export default async function InstructorCommentsPage() {
     .eq('live_stream_sessions.instructor_id', instructor.id)
     .order('created_at', { ascending: false })
     .limit(50);
+
+  // Transform Supabase joined data (arrays) to objects
+  const comments = rawComments?.map(comment => ({
+    ...comment,
+    live_stream_sessions: Array.isArray(comment.live_stream_sessions)
+      ? comment.live_stream_sessions[0]
+      : comment.live_stream_sessions,
+    user_profiles: Array.isArray(comment.user_profiles)
+      ? comment.user_profiles[0]
+      : comment.user_profiles,
+  }));
 
   const totalComments = comments?.length || 0;
   const visibleComments = comments?.filter(c => !c.is_hidden).length || 0;
