@@ -75,7 +75,40 @@ CREATE INDEX IF NOT EXISTS idx_watch_sessions_stream ON stream_watch_sessions(st
 CREATE INDEX IF NOT EXISTS idx_watch_sessions_active ON stream_watch_sessions(stream_id, last_heartbeat_at) WHERE ended_at IS NULL;
 CREATE INDEX IF NOT EXISTS idx_comments_stream ON stream_comments(stream_id, created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_comments_visible ON stream_comments(stream_id, is_hidden, created_at DESC) WHERE is_hidden = false;
+CREATE INDEX IF NOT EXISTS idx_comments_user ON stream_comments(user_id);
 CREATE INDEX IF NOT EXISTS idx_replies_comment ON stream_comment_replies(comment_id);
+CREATE INDEX IF NOT EXISTS idx_replies_instructor ON stream_comment_replies(instructor_id);
+
+-- ============================================================================
+-- FOREIGN KEY RELATIONSHIPS FOR SUPABASE JOINS
+-- ============================================================================
+
+-- Add foreign key constraints to enable Supabase's automatic joins
+-- These create the relationships that PostgREST uses for the table(column) syntax
+
+-- This allows us to join stream_comments to user_profiles via user_id
+-- Note: We use a unique constraint on stream_comments(user_id, stream_id)
+-- and user_profiles has a unique user_id, so this is a valid relationship
+DO $$
+BEGIN
+  -- First check if user_profiles has the expected structure
+  IF EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_name = 'user_profiles' AND column_name = 'user_id'
+  ) THEN
+    -- Create a foreign key from stream_comments to user_profiles
+    -- This enables: stream_comments.select('*, user_profiles(*)')
+    IF NOT EXISTS (
+      SELECT 1 FROM information_schema.table_constraints
+      WHERE constraint_name = 'stream_comments_user_profiles_fk'
+    ) THEN
+      ALTER TABLE stream_comments
+      ADD CONSTRAINT stream_comments_user_profiles_fk
+      FOREIGN KEY (user_id)
+      REFERENCES user_profiles(user_id);
+    END IF;
+  END IF;
+END $$;
 
 -- ============================================================================
 -- FUNCTIONS
