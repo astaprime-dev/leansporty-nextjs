@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { getStreams, getUserEnrollments } from "@/app/actions";
 import { StreamCard } from "@/components/stream-card";
-// import GalleryDisplay from "@/components/instructor/gallery-display";
+import GalleryDisplay from "@/components/instructor/gallery-display";
 
 interface ProfilePageProps {
   params: Promise<{
@@ -82,18 +82,18 @@ export default async function ProfilePage({
     : { data: null };
 
   // Get instructor's gallery items
-  // const { data: galleryItems, error: galleryError } = isInstructor
-  //   ? await supabase
-  //       .from("instructor_gallery_items")
-  //       .select("*")
-  //       .eq("instructor_id", instructor.id)
-  //       .order("display_order", { ascending: true })
-  //   : { data: null, error: null };
+  const { data: galleryItems, error: galleryError } = isInstructor
+    ? await supabase
+        .from("instructor_gallery_items")
+        .select("*")
+        .eq("instructor_id", instructor.id)
+        .order("display_order", { ascending: true })
+    : { data: null, error: null };
 
-  // // Log gallery errors but don't block page render
-  // if (galleryError) {
-  //   console.error('Error fetching gallery items:', galleryError);
-  // }
+  // Log gallery errors but don't block page render
+  if (galleryError) {
+    console.error('Error fetching gallery items:', galleryError);
+  }
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
@@ -213,11 +213,11 @@ export default async function ProfilePage({
         </div>
 
         {/* Gallery (Instructors only) */}
-        {/* {isInstructor && galleryItems && galleryItems.length > 0 && (
+        {isInstructor && galleryItems && galleryItems.length > 0 && (
           <div className="mb-8">
             <GalleryDisplay galleryItems={galleryItems} />
           </div>
-        )} */}
+        )}
 
         {/* Upcoming Streams (Instructors only) */}
         {isInstructor && upcomingStreams && upcomingStreams.length > 0 && (
