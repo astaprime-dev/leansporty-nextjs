@@ -82,13 +82,18 @@ export default async function ProfilePage({
     : { data: null };
 
   // Get instructor's gallery items
-  const { data: galleryItems } = isInstructor
+  const { data: galleryItems, error: galleryError } = isInstructor
     ? await supabase
         .from("instructor_gallery_items")
         .select("*")
         .eq("instructor_id", instructor.id)
         .order("display_order", { ascending: true })
-    : { data: null };
+    : { data: null, error: null };
+
+  // Log gallery errors but don't block page render
+  if (galleryError) {
+    console.error('Error fetching gallery items:', galleryError);
+  }
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
