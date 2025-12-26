@@ -46,7 +46,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Fetch user profiles for comment authors
-    const userIds = [...new Set(comments.map(c => c.user_id))];
+    const userIds = Array.from(new Set(comments.map(c => c.user_id)));
     const { data: userProfiles } = await supabase
       .from('user_profiles')
       .select('user_id, display_name, username, profile_photo_url')
@@ -71,7 +71,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Fetch instructor profiles for reply authors
-    const instructorIds = [...new Set((replies || []).map(r => r.instructor_id))];
+    const instructorIds = Array.from(new Set((replies || []).map(r => r.instructor_id)));
     const { data: instructors } = await supabase
       .from('instructors')
       .select('id, display_name, profile_photo_url')
