@@ -17,7 +17,7 @@ export async function POST(request: NextRequest) {
     // 2. Get instructor profile to verify user is an instructor
     const { data: instructorProfile, error: instructorError } = await supabase
       .from('instructors')
-      .select('id')
+      .select('id, slug')
       .eq('user_id', user.id)
       .single();
 
@@ -57,14 +57,18 @@ export async function POST(request: NextRequest) {
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
 
-    // 6. Upload to Cloudflare Images
-    const { imageUrl, imageId } = await uploadImage(buffer, file.name, {
+    // 6. Create filename with instructor slug
+    const fileExtension = file.name.split('.').pop() || 'jpg';
+    const filename = `${instructorProfile.slug}-profile.${fileExtension}`;
+
+    // 7. Upload to Cloudflare Images
+    const { imageUrl, imageId } = await uploadImage(buffer, filename, {
       userId: user.id,
       instructorId: instructorProfile.id,
       type: 'profile_photo',
     });
 
-    // 7. Update instructor profile with new photo URL
+    // 8. Update instructor profile with new photo URL
     const { error: updateError } = await supabase
       .from('instructors')
       .update({ profile_photo_url: imageUrl })

@@ -68,7 +68,7 @@ export async function POST(request: NextRequest) {
     // Get instructor profile
     const { data: instructorProfile, error: instructorError } = await supabase
       .from('instructors')
-      .select('id')
+      .select('id, slug')
       .eq('user_id', user.id)
       .single();
 
@@ -168,9 +168,13 @@ export async function POST(request: NextRequest) {
 
     const nextOrder = lastItem ? lastItem.display_order + 1 : 0;
 
+    // Create filename with instructor slug and order
+    const fileExtension = file.name.split('.').pop() || (isVideo ? 'mp4' : 'jpg');
+    const filename = `${instructorProfile.slug}-gallery-${nextOrder}.${fileExtension}`;
+
     // Upload to Cloudflare Images
     const uploadFn = isVideo ? uploadVideo : uploadImage;
-    const { imageUrl, imageId } = await uploadFn(buffer, file.name, {
+    const { imageUrl, imageId } = await uploadFn(buffer, filename, {
       userId: user.id,
       instructorId: instructorProfile.id,
       type: 'gallery_item',
