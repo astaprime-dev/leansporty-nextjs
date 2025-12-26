@@ -137,16 +137,17 @@ export function useWatchSession({
       }
       if (isTracking && session) {
         // Fire-and-forget end session on unmount
-        supabase
-          .from('stream_watch_sessions')
-          .update({ ended_at: new Date().toISOString() })
-          .eq('id', session.id)
-          .then(() => {
+        void (async () => {
+          try {
+            await supabase
+              .from('stream_watch_sessions')
+              .update({ ended_at: new Date().toISOString() })
+              .eq('id', session.id);
             console.log('Watch session ended on unmount');
-          })
-          .catch((err) => {
+          } catch (err) {
             console.error('Failed to end session on unmount:', err);
-          });
+          }
+        })();
       }
     };
   }, [isTracking, session, supabase]);
