@@ -56,23 +56,20 @@ export function ReactionButtons({
       {/* Reaction Buttons Container */}
       <div
         className={cn(
-          // Mobile: Bottom horizontal layout
-          'fixed bottom-0 left-0 right-0 z-10',
+          // Mobile: Fixed at bottom
+          'fixed bottom-0 left-0 right-0 z-10 lg:relative',
           'flex items-center justify-center',
-          'p-4 pb-6',
-          'bg-gradient-to-t from-black/50 to-transparent',
-          // Desktop: Right side vertical layout
-          'lg:top-0 lg:bottom-auto lg:left-auto lg:right-0',
-          'lg:flex-col lg:justify-center',
-          'lg:p-4 lg:pr-6',
-          'lg:bg-gradient-to-l lg:from-black/50 lg:to-transparent',
-          'pointer-events-none',
+          'p-4 pb-safe lg:p-0',
+          'bg-gradient-to-t from-black/50 to-transparent lg:bg-none',
+          // Desktop: Static sidebar
+          'lg:flex-col lg:justify-start lg:items-center',
+          'lg:gap-3',
           className
         )}
       >
         <div className={cn(
-          'flex gap-2 sm:gap-3 pointer-events-auto',
-          'lg:flex-col lg:gap-3'
+          'flex gap-2 sm:gap-3',
+          'lg:flex-col lg:gap-3 lg:sticky lg:top-4'
         )}>
           {REACTION_BUTTONS.map((button) => {
             const colorClasses = REACTION_COLOR_CLASSES[button.color];
@@ -86,10 +83,10 @@ export function ReactionButtons({
                   className={cn(
                     // Base styles
                     'relative flex items-center justify-center',
-                    'w-[70px] h-[70px] lg:w-[80px] lg:h-[80px]',
+                    'w-[56px] h-[56px] lg:w-[64px] lg:h-[64px]',
                     'rounded-full',
                     'transition-all duration-300',
-                    'border-4 border-white',
+                    'border-3 border-white',
 
                     // Shadow and effects
                     'shadow-2xl hover:shadow-3xl',
@@ -116,7 +113,7 @@ export function ReactionButtons({
                   {/* SVG Icon */}
                   <ReactionIcon
                     iconName={button.icon}
-                    className="w-9 h-9 lg:w-11 lg:h-11 text-white drop-shadow-lg"
+                    className="w-7 h-7 lg:w-8 lg:h-8 text-white drop-shadow-lg"
                   />
 
                   {/* Cooldown Timer */}

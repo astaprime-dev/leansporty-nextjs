@@ -66,27 +66,30 @@ export function StreamWatchView({
 
   return (
     <div className="flex-1 w-full flex flex-col gap-6 px-4 py-8 max-w-7xl mx-auto">
-      {/* Video Player */}
-      <div className="w-full relative">
-        {isLive && whepUrl ? (
-          /* Live stream uses WHEP (WebRTC) for sub-second latency */
-          <WHEPPlayer
-            whepUrl={whepUrl}
-            autoplay={true}
-            muted={false}
-            poster={stream.thumbnail_url || undefined}
-          />
-        ) : recordingPlaybackId ? (
-          /* Recordings use regular HLS playback */
-          <CloudflareStreamPlayer
-            playbackId={recordingPlaybackId}
-            autoplay={false}
-            controls={true}
-            poster={stream.thumbnail_url || undefined}
-          />
-        ) : null}
+      {/* Video Player + Reaction Buttons */}
+      <div className="w-full flex flex-col lg:flex-row gap-6">
+        {/* Video Player */}
+        <div className="flex-1">
+          {isLive && whepUrl ? (
+            /* Live stream uses WHEP (WebRTC) for sub-second latency */
+            <WHEPPlayer
+              whepUrl={whepUrl}
+              autoplay={true}
+              muted={false}
+              poster={stream.thumbnail_url || undefined}
+            />
+          ) : recordingPlaybackId ? (
+            /* Recordings use regular HLS playback */
+            <CloudflareStreamPlayer
+              playbackId={recordingPlaybackId}
+              autoplay={false}
+              controls={true}
+              poster={stream.thumbnail_url || undefined}
+            />
+          ) : null}
+        </div>
 
-        {/* Reaction Buttons - Only shown during live streams */}
+        {/* Reaction Buttons Sidebar (Desktop) - Only shown during live streams */}
         <ReactionButtons streamId={stream.id} isLive={isLive} />
       </div>
 
