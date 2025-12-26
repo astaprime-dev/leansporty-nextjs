@@ -53,9 +53,18 @@ function SortableGalleryItem({
       ref={setNodeRef}
       style={style}
       {...attributes}
-      {...listeners}
-      className="relative group bg-white rounded-lg border-2 border-gray-200 overflow-hidden cursor-move hover:border-pink-300 transition-colors"
+      className="relative group bg-white rounded-lg border-2 border-gray-200 overflow-hidden hover:border-pink-300 transition-colors"
     >
+      {/* Drag Handle */}
+      <div
+        {...listeners}
+        className="absolute top-2 left-2 p-1.5 bg-white/90 rounded cursor-move z-10 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-white"
+      >
+        <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8h16M4 16h16" />
+        </svg>
+      </div>
+
       {/* Media Preview */}
       <div className="aspect-square relative bg-gray-100">
         {item.media_type === 'image' ? (
