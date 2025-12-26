@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Video, VideoOff, Mic, MicOff, MonitorPlay } from "lucide-react";
+import { Video, VideoOff, Mic, MicOff, MonitorPlay, Camera, Headphones } from "lucide-react";
 
 interface BrowserBroadcastProps {
   webrtcUrl: string;
@@ -12,6 +12,11 @@ interface BrowserBroadcastProps {
 }
 
 type ConnectionState = "idle" | "requesting" | "connecting" | "connected" | "disconnected" | "failed";
+
+interface MediaDeviceInfo {
+  deviceId: string;
+  label: string;
+}
 
 export function BrowserBroadcast({
   webrtcUrl,
@@ -24,9 +29,20 @@ export function BrowserBroadcast({
   const [isAudioEnabled, setIsAudioEnabled] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // Device selection state
+  const [videoDevices, setVideoDevices] = useState<MediaDeviceInfo[]>([]);
+  const [audioDevices, setAudioDevices] = useState<MediaDeviceInfo[]>([]);
+  const [selectedVideoDevice, setSelectedVideoDevice] = useState<string>("");
+  const [selectedAudioDevice, setSelectedAudioDevice] = useState<string>("");
+
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const peerConnectionRef = useRef<RTCPeerConnection | null>(null);
+
+  // Enumerate available devices on mount
+  useEffect(() => {
+    enumerateDevices();
+  }, []);
 
   // Clean up on unmount
   useEffect(() => {
@@ -41,6 +57,49 @@ export function BrowserBroadcast({
     };
   }, []);
 
+  const enumerateDevices = async () => {
+    try {
+      // Request permissions first to get device labels
+      const tempStream = await navigator.mediaDevices.getUserMedia({
+        video: true,
+        audio: true
+      });
+
+      // Now enumerate devices (labels will be available after permission granted)
+      const devices = await navigator.mediaDevices.enumerateDevices();
+
+      // Stop temporary stream
+      tempStream.getTracks().forEach(track => track.stop());
+
+      const videoInputs = devices
+        .filter(device => device.kind === "videoinput")
+        .map(device => ({
+          deviceId: device.deviceId,
+          label: device.label || `Camera ${devices.filter(d => d.kind === "videoinput").indexOf(device) + 1}`,
+        }));
+
+      const audioInputs = devices
+        .filter(device => device.kind === "audioinput")
+        .map(device => ({
+          deviceId: device.deviceId,
+          label: device.label || `Microphone ${devices.filter(d => d.kind === "audioinput").indexOf(device) + 1}`,
+        }));
+
+      setVideoDevices(videoInputs);
+      setAudioDevices(audioInputs);
+
+      // Set default selections to first available device
+      if (videoInputs.length > 0 && !selectedVideoDevice) {
+        setSelectedVideoDevice(videoInputs[0].deviceId);
+      }
+      if (audioInputs.length > 0 && !selectedAudioDevice) {
+        setSelectedAudioDevice(audioInputs[0].deviceId);
+      }
+    } catch (err) {
+      console.error("Failed to enumerate devices:", err);
+    }
+  };
+
   const startBroadcast = async () => {
     try {
       setError(null);
@@ -51,17 +110,30 @@ export function BrowserBroadcast({
         throw new Error("WebRTC URL not configured. Stream may not have been created properly.");
       }
 
-      // Request camera and microphone permissions
+      // Request camera and microphone permissions with selected devices
       const stream = await navigator.mediaDevices.getUserMedia({
-        video: {
-          width: { ideal: 1280 },
-          height: { ideal: 720 },
-          frameRate: { ideal: 30 },
-        },
-        audio: {
-          echoCancellation: true,
-          noiseSuppression: true,
-        },
+        video: selectedVideoDevice
+          ? {
+              deviceId: { exact: selectedVideoDevice },
+              width: { ideal: 1280 },
+              height: { ideal: 720 },
+              frameRate: { ideal: 30 },
+            }
+          : {
+              width: { ideal: 1280 },
+              height: { ideal: 720 },
+              frameRate: { ideal: 30 },
+            },
+        audio: selectedAudioDevice
+          ? {
+              deviceId: { exact: selectedAudioDevice },
+              echoCancellation: true,
+              noiseSuppression: true,
+            }
+          : {
+              echoCancellation: true,
+              noiseSuppression: true,
+            },
       });
 
       streamRef.current = stream;
@@ -254,8 +326,145 @@ export function BrowserBroadcast({
     }
   };
 
+  const switchCamera = async (deviceId: string) => {
+    setSelectedVideoDevice(deviceId);
+
+    // If already broadcasting, switch the camera
+    if (streamRef.current && peerConnectionRef.current) {
+      try {
+        const newStream = await navigator.mediaDevices.getUserMedia({
+          video: {
+            deviceId: { exact: deviceId },
+            width: { ideal: 1280 },
+            height: { ideal: 720 },
+            frameRate: { ideal: 30 },
+          },
+          audio: false,
+        });
+
+        const newVideoTrack = newStream.getVideoTracks()[0];
+        const oldVideoTrack = streamRef.current.getVideoTracks()[0];
+
+        // Replace track in peer connection
+        const sender = peerConnectionRef.current
+          .getSenders()
+          .find((s) => s.track?.kind === "video");
+
+        if (sender) {
+          await sender.replaceTrack(newVideoTrack);
+        }
+
+        // Replace track in stream
+        streamRef.current.removeTrack(oldVideoTrack);
+        streamRef.current.addTrack(newVideoTrack);
+
+        // Update video preview
+        if (videoRef.current) {
+          videoRef.current.srcObject = streamRef.current;
+        }
+
+        // Stop old track
+        oldVideoTrack.stop();
+      } catch (err) {
+        console.error("Failed to switch camera:", err);
+        setError("Failed to switch camera. Please try again.");
+      }
+    }
+  };
+
+  const switchMicrophone = async (deviceId: string) => {
+    setSelectedAudioDevice(deviceId);
+
+    // If already broadcasting, switch the microphone
+    if (streamRef.current && peerConnectionRef.current) {
+      try {
+        const newStream = await navigator.mediaDevices.getUserMedia({
+          video: false,
+          audio: {
+            deviceId: { exact: deviceId },
+            echoCancellation: true,
+            noiseSuppression: true,
+          },
+        });
+
+        const newAudioTrack = newStream.getAudioTracks()[0];
+        const oldAudioTrack = streamRef.current.getAudioTracks()[0];
+
+        // Replace track in peer connection
+        const sender = peerConnectionRef.current
+          .getSenders()
+          .find((s) => s.track?.kind === "audio");
+
+        if (sender) {
+          await sender.replaceTrack(newAudioTrack);
+        }
+
+        // Replace track in stream
+        streamRef.current.removeTrack(oldAudioTrack);
+        streamRef.current.addTrack(newAudioTrack);
+
+        // Stop old track
+        oldAudioTrack.stop();
+      } catch (err) {
+        console.error("Failed to switch microphone:", err);
+        setError("Failed to switch microphone. Please try again.");
+      }
+    }
+  };
+
   return (
     <div className="space-y-4">
+      {/* Device Selection */}
+      {(videoDevices.length > 1 || audioDevices.length > 1) && (
+        <div className="bg-white rounded-lg border p-4 space-y-3">
+          <h3 className="font-medium text-sm text-gray-700 flex items-center gap-2">
+            <Camera className="w-4 h-4" />
+            Device Settings
+          </h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {/* Camera Selection */}
+            {videoDevices.length > 1 && (
+              <div className="space-y-1.5">
+                <label className="text-xs font-medium text-gray-600">
+                  Camera
+                </label>
+                <select
+                  value={selectedVideoDevice}
+                  onChange={(e) => switchCamera(e.target.value)}
+                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                >
+                  {videoDevices.map((device) => (
+                    <option key={device.deviceId} value={device.deviceId}>
+                      {device.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+
+            {/* Microphone Selection */}
+            {audioDevices.length > 1 && (
+              <div className="space-y-1.5">
+                <label className="text-xs font-medium text-gray-600">
+                  Microphone
+                </label>
+                <select
+                  value={selectedAudioDevice}
+                  onChange={(e) => switchMicrophone(e.target.value)}
+                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                >
+                  {audioDevices.map((device) => (
+                    <option key={device.deviceId} value={device.deviceId}>
+                      {device.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* Video Preview */}
       <div className="relative bg-black rounded-lg overflow-hidden" style={{ paddingBottom: "56.25%" }}>
         <video
