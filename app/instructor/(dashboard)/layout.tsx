@@ -77,6 +77,12 @@ export default async function InstructorLayout({
               >
                 My Profile
               </Link>
+              <Link
+                href="/instructor/help"
+                className="text-sm font-medium text-gray-600 hover:text-pink-500 transition-colors"
+              >
+                Help
+              </Link>
             </nav>
           </div>
 

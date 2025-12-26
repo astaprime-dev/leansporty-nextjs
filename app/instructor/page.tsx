@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/utils/supabase/server";
 import { LiveStreamSession } from "@/types/streaming";
-import { Plus, Calendar, Users, DollarSign, Eye } from "lucide-react";
+import { Plus, Calendar, Users, DollarSign, Eye, BookOpen } from "lucide-react";
 import { redirect } from "next/navigation";
 
 export default async function InstructorDashboard() {
@@ -118,7 +118,7 @@ export default async function InstructorDashboard() {
       )}
 
       {/* Quick Actions */}
-      <div className="grid md:grid-cols-2 gap-4 mb-8">
+      <div className="grid md:grid-cols-3 gap-4 mb-8">
         <Link href="/instructor/streams/create">
           <div className="bg-gradient-to-r from-pink-500 to-rose-400 rounded-lg p-6 text-white hover:shadow-lg transition-shadow cursor-pointer">
             <Plus className="w-8 h-8 mb-2" />
@@ -131,6 +131,13 @@ export default async function InstructorDashboard() {
             <Eye className="w-8 h-8 mb-2 text-gray-600" />
             <h3 className="text-xl font-semibold mb-1 text-gray-900">View Public Profile</h3>
             <p className="text-gray-600 text-sm">See how others see your profile</p>
+          </div>
+        </Link>
+        <Link href="/instructor/help">
+          <div className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-lg transition-shadow cursor-pointer">
+            <BookOpen className="w-8 h-8 mb-2 text-gray-600" />
+            <h3 className="text-xl font-semibold mb-1 text-gray-900">Instructor Guide</h3>
+            <p className="text-gray-600 text-sm">Learn how to maximize your success</p>
           </div>
         </Link>
       </div>
