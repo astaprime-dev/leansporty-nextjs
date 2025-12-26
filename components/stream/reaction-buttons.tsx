@@ -69,7 +69,7 @@ export function ReactionButtons({
       >
         <div className={cn(
           'flex gap-2 sm:gap-3',
-          'lg:flex-col lg:gap-3 lg:sticky lg:top-4'
+          'lg:flex-col lg:gap-3 lg:sticky lg:top-1/2 lg:-translate-y-1/2'
         )}>
           {REACTION_BUTTONS.map((button) => {
             const colorClasses = REACTION_COLOR_CLASSES[button.color];
@@ -125,7 +125,7 @@ export function ReactionButtons({
                 </button>
 
                 {/* Label below button */}
-                <span className="text-[10px] font-semibold text-white drop-shadow-md text-center px-2 py-0.5 bg-black/40 rounded backdrop-blur-sm">
+                <span className="text-[10px] font-normal text-black text-center px-2 py-0.5 bg-white rounded shadow-sm">
                   {button.label}
                 </span>
               </div>
