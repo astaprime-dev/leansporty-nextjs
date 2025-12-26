@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { getStreams, getUserEnrollments } from "@/app/actions";
+import { StreamCard } from "@/components/stream-card";
 
 interface ProfilePageProps {
   params: Promise<{
@@ -49,6 +50,9 @@ export default async function ProfilePage({
   const isInstructor = !!instructor;
   const profile = instructor || userProfile;
 
+  // Check if current user is authenticated
+  const { data: { user } } = await supabase.auth.getUser();
+
   // Fetch user enrollments to show past scheduled streams if enrolled
   const enrollments = await getUserEnrollments();
   const enrolledStreamIds = enrollments.map(e => e.stream_id);
@@ -61,6 +65,9 @@ export default async function ProfilePage({
     : { liveStreams: [], upcomingStreams: [] };
 
   const upcomingStreams = [...streams.liveStreams, ...streams.upcomingStreams];
+
+  // Create enrollment map for StreamCard
+  const enrollmentMap = new Map(enrollments.map((e) => [e.stream_id, e]));
 
   // Get instructor's past streams (for reference/portfolio)
   const { data: pastStreams } = isInstructor
@@ -196,42 +203,15 @@ export default async function ProfilePage({
             <h2 className="text-2xl font-bold mb-4 text-gray-800">
               Upcoming Streams
             </h2>
-            <div className="grid gap-4">
+            <div className="grid gap-6">
               {upcomingStreams.map((stream) => (
-                <Link
+                <StreamCard
                   key={stream.id}
-                  href={`/streams/${stream.id}`}
-                  className="block group"
-                >
-                  <div className="bg-white rounded-xl border border-pink-200 hover:border-pink-400 shadow-md hover:shadow-lg hover:shadow-pink-200/50 transition-all p-6 relative overflow-hidden">
-                    {/* Premium glow effect */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-pink-50/40 via-transparent to-rose-50/40 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <h3 className="text-xl font-semibold text-gray-800 group-hover:text-pink-500 transition-colors mb-2">
-                          {stream.title}
-                        </h3>
-                        {stream.description && (
-                          <p className="text-gray-600 mb-3">{stream.description}</p>
-                        )}
-                        <div className="flex items-center gap-4 text-sm text-gray-500">
-                          <span>📅 {formatDate(stream.scheduled_start_time)}</span>
-                          <span>⏱️ {formatDuration(stream.scheduled_duration_seconds)}</span>
-                          {stream.price_in_tokens > 0 && (
-                            <span className="text-pink-500 font-medium">
-                              {stream.price_in_tokens} tokens
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                      {stream.status === "live" && (
-                        <span className="px-3 py-1 bg-red-500 text-white text-xs font-semibold rounded-full animate-pulse">
-                          LIVE
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                </Link>
+                  stream={stream}
+                  enrollment={enrollmentMap.get(stream.id)}
+                  isLive={stream.status === "live"}
+                  isAuthenticated={!!user}
+                />
               ))}
             </div>
           </div>
