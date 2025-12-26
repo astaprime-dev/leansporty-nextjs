@@ -22,24 +22,10 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Fetch comments with user profiles
+    // Fetch comments (without joins to avoid FK issues)
     const { data: comments, error: commentsError } = await supabase
       .from('stream_comments')
-      .select(`
-        id,
-        stream_id,
-        enrollment_id,
-        user_id,
-        star_rating,
-        comment_text,
-        is_hidden,
-        hidden_at,
-        hidden_by,
-        edited_at,
-        created_at,
-        updated_at,
-        user_profiles(display_name, username, profile_photo_url)
-      `)
+      .select('id, stream_id, enrollment_id, user_id, star_rating, comment_text, is_hidden, hidden_at, hidden_by, edited_at, created_at, updated_at')
       .eq('stream_id', streamId)
       .eq('is_hidden', false)
       .order('created_at', { ascending: false })
@@ -59,22 +45,23 @@ export async function GET(request: NextRequest) {
       return NextResponse.json(response);
     }
 
+    // Fetch user profiles for comment authors
+    const userIds = [...new Set(comments.map(c => c.user_id))];
+    const { data: userProfiles } = await supabase
+      .from('user_profiles')
+      .select('user_id, display_name, username, profile_photo_url')
+      .in('user_id', userIds);
+
+    // Create user profiles map
+    const userProfilesMap = new Map(
+      userProfiles?.map(up => [up.user_id, up]) || []
+    );
+
     // Fetch replies for these comments
     const commentIds = comments.map(c => c.id);
     const { data: replies, error: repliesError } = await supabase
       .from('stream_comment_replies')
-      .select(`
-        id,
-        comment_id,
-        stream_id,
-        instructor_id,
-        user_id,
-        reply_text,
-        edited_at,
-        created_at,
-        updated_at,
-        instructors(display_name, profile_photo_url)
-      `)
+      .select('id, comment_id, stream_id, instructor_id, user_id, reply_text, edited_at, created_at, updated_at')
       .in('comment_id', commentIds)
       .order('created_at', { ascending: true });
 
@@ -83,31 +70,30 @@ export async function GET(request: NextRequest) {
       throw repliesError;
     }
 
+    // Fetch instructor profiles for reply authors
+    const instructorIds = [...new Set((replies || []).map(r => r.instructor_id))];
+    const { data: instructors } = await supabase
+      .from('instructors')
+      .select('id, display_name, profile_photo_url')
+      .in('id', instructorIds);
+
+    // Create instructors map
+    const instructorsMap = new Map(
+      instructors?.map(i => [i.id, i]) || []
+    );
+
     // Combine comments with their replies
     const commentsWithReplies = comments.map(comment => {
-      // Supabase returns joined data as arrays, extract single objects
       const commentReplies = (replies || [])
         .filter(r => r.comment_id === comment.id)
         .map(reply => ({
           ...reply,
-          instructors: Array.isArray(reply.instructors)
-            ? (reply.instructors[0] || { display_name: 'Instructor', profile_photo_url: null })
-            : (reply.instructors || { display_name: 'Instructor', profile_photo_url: null }),
+          instructors: instructorsMap.get(reply.instructor_id) || { display_name: 'Instructor', profile_photo_url: null },
         }));
-
-      // Handle user_profiles (can be array, object, or null)
-      let userProfile;
-      if (Array.isArray(comment.user_profiles)) {
-        userProfile = comment.user_profiles[0] || { display_name: 'Unknown User', username: 'unknown', profile_photo_url: null };
-      } else if (comment.user_profiles) {
-        userProfile = comment.user_profiles;
-      } else {
-        userProfile = { display_name: 'Unknown User', username: 'unknown', profile_photo_url: null };
-      }
 
       return {
         ...comment,
-        user_profiles: userProfile,
+        user_profiles: userProfilesMap.get(comment.user_id) || { display_name: 'Unknown User', username: 'unknown', profile_photo_url: null },
         replies: commentReplies,
       };
     });
