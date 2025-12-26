@@ -84,10 +84,21 @@ export async function GET(request: NextRequest) {
     }
 
     // Combine comments with their replies
-    const commentsWithReplies = comments.map(comment => ({
-      ...comment,
-      replies: (replies || []).filter(r => r.comment_id === comment.id),
-    }));
+    const commentsWithReplies = comments.map(comment => {
+      // Supabase returns joined data as arrays, extract single objects
+      const commentReplies = (replies || [])
+        .filter(r => r.comment_id === comment.id)
+        .map(reply => ({
+          ...reply,
+          instructors: Array.isArray(reply.instructors) ? reply.instructors[0] : reply.instructors,
+        }));
+
+      return {
+        ...comment,
+        user_profiles: Array.isArray(comment.user_profiles) ? comment.user_profiles[0] : comment.user_profiles,
+        replies: commentReplies,
+      };
+    });
 
     const response: CommentsListResponse = {
       success: true,
