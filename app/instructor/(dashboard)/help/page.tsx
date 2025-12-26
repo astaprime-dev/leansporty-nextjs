@@ -271,10 +271,10 @@ export default function InstructorHelpPage() {
               <div className="flex items-start gap-3">
                 <AlertCircle className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
                 <div>
-                  <p className="font-semibold text-blue-900 mb-1">Broadcasting Technology</p>
+                  <p className="font-semibold text-blue-900 mb-1">Easy Broadcasting</p>
                   <p className="text-blue-800 text-sm">
-                    Lean Sporty uses Cloudflare WebRTC for browser-based streaming. No special software required -
-                    just allow camera and microphone access in your browser and you're ready to broadcast!
+                    No special software required - everything works directly in your browser!
+                    Just allow camera and microphone access and you're ready to broadcast.
                   </p>
                 </div>
               </div>
