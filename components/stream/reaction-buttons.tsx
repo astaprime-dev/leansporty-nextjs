@@ -96,8 +96,8 @@ export function ReactionButtons({
                       ? 'bg-gray-400 cursor-not-allowed'
                       : `${colorClasses.bg} ${colorClasses.hover} cursor-pointer hover:scale-110`,
 
-                    // Pressed state - keep colorful and scale up
-                    isPressed && 'scale-125 ring-4 ring-white/50',
+                    // Pressed state - keep colorful and scale up with pulse
+                    isPressed && 'scale-150 ring-4 ring-white/50 animate-pulse',
 
                     // Disabled state
                     isOnCooldown && !isPressed && 'opacity-50',
