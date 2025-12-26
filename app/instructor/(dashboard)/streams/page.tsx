@@ -39,13 +39,13 @@ export default async function InstructorStreamsPage() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
-      <div className="flex justify-between items-center mb-8">
+      <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4 mb-8">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">My Streams</h1>
           <p className="text-gray-600 mt-1">Manage your live streaming sessions</p>
         </div>
-        <Link href="/instructor/streams/create">
-          <Button className="bg-gradient-to-r from-pink-500 to-rose-400 hover:from-pink-600 hover:to-rose-500">
+        <Link href="/instructor/streams/create" className="shrink-0">
+          <Button className="bg-gradient-to-r from-pink-500 to-rose-400 hover:from-pink-600 hover:to-rose-500 w-full sm:w-auto">
             <Plus className="w-4 h-4 mr-2" />
             Create Stream
           </Button>
@@ -68,14 +68,14 @@ export default async function InstructorStreamsPage() {
               key={stream.id}
               className="bg-white rounded-lg border border-gray-200 p-6 hover:border-pink-300 hover:shadow-md transition-all"
             >
-              <div className="flex justify-between items-start">
-                <div className="flex-1">
-                  <div className="flex items-center gap-3 mb-2">
-                    <h3 className="text-xl font-semibold text-gray-900">
+              <div className="flex flex-col sm:flex-row justify-between sm:items-start gap-4">
+                <div className="flex-1 min-w-0">
+                  <div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-2">
+                    <h3 className="text-xl font-semibold text-gray-900 break-words">
                       {stream.title}
                     </h3>
                     <span
-                      className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                      className={`px-3 py-1 rounded-full text-xs font-semibold shrink-0 ${
                         stream.status === "live"
                           ? "bg-red-100 text-red-700"
                           : stream.status === "scheduled"
@@ -86,35 +86,36 @@ export default async function InstructorStreamsPage() {
                       {stream.status.toUpperCase()}
                     </span>
                   </div>
-                  <p className="text-gray-600 mb-3">{stream.description}</p>
-                  <div className="flex gap-6 text-sm text-gray-500">
-                    <span className="flex items-center gap-1">
+                  <p className="text-gray-600 mb-3 break-words">{stream.description}</p>
+                  <div className="flex flex-wrap gap-3 sm:gap-6 text-sm text-gray-500">
+                    <span className="flex items-center gap-1 shrink-0">
                       <Calendar className="w-4 h-4" />
-                      {new Date(stream.scheduled_start_time).toLocaleString()}
+                      <span className="truncate">{new Date(stream.scheduled_start_time).toLocaleString()}</span>
                     </span>
-                    <span className="flex items-center gap-1">
+                    <span className="flex items-center gap-1 shrink-0">
                       <Coins className="w-4 h-4" />
                       {stream.price_in_tokens} tokens
                     </span>
-                    <span className="flex items-center gap-1">
+                    <span className="flex items-center gap-1 shrink-0">
                       <Users className="w-4 h-4" />
                       {stream.total_enrollments} enrolled
                     </span>
                   </div>
                 </div>
-                <div className="flex gap-2">
+                <div className="flex gap-2 shrink-0 sm:flex-col sm:items-end">
                   {stream.status === "scheduled" && (
-                    <Link href={`/instructor/streams/${stream.id}/edit`}>
-                      <Button variant="outline" size="sm">
+                    <Link href={`/instructor/streams/${stream.id}/edit`} className="flex-1 sm:flex-initial">
+                      <Button variant="outline" size="sm" className="w-full">
                         <Edit className="w-4 h-4 mr-1" />
                         Edit
                       </Button>
                     </Link>
                   )}
-                  <Link href={`/instructor/streams/${stream.id}/broadcast`}>
+                  <Link href={`/instructor/streams/${stream.id}/broadcast`} className="flex-1 sm:flex-initial">
                     <Button
                       variant={stream.status === "scheduled" ? "outline" : "default"}
                       size="sm"
+                      className="w-full"
                     >
                       {stream.status === "scheduled" ? (
                         <>
