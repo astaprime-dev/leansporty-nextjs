@@ -26,8 +26,8 @@ export function StreamForm({ initialData, streamId, mode }: StreamFormProps) {
     title: initialData?.title || "",
     description: initialData?.description || "",
     scheduledStartTime: initialData?.scheduledStartTime || "",
-    durationMinutes: initialData?.durationMinutes || 60,
-    priceInTokens: initialData?.priceInTokens || 5,
+    durationMinutes: initialData?.durationMinutes ?? 60,
+    priceInTokens: initialData?.priceInTokens ?? 0,
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
