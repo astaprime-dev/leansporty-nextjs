@@ -17,13 +17,20 @@ export default async function InstructorDashboard() {
   // Check if instructor profile exists
   const { data: instructorProfile } = await supabase
     .from("instructors")
-    .select("*")
+    .select("id, user_id, slug")
     .eq("user_id", user.id)
     .single();
 
   if (!instructorProfile) {
     redirect("/instructor/profile");
   }
+
+  // Fetch user profile for display data
+  const { data: userProfile } = await supabase
+    .from("user_profiles")
+    .select("display_name, bio, profile_photo_url")
+    .eq("user_id", user.id)
+    .single();
 
   // Fetch stream statistics
   const { data: allStreams } = await supabase
@@ -72,10 +79,10 @@ export default async function InstructorDashboard() {
     .order("enrolled_at", { ascending: false })
     .limit(5);
 
-  // Check profile completion (only essential fields)
+  // Check profile completion from user_profiles (only essential fields)
   const profileCompletion = {
-    hasPhoto: !!instructorProfile.profile_photo_url,
-    hasBio: !!instructorProfile.bio,
+    hasPhoto: !!userProfile?.profile_photo_url,
+    hasBio: !!userProfile?.bio,
   };
   const completionPercentage = Math.round(
     ((profileCompletion.hasPhoto ? 1 : 0) +
@@ -87,7 +94,7 @@ export default async function InstructorDashboard() {
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">
-          Welcome back, {instructorProfile.display_name}
+          Welcome back, {userProfile?.display_name || 'Instructor'}
         </h1>
         <p className="text-gray-600">Here's what's happening with your streams</p>
       </div>
