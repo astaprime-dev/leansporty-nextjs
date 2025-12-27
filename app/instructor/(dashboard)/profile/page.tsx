@@ -14,10 +14,10 @@ export default async function InstructorProfilePage() {
     redirect("/?redirect=/instructor/activate");
   }
 
-  // Get instructor record (for slug and id)
+  // Get instructor record (for slug, id, and timestamps)
   const { data: instructorRecord } = await supabase
     .from("instructors")
-    .select("id, user_id, slug")
+    .select("id, user_id, slug, created_at, updated_at")
     .eq("user_id", user.id)
     .single();
 
@@ -39,6 +39,8 @@ export default async function InstructorProfilePage() {
         profile_photo_url: userProfile.profile_photo_url,
         instagram_handle: userProfile.instagram_handle,
         website_url: userProfile.website_url,
+        created_at: instructorRecord.created_at,
+        updated_at: instructorRecord.updated_at,
       }
     : null;
 
