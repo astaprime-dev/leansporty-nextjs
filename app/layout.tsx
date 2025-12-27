@@ -19,6 +19,29 @@ export const metadata = {
   metadataBase: new URL(defaultUrl),
   title: "Lean Sporty",
   description: "New way to get fit and energized through dance",
+  icons: {
+    icon: '/logo1024.png',
+    apple: '/logo1024.png',
+  },
+  openGraph: {
+    title: "Lean Sporty",
+    description: "New way to get fit and energized through dance",
+    images: [
+      {
+        url: '/logo1024.png',
+        width: 1024,
+        height: 1024,
+        alt: 'Lean Sporty Logo',
+      },
+    ],
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary',
+    title: "Lean Sporty",
+    description: "New way to get fit and energized through dance",
+    images: ['/logo1024.png'],
+  },
 };
 
 const geistSans = Geist({
