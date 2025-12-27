@@ -2,9 +2,9 @@
 
 export interface Instructor {
   id: string;
-  display_name: string;
   slug: string;
-  profile_photo_url: string | null;
+  // Note: display_name and profile_photo_url have been moved to user_profiles table.
+  // Join with user_profiles to get these fields.
 }
 
 export interface LiveStreamSession {

@@ -25,13 +25,10 @@ export default async function InstructorStreamsPage() {
     redirect("/instructor/profile");
   }
 
-  // Fetch only this instructor's streams with instructor data (sorted by scheduled time)
+  // Fetch only this instructor's streams (sorted by scheduled time)
   const { data: streams } = await supabase
     .from("live_stream_sessions")
-    .select(`
-      *,
-      instructor:instructors(id, display_name, slug, profile_photo_url)
-    `)
+    .select("*")
     .eq("instructor_id", instructorProfile.id)
     .order("scheduled_start_time", { ascending: false });
 

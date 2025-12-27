@@ -45,12 +45,7 @@ export default async function StreamDetailPage({
   // Fetch stream details
   const { data: stream, error } = await supabase
     .from("live_stream_sessions")
-    .select(
-      `
-      *,
-      instructor:instructors(id, display_name, slug, profile_photo_url)
-    `
-    )
+    .select("*")
     .eq("id", id)
     .eq("instructor_id", instructorProfile.id)
     .single();

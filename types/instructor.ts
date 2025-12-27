@@ -1,14 +1,11 @@
 export interface Instructor {
   id: string;
   user_id: string;
-  display_name: string;
   slug: string;
-  bio: string | null;
-  profile_photo_url: string | null;
-  instagram_handle: string | null;
-  website_url: string | null;
   created_at: string;
   updated_at: string;
+  // Note: display_name, bio, profile_photo_url, instagram_handle, website_url
+  // have been moved to user_profiles table. Join with user_profiles to get these fields.
 }
 
 export interface InstructorWithStreams extends Instructor {
