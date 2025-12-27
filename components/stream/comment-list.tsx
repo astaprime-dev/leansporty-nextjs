@@ -78,7 +78,7 @@ export function CommentList({
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          reply_text: replyText.trim(),
+          replyText: replyText.trim(),
         }),
       });
 
