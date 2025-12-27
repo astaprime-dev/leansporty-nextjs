@@ -291,12 +291,12 @@ export const getStreams = async (options?: {
   const supabase = await createClient();
   const now = new Date().toISOString();
 
-  // Build live streams query with instructor data
+  // Build live streams query with instructor data (only id, slug, user_id)
   let liveQuery = supabase
     .from('live_stream_sessions')
     .select(`
       *,
-      instructor:instructors(id, display_name, slug, profile_photo_url)
+      instructor:instructors(id, slug, user_id)
     `)
     .eq('status', 'live');
 
@@ -311,12 +311,12 @@ export const getStreams = async (options?: {
     console.error("Error fetching live streams:", liveError);
   }
 
-  // Build scheduled streams query with instructor data
+  // Build scheduled streams query with instructor data (only id, slug, user_id)
   let scheduledQuery = supabase
     .from('live_stream_sessions')
     .select(`
       *,
-      instructor:instructors(id, display_name, slug, profile_photo_url)
+      instructor:instructors(id, slug, user_id)
     `)
     .eq('status', 'scheduled');
 
@@ -347,9 +347,46 @@ export const getStreams = async (options?: {
     return isFutureScheduled || isEnrolled;
   });
 
+  // Fetch user_profiles for all instructors
+  const allStreams = [...(liveData || []), ...(upcomingData || [])];
+  const instructorUserIds = Array.from(new Set(
+    allStreams
+      .map(s => s.instructor?.user_id)
+      .filter((id): id is string => !!id)
+  ));
+
+  const { data: userProfiles } = await supabase
+    .from('user_profiles')
+    .select('user_id, display_name, profile_photo_url')
+    .in('user_id', instructorUserIds);
+
+  // Create a map of user_id -> profile data
+  const profileMap = new Map(
+    userProfiles?.map(p => [p.user_id, p]) || []
+  );
+
+  // Merge user_profiles data into instructor objects
+  const mergeLiveStreams = (liveData || []).map(stream => ({
+    ...stream,
+    instructor: stream.instructor ? {
+      ...stream.instructor,
+      display_name: profileMap.get(stream.instructor.user_id)?.display_name || '',
+      profile_photo_url: profileMap.get(stream.instructor.user_id)?.profile_photo_url || null,
+    } : null
+  }));
+
+  const mergeUpcomingStreams = upcomingData.map(stream => ({
+    ...stream,
+    instructor: stream.instructor ? {
+      ...stream.instructor,
+      display_name: profileMap.get(stream.instructor.user_id)?.display_name || '',
+      profile_photo_url: profileMap.get(stream.instructor.user_id)?.profile_photo_url || null,
+    } : null
+  }));
+
   return {
-    liveStreams: (liveData || []) as LiveStreamSession[],
-    upcomingStreams: upcomingData as LiveStreamSession[],
+    liveStreams: mergeLiveStreams as LiveStreamSession[],
+    upcomingStreams: mergeUpcomingStreams as LiveStreamSession[],
   };
 };
 
