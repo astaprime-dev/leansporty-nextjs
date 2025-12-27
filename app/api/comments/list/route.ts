@@ -70,16 +70,33 @@ export async function GET(request: NextRequest) {
       throw repliesError;
     }
 
-    // Fetch instructor profiles for reply authors
+    // Fetch instructor profiles for reply authors from user_profiles
+    // Note: instructor_id in replies still references instructors.id, but we need user_id to query user_profiles
+    // So first get the instructor records to map id -> user_id
     const instructorIds = Array.from(new Set((replies || []).map(r => r.instructor_id)));
-    const { data: instructors } = await supabase
+    const { data: instructorRecords } = await supabase
       .from('instructors')
-      .select('id, display_name, profile_photo_url')
+      .select('id, user_id')
       .in('id', instructorIds);
 
-    // Create instructors map
+    // Get user_ids from instructor records
+    const userIds = instructorRecords?.map(i => i.user_id) || [];
+
+    // Fetch display data from user_profiles
+    const { data: userProfiles } = await supabase
+      .from('user_profiles')
+      .select('user_id, display_name, profile_photo_url')
+      .in('user_id', userIds);
+
+    // Create map: instructor.id -> user profile data
+    const instructorIdToUserId = new Map(instructorRecords?.map(i => [i.id, i.user_id]) || []);
+    const userProfilesMap = new Map(userProfiles?.map(up => [up.user_id, up]) || []);
+
     const instructorsMap = new Map(
-      instructors?.map(i => [i.id, i]) || []
+      instructorRecords?.map(i => {
+        const profile = userProfilesMap.get(i.user_id);
+        return [i.id, profile || { display_name: 'Instructor', profile_photo_url: null }];
+      }) || []
     );
 
     // Combine comments with their replies

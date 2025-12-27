@@ -14,12 +14,33 @@ export default async function InstructorProfilePage() {
     redirect("/?redirect=/instructor/activate");
   }
 
-  // Get instructor profile if exists
-  const { data: instructorProfile } = await supabase
+  // Get instructor record (for slug and id)
+  const { data: instructorRecord } = await supabase
     .from("instructors")
-    .select("*")
+    .select("id, user_id, slug")
     .eq("user_id", user.id)
     .single();
+
+  // Get user profile data (for display fields)
+  const { data: userProfile } = await supabase
+    .from("user_profiles")
+    .select("display_name, bio, profile_photo_url, instagram_handle, website_url")
+    .eq("user_id", user.id)
+    .single();
+
+  // Merge for form
+  const instructorProfile = instructorRecord && userProfile
+    ? {
+        id: instructorRecord.id,
+        user_id: instructorRecord.user_id,
+        slug: instructorRecord.slug,
+        display_name: userProfile.display_name,
+        bio: userProfile.bio,
+        profile_photo_url: userProfile.profile_photo_url,
+        instagram_handle: userProfile.instagram_handle,
+        website_url: userProfile.website_url,
+      }
+    : null;
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">

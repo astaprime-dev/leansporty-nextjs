@@ -68,12 +68,14 @@ export function InstructorProfileForm({
       }
 
       if (initialData) {
-        // Update existing profile
-        const { error: updateError } = await supabase
-          .from("instructors")
+        // Update existing profile - save to BOTH tables
+
+        // 1. Update user_profiles with display data
+        const { error: profileError } = await supabase
+          .from("user_profiles")
           .update({
             display_name: formData.display_name,
-            slug: formData.slug,
+            username: formData.slug,
             bio: formData.bio || null,
             profile_photo_url: formData.profile_photo_url || null,
             instagram_handle: formData.instagram_handle || null,
@@ -81,22 +83,44 @@ export function InstructorProfileForm({
           })
           .eq("user_id", userId);
 
-        if (updateError) throw updateError;
-      } else {
-        // Create new profile
-        const { error: insertError } = await supabase
+        if (profileError) throw profileError;
+
+        // 2. Update instructors with only slug
+        const { error: instructorError } = await supabase
           .from("instructors")
-          .insert({
-            user_id: userId,
-            display_name: formData.display_name,
+          .update({
             slug: formData.slug,
+          })
+          .eq("user_id", userId);
+
+        if (instructorError) throw instructorError;
+      } else {
+        // Create new profile - user_profiles should already exist
+
+        // 1. Update user_profiles with display data
+        const { error: profileError } = await supabase
+          .from("user_profiles")
+          .update({
+            display_name: formData.display_name,
+            username: formData.slug,
             bio: formData.bio || null,
             profile_photo_url: formData.profile_photo_url || null,
             instagram_handle: formData.instagram_handle || null,
             website_url: formData.website_url || null,
+          })
+          .eq("user_id", userId);
+
+        if (profileError) throw profileError;
+
+        // 2. Create instructors entry with only slug
+        const { error: instructorError } = await supabase
+          .from("instructors")
+          .insert({
+            user_id: userId,
+            slug: formData.slug,
           });
 
-        if (insertError) throw insertError;
+        if (instructorError) throw instructorError;
       }
 
       router.refresh();

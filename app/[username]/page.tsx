@@ -23,29 +23,43 @@ export default async function ProfilePage({
 
   const supabase = await createClient();
 
-  // Check if it's an instructor profile first
+  // Check if it's an instructor profile first (by slug)
   const { data: instructor } = await supabase
     .from("instructors")
-    .select("*")
+    .select("id, user_id, slug")
     .eq("slug", slug)
     .single();
 
-  // If not an instructor, check user profiles
-  const { data: userProfile } = !instructor
-    ? await supabase
-        .from("user_profiles")
-        .select("*")
-        .eq("username", slug)
-        .single()
-    : { data: null };
+  // Get the user profile data
+  let userProfile = null;
+  if (instructor) {
+    // Instructor: get profile data by user_id
+    const { data } = await supabase
+      .from("user_profiles")
+      .select("*")
+      .eq("user_id", instructor.user_id)
+      .single();
+    userProfile = data;
+  } else {
+    // Regular user: get profile by username
+    const { data } = await supabase
+      .from("user_profiles")
+      .select("*")
+      .eq("username", slug)
+      .single();
+    userProfile = data;
+  }
 
-  // If neither exists, show 404
-  if (!instructor && !userProfile) {
+  // If no profile found, show 404
+  if (!userProfile) {
     notFound();
   }
 
   const isInstructor = !!instructor;
-  const profile = instructor || userProfile;
+  // Merge instructor slug with user profile data
+  const profile = isInstructor
+    ? { ...userProfile, slug: instructor.slug, id: instructor.id }
+    : userProfile;
 
   // Check if current user is authenticated
   const { data: { user } } = await supabase.auth.getUser();

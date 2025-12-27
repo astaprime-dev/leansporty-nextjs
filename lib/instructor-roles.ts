@@ -26,9 +26,16 @@ export async function grantInstructorRole(userId: string) {
     }
 
     // 2. Check if instructor profile exists
-    const { data: existingProfile } = await supabase
+    const { data: existingInstructor } = await supabase
       .from("instructors")
-      .select("id, slug, display_name")
+      .select("id, slug")
+      .eq("user_id", userId)
+      .single();
+
+    // Also get user_profiles data
+    const { data: existingProfile } = await supabase
+      .from("user_profiles")
+      .select("user_id, display_name, username")
       .eq("user_id", userId)
       .single();
 
@@ -36,13 +43,18 @@ export async function grantInstructorRole(userId: string) {
     const currentRoles = user.app_metadata?.roles || [];
     const hasRole = currentRoles.includes('instructor');
 
-    // 4. If both profile and role exist, nothing to do
-    if (existingProfile && hasRole) {
-      return { success: true, alreadyInstructor: true };
+    // 4. If both instructor record and role exist, nothing to do
+    if (existingInstructor && hasRole) {
+      return {
+        success: true,
+        alreadyInstructor: true,
+        slug: existingInstructor.slug,
+        displayName: existingProfile?.display_name
+      };
     }
 
-    // 5. If profile exists but role is missing, just add the role
-    if (existingProfile && !hasRole) {
+    // 5. If instructor record exists but role is missing, just add the role
+    if (existingInstructor && !hasRole) {
       const updatedRoles = [...currentRoles, 'instructor'];
 
       const { error: updateError } = await supabase.auth.admin.updateUserById(
@@ -59,15 +71,20 @@ export async function grantInstructorRole(userId: string) {
       return {
         success: true,
         roleAdded: true,
-        slug: existingProfile.slug,
-        displayName: existingProfile.display_name
+        slug: existingInstructor.slug,
+        displayName: existingProfile?.display_name
       };
     }
 
-    // 6. Profile doesn't exist - create it and add role
-    // Generate slug from user data
-    let displayName = user.user_metadata?.full_name || user.email?.split("@")[0] || "Instructor";
-    let baseSlug = displayName
+    // 6. Instructor record doesn't exist - create it and add role
+    // user_profiles should already exist (auto-created on signup)
+    // Generate slug from user profile or fallback to user data
+    let displayName = existingProfile?.display_name ||
+      user.user_metadata?.full_name ||
+      user.email?.split("@")[0] ||
+      "Instructor";
+
+    let baseSlug = (existingProfile?.username || displayName)
       .toLowerCase()
       .replace(/[^a-z0-9\s-]/g, "")
       .replace(/\s+/g, "-")
@@ -98,17 +115,31 @@ export async function grantInstructorRole(userId: string) {
       }
     }
 
-    // 8. Create instructor profile
+    // 8. Ensure user_profiles exists and update display_name if needed
+    if (!existingProfile) {
+      const { error: profileError } = await supabase
+        .from("user_profiles")
+        .insert({
+          user_id: userId,
+          display_name: displayName,
+          username: slug, // Use slug as username
+        });
+
+      if (profileError) {
+        throw new Error(`Failed to create user profile: ${profileError.message}`);
+      }
+    }
+
+    // 9. Create instructors entry with ONLY slug
     const { error: insertError } = await supabase
       .from("instructors")
       .insert({
         user_id: userId,
-        display_name: displayName,
         slug: slug,
       });
 
     if (insertError) {
-      throw new Error(`Failed to create instructor profile: ${insertError.message}`);
+      throw new Error(`Failed to create instructor record: ${insertError.message}`);
     }
 
     // 9. Add instructor role to app_metadata (don't replace existing roles)
@@ -166,14 +197,14 @@ export async function revokeInstructorRole(userId: string) {
       throw new Error(`User not found: ${userId}`);
     }
 
-    // 2. Delete instructor profile
+    // 2. Delete instructor record (keep user_profiles)
     const { error: deleteError } = await supabase
       .from("instructors")
       .delete()
       .eq("user_id", userId);
 
     if (deleteError) {
-      throw new Error(`Failed to delete instructor profile: ${deleteError.message}`);
+      throw new Error(`Failed to delete instructor record: ${deleteError.message}`);
     }
 
     // 3. Remove 'instructor' from roles array (keep other roles)

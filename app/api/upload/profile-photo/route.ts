@@ -68,14 +68,14 @@ export async function POST(request: NextRequest) {
       type: 'profile_photo',
     });
 
-    // 8. Update instructor profile with new photo URL
+    // 8. Update user profile with new photo URL
     const { error: updateError } = await supabase
-      .from('instructors')
+      .from('user_profiles')
       .update({ profile_photo_url: imageUrl })
-      .eq('id', instructorProfile.id);
+      .eq('user_id', user.id);
 
     if (updateError) {
-      console.error('Error updating instructor profile:', updateError);
+      console.error('Error updating user profile:', updateError);
       return NextResponse.json(
         { error: 'Failed to update profile' },
         { status: 500 }
