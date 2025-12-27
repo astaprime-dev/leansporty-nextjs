@@ -80,21 +80,21 @@ export async function GET(request: NextRequest) {
       .in('id', instructorIds);
 
     // Get user_ids from instructor records
-    const userIds = instructorRecords?.map(i => i.user_id) || [];
+    const instructorUserIds = instructorRecords?.map(i => i.user_id) || [];
 
     // Fetch display data from user_profiles
-    const { data: userProfiles } = await supabase
+    const { data: instructorUserProfiles } = await supabase
       .from('user_profiles')
       .select('user_id, display_name, profile_photo_url')
-      .in('user_id', userIds);
+      .in('user_id', instructorUserIds);
 
     // Create map: instructor.id -> user profile data
     const instructorIdToUserId = new Map(instructorRecords?.map(i => [i.id, i.user_id]) || []);
-    const userProfilesMap = new Map(userProfiles?.map(up => [up.user_id, up]) || []);
+    const instructorProfilesMap = new Map(instructorUserProfiles?.map(up => [up.user_id, up]) || []);
 
     const instructorsMap = new Map(
       instructorRecords?.map(i => {
-        const profile = userProfilesMap.get(i.user_id);
+        const profile = instructorProfilesMap.get(i.user_id);
         return [i.id, profile || { display_name: 'Instructor', profile_photo_url: null }];
       }) || []
     );
