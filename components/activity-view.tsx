@@ -110,30 +110,30 @@ export function ActivityView({
   }, [filteredWorkouts]);
 
   return (
-    <div className="flex-1 w-full flex flex-col gap-8 px-4 py-8 max-w-7xl mx-auto">
+    <div className="flex-1 w-full flex flex-col gap-6 sm:gap-8 px-4 py-6 sm:py-8 max-w-7xl mx-auto">
       <div>
-        <h1 className="text-4xl font-bold mb-2">Activity</h1>
-        <p className="text-muted-foreground">Your workout history and progress</p>
+        <h1 className="text-3xl sm:text-4xl font-bold mb-2">Activity</h1>
+        <p className="text-sm sm:text-base text-muted-foreground">Your workout history and progress</p>
       </div>
 
       {/* Live Streams Section */}
       {featuredStreams.length > 0 && (
-        <div className="bg-gradient-to-br from-pink-50 to-rose-50 rounded-2xl p-6 border border-pink-100">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h2 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
+        <div className="bg-gradient-to-br from-pink-50 to-rose-50 rounded-2xl p-4 sm:p-6 border border-pink-100">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 mb-4">
+            <div className="flex-1">
+              <h2 className="text-xl sm:text-2xl font-bold text-gray-800 flex items-center gap-2">
                 {liveStreams.length > 0 && (
-                  <Radio className="w-6 h-6 text-red-500 animate-pulse" />
+                  <Radio className="w-5 h-5 sm:w-6 sm:h-6 text-red-500 animate-pulse" />
                 )}
-                <Calendar className="w-6 h-6 text-pink-500" />
+                <Calendar className="w-5 h-5 sm:w-6 sm:h-6 text-pink-500" />
                 Join Live Classes
               </h2>
-              <p className="text-sm text-gray-600 mt-1">
+              <p className="text-xs sm:text-sm text-gray-600 mt-1">
                 Connect with instructors in real-time dance workouts
               </p>
             </div>
-            <Link href="/streams">
-              <Button variant="outline" size="sm" className="border-pink-300 text-pink-600 hover:bg-pink-100">
+            <Link href="/streams" className="self-start sm:self-auto">
+              <Button variant="outline" size="sm" className="border-pink-300 text-pink-600 hover:bg-pink-100 text-xs sm:text-sm">
                 View All Streams
               </Button>
             </Link>
@@ -153,77 +153,79 @@ export function ActivityView({
       )}
 
       {/* Month Navigation */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-2">
         <Button
           variant="outline"
           size="sm"
           onClick={goToPreviousMonth}
-          className="flex items-center gap-2"
+          className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm"
         >
-          <ChevronLeft className="w-4 h-4" />
-          Previous
+          <ChevronLeft className="w-3 h-3 sm:w-4 sm:h-4" />
+          <span className="hidden sm:inline">Previous</span>
+          <span className="sm:hidden">Prev</span>
         </Button>
-        <h2 className="text-xl font-semibold">{getMonthYear(selectedDate)}</h2>
+        <h2 className="text-base sm:text-xl font-semibold text-center">{getMonthYear(selectedDate)}</h2>
         <Button
           variant="outline"
           size="sm"
           onClick={goToNextMonth}
           disabled={isNextMonthDisabled}
-          className="flex items-center gap-2"
+          className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm"
         >
-          Next
-          <ChevronRight className="w-4 h-4" />
+          <span className="sm:hidden">Next</span>
+          <span className="hidden sm:inline">Next</span>
+          <ChevronRight className="w-3 h-3 sm:w-4 sm:h-4" />
         </Button>
       </div>
 
       {/* Summary Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-muted rounded-lg p-6">
-          <h3 className="text-sm font-medium text-muted-foreground mb-2">Total Workouts</h3>
-          <p className="text-3xl font-bold">{stats.totalWorkouts}</p>
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
+        <div className="bg-muted rounded-lg p-4 sm:p-6">
+          <h3 className="text-xs sm:text-sm font-medium text-muted-foreground mb-2">Total Workouts</h3>
+          <p className="text-2xl sm:text-3xl font-bold">{stats.totalWorkouts}</p>
         </div>
-        <div className="bg-muted rounded-lg p-6">
-          <h3 className="text-sm font-medium text-muted-foreground mb-2">Total Duration</h3>
-          <p className="text-3xl font-bold">{formatDuration(stats.totalDuration)}</p>
+        <div className="bg-muted rounded-lg p-4 sm:p-6">
+          <h3 className="text-xs sm:text-sm font-medium text-muted-foreground mb-2">Total Duration</h3>
+          <p className="text-2xl sm:text-3xl font-bold">{formatDuration(stats.totalDuration)}</p>
         </div>
-        <div className="bg-muted rounded-lg p-6">
-          <h3 className="text-sm font-medium text-muted-foreground mb-2">Total Calories</h3>
-          <p className="text-3xl font-bold">{stats.totalCalories} kcal</p>
+        <div className="bg-muted rounded-lg p-4 sm:p-6">
+          <h3 className="text-xs sm:text-sm font-medium text-muted-foreground mb-2">Total Calories</h3>
+          <p className="text-2xl sm:text-3xl font-bold">{stats.totalCalories} kcal</p>
         </div>
       </div>
 
       {/* Workout History Table */}
       {filteredWorkouts.length === 0 ? (
         <div className="text-center py-12">
-          <p className="text-lg text-muted-foreground">No workout sessions in {getMonthYear(selectedDate)}.</p>
-          <p className="text-sm text-muted-foreground mt-2">
+          <p className="text-base sm:text-lg text-muted-foreground">No workout sessions in {getMonthYear(selectedDate)}.</p>
+          <p className="text-xs sm:text-sm text-muted-foreground mt-2">
             Start your first workout to see your activity here!
           </p>
         </div>
       ) : (
-        <div className="overflow-x-auto">
-          <table className="w-full border-collapse">
+        <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
+          <table className="w-full border-collapse min-w-[640px] sm:min-w-full">
             <thead>
               <tr className="border-b">
-                <th className="text-left py-4 px-4 font-semibold">Date</th>
-                <th className="text-left py-4 px-4 font-semibold">Workout</th>
-                <th className="text-left py-4 px-4 font-semibold">Duration</th>
-                <th className="text-left py-4 px-4 font-semibold">Calories Burned</th>
+                <th className="text-left py-3 sm:py-4 px-2 sm:px-4 font-semibold text-xs sm:text-sm">Date</th>
+                <th className="text-left py-3 sm:py-4 px-2 sm:px-4 font-semibold text-xs sm:text-sm">Workout</th>
+                <th className="text-left py-3 sm:py-4 px-2 sm:px-4 font-semibold text-xs sm:text-sm">Duration</th>
+                <th className="text-left py-3 sm:py-4 px-2 sm:px-4 font-semibold text-xs sm:text-sm">Calories</th>
               </tr>
             </thead>
             <tbody>
               {filteredWorkouts.map((session) => (
                 <tr key={session.id} className="border-b hover:bg-muted/50 transition-colors">
-                  <td className="py-4 px-4">
+                  <td className="py-3 sm:py-4 px-2 sm:px-4 text-xs sm:text-sm">
                     {formatDate(session.workout_date)}
                   </td>
-                  <td className="py-4 px-4 font-medium">
+                  <td className="py-3 sm:py-4 px-2 sm:px-4 font-medium text-xs sm:text-sm">
                     {session.workouts?.title || 'Unknown Workout'}
                   </td>
-                  <td className="py-4 px-4">
+                  <td className="py-3 sm:py-4 px-2 sm:px-4 text-xs sm:text-sm">
                     {formatDuration(session.duration_seconds)}
                   </td>
-                  <td className="py-4 px-4">
+                  <td className="py-3 sm:py-4 px-2 sm:px-4 text-xs sm:text-sm">
                     {session.calories_burned || 0} kcal
                   </td>
                 </tr>
