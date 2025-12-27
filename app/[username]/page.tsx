@@ -92,7 +92,7 @@ export default async function ProfilePage({
     : { data: null };
 
   // Get instructor's recent reviews/comments
-  const { data: instructorComments } = isInstructor
+  const { data: instructorComments, error: commentsError } = isInstructor
     ? await supabase
         .from("stream_comments")
         .select(`
@@ -106,7 +106,11 @@ export default async function ProfilePage({
         .eq("is_hidden", false)
         .order("created_at", { ascending: false })
         .limit(10)
-    : { data: null };
+    : { data: null, error: null };
+
+  if (commentsError) {
+    console.error('Error fetching instructor comments:', commentsError);
+  }
 
   // Get instructor's gallery items
   const { data: galleryItems, error: galleryError } = isInstructor
