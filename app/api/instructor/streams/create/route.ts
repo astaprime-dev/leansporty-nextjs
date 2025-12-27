@@ -94,6 +94,8 @@ export async function POST(request: NextRequest) {
         cloudflare_webrtc_token: cloudflare.webrtcToken,
         cloudflare_playback_id: cloudflare.playbackId,
         cloudflare_whep_playback_url: cloudflare.whepPlaybackUrl,
+        cloudflare_rtmps_url: cloudflare.rtmpsUrl,
+        cloudflare_rtmps_stream_key: cloudflare.rtmpsStreamKey,
         status: "scheduled",
       })
       .select()

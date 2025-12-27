@@ -37,6 +37,8 @@ export interface LiveStreamSession {
   cloudflare_webrtc_token: string | null;
   cloudflare_playback_id: string | null;
   cloudflare_whep_playback_url: string | null; // WHEP URL for WebRTC playback (egress)
+  cloudflare_rtmps_url: string | null; // RTMPS URL for OBS streaming (optional)
+  cloudflare_rtmps_stream_key: string | null; // RTMPS stream key for OBS (optional)
 
   // Recording
   recording_available: boolean;

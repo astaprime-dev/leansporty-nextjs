@@ -8,7 +8,7 @@ import { CommentList } from "@/components/stream/comment-list";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Calendar, Clock, Coins, Users, Copy, Check, AlertCircle } from "lucide-react";
+import { Calendar, Clock, Coins, Users, Copy, Check, AlertCircle, ChevronDown, ChevronUp, Video } from "lucide-react";
 
 interface BroadcastManagementViewProps {
   stream: LiveStreamSession;
@@ -17,6 +17,7 @@ interface BroadcastManagementViewProps {
 export function BroadcastManagementView({ stream }: BroadcastManagementViewProps) {
   const [streamStatus, setStreamStatus] = useState(stream.status);
   const [copied, setCopied] = useState(false);
+  const [showRTMPS, setShowRTMPS] = useState(false);
   const router = useRouter();
 
   // Detect if this is a reconnection scenario
@@ -163,6 +164,90 @@ export function BroadcastManagementView({ stream }: BroadcastManagementViewProps
               </div>
             </div>
           </div>
+
+          {/* Advanced: RTMPS for OBS */}
+          {stream.cloudflare_rtmps_url && stream.cloudflare_rtmps_stream_key && streamStatus !== "ended" && (
+            <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg border border-blue-200 p-6 space-y-4">
+              <button
+                onClick={() => setShowRTMPS(!showRTMPS)}
+                className="w-full flex items-center justify-between text-left"
+              >
+                <div className="flex items-center gap-2">
+                  <Video className="w-5 h-5 text-blue-600" />
+                  <h3 className="font-bold text-blue-900">Advanced: Stream with OBS (Recording Available)</h3>
+                </div>
+                {showRTMPS ? (
+                  <ChevronUp className="w-5 h-5 text-blue-600" />
+                ) : (
+                  <ChevronDown className="w-5 h-5 text-blue-600" />
+                )}
+              </button>
+
+              {showRTMPS && (
+                <div className="space-y-4 pt-2">
+                  <div className="bg-blue-100/50 rounded-lg p-4">
+                    <div className="flex items-start gap-2 mb-3">
+                      <AlertCircle className="w-5 h-5 text-blue-700 flex-shrink-0 mt-0.5" />
+                      <div className="text-sm text-blue-800">
+                        <p className="font-semibold mb-1">RTMPS streaming supports recording!</p>
+                        <p>Use OBS or similar software to stream. Your class will be automatically recorded and available to students for 7 days.</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-3">
+                    <div>
+                      <label className="text-sm font-medium text-gray-700 block mb-1">Server URL</label>
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          value={stream.cloudflare_rtmps_url}
+                          readOnly
+                          className="flex-1 px-3 py-2 bg-white border border-gray-300 rounded text-sm font-mono"
+                        />
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => copyToClipboard(stream.cloudflare_rtmps_url!)}
+                        >
+                          {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                        </Button>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="text-sm font-medium text-gray-700 block mb-1">Stream Key</label>
+                      <div className="flex gap-2">
+                        <input
+                          type="password"
+                          value={stream.cloudflare_rtmps_stream_key}
+                          readOnly
+                          className="flex-1 px-3 py-2 bg-white border border-gray-300 rounded text-sm font-mono"
+                        />
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => copyToClipboard(stream.cloudflare_rtmps_stream_key!)}
+                        >
+                          {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                        </Button>
+                      </div>
+                    </div>
+
+                    <div className="text-xs text-gray-600 space-y-1 pt-2">
+                      <p className="font-semibold">Quick OBS Setup:</p>
+                      <ol className="list-decimal list-inside space-y-1 ml-2">
+                        <li>Open OBS Studio</li>
+                        <li>Settings → Stream → Service: Custom</li>
+                        <li>Paste Server URL and Stream Key above</li>
+                        <li>Click Start Streaming in OBS</li>
+                      </ol>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Comments Section */}
           <div className="bg-white rounded-lg border p-6">
