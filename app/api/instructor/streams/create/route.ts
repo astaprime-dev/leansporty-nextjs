@@ -65,13 +65,14 @@ export async function POST(request: NextRequest) {
     }
 
     // Get instructor profile
-    const { data: instructorProfile } = await supabase
+    const { data: instructorProfile, error: instructorError } = await supabase
       .from("instructors")
-      .select("id, display_name")
+      .select("id")
       .eq("user_id", user.id)
       .single();
 
-    if (!instructorProfile) {
+    if (instructorError || !instructorProfile) {
+      console.error("Instructor lookup error:", instructorError);
       return NextResponse.json(
         { error: "Instructor profile not found. Please create your profile first." },
         { status: 400 }
