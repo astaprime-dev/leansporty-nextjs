@@ -91,6 +91,23 @@ export default async function ProfilePage({
         .limit(6)
     : { data: null };
 
+  // Get instructor's recent reviews/comments
+  const { data: instructorComments } = isInstructor
+    ? await supabase
+        .from("stream_comments")
+        .select(`
+          id,
+          star_rating,
+          comment_text,
+          created_at,
+          user_profiles!inner(display_name, username, profile_photo_url)
+        `)
+        .eq("instructor_id", instructor.id)
+        .eq("is_hidden", false)
+        .order("created_at", { ascending: false })
+        .limit(10)
+    : { data: null };
+
   // Get instructor's gallery items
   const { data: galleryItems, error: galleryError } = isInstructor
     ? await supabase
@@ -249,7 +266,7 @@ export default async function ProfilePage({
 
         {/* Past Streams (Instructors only) */}
         {isInstructor && pastStreams && pastStreams.length > 0 && (
-          <div>
+          <div className="mb-8">
             <h2 className="text-2xl font-bold mb-4 text-gray-800">
               Past Classes
             </h2>
@@ -267,6 +284,80 @@ export default async function ProfilePage({
                   </div>
                 </div>
               ))}
+            </div>
+          </div>
+        )}
+
+        {/* Reviews (Instructors only) */}
+        {isInstructor && instructorComments && instructorComments.length > 0 && (
+          <div>
+            <h2 className="text-2xl font-bold mb-4 text-gray-800">
+              Student Reviews
+            </h2>
+            <div className="grid gap-4">
+              {instructorComments.map((comment) => {
+                const userProfile = Array.isArray(comment.user_profiles)
+                  ? comment.user_profiles[0]
+                  : comment.user_profiles;
+
+                return (
+                  <div
+                    key={comment.id}
+                    className="bg-white rounded-xl border border-gray-200 p-6"
+                  >
+                    <div className="flex items-start gap-4">
+                      {/* User Avatar */}
+                      <div className="flex-shrink-0">
+                        {userProfile?.profile_photo_url ? (
+                          <img
+                            src={userProfile.profile_photo_url}
+                            alt={userProfile.display_name}
+                            className="w-12 h-12 rounded-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-12 h-12 rounded-full bg-pink-100 flex items-center justify-center">
+                            <span className="text-pink-600 font-semibold">
+                              {userProfile?.display_name?.charAt(0).toUpperCase() || '?'}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Review Content */}
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-2">
+                          <span className="font-semibold text-gray-900">
+                            {userProfile?.display_name || 'Anonymous'}
+                          </span>
+                          <span className="text-gray-400">•</span>
+                          <div className="flex items-center">
+                            <span className="text-yellow-500">
+                              {'★'.repeat(comment.star_rating)}
+                            </span>
+                            <span className="text-gray-300">
+                              {'★'.repeat(5 - comment.star_rating)}
+                            </span>
+                          </div>
+                        </div>
+
+                        {comment.comment_text && (
+                          <p className="text-gray-700 mb-2">
+                            {comment.comment_text}
+                          </p>
+                        )}
+
+                        <p className="text-xs text-gray-500">
+                          {new Date(comment.created_at).toLocaleDateString('en-US', {
+                            month: 'long',
+                            day: 'numeric',
+                            year: 'numeric'
+                          })}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
         )}

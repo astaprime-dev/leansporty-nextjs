@@ -56,6 +56,20 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Get stream to fetch instructor_id
+    const { data: stream, error: streamError } = await supabase
+      .from('live_stream_sessions')
+      .select('instructor_id')
+      .eq('id', streamId)
+      .single();
+
+    if (streamError || !stream) {
+      return NextResponse.json(
+        { error: 'Stream not found' },
+        { status: 404 }
+      );
+    }
+
     // Insert comment (database trigger validates eligibility: 50% attendance, stream ended, 7-day window)
     const { data: comment, error: commentError } = await supabase
       .from('stream_comments')
@@ -63,6 +77,7 @@ export async function POST(request: NextRequest) {
         stream_id: streamId,
         enrollment_id: enrollment.id,
         user_id: user.id,
+        instructor_id: stream.instructor_id,
         star_rating: starRating,
         comment_text: commentText || null,
       })
