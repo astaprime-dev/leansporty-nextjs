@@ -123,11 +123,13 @@ export async function deleteLiveInput(streamId: string): Promise<boolean> {
  * After a live stream ends, recordings become available as regular videos
  */
 export async function getStreamRecordings(streamId: string): Promise<CloudflareStreamVideo[]> {
-  // List all videos and filter by live input ID
-  const videos = await callCloudflareAPI<CloudflareStreamVideo[]>('/stream');
+  // Use the correct endpoint for live input recordings
+  const videos = await callCloudflareAPI<CloudflareStreamVideo[]>(
+    `/stream/live_inputs/${streamId}/videos`
+  );
 
-  // Filter videos that were recorded from this live input
-  return videos.filter((video) => video.input?.liveInput === streamId);
+  // Filter for ready recordings only
+  return videos.filter((video) => video.status.state === 'ready');
 }
 
 /**
