@@ -4,6 +4,7 @@ import { LiveStreamSession } from "@/types/streaming";
 import { BrowserBroadcast } from "@/components/instructor/browser-broadcast";
 import { ReactionDisplay } from "@/components/instructor/reaction-display";
 import { LiveViewerCount } from "@/components/stream/live-viewer-count";
+import { CommentList } from "@/components/stream/comment-list";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -114,6 +115,16 @@ export function BroadcastManagementView({ stream }: BroadcastManagementViewProps
                 <span>{stream.total_enrollments} enrolled</span>
               </div>
             </div>
+          </div>
+
+          {/* Comments Section */}
+          <div className="bg-white rounded-lg border p-6">
+            <h2 className="font-bold text-lg mb-6">Viewer Comments</h2>
+            <CommentList
+              streamId={stream.id}
+              isInstructor={true}
+              instructorId={stream.instructor_id}
+            />
           </div>
         </div>
 
