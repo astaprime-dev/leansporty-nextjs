@@ -52,12 +52,21 @@ export async function POST(
       );
     }
 
+    // Check if this is a WebRTC broadcast start (from BrowserBroadcast component)
+    // vs manual "Mark as Live" (for OBS/RTMPS)
+    const body = await request.json().catch(() => ({}));
+    const isWebRTC = body.method === 'webrtc';
+
     // Prepare update data
     // Only set actual_start_time on first start, not on reconnection
     const updateData: { status: string; actual_start_time?: string; broadcast_method?: string } = {
       status: "live",
-      broadcast_method: "webrtc", // This endpoint is only called for browser WebRTC broadcasting
     };
+
+    // Only set broadcast_method if explicitly specified as WebRTC
+    if (isWebRTC) {
+      updateData.broadcast_method = "webrtc";
+    }
 
     // If no start time exists, this is the first start (not a reconnection)
     if (!stream.actual_start_time) {

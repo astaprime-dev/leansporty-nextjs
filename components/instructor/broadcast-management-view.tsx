@@ -37,9 +37,14 @@ export function BroadcastManagementView({ stream }: BroadcastManagementViewProps
     return () => window.removeEventListener("beforeunload", handleBeforeUnload);
   }, [streamStatus]);
 
-  const handleMarkLive = async () => {
+  const handleMarkLive = async (isWebRTC = false) => {
+    const body = isWebRTC ? { method: 'webrtc' } : {};
     const response = await fetch(`/api/instructor/streams/${stream.id}/start`, {
       method: "POST",
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(body),
     });
 
     if (response.ok) {
@@ -100,7 +105,7 @@ export function BroadcastManagementView({ stream }: BroadcastManagementViewProps
                 webrtcUrl={stream.cloudflare_webrtc_url}
                 webrtcToken={stream.cloudflare_webrtc_token || undefined}
                 isReconnection={isReconnection}
-                onStreamStart={handleMarkLive}
+                onStreamStart={() => handleMarkLive(true)}
                 onStreamEnd={handleEndStream}
               />
               {/* Reaction Display Overlay - Shows viewer reactions in real-time */}
