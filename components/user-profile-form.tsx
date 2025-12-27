@@ -25,8 +25,6 @@ export function UserProfileForm({
     username: initialData?.username || "",
     bio: initialData?.bio || "",
     profile_photo_url: initialData?.profile_photo_url || "",
-    location: initialData?.location || "",
-    birthday: initialData?.birthday || "",
     instagram_handle: initialData?.instagram_handle || "",
     website_url: initialData?.website_url || "",
   });
@@ -77,8 +75,6 @@ export function UserProfileForm({
             username: formData.username,
             bio: formData.bio || null,
             profile_photo_url: formData.profile_photo_url || null,
-            location: formData.location || null,
-            birthday: formData.birthday || null,
             instagram_handle: formData.instagram_handle || null,
             website_url: formData.website_url || null,
           })
@@ -95,8 +91,6 @@ export function UserProfileForm({
             username: formData.username,
             bio: formData.bio || null,
             profile_photo_url: formData.profile_photo_url || null,
-            location: formData.location || null,
-            birthday: formData.birthday || null,
             instagram_handle: formData.instagram_handle || null,
             website_url: formData.website_url || null,
           });
@@ -193,37 +187,6 @@ export function UserProfileForm({
         <p className="text-xs text-gray-500 mt-1">
           Direct URL to your profile photo
         </p>
-      </div>
-
-      {/* Location */}
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          Location
-        </label>
-        <Input
-          type="text"
-          value={formData.location}
-          onChange={(e) =>
-            setFormData({ ...formData, location: e.target.value })
-          }
-          placeholder="San Francisco, CA"
-          disabled={isLoading}
-        />
-      </div>
-
-      {/* Birthday */}
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          Birthday
-        </label>
-        <Input
-          type="date"
-          value={formData.birthday}
-          onChange={(e) =>
-            setFormData({ ...formData, birthday: e.target.value })
-          }
-          disabled={isLoading}
-        />
       </div>
 
       {/* Instagram Handle */}

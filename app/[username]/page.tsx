@@ -175,24 +175,6 @@ export default async function ProfilePage({
                 </p>
               )}
 
-              {/* Location and Birthday for user profiles */}
-              {!isInstructor && (
-                <div className="flex items-center gap-4 text-sm text-gray-600 mb-4">
-                  {userProfile.location && (
-                    <span className="flex items-center gap-1">
-                      <span>📍</span>
-                      <span>{userProfile.location}</span>
-                    </span>
-                  )}
-                  {userProfile.birthday && (
-                    <span className="flex items-center gap-1">
-                      <span>🎂</span>
-                      <span>{new Date(userProfile.birthday).toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}</span>
-                    </span>
-                  )}
-                </div>
-              )}
-
               {/* Social Links */}
               <div className="flex items-center gap-4 text-sm">
                 {profile.instagram_handle && (
