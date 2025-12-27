@@ -38,13 +38,17 @@ export function StreamWatchView({
     enabled: isPlaying,
   });
 
-  // For live streams, we need the WHEP playback URL
-  // For recordings, we use the regular playback ID
-  const whepUrl = isLive ? stream.cloudflare_whep_playback_url : null;
+  // Determine which player to use for live streams
+  // - WebRTC streams use WHEP (sub-second latency)
+  // - RTMPS streams use HLS/DASH (2-5 second latency)
+  const isWebRTCStream = stream.broadcast_method === 'webrtc';
+  const useWHEP = isLive && isWebRTCStream;
+  const whepUrl = useWHEP ? stream.cloudflare_whep_playback_url : null;
+  const livePlaybackId = isLive && !isWebRTCStream ? stream.cloudflare_playback_id : null;
   const recordingPlaybackId = !isLive ? stream.recording_cloudflare_video_id : null;
 
   // Check if we have the necessary URLs
-  if (isLive && !whepUrl) {
+  if (isLive && !whepUrl && !livePlaybackId) {
     return (
       <div className="flex-1 w-full flex items-center justify-center p-8">
         <div className="text-center max-w-md">
@@ -90,12 +94,21 @@ export function StreamWatchView({
       <div className="w-full flex flex-col lg:flex-row gap-6">
         {/* Video Player */}
         <div className="flex-1">
-          {isLive && whepUrl ? (
-            /* Live stream uses WHEP (WebRTC) for sub-second latency */
+          {whepUrl ? (
+            /* Live WebRTC stream uses WHEP for sub-second latency */
             <WHEPPlayer
               whepUrl={whepUrl}
               autoplay={true}
               muted={false}
+              poster={stream.thumbnail_url || undefined}
+              onPlayStateChange={setIsPlaying}
+            />
+          ) : livePlaybackId ? (
+            /* Live RTMPS stream uses HLS/DASH (2-5 second latency) */
+            <CloudflareStreamPlayer
+              playbackId={livePlaybackId}
+              autoplay={true}
+              controls={true}
               poster={stream.thumbnail_url || undefined}
               onPlayStateChange={setIsPlaying}
             />

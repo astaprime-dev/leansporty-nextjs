@@ -28,6 +28,9 @@ export interface LiveStreamSession {
   // Status
   status: 'scheduled' | 'live' | 'ended' | 'cancelled';
 
+  // Broadcast method (which protocol is being used for streaming)
+  broadcast_method: 'webrtc' | 'rtmps' | null;
+
   // Pricing
   price_in_tokens: number;
 

@@ -54,8 +54,9 @@ export async function POST(
 
     // Prepare update data
     // Only set actual_start_time on first start, not on reconnection
-    const updateData: { status: string; actual_start_time?: string } = {
+    const updateData: { status: string; actual_start_time?: string; broadcast_method?: string } = {
       status: "live",
+      broadcast_method: "webrtc", // This endpoint is only called for browser WebRTC broadcasting
     };
 
     // If no start time exists, this is the first start (not a reconnection)
