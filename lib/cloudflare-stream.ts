@@ -70,6 +70,12 @@ export async function createLiveInput(streamName: string): Promise<{
     }),
   });
 
+  console.log('Cloudflare live input created with recording config:', {
+    uid: result.uid,
+    recordingMode: result.recording?.mode,
+    recordingTimeout: result.recording?.timeoutSeconds,
+  });
+
   return {
     streamId: result.uid,
     webrtcUrl: result.webRTC.url,
@@ -121,7 +127,7 @@ export async function getStreamRecordings(streamId: string): Promise<CloudflareS
   const videos = await callCloudflareAPI<CloudflareStreamVideo[]>('/stream');
 
   // Filter videos that were recorded from this live input
-  return videos.filter((video: any) => video.input?.liveInput === streamId);
+  return videos.filter((video) => video.input?.liveInput === streamId);
 }
 
 /**

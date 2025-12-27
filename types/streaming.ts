@@ -180,6 +180,7 @@ export interface CloudflareStreamVideo {
   input: {
     width: number;
     height: number;
+    liveInput?: string; // ID of the live input that created this recording
   };
   playback: {
     hls: string;
