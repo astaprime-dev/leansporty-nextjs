@@ -1,10 +1,12 @@
 // Live Streaming TypeScript Types
 
+// Instructor data as returned by getStreams() - includes merged user_profiles data
 export interface Instructor {
   id: string;
+  user_id: string;
   slug: string;
-  // Note: display_name and profile_photo_url have been moved to user_profiles table.
-  // Join with user_profiles to get these fields.
+  display_name: string;
+  profile_photo_url: string | null;
 }
 
 export interface LiveStreamSession {

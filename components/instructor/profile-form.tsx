@@ -4,12 +4,12 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Instructor } from "@/types/instructor";
+import { InstructorWithProfile } from "@/types/instructor";
 import { createClient } from "@/utils/supabase/client";
 import ProfilePhotoUpload from "@/components/ui/profile-photo-upload";
 
 interface InstructorProfileFormProps {
-  initialData: Instructor | null;
+  initialData: InstructorWithProfile | null;
   userId: string;
 }
 
