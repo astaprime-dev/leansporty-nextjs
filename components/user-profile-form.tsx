@@ -24,7 +24,6 @@ export function UserProfileForm({
     display_name: initialData?.display_name || "",
     username: initialData?.username || "",
     bio: initialData?.bio || "",
-    profile_photo_url: initialData?.profile_photo_url || "",
     location: initialData?.location || "",
     instagram_handle: initialData?.instagram_handle || "",
     website_url: initialData?.website_url || "",
@@ -75,7 +74,6 @@ export function UserProfileForm({
             display_name: formData.display_name,
             username: formData.username,
             bio: formData.bio || null,
-            profile_photo_url: formData.profile_photo_url || null,
             location: formData.location || null,
             instagram_handle: formData.instagram_handle || null,
             website_url: formData.website_url || null,
@@ -92,7 +90,6 @@ export function UserProfileForm({
             display_name: formData.display_name,
             username: formData.username,
             bio: formData.bio || null,
-            profile_photo_url: formData.profile_photo_url || null,
             location: formData.location || null,
             instagram_handle: formData.instagram_handle || null,
             website_url: formData.website_url || null,
@@ -171,25 +168,6 @@ export function UserProfileForm({
           disabled={isLoading}
           className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500"
         />
-      </div>
-
-      {/* Profile Photo URL */}
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          Profile Photo URL
-        </label>
-        <Input
-          type="url"
-          value={formData.profile_photo_url}
-          onChange={(e) =>
-            setFormData({ ...formData, profile_photo_url: e.target.value })
-          }
-          placeholder="https://example.com/photo.jpg"
-          disabled={isLoading}
-        />
-        <p className="text-xs text-gray-500 mt-1">
-          Direct URL to your profile photo
-        </p>
       </div>
 
       {/* Location */}
