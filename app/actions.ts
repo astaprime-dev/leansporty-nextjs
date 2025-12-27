@@ -420,11 +420,11 @@ export const getPastStreams = async (options?: {
   }
 
   // Fetch instructor profiles for all streams
-  const instructorUserIds = [...new Set(
+  const instructorUserIds = Array.from(new Set(
     data
       .map(s => s.instructor?.user_id)
       .filter((id): id is string => id != null)
-  )];
+  ));
 
   const { data: profiles } = await supabase
     .from('profiles')
