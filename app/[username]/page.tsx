@@ -92,21 +92,37 @@ export default async function ProfilePage({
     : { data: null };
 
   // Get instructor's recent reviews/comments
-  const { data: instructorComments, error: commentsError } = isInstructor
-    ? await supabase
-        .from("stream_comments")
-        .select(`
-          id,
-          star_rating,
-          comment_text,
-          created_at,
-          user_profiles!inner(display_name, username, profile_photo_url)
-        `)
-        .eq("instructor_id", instructor.id)
-        .eq("is_hidden", false)
-        .order("created_at", { ascending: false })
-        .limit(10)
-    : { data: null, error: null };
+  let instructorComments = null;
+  let commentsError = null;
+
+  if (isInstructor) {
+    // Fetch comments first
+    const { data: comments, error: fetchError } = await supabase
+      .from("stream_comments")
+      .select("id, star_rating, comment_text, created_at, user_id")
+      .eq("instructor_id", instructor.id)
+      .eq("is_hidden", false)
+      .order("created_at", { ascending: false })
+      .limit(10);
+
+    commentsError = fetchError;
+
+    if (comments && comments.length > 0) {
+      // Fetch user profiles for commenters
+      const userIds = comments.map(c => c.user_id);
+      const { data: profiles } = await supabase
+        .from("user_profiles")
+        .select("user_id, display_name, username, profile_photo_url")
+        .in("user_id", userIds);
+
+      // Merge profiles into comments
+      const profileMap = new Map(profiles?.map(p => [p.user_id, p]) || []);
+      instructorComments = comments.map(comment => ({
+        ...comment,
+        user_profiles: profileMap.get(comment.user_id) || null
+      }));
+    }
+  }
 
   if (commentsError) {
     console.error('Error fetching instructor comments:', commentsError);
