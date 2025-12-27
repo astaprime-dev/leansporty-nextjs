@@ -214,9 +214,9 @@ export default async function ProfilePage({
     <div className={`min-h-screen ${isInstructor
       ? 'bg-gradient-to-b from-pink-100/40 via-rose-50/30 to-white'
       : 'bg-gradient-to-b from-pink-50/30 to-white'}`}>
-      <div className="max-w-5xl mx-auto px-4 py-12">
+      <div className="max-w-5xl mx-auto px-4 py-6 sm:py-12">
         {/* Profile Header */}
-        <div className={`bg-white rounded-2xl border shadow-sm p-8 mb-8 ${isInstructor
+        <div className={`bg-white rounded-2xl border shadow-sm p-6 sm:p-8 mb-6 sm:mb-8 ${isInstructor
           ? 'border-pink-200 shadow-pink-100/50 shadow-lg relative overflow-hidden'
           : 'border-pink-100'}`}>
           {/* Premium glow effect for instructors */}
@@ -224,26 +224,26 @@ export default async function ProfilePage({
             <div className="absolute inset-0 bg-gradient-to-br from-pink-50/60 via-transparent to-rose-50/60 pointer-events-none" />
           )}
 
-          <div className="flex flex-col md:flex-row gap-6 items-start md:items-center relative z-10">
+          <div className="flex flex-col md:flex-row gap-4 sm:gap-6 items-center md:items-center relative z-10">
             {/* Profile Photo with gradient ring for instructors */}
             <div className={isInstructor ? 'relative p-1 rounded-full bg-gradient-to-br from-pink-500 via-rose-400 to-pink-500 animate-pulse' : ''}>
-              <Avatar className={`h-32 w-32 ${isInstructor ? 'ring-4 ring-white' : ''}`}>
+              <Avatar className={`h-24 w-24 sm:h-32 sm:w-32 ${isInstructor ? 'ring-4 ring-white' : ''}`}>
                 {profile.profile_photo_url && (
                   <AvatarImage
                     src={profile.profile_photo_url}
                     alt={profile.display_name}
                   />
                 )}
-                <AvatarFallback className="bg-gradient-to-br from-pink-500 to-purple-500 text-white text-4xl font-medium">
+                <AvatarFallback className="bg-gradient-to-br from-pink-500 to-purple-500 text-white text-3xl sm:text-4xl font-medium">
                   {profile.display_name.charAt(0).toUpperCase()}
                 </AvatarFallback>
               </Avatar>
             </div>
 
             {/* Profile Info */}
-            <div className="flex-1">
-              <div className="flex items-center gap-3 mb-2">
-                <h1 className="text-4xl font-bold bg-gradient-to-r from-pink-500 to-rose-400 bg-clip-text text-transparent">
+            <div className="flex-1 text-center md:text-left w-full">
+              <div className="flex flex-col sm:flex-row items-center md:items-center gap-2 sm:gap-3 mb-2">
+                <h1 className="text-2xl sm:text-4xl font-bold bg-gradient-to-r from-pink-500 to-rose-400 bg-clip-text text-transparent">
                   {profile.display_name}
                 </h1>
                 {isInstructor && (
@@ -305,11 +305,11 @@ export default async function ProfilePage({
 
         {/* Upcoming Streams (Instructors only) */}
         {isInstructor && upcomingStreams && upcomingStreams.length > 0 && (
-          <div className="mb-8">
-            <h2 className="text-2xl font-bold mb-4 text-gray-800">
+          <div className="mb-6 sm:mb-8">
+            <h2 className="text-xl sm:text-2xl font-bold mb-4 text-gray-800 px-2 sm:px-0">
               Upcoming Streams
             </h2>
-            <div className="grid gap-6">
+            <div className="grid gap-4 sm:gap-6">
               {upcomingStreams.map((stream) => (
                 <StreamCard
                   key={stream.id}
@@ -325,8 +325,8 @@ export default async function ProfilePage({
 
         {/* No Upcoming Streams Message (Instructors only) */}
         {isInstructor && (!upcomingStreams || upcomingStreams.length === 0) && (
-          <div className="bg-pink-50/50 rounded-xl border border-pink-100 p-8 text-center mb-8">
-            <p className="text-gray-600">
+          <div className="bg-pink-50/50 rounded-xl border border-pink-100 p-6 sm:p-8 text-center mb-6 sm:mb-8">
+            <p className="text-sm sm:text-base text-gray-600">
               No upcoming streams scheduled at the moment. Check back soon!
             </p>
           </div>
@@ -334,11 +334,11 @@ export default async function ProfilePage({
 
         {/* Past Streams (Instructors only) */}
         {isInstructor && pastStreams && pastStreams.length > 0 && (
-          <div className="mb-8">
-            <h2 className="text-2xl font-bold mb-4 text-gray-800">
+          <div className="mb-6 sm:mb-8">
+            <h2 className="text-xl sm:text-2xl font-bold mb-4 text-gray-800 px-2 sm:px-0">
               Past Classes
             </h2>
-            <div className="grid md:grid-cols-2 gap-4">
+            <div className="grid sm:grid-cols-2 gap-4">
               {pastStreams.map((stream) => (
                 <div
                   key={stream.id}
@@ -358,8 +358,8 @@ export default async function ProfilePage({
 
         {/* Reviews (Instructors only) */}
         {isInstructor && instructorComments && instructorComments.length > 0 && (
-          <div>
-            <h2 className="text-2xl font-bold mb-4 text-gray-800">
+          <div className="mb-6 sm:mb-8">
+            <h2 className="text-xl sm:text-2xl font-bold mb-4 text-gray-800 px-2 sm:px-0">
               Student Reviews
             </h2>
             <div className="grid gap-4">
@@ -371,9 +371,9 @@ export default async function ProfilePage({
                 return (
                   <div
                     key={comment.id}
-                    className="bg-white rounded-xl border border-gray-200 p-6"
+                    className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6"
                   >
-                    <div className="flex items-start gap-4">
+                    <div className="flex items-start gap-3 sm:gap-4">
                       {/* User Avatar */}
                       <div className="flex-shrink-0">
                         {userProfile?.profile_photo_url ? (
