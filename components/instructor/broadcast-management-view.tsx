@@ -285,7 +285,7 @@ export function BroadcastManagementView({ stream }: BroadcastManagementViewProps
 
               {streamStatus === "scheduled" && (
                 <Button
-                  onClick={handleMarkLive}
+                  onClick={() => handleMarkLive()}
                   className="w-full bg-green-500 hover:bg-green-600"
                 >
                   Mark as Live
