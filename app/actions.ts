@@ -391,6 +391,64 @@ export const getStreams = async (options?: {
 };
 
 /**
+ * Get past streams (ended) that user is enrolled in with available recordings
+ */
+export const getPastStreams = async (options?: {
+  enrolledStreamIds?: string[];
+}): Promise<LiveStreamSession[]> => {
+  const supabase = await createClient();
+
+  if (!options?.enrolledStreamIds || options.enrolledStreamIds.length === 0) {
+    return [];
+  }
+
+  // Fetch ended streams that user is enrolled in with recordings available
+  const { data, error } = await supabase
+    .from('live_stream_sessions')
+    .select(`
+      *,
+      instructor:instructors(id, slug, user_id)
+    `)
+    .eq('status', 'ended')
+    .eq('recording_available', true)
+    .in('id', options.enrolledStreamIds)
+    .order('actual_end_time', { ascending: false });
+
+  if (error) {
+    console.error("Error fetching past streams:", error);
+    return [];
+  }
+
+  // Fetch instructor profiles for all streams
+  const instructorUserIds = [...new Set(
+    data
+      .map(s => s.instructor?.user_id)
+      .filter((id): id is string => id != null)
+  )];
+
+  const { data: profiles } = await supabase
+    .from('profiles')
+    .select('user_id, display_name, profile_photo_url')
+    .in('user_id', instructorUserIds);
+
+  const profileMap = new Map(
+    (profiles || []).map(p => [p.user_id, p])
+  );
+
+  // Merge instructor display names and photos
+  const mergePastStreams = data.map(stream => ({
+    ...stream,
+    instructor: stream.instructor ? {
+      ...stream.instructor,
+      display_name: profileMap.get(stream.instructor.user_id)?.display_name || '',
+      profile_photo_url: profileMap.get(stream.instructor.user_id)?.profile_photo_url || null,
+    } : null
+  }));
+
+  return mergePastStreams as LiveStreamSession[];
+};
+
+/**
  * Get user's stream enrollments
  */
 export const getUserEnrollments = async (): Promise<StreamEnrollment[]> => {

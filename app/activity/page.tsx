@@ -1,4 +1,4 @@
-import { getWorkoutHistory, getStreams, getUserEnrollments } from "@/app/actions";
+import { getWorkoutHistory, getStreams, getUserEnrollments, getPastStreams } from "@/app/actions";
 import { ActivityView } from "@/components/activity-view";
 import { createClient } from "@/utils/supabase/server";
 
@@ -15,14 +15,18 @@ export default async function ActivityPage() {
   // Get enrolled stream IDs
   const enrolledStreamIds = enrollments.map(e => e.stream_id);
 
-  // Fetch upcoming streams
-  const streams = await getStreams({ enrolledStreamIds });
+  // Fetch upcoming and past streams in parallel
+  const [streams, pastStreams] = await Promise.all([
+    getStreams({ enrolledStreamIds }),
+    getPastStreams({ enrolledStreamIds }),
+  ]);
 
   return (
     <ActivityView
       workoutHistory={workoutHistory}
       upcomingStreams={streams.upcomingStreams}
       liveStreams={streams.liveStreams}
+      pastStreams={pastStreams}
       enrollments={enrollments}
       isAuthenticated={!!user}
     />

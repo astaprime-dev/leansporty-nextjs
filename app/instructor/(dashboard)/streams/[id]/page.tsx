@@ -2,6 +2,7 @@ import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import { LiveStreamSession } from "@/types/streaming";
 import { StreamAnalytics } from "@/components/instructor/stream-analytics";
+import { CloudflareStreamPlayer } from "@/components/CloudflareStreamPlayer";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import {
@@ -13,6 +14,7 @@ import {
   Radio,
   TrendingUp,
   ArrowLeft,
+  PlayCircle,
 } from "lucide-react";
 
 export default async function StreamDetailPage({
@@ -176,6 +178,34 @@ export default async function StreamDetailPage({
           </div>
         </div>
       </div>
+
+      {/* Recording Player - Show for ended streams with available recordings */}
+      {streamData.status === "ended" &&
+       streamData.recording_available &&
+       streamData.recording_cloudflare_video_id && (
+        <div className="bg-white rounded-lg border p-6">
+          <div className="flex items-center gap-2 mb-6">
+            <PlayCircle className="w-6 h-6 text-pink-500" />
+            <h2 className="text-2xl font-bold">Recording Preview</h2>
+          </div>
+          <div className="mb-4">
+            <CloudflareStreamPlayer
+              playbackId={streamData.recording_cloudflare_video_id}
+              autoplay={false}
+              controls={true}
+              poster={streamData.thumbnail_url || undefined}
+            />
+          </div>
+          {streamData.recording_expires_at && (
+            <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+              <p className="text-sm text-amber-800">
+                Recording available until{" "}
+                {formatDate(streamData.recording_expires_at)}
+              </p>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Analytics Section - Only show after stream ends */}
       {streamData.status === "ended" && (

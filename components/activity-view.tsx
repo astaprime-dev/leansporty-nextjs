@@ -12,6 +12,7 @@ interface ActivityViewProps {
   workoutHistory: WorkoutHistoryItem[];
   upcomingStreams: LiveStreamSession[];
   liveStreams: LiveStreamSession[];
+  pastStreams: LiveStreamSession[];
   enrollments: StreamEnrollment[];
   isAuthenticated: boolean;
 }
@@ -20,6 +21,7 @@ export function ActivityView({
   workoutHistory,
   upcomingStreams,
   liveStreams,
+  pastStreams,
   enrollments,
   isAuthenticated
 }: ActivityViewProps) {
@@ -145,6 +147,33 @@ export function ActivityView({
                 stream={stream}
                 enrollment={enrollmentMap.get(stream.id)}
                 isLive={stream.status === "live"}
+                isAuthenticated={isAuthenticated}
+              />
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Past Classes Section */}
+      {pastStreams.length > 0 && (
+        <div className="bg-gradient-to-br from-purple-50 to-indigo-50 rounded-2xl p-4 sm:p-6 border border-purple-100">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 mb-4">
+            <div className="flex-1">
+              <h2 className="text-xl sm:text-2xl font-bold text-gray-800">
+                Past Classes
+              </h2>
+              <p className="text-xs sm:text-sm text-gray-600 mt-1">
+                Replay your enrolled classes anytime within 7 days
+              </p>
+            </div>
+          </div>
+          <div className="grid gap-4">
+            {pastStreams.map((stream) => (
+              <StreamCard
+                key={stream.id}
+                stream={stream}
+                enrollment={enrollmentMap.get(stream.id)}
+                isLive={false}
                 isAuthenticated={isAuthenticated}
               />
             ))}
