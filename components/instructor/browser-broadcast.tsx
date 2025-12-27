@@ -7,6 +7,7 @@ import { Video, VideoOff, Mic, MicOff, MonitorPlay, Camera, Headphones } from "l
 interface BrowserBroadcastProps {
   webrtcUrl: string;
   webrtcToken?: string;
+  isReconnection?: boolean;
   onStreamStart?: () => void;
   onStreamEnd?: () => void;
 }
@@ -21,6 +22,7 @@ interface MediaDeviceInfo {
 export function BrowserBroadcast({
   webrtcUrl,
   webrtcToken,
+  isReconnection = false,
   onStreamStart,
   onStreamEnd,
 }: BrowserBroadcastProps) {
@@ -479,8 +481,14 @@ export function BrowserBroadcast({
           <div className="absolute inset-0 flex items-center justify-center bg-gray-900">
             <div className="text-center text-white">
               <MonitorPlay className="w-16 h-16 mx-auto mb-4 opacity-50" />
-              <p className="text-lg">Ready to broadcast</p>
-              <p className="text-sm opacity-70 mt-2">Click "Start Broadcast" to begin</p>
+              <p className="text-lg">
+                {isReconnection ? "Ready to reconnect" : "Ready to broadcast"}
+              </p>
+              <p className="text-sm opacity-70 mt-2">
+                {isReconnection
+                  ? "Your stream is still live. Click to continue from this device."
+                  : "Click \"Start Broadcast\" to begin"}
+              </p>
             </div>
           </div>
         )}
@@ -517,10 +525,14 @@ export function BrowserBroadcast({
         {connectionState === "idle" ? (
           <Button
             onClick={startBroadcast}
-            className="bg-gradient-to-r from-pink-500 to-rose-400 hover:from-pink-600 hover:to-rose-500"
+            className={
+              isReconnection
+                ? "bg-gradient-to-r from-blue-500 to-cyan-400 hover:from-blue-600 hover:to-cyan-500"
+                : "bg-gradient-to-r from-pink-500 to-rose-400 hover:from-pink-600 hover:to-rose-500"
+            }
             size="lg"
           >
-            Start Broadcast
+            {isReconnection ? "Reconnect Broadcast" : "Start Broadcast"}
           </Button>
         ) : connectionState === "connected" ? (
           <>

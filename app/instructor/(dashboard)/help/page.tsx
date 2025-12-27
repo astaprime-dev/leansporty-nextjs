@@ -247,23 +247,180 @@ export default function InstructorHelpPage() {
             </div>
 
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-3">Going live & broadcasting</h3>
-              <ol className="space-y-2 ml-6 list-decimal text-gray-700">
-                <li>Navigate to "My Streams" before your scheduled start time</li>
-                <li>Click "Manage →" on your scheduled stream to open the broadcast page</li>
-                <li>Click "Start Broadcast" and allow camera/microphone access in your browser</li>
-                <li>Once connected, click "Mark as Live" so students can join</li>
-                <li>Your stream status changes to "LIVE" and enrolled students can watch</li>
-                <li>Conduct your class as normal</li>
-                <li>Click "Stop Broadcast" then "End Stream" when finished</li>
-              </ol>
+              <h3 className="text-lg font-semibold text-gray-900 mb-3">Going live - it's easy!</h3>
+              <p className="text-gray-700 mb-4">
+                Broadcasting your class is simple - everything happens in your browser with just one button click.
+                Here's what to do:
+              </p>
 
-              <div className="mt-4 bg-green-50 border border-green-200 rounded-lg p-4">
+              <div className="bg-gradient-to-br from-pink-50 to-rose-50 rounded-lg p-6 border border-pink-200 mb-6">
+                <p className="font-bold text-gray-900 mb-4 text-lg">Quick Start Guide:</p>
+                <ol className="space-y-3 ml-6 list-decimal text-gray-700">
+                  <li>
+                    <p className="font-semibold text-gray-900">Open your broadcast page</p>
+                    <p className="text-sm text-gray-600">Go to "My Streams" and click "Manage →" on your scheduled stream</p>
+                  </li>
+                  <li>
+                    <p className="font-semibold text-gray-900">Click "Start Broadcast"</p>
+                    <p className="text-sm text-gray-600">Allow camera and microphone access when your browser asks</p>
+                  </li>
+                  <li>
+                    <p className="font-semibold text-gray-900">Wait for the connection</p>
+                    <p className="text-sm text-gray-600">You'll see a red "LIVE" badge appear when you're connected (usually takes just a few seconds)</p>
+                  </li>
+                  <li>
+                    <p className="font-semibold text-gray-900">That's it! You're live</p>
+                    <p className="text-sm text-gray-600">Your stream automatically becomes visible to students. Start teaching!</p>
+                  </li>
+                  <li>
+                    <p className="font-semibold text-gray-900">When you're done</p>
+                    <p className="text-sm text-gray-600">Click "Stop Broadcast" then confirm "End Stream"</p>
+                  </li>
+                </ol>
+              </div>
+
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+                <div className="flex items-start gap-3">
+                  <AlertCircle className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <p className="font-semibold text-blue-900 mb-1">What happens when you click "Start Broadcast"?</p>
+                    <ul className="text-sm text-blue-800 space-y-1 list-disc ml-4">
+                      <li>Your camera and microphone turn on (you'll see yourself on screen)</li>
+                      <li>The system connects you to the streaming servers</li>
+                      <li>Your stream automatically switches from "Scheduled" to "LIVE"</li>
+                      <li>Students who enrolled can now watch your class</li>
+                      <li>Your stream appears in the "LIVE NOW" section on the homepage</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-green-50 border border-green-200 rounded-lg p-4">
                 <p className="font-semibold text-green-900 mb-1">Browser Requirements</p>
                 <p className="text-sm text-green-800">
                   Works best in Chrome, Firefox, or Safari. Make sure you have a stable internet connection
                   (at least 5 Mbps upload speed recommended) and good lighting for the best experience.
                 </p>
+              </div>
+            </div>
+
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-3">Ending your class</h3>
+              <p className="text-gray-700 mb-4">
+                When you're finished teaching, ending your stream is just as simple as starting it.
+              </p>
+
+              <div className="bg-gradient-to-br from-rose-50 to-pink-50 rounded-lg p-6 border border-rose-200 mb-6">
+                <p className="font-bold text-gray-900 mb-4 text-lg">How to end your stream:</p>
+                <ol className="space-y-3 ml-6 list-decimal text-gray-700">
+                  <li>
+                    <p className="font-semibold text-gray-900">Click "Stop Broadcast"</p>
+                    <p className="text-sm text-gray-600">Your camera and microphone turn off immediately</p>
+                  </li>
+                  <li>
+                    <p className="font-semibold text-gray-900">Confirm you want to end</p>
+                    <p className="text-sm text-gray-600">A popup asks "Are you sure you want to end this stream?"</p>
+                  </li>
+                  <li>
+                    <p className="font-semibold text-gray-900">Click "OK" to confirm</p>
+                    <p className="text-sm text-gray-600">Your stream is now marked as ended</p>
+                  </li>
+                  <li>
+                    <p className="font-semibold text-gray-900">That's it!</p>
+                    <p className="text-sm text-gray-600">The recording becomes available to students automatically</p>
+                  </li>
+                </ol>
+              </div>
+
+              <div className="bg-purple-50 border border-purple-200 rounded-lg p-4 mb-4">
+                <div className="flex items-start gap-3">
+                  <AlertCircle className="w-5 h-5 text-purple-600 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <p className="font-semibold text-purple-900 mb-1">What happens when you end your stream?</p>
+                    <ul className="text-sm text-purple-800 space-y-1 list-disc ml-4">
+                      <li>Your camera and microphone turn off</li>
+                      <li>The stream status changes from "LIVE" to "ENDED"</li>
+                      <li>Students can no longer join the live class</li>
+                      <li>The recording becomes available automatically</li>
+                      <li>Enrolled students can watch the replay for 7 days</li>
+                      <li>Your earnings are finalized based on total enrollments</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+                <div className="flex items-start gap-3">
+                  <AlertCircle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <p className="font-semibold text-amber-900 mb-1">Important: Recording Availability</p>
+                    <p className="text-amber-800 text-sm">
+                      Your class is automatically recorded while you broadcast. After you end the stream,
+                      the recording is available to enrolled students for <strong>7 days</strong>. After that,
+                      it's automatically deleted. This gives students time to re-watch the class while keeping
+                      your content exclusive!
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-3">What if something goes wrong?</h3>
+              <p className="text-gray-700 mb-4">
+                Don't worry - we've built in resilience for common technical issues during your class.
+              </p>
+
+              <div className="space-y-4">
+                <div className="bg-cyan-50 border border-cyan-200 rounded-lg p-4">
+                  <div className="flex items-start gap-3">
+                    <AlertCircle className="w-5 h-5 text-cyan-600 flex-shrink-0 mt-0.5" />
+                    <div>
+                      <p className="font-semibold text-cyan-900 mb-2">Reconnecting After Connection Loss</p>
+                      <p className="text-cyan-800 text-sm mb-3">
+                        If your connection drops during class (battery dies, browser crashes, network issues, or accidental refresh),
+                        you can easily reconnect without ending your stream:
+                      </p>
+                      <ol className="text-sm text-cyan-800 space-y-2 ml-6 list-decimal">
+                        <li>Open the broadcast page again (same device or different device)</li>
+                        <li>You'll see a blue <strong>"Reconnect Broadcast"</strong> button instead of the pink "Start Broadcast"</li>
+                        <li>Click it to continue your class from where you left off</li>
+                        <li>Your original start time and analytics are preserved</li>
+                        <li>Students stay enrolled and can continue watching</li>
+                      </ol>
+                      <p className="text-xs text-cyan-700 mt-3 font-medium">
+                        Common scenarios: laptop battery dies, switch to phone, browser refresh, network drop, computer sleep
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                  <div className="flex items-start gap-3">
+                    <AlertCircle className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" />
+                    <div>
+                      <p className="font-semibold text-yellow-900 mb-1">Browser Warning Protection</p>
+                      <p className="text-yellow-800 text-sm">
+                        When your stream is live, if you try to close the tab or refresh the page, your browser will warn you:
+                        "Your stream is still live. Are you sure you want to leave?" This helps prevent accidental disconnections.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-rose-50 border border-rose-200 rounded-lg p-4">
+                  <div className="flex items-start gap-3">
+                    <AlertCircle className="w-5 h-5 text-rose-600 flex-shrink-0 mt-0.5" />
+                    <div>
+                      <p className="font-semibold text-rose-900 mb-1">Cannot Restart Ended Streams</p>
+                      <p className="text-rose-800 text-sm">
+                        Once you've ended a stream (by clicking "Stop Broadcast" and confirming), you cannot restart it.
+                        This is intentional - each class should be a separate session with its own recording and analytics.
+                        To teach again, simply create a new stream.
+                      </p>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
 

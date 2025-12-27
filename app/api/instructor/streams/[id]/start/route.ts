@@ -29,13 +29,44 @@ export async function POST(
 
     const { id } = await params;
 
-    // Update stream status to 'live'
+    // Check current stream status to determine if this is a first start or reconnection
+    const { data: stream, error: fetchError } = await supabase
+      .from("live_stream_sessions")
+      .select("status, actual_start_time")
+      .eq("id", id)
+      .single();
+
+    if (fetchError || !stream) {
+      console.error("Error fetching stream:", fetchError);
+      return NextResponse.json(
+        { error: "Stream not found" },
+        { status: 404 }
+      );
+    }
+
+    // Block restarting ended streams - instructor should create a new stream instead
+    if (stream.status === "ended") {
+      return NextResponse.json(
+        { error: "This stream has already ended. Please create a new stream for your next class." },
+        { status: 400 }
+      );
+    }
+
+    // Prepare update data
+    // Only set actual_start_time on first start, not on reconnection
+    const updateData: { status: string; actual_start_time?: string } = {
+      status: "live",
+    };
+
+    // If no start time exists, this is the first start (not a reconnection)
+    if (!stream.actual_start_time) {
+      updateData.actual_start_time = new Date().toISOString();
+    }
+
+    // Update stream status to 'live' (preserving start time on reconnection)
     const { error } = await supabase
       .from("live_stream_sessions")
-      .update({
-        status: "live",
-        actual_start_time: new Date().toISOString(),
-      })
+      .update(updateData)
       .eq("id", id);
 
     if (error) {
@@ -46,7 +77,10 @@ export async function POST(
       );
     }
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json({
+      success: true,
+      isReconnection: !!stream.actual_start_time
+    });
   } catch (error) {
     console.error("Start stream error:", error);
     return NextResponse.json(

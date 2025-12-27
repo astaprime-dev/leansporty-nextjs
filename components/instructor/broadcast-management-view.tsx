@@ -6,9 +6,9 @@ import { ReactionDisplay } from "@/components/instructor/reaction-display";
 import { LiveViewerCount } from "@/components/stream/live-viewer-count";
 import { CommentList } from "@/components/stream/comment-list";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Calendar, Clock, Coins, Users, Copy, Check } from "lucide-react";
+import { Calendar, Clock, Coins, Users, Copy, Check, AlertCircle } from "lucide-react";
 
 interface BroadcastManagementViewProps {
   stream: LiveStreamSession;
@@ -18,6 +18,23 @@ export function BroadcastManagementView({ stream }: BroadcastManagementViewProps
   const [streamStatus, setStreamStatus] = useState(stream.status);
   const [copied, setCopied] = useState(false);
   const router = useRouter();
+
+  // Detect if this is a reconnection scenario
+  // (stream is already live but this device isn't currently broadcasting)
+  const isReconnection = streamStatus === "live" && stream.actual_start_time !== null;
+
+  // Add browser warning when trying to leave page while stream is live
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (streamStatus === "live") {
+        e.preventDefault();
+        e.returnValue = "Your stream is still live. Are you sure you want to leave?";
+      }
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [streamStatus]);
 
   const handleMarkLive = async () => {
     const response = await fetch(`/api/instructor/streams/${stream.id}/start`, {
@@ -76,11 +93,12 @@ export function BroadcastManagementView({ stream }: BroadcastManagementViewProps
           </div>
 
           {/* Broadcast Component */}
-          {stream.cloudflare_webrtc_url && (
+          {stream.cloudflare_webrtc_url && streamStatus !== "ended" && (
             <div className="relative">
               <BrowserBroadcast
                 webrtcUrl={stream.cloudflare_webrtc_url}
                 webrtcToken={stream.cloudflare_webrtc_token || undefined}
+                isReconnection={isReconnection}
                 onStreamStart={handleMarkLive}
                 onStreamEnd={handleEndStream}
               />
@@ -89,6 +107,35 @@ export function BroadcastManagementView({ stream }: BroadcastManagementViewProps
                 streamId={stream.id}
                 isLive={streamStatus === "live"}
               />
+            </div>
+          )}
+
+          {/* Message when stream has ended */}
+          {streamStatus === "ended" && (
+            <div className="bg-gray-50 rounded-lg border-2 border-gray-200 p-12">
+              <div className="text-center">
+                <div className="inline-flex items-center justify-center w-16 h-16 bg-gray-100 rounded-full mb-4">
+                  <Check className="w-8 h-8 text-gray-600" />
+                </div>
+                <h3 className="text-xl font-bold text-gray-900 mb-2">Stream Has Ended</h3>
+                <p className="text-gray-600 mb-6">
+                  This class has finished. The recording is now available to enrolled students for 7 days.
+                </p>
+                <div className="flex gap-3 justify-center">
+                  <Button
+                    onClick={() => router.push("/instructor/streams")}
+                    variant="outline"
+                  >
+                    Back to Streams
+                  </Button>
+                  <Button
+                    onClick={() => router.push("/instructor/streams/create")}
+                    className="bg-gradient-to-r from-pink-500 to-rose-400"
+                  >
+                    Create New Stream
+                  </Button>
+                </div>
+              </div>
             </div>
           )}
 
@@ -229,15 +276,31 @@ export function BroadcastManagementView({ stream }: BroadcastManagementViewProps
           )} */}
 
           {/* Help Card */}
-          <div className="bg-gray-50 border rounded-lg p-4">
-            <h4 className="font-medium mb-2">How to Broadcast</h4>
-            <ol className="text-sm text-gray-700 space-y-2 list-decimal list-inside">
-              <li>Click "Start Broadcast"</li>
-              <li>Allow camera & microphone access</li>
-              <li>Wait for "LIVE" indicator</li>
-              <li>Start your workout!</li>
-              <li>Click "Stop Broadcast" when done</li>
-            </ol>
+          <div className="bg-gradient-to-br from-pink-50 to-rose-50 border border-pink-200 rounded-lg p-4">
+            <h4 className="font-semibold text-gray-900 mb-3">Quick Guide</h4>
+
+            <div className="mb-4">
+              <p className="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wide">Starting Your Stream</p>
+              <ol className="text-sm text-gray-700 space-y-1 ml-4 list-decimal">
+                <li>Click <strong>"Start Broadcast"</strong></li>
+                <li>Allow camera & microphone access</li>
+                <li>Wait for red <strong>"LIVE"</strong> badge (3-5 seconds)</li>
+                <li>You're live - students can now watch</li>
+              </ol>
+            </div>
+
+            <div className="pt-3 border-t border-pink-200">
+              <p className="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wide">Ending Your Stream</p>
+              <ol className="text-sm text-gray-700 space-y-1 ml-4 list-decimal">
+                <li>Click <strong>"Stop Broadcast"</strong></li>
+                <li>Confirm when asked</li>
+                <li>Done - recording becomes available to students</li>
+              </ol>
+            </div>
+
+            <p className="text-xs text-gray-600 mt-3 pt-3 border-t border-pink-200">
+              Tip: Everything is automatic - just click one button to start and one to stop
+            </p>
           </div>
         </div>
       </div>
