@@ -5,11 +5,59 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { getStreams, getUserEnrollments } from "@/app/actions";
 import { StreamCard } from "@/components/stream-card";
 import GalleryDisplay from "@/components/instructor/gallery-display";
+import { Metadata } from "next";
 
 interface ProfilePageProps {
   params: Promise<{
     username: string;
   }>;
+}
+
+export async function generateMetadata({
+  params,
+}: ProfilePageProps): Promise<Metadata> {
+  const { username } = await params;
+  const slug = username;
+  const supabase = await createClient();
+
+  // Check if it's an instructor profile first
+  const { data: instructor } = await supabase
+    .from("instructors")
+    .select("id, user_id, slug")
+    .eq("slug", slug)
+    .single();
+
+  // Get the user profile data
+  let userProfile = null;
+  if (instructor) {
+    const { data } = await supabase
+      .from("user_profiles")
+      .select("display_name, bio")
+      .eq("user_id", instructor.user_id)
+      .single();
+    userProfile = data;
+  } else {
+    const { data } = await supabase
+      .from("user_profiles")
+      .select("display_name, bio")
+      .eq("username", slug)
+      .single();
+    userProfile = data;
+  }
+
+  if (!userProfile) {
+    return {
+      title: "Profile Not Found",
+    };
+  }
+
+  const title = `${userProfile.display_name}${instructor ? " - Instructor" : ""} | LeanSporty`;
+  const description = userProfile.bio || `View ${userProfile.display_name}'s profile on LeanSporty`;
+
+  return {
+    title,
+    description,
+  };
 }
 
 export default async function ProfilePage({
