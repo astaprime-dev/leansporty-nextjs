@@ -61,12 +61,9 @@ export async function createLiveInput(streamName: string): Promise<{
     body: JSON.stringify({
       meta: { name: streamName },
       recording: {
-        mode: 'automatic', // Automatically record for 7-day replay
-        timeoutSeconds: 3600, // Stop recording after 1 hour of inactivity
-        requireSignedURLs: false, // Public playback for enrolled users
+        mode: 'automatic', // Automatically record for replay
+        timeoutSeconds: 3600, // Reconnection timeout
       },
-      // Enable WebRTC for browser streaming
-      defaultCreator: null,
     }),
   });
 
