@@ -175,6 +175,13 @@ export default async function ProfilePage({
                 </p>
               )}
 
+              {/* Location for user profiles */}
+              {!isInstructor && userProfile.location && (
+                <p className="text-sm text-gray-600 mb-4">
+                  {userProfile.location}
+                </p>
+              )}
+
               {/* Social Links */}
               <div className="flex items-center gap-4 text-sm">
                 {profile.instagram_handle && (
