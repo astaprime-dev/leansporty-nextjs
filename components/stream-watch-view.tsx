@@ -16,12 +16,16 @@ interface StreamWatchViewProps {
   stream: LiveStreamSession;
   enrollment: StreamEnrollment;
   isLive: boolean;
+  isInstructor?: boolean;
+  instructorId?: string;
 }
 
 export function StreamWatchView({
   stream,
   enrollment,
   isLive,
+  isInstructor = false,
+  instructorId,
 }: StreamWatchViewProps) {
   // Track playing state for attendance tracking
   const [isPlaying, setIsPlaying] = useState(false);
@@ -204,7 +208,11 @@ export function StreamWatchView({
           </div>
 
           {/* Comment List */}
-          <CommentList streamId={stream.id} />
+          <CommentList
+            streamId={stream.id}
+            isInstructor={isInstructor}
+            instructorId={instructorId}
+          />
         </div>
       </div>
     </div>

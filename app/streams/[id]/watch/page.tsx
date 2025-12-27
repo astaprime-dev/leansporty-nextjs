@@ -34,11 +34,20 @@ export default async function StreamWatchPage({
     redirect("/streams");
   }
 
+  // Check if current user is an instructor
+  const { data: instructor } = await supabase
+    .from("instructors")
+    .select("id")
+    .eq("user_id", user.id)
+    .single();
+
   return (
     <StreamWatchView
       stream={stream}
       enrollment={enrollment}
       isLive={stream.status === "live"}
+      isInstructor={!!instructor}
+      instructorId={instructor?.id}
     />
   );
 }

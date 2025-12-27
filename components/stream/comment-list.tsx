@@ -11,6 +11,8 @@ interface CommentListProps {
   streamId: string;
   averageRating?: number;
   totalComments?: number;
+  isInstructor?: boolean;
+  instructorId?: string;
 }
 
 /**
@@ -18,11 +20,20 @@ interface CommentListProps {
  * Displays paginated list of comments with replies
  * Shows rating summary and load more functionality
  */
-export function CommentList({ streamId, averageRating = 0, totalComments = 0 }: CommentListProps) {
+export function CommentList({
+  streamId,
+  averageRating = 0,
+  totalComments = 0,
+  isInstructor = false,
+  instructorId
+}: CommentListProps) {
   const [comments, setComments] = useState<CommentWithUser[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [hasMore, setHasMore] = useState(false);
   const [offset, setOffset] = useState(0);
+  const [replyingTo, setReplyingTo] = useState<string | null>(null);
+  const [replyText, setReplyText] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const loadComments = async (currentOffset: number = 0) => {
     setIsLoading(true);
@@ -56,6 +67,37 @@ export function CommentList({ streamId, averageRating = 0, totalComments = 0 }: 
 
   const handleLoadMore = () => {
     loadComments(offset);
+  };
+
+  const handleReplySubmit = async (commentId: string) => {
+    if (!replyText.trim() || !instructorId) return;
+
+    setIsSubmitting(true);
+    try {
+      const response = await fetch(`/api/comments/${commentId}/reply`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          reply_text: replyText.trim(),
+        }),
+      });
+
+      if (response.ok) {
+        // Reset form
+        setReplyText('');
+        setReplyingTo(null);
+        // Reload comments to show new reply
+        await loadComments(0);
+      } else {
+        const error = await response.json();
+        alert(error.error || 'Failed to post reply');
+      }
+    } catch (error) {
+      console.error('Reply error:', error);
+      alert('Failed to post reply');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   // No comments yet
@@ -150,6 +192,54 @@ export function CommentList({ streamId, averageRating = 0, totalComments = 0 }: 
                 <p className="text-gray-700 leading-relaxed mb-4">
                   {comment.comment_text}
                 </p>
+              )}
+
+              {/* Reply Button (Instructors Only) */}
+              {isInstructor && (
+                <div className="mb-4">
+                  {replyingTo === comment.id ? (
+                    <div className="bg-pink-50 rounded-lg p-4 border border-pink-200">
+                      <textarea
+                        value={replyText}
+                        onChange={(e) => setReplyText(e.target.value)}
+                        placeholder="Write your reply..."
+                        rows={3}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500 mb-2"
+                        disabled={isSubmitting}
+                      />
+                      <div className="flex gap-2">
+                        <Button
+                          size="sm"
+                          onClick={() => handleReplySubmit(comment.id)}
+                          disabled={isSubmitting || !replyText.trim()}
+                          className="bg-pink-600 hover:bg-pink-700"
+                        >
+                          {isSubmitting ? 'Posting...' : 'Post Reply'}
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => {
+                            setReplyingTo(null);
+                            setReplyText('');
+                          }}
+                          disabled={isSubmitting}
+                        >
+                          Cancel
+                        </Button>
+                      </div>
+                    </div>
+                  ) : (
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => setReplyingTo(comment.id)}
+                      className="text-pink-600 hover:text-pink-700 hover:bg-pink-50"
+                    >
+                      Reply
+                    </Button>
+                  )}
+                </div>
               )}
 
               {/* Instructor Replies */}
