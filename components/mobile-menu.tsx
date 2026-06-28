@@ -47,10 +47,10 @@ export function MobileMenu({ user, isInstructor }: MobileMenuProps) {
                 </Link>
               )}
 
-              {/* Challenge - the primary web offer */}
+              {/* Challenge - first for prominence; the pink CTA carries the emphasis */}
               <Link
                 href="/challenge"
-                className="text-base font-semibold text-gray-900 hover:text-pink-500 transition-colors py-2"
+                className="text-base font-light text-gray-600 hover:text-pink-500 transition-colors py-2"
                 onClick={() => setIsOpen(false)}
               >
                 Challenge

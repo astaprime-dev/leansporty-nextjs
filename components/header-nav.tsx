@@ -20,10 +20,10 @@ export default async function HeaderNav() {
 
   return (
     <div className="hidden md:flex items-center gap-3 lg:gap-6">
-      {/* Challenge - the primary web offer: first + emphasized */}
+      {/* Challenge - first for prominence; the pink CTA carries the emphasis */}
       <Link
         href="/challenge"
-        className="text-sm font-semibold text-gray-900 hover:text-pink-500 transition-colors duration-300"
+        className="text-sm font-light text-gray-600 hover:text-pink-500 transition-colors duration-300"
       >
         Challenge
       </Link>
