@@ -1,125 +1,16 @@
-import { getWorkouts } from "@/app/actions";
-import Image from "next/image";
-import { Sparkles, Flame, Zap, Star } from "lucide-react";
-import { ProgramCard } from "@/components/challenge/program-card";
+import { redirect } from "next/navigation";
 
-export default async function WorkoutsPage() {
-  const workouts = await getWorkouts();
-
-  // Helper function to format duration from seconds to MM:SS
-  const formatDuration = (seconds: number | null | undefined) => {
-    if (!seconds || seconds === 0) return '0:00';
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
-  };
-
-  return (
-    <div className="flex-1 w-full flex flex-col gap-8 px-4 py-8 max-w-7xl mx-auto">
-      {/* Your program (web-first) — replaces the old iOS-only notice */}
-      <ProgramCard />
-      <p className="-mt-4 text-center text-xs text-muted-foreground">
-        Prefer your phone? These workouts are also in the Lean Sporty iOS app.
-      </p>
-
-      {/* Header */}
-      <div>
-        <h1 className="text-5xl font-display font-light text-gray-900 mb-2">
-          Latest Dance Workouts
-        </h1>
-        <p className="text-muted-foreground">Preview our workout collection</p>
-      </div>
-
-      {/* Workouts Grid */}
-      {workouts.length === 0 ? (
-        <div className="text-center py-12">
-          <p className="text-lg text-muted-foreground">No workouts available yet.</p>
-          <p className="text-sm text-muted-foreground mt-2">
-            Check back soon for new dance workouts!
-          </p>
-        </div>
-      ) : (
-        <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-1">
-          {workouts.map((workout) => (
-            <div
-              key={workout.id}
-              className="group relative bg-white rounded-2xl border border-pink-100 hover:border-pink-300 shadow-sm hover:shadow-lg hover:shadow-pink-200/50 transition-all duration-300 overflow-hidden"
-            >
-              <div className="flex flex-col sm:flex-row gap-0 sm:gap-6">
-                {/* Thumbnail */}
-                <div className="relative w-full sm:w-64 h-48 sm:h-auto flex-shrink-0 bg-gradient-to-br from-pink-50 to-rose-50">
-                  {workout.thumbnailUrl ? (
-                    <Image
-                      src={workout.thumbnailUrl}
-                      alt={workout.title || 'Workout'}
-                      fill
-                      className="object-cover"
-                      sizes="(max-width: 640px) 100vw, 256px"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center">
-                      <Sparkles className="w-16 h-16 text-pink-400" strokeWidth={1.5} />
-                    </div>
-                  )}
-
-                  {/* Duration Badge */}
-                  <div className="absolute bottom-3 left-3 bg-gradient-to-r from-pink-500 to-rose-400 text-white px-4 py-2 rounded-lg font-semibold shadow-lg">
-                    {formatDuration(workout.durationInSeconds)}
-                  </div>
-                </div>
-
-                {/* Content */}
-                <div className="flex-1 p-6 flex flex-col justify-center">
-                  <h2 className="text-2xl font-semibold mb-3 text-gray-900 group-hover:text-pink-500 transition-colors">
-                    {workout.title || 'Untitled Workout'}
-                  </h2>
-
-                  {workout.subtitle && (
-                    <p className="text-gray-600 mb-4 text-lg">
-                      {workout.subtitle}
-                    </p>
-                  )}
-
-                  {workout.description && workout.description !== 'workout' && (
-                    <p className="text-gray-500 mb-4">
-                      {workout.description}
-                    </p>
-                  )}
-
-                  {/* Stats */}
-                  <div className="flex flex-wrap gap-4 text-sm text-gray-600">
-                    {workout.calories > 0 && (
-                      <div className="flex items-center gap-2">
-                        <Flame className="w-4 h-4 text-pink-500" strokeWidth={2} />
-                        <span>{workout.calories} cal</span>
-                      </div>
-                    )}
-                    {workout.moves > 0 && (
-                      <div className="flex items-center gap-2">
-                        <Zap className="w-4 h-4 text-pink-500" strokeWidth={2} />
-                        <span>{workout.moves} moves</span>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Featured Badge */}
-                  {workout.featured && (
-                    <div className="mt-4">
-                      <span className="inline-flex items-center gap-2 px-3 py-1 bg-gradient-to-r from-pink-500 to-rose-400 text-white text-xs font-semibold rounded-full">
-                        <Star className="w-3 h-3" strokeWidth={2} fill="currentColor" />
-                        Featured
-                      </span>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* Hover Effect Overlay */}
-              <div className="absolute inset-0 bg-gradient-to-br from-pink-50/50 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
-  );
+/**
+ * /workouts is PARKED (hidden from nav + redirected).
+ *
+ * It used to be a non-playable preview grid + an "available on iOS" notice —
+ * low value once the web challenge shipped (the program lives at /my-program,
+ * surfaced there and on /activity via ProgramCard).
+ *
+ * RECLAIM LATER: when membership (Phase 2) unlocks a standalone catalog, this
+ * route becomes the "Library" of playable sessions. The old preview-grid
+ * implementation is in git history (the commit before this redirect).
+ */
+export default function WorkoutsPage() {
+  redirect("/my-program");
 }

@@ -61,9 +61,6 @@ export function MobileMenu({ user, isInstructor }: MobileMenuProps) {
                   <NavLink href="/streams" onClick={close} className="text-base font-light py-2">
                     Streams
                   </NavLink>
-                  <NavLink href="/workouts" onClick={close} className="text-base font-light py-2">
-                    Workouts
-                  </NavLink>
                 </>
               ) : (
                 <>
