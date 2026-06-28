@@ -94,16 +94,28 @@ export default async function RootLayout({
                     {/* Auth Buttons */}
                     <HeaderAuth />
 
-                    {/* CTA Button - Desktop only */}
-                    <a
-                      href="https://apps.apple.com/app/id6745218800"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="hidden sm:inline-flex items-center gap-2 px-4 lg:px-6 py-2 lg:py-2.5 bg-gradient-to-r from-pink-500 to-rose-400 text-white text-xs lg:text-sm font-light rounded-full hover:shadow-lg hover:shadow-pink-200/50 transform hover:scale-105 transition-all duration-300"
-                    >
-                      <span>Download App</span>
-                      <span className="text-xs">✧</span>
-                    </a>
+                    {/* Primary CTA - Desktop only.
+                        Anonymous → drive to the web offer (the commerce surface).
+                        Signed in → Download App (iOS = watch/retention surface). */}
+                    {user ? (
+                      <a
+                        href="https://apps.apple.com/app/id6745218800"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="hidden sm:inline-flex items-center gap-2 px-4 lg:px-6 py-2 lg:py-2.5 bg-gradient-to-r from-pink-500 to-rose-400 text-white text-xs lg:text-sm font-light rounded-full hover:shadow-lg hover:shadow-pink-200/50 transform hover:scale-105 transition-all duration-300"
+                      >
+                        <span>Download App</span>
+                        <span className="text-xs">✧</span>
+                      </a>
+                    ) : (
+                      <Link
+                        href="/challenge"
+                        className="hidden sm:inline-flex items-center gap-2 px-4 lg:px-6 py-2 lg:py-2.5 bg-gradient-to-r from-pink-500 to-rose-400 text-white text-xs lg:text-sm font-medium rounded-full hover:shadow-lg hover:shadow-pink-200/50 transform hover:scale-105 transition-all duration-300"
+                      >
+                        <span>Start the Challenge</span>
+                        <span className="text-xs">✧</span>
+                      </Link>
+                    )}
 
                     {/* Mobile Menu */}
                     <MobileMenuWrapper />

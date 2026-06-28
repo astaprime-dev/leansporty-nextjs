@@ -20,7 +20,15 @@ export default async function HeaderNav() {
 
   return (
     <div className="hidden md:flex items-center gap-3 lg:gap-6">
-      {/* Streams - visible to everyone for discovery */}
+      {/* Challenge - the primary web offer: first + emphasized */}
+      <Link
+        href="/challenge"
+        className="text-sm font-semibold text-gray-900 hover:text-pink-500 transition-colors duration-300"
+      >
+        Challenge
+      </Link>
+
+      {/* Streams - live discovery, everyone */}
       <Link
         href="/streams"
         className="text-sm font-light text-gray-600 hover:text-pink-500 transition-colors duration-300"
@@ -28,23 +36,7 @@ export default async function HeaderNav() {
         Streams
       </Link>
 
-      {/* Workouts - visible to everyone */}
-      <Link
-        href="/workouts"
-        className="text-sm font-light text-gray-600 hover:text-pink-500 transition-colors duration-300"
-      >
-        Workouts
-      </Link>
-
-      {/* Challenge - visible to everyone for discovery */}
-      <Link
-        href="/challenge"
-        className="text-sm font-light text-gray-600 hover:text-pink-500 transition-colors duration-300"
-      >
-        Challenge
-      </Link>
-
-      {/* Authenticated user links */}
+      {/* Authenticated user links (Workouts is the iOS-preview page → signed-in only) */}
       {user && (
         <>
           <Link
@@ -52,6 +44,12 @@ export default async function HeaderNav() {
             className="text-sm font-light text-gray-600 hover:text-pink-500 transition-colors duration-300"
           >
             My Program
+          </Link>
+          <Link
+            href="/workouts"
+            className="text-sm font-light text-gray-600 hover:text-pink-500 transition-colors duration-300"
+          >
+            Workouts
           </Link>
           <Link
             href="/activity"

@@ -62,7 +62,8 @@ export type DayState =
   | "completed" // entitled + progress complete
   | "preview-free" // not entitled, free preview day
   | "locked" // not entitled, non-preview
-  | "locked-until"; // entitled, drip on, not yet unlocked
+  | "locked-until" // entitled, drip on, not yet unlocked
+  | "coming-soon"; // session in the program structure, video not uploaded yet
 
 export interface ProgramDay {
   dayNumber: number; // 1..N calendar day

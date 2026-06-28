@@ -149,6 +149,18 @@ function DayCard({
     );
   }
 
+  if (state === "coming-soon") {
+    return (
+      <div className="flex aspect-video flex-col items-center justify-center gap-1 rounded-xl border border-pink-100 bg-white text-center">
+        <Sparkles className="h-5 w-5 text-pink-300" />
+        <span className="text-xs font-medium uppercase text-gray-400">
+          Day {day.dayNumber}
+        </span>
+        <span className="text-xs text-pink-400">Coming soon</span>
+      </div>
+    );
+  }
+
   return (
     <button
       type="button"

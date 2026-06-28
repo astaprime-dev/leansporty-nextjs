@@ -12,6 +12,7 @@ import {
   completedWorkoutDays,
   formatPrice,
   isDripEnabled,
+  mergeCanonicalItems,
   programLengthDays,
   totalWorkoutDays,
 } from "@/lib/challenge";
@@ -60,12 +61,16 @@ export default async function MyProgramPage({
   const totalDays = programLengthDays(product.config);
   const priceLabel = formatPrice(product.price_cents, product.currency);
 
-  const days = buildProgramDays(totalDays, data.items, {
-    owned,
-    completedContentIds: new Set(data.completedContentIds),
-    dripEnabled: isDripEnabled(product.config),
-    grantedAt: data.grantedAt,
-  });
+  const days = buildProgramDays(
+    totalDays,
+    mergeCanonicalItems(data.items, product.id),
+    {
+      owned,
+      completedContentIds: new Set(data.completedContentIds),
+      dripEnabled: isDripEnabled(product.config),
+      grantedAt: data.grantedAt,
+    }
+  );
 
   const total = totalWorkoutDays(days);
   const done = completedWorkoutDays(days);

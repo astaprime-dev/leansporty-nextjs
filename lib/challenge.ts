@@ -20,20 +20,33 @@ export const CANONICAL_WORKOUT_DAYS = [
 ] as const;
 
 /**
- * Placeholder curriculum for the public landing before the product is seeded
- * (or when items aren't loaded). Day 1 is the free preview; the rest are locked.
- * Carries no real workout — used only to communicate program structure.
+ * Build the full canonical 15-session program, overlaying real product_items
+ * onto the schedule. Days with a real item (a workout) play; days not yet
+ * uploaded become "coming soon" placeholders — so the program always presents
+ * as a complete, balanced 3×5 structure and fills in as videos are added.
+ * With no real items at all, this yields the marketing-only placeholder grid.
  */
-export function synthesizeCurriculumItems(productId = ""): ProductItem[] {
-  return CANONICAL_WORKOUT_DAYS.map((day, i) => ({
-    product_id: productId,
-    content_id: `placeholder-${day}`,
-    position: i + 1,
-    day_number: day,
-    is_preview: day === 1,
-    item_label: null,
-    workout: null,
-  }));
+export function mergeCanonicalItems(
+  items: ProductItem[],
+  productId = ""
+): ProductItem[] {
+  const byDay = new Map<number, ProductItem>();
+  for (const it of items) {
+    if (it.day_number != null) byDay.set(it.day_number, it);
+  }
+  return CANONICAL_WORKOUT_DAYS.map((day, i) => {
+    const real = byDay.get(day);
+    if (real) return real;
+    return {
+      product_id: productId,
+      content_id: `coming-soon-${day}`,
+      position: i + 1,
+      day_number: day,
+      is_preview: false,
+      item_label: null,
+      workout: null,
+    };
+  });
 }
 
 export function programLengthDays(config?: ChallengeConfig): number {
@@ -94,6 +107,9 @@ function computeDayState(
   opts: BuildOpts
 ): { state: DayState; unlocksOnDay?: number } {
   if (!item) return { state: "rest" };
+
+  // A program slot with no uploaded video yet — not playable in any state.
+  if (!item.workout) return { state: "coming-soon" };
 
   const completed = opts.completedContentIds.has(item.content_id);
 

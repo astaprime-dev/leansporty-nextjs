@@ -23,8 +23,8 @@ import {
   buildProgramDays,
   formatDuration,
   formatPrice,
+  mergeCanonicalItems,
   programLengthDays,
-  synthesizeCurriculumItems,
 } from "@/lib/challenge";
 
 export const dynamic = "force-dynamic";
@@ -95,12 +95,9 @@ export default async function ChallengePage({
     ? programLengthDays(product.config)
     : DEFAULT_PROGRAM_LENGTH_DAYS;
 
-  // Curriculum: real items when seeded, else the canonical structure so the
-  // page still communicates value (marketing view = not owned).
-  const items =
-    data && data.items.length > 0
-      ? data.items
-      : synthesizeCurriculumItems(product?.id);
+  // Always present the full 15-session structure (marketing view = not owned):
+  // real items where uploaded, "coming soon" placeholders for the rest.
+  const items = mergeCanonicalItems(data?.items ?? [], product?.id);
   const days = buildProgramDays(totalDays, items, {
     owned: false,
     completedContentIds: new Set(),
@@ -216,6 +213,20 @@ export default async function ChallengePage({
                       Day {day.dayNumber}
                     </span>
                     <span className="text-xs text-gray-400">Rest</span>
+                  </div>
+                );
+              }
+              if (day.state === "coming-soon") {
+                return (
+                  <div
+                    key={day.dayNumber}
+                    className="flex aspect-square flex-col items-center justify-center rounded-xl border border-pink-100 bg-white text-center"
+                  >
+                    <Sparkles className="mb-1 h-5 w-5 text-pink-300" />
+                    <span className="text-[10px] font-medium uppercase text-gray-400">
+                      Day {day.dayNumber}
+                    </span>
+                    <span className="text-[10px] text-pink-400">Coming soon</span>
                   </div>
                 );
               }

@@ -22,11 +22,12 @@ insert into public.products
 values
   ('21-day-dance-challenge', 'challenge',
    '21-Day Dance Challenge',
-   'Three weeks of feel-good dance sessions. Zero equipment.',
+   'Three weeks. Fifteen feel-good sessions. Zero equipment.',
    4900, 'eur',
    null,                         -- TODO: Stripe Price id (e.g. price_...) when wiring checkout
    true,
-   '{"program_length_days":21,"drip_enabled":false,"workout_count":14,"access_months":12}'::jsonb)
+   -- workout_count = 15 (full program); days not yet uploaded show as "coming soon"
+   '{"program_length_days":21,"drip_enabled":false,"workout_count":15,"access_months":12}'::jsonb)
 on conflict (slug) do update set
   title       = excluded.title,
   subtitle    = excluded.subtitle,

@@ -58,7 +58,7 @@ export default async function AuthButton() {
   ) : (
     <OAuthSignInModal>
       <Button size="sm" variant={"outline"}>
-        Sign in
+        Sign in / Join
       </Button>
     </OAuthSignInModal>
   );

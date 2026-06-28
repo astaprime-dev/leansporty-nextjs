@@ -36,29 +36,33 @@ export function MobileMenu({ user, isInstructor }: MobileMenuProps) {
           {/* Menu Panel */}
           <div className="fixed top-16 right-0 w-64 bg-white border-l border-pink-100 shadow-lg z-[60] md:hidden">
             <div className="flex flex-col p-4 space-y-4">
-              {/* Navigation Links */}
+              {/* Anonymous primary CTA — drive to the web offer */}
+              {!user && (
+                <Link
+                  href="/challenge"
+                  className="flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-pink-500 to-rose-400 text-white text-sm font-semibold rounded-full hover:shadow-lg transition-all"
+                  onClick={() => setIsOpen(false)}
+                >
+                  <span>Start the Challenge</span>
+                  <span className="text-xs">✧</span>
+                </Link>
+              )}
+
+              {/* Challenge - the primary web offer */}
+              <Link
+                href="/challenge"
+                className="text-base font-semibold text-gray-900 hover:text-pink-500 transition-colors py-2"
+                onClick={() => setIsOpen(false)}
+              >
+                Challenge
+              </Link>
+
               <Link
                 href="/streams"
                 className="text-base font-light text-gray-600 hover:text-pink-500 transition-colors py-2"
                 onClick={() => setIsOpen(false)}
               >
                 Streams
-              </Link>
-
-              <Link
-                href="/workouts"
-                className="text-base font-light text-gray-600 hover:text-pink-500 transition-colors py-2"
-                onClick={() => setIsOpen(false)}
-              >
-                Workouts
-              </Link>
-
-              <Link
-                href="/challenge"
-                className="text-base font-light text-gray-600 hover:text-pink-500 transition-colors py-2"
-                onClick={() => setIsOpen(false)}
-              >
-                Challenge
               </Link>
 
               {user && (
@@ -69,6 +73,13 @@ export function MobileMenu({ user, isInstructor }: MobileMenuProps) {
                     onClick={() => setIsOpen(false)}
                   >
                     My Program
+                  </Link>
+                  <Link
+                    href="/workouts"
+                    className="text-base font-light text-gray-600 hover:text-pink-500 transition-colors py-2"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    Workouts
                   </Link>
                   <Link
                     href="/activity"
