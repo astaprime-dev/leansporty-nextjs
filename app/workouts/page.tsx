@@ -27,7 +27,7 @@ export default async function WorkoutsPage() {
               Available on iOS
             </h3>
             <p className="text-gray-600">
-              Dance workouts are currently available only in our iOS app. Download LeanSporty from the App Store to access these workouts and start your fitness journey!
+              Dance workouts are currently available only in our iOS app. Download Lean Sporty from the App Store to access these workouts and start your fitness journey!
             </p>
           </div>
         </div>

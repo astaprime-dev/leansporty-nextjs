@@ -79,7 +79,7 @@ export default async function RootLayout({
                   {/* Logo/Brand */}
                   <Link href={"/"} className="group flex items-center gap-2 md:gap-3">
                     <span className="text-xl md:text-2xl font-light tracking-tight text-gray-800 group-hover:text-pink-500 transition-colors duration-300">
-                      Lean<span className="font-semibold bg-gradient-to-r from-pink-500 to-rose-400 bg-clip-text text-transparent">Sporty</span>
+                      Lean <span className="font-semibold bg-gradient-to-r from-pink-500 to-rose-400 bg-clip-text text-transparent">Sporty</span>
                     </span>
                     <div className="hidden sm:flex items-center gap-2 text-pink-300/60 text-xs">
                       <span>✦</span>
@@ -123,7 +123,7 @@ export default async function RootLayout({
                     {/* Logo */}
                     <div className="flex items-center gap-2">
                       <span className="text-lg md:text-xl font-light text-gray-700">
-                        Lean<span className="font-semibold bg-gradient-to-r from-pink-500 to-rose-400 bg-clip-text text-transparent">Sporty</span>
+                        Lean <span className="font-semibold bg-gradient-to-r from-pink-500 to-rose-400 bg-clip-text text-transparent">Sporty</span>
                       </span>
                       <span className="text-pink-300/50 text-sm">✦</span>
                     </div>

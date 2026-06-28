@@ -36,7 +36,7 @@ export function DeleteAccountButton() {
           <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
           <AlertDialogDescription>
             This action cannot be undone. This will permanently delete your account
-            and remove your access to LeanSporty. Your workout history will be preserved
+            and remove your access to Lean Sporty. Your workout history will be preserved
             for analytics purposes.
           </AlertDialogDescription>
         </AlertDialogHeader>

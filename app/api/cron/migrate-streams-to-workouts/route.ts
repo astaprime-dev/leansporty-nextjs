@@ -51,7 +51,7 @@ export async function GET(request: NextRequest) {
           .insert({
             title: stream.title,
             description: stream.description || "",
-            instructor_name: stream.instructor_name || "LeanSporty Instructor",
+            instructor_name: stream.instructor_name || "Lean Sporty Instructor",
             difficulty_level: "intermediate", // Default difficulty
             duration_in_seconds: stream.scheduled_duration_seconds,
             mux_playback_id: stream.cloudflare_stream_id, // Store Cloudflare video ID

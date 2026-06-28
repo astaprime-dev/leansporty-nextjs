@@ -344,7 +344,7 @@ export default async function ChallengePage({
       {/* Disclaimer / waiver */}
       <section className="mx-auto max-w-3xl px-4 pb-16">
         <p className="text-center text-xs leading-relaxed text-muted-foreground">
-          LeanSporty is a fitness and wellbeing program, not medical advice.
+          Lean Sporty is a fitness and wellbeing program, not medical advice.
           Results vary from person to person, and nothing here is a guarantee of
           any specific outcome. Please consult your physician before starting
           this or any exercise program, exercise within your own limits, and

@@ -56,12 +56,12 @@ export async function generateMetadata({
 
     if (!userProfile) {
       return {
-        title: "Profile | LeanSporty",
+        title: "Profile | Lean Sporty",
       };
     }
 
-    const title = `${userProfile.display_name}${instructor ? " - Instructor" : ""} | LeanSporty`;
-    const description = userProfile.bio || `View ${userProfile.display_name}'s profile on LeanSporty`;
+    const title = `${userProfile.display_name}${instructor ? " - Instructor" : ""} | Lean Sporty`;
+    const description = userProfile.bio || `View ${userProfile.display_name}'s profile on Lean Sporty`;
 
     return {
       title,
@@ -70,7 +70,7 @@ export async function generateMetadata({
   } catch (error) {
     console.error("Error generating metadata:", error);
     return {
-      title: "Profile | LeanSporty",
+      title: "Profile | Lean Sporty",
     };
   }
 }

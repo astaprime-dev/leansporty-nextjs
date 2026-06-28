@@ -26,12 +26,12 @@ export default function TermsOfServicePage() {
             {/* Introduction */}
             <section className="mb-8">
               <p className="text-gray-700 leading-relaxed">
-                Welcome to LeanSporty. These Terms of Service ("Terms") govern your access to and use of the LeanSporty
+                Welcome to Lean Sporty. These Terms of Service ("Terms") govern your access to and use of the Lean Sporty
                 platform, including our website, mobile applications, and live streaming fitness services (collectively,
                 the "Service"). By accessing or using our Service, you agree to be bound by these Terms.
               </p>
               <p className="text-gray-700 leading-relaxed mt-4">
-                LeanSporty is operated by <strong>Astaprime Sp. z o.o.</strong>, a company registered in Poland.
+                Lean Sporty is operated by <strong>Astaprime Sp. z o.o.</strong>, a company registered in Poland.
               </p>
             </section>
 
@@ -39,12 +39,12 @@ export default function TermsOfServicePage() {
             <section className="mb-8">
               <h2 className="text-2xl font-semibold text-gray-900 mb-4">1. Agreement to Terms</h2>
               <p className="text-gray-700 leading-relaxed">
-                By using LeanSporty, you confirm that you are at least 18 years of age and have the legal capacity to
+                By using Lean Sporty, you confirm that you are at least 18 years of age and have the legal capacity to
                 enter into this agreement. If you are using the Service on behalf of an organization, you represent that
                 you have the authority to bind that organization to these Terms.
               </p>
               <p className="text-gray-700 leading-relaxed mt-4">
-                LeanSporty provides live streaming fitness classes, on-demand workout content, and related wellness
+                Lean Sporty provides live streaming fitness classes, on-demand workout content, and related wellness
                 services. You must comply with these Terms and all applicable laws when using our Service.
               </p>
             </section>
@@ -54,7 +54,7 @@ export default function TermsOfServicePage() {
               <h2 className="text-2xl font-semibold text-gray-900 mb-4">2. Use of Service</h2>
               <h3 className="text-xl font-medium text-gray-800 mb-3">Permitted Use</h3>
               <p className="text-gray-700 leading-relaxed">
-                You may use LeanSporty for personal, non-commercial purposes to participate in fitness classes, track
+                You may use Lean Sporty for personal, non-commercial purposes to participate in fitness classes, track
                 your workout progress, and engage with our community.
               </p>
 
@@ -89,7 +89,7 @@ export default function TermsOfServicePage() {
             <section className="mb-8">
               <h2 className="text-2xl font-semibold text-gray-900 mb-4">4. Intellectual Property Rights</h2>
               <p className="text-gray-700 leading-relaxed">
-                All content on LeanSporty, including workout videos, class materials, graphics, logos, software, and
+                All content on Lean Sporty, including workout videos, class materials, graphics, logos, software, and
                 text, is owned by Astaprime Sp. z o.o. or our licensors and is protected by copyright, trademark, and
                 other intellectual property laws. You may not copy, modify, distribute, or create derivative works
                 without our express written permission.
@@ -105,7 +105,7 @@ export default function TermsOfServicePage() {
             <section className="mb-8">
               <h2 className="text-2xl font-semibold text-gray-900 mb-4">5. Payment and Tokens</h2>
               <p className="text-gray-700 leading-relaxed">
-                LeanSporty uses a token-based system for enrolling in live classes and accessing premium content. By
+                Lean Sporty uses a token-based system for enrolling in live classes and accessing premium content. By
                 purchasing tokens, you agree to pay all applicable fees. Tokens are non-refundable except as required
                 by law. We reserve the right to change our pricing structure with 30 days' notice to users.
               </p>
@@ -133,7 +133,7 @@ export default function TermsOfServicePage() {
               <h2 className="text-2xl font-semibold text-gray-900 mb-4">7. Health and Safety Disclaimer</h2>
               <p className="text-gray-700 leading-relaxed">
                 <strong className="text-red-600">IMPORTANT:</strong> Before starting any fitness program, please consult
-                with your physician or healthcare provider. LeanSporty provides general fitness information and is not
+                with your physician or healthcare provider. Lean Sporty provides general fitness information and is not
                 a substitute for professional medical advice.
               </p>
               <p className="text-gray-700 leading-relaxed mt-4">
@@ -147,7 +147,7 @@ export default function TermsOfServicePage() {
             <section className="mb-8">
               <h2 className="text-2xl font-semibold text-gray-900 mb-4">8. Live Streaming and Recordings</h2>
               <p className="text-gray-700 leading-relaxed">
-                LeanSporty offers live fitness classes via streaming technology. We strive to provide high-quality,
+                Lean Sporty offers live fitness classes via streaming technology. We strive to provide high-quality,
                 uninterrupted streams, but we cannot guarantee that the Service will be error-free or always available.
                 Technical issues, internet connectivity problems, or other factors may affect stream quality.
               </p>

@@ -40,7 +40,7 @@ export function OAuthSignInModal({
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="text-2xl font-semibold text-center bg-gradient-to-r from-pink-500 to-rose-400 bg-clip-text text-transparent">
-            Welcome to LeanSporty
+            Welcome to Lean Sporty
           </DialogTitle>
           <DialogDescription className="text-center pt-2">
             Sign in to access your workouts and track your progress
