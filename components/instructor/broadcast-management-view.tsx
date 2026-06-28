@@ -6,9 +6,10 @@ import { ReactionDisplay } from "@/components/instructor/reaction-display";
 import { LiveViewerCount } from "@/components/stream/live-viewer-count";
 import { CommentList } from "@/components/stream/comment-list";
 import { Button } from "@/components/ui/button";
+import { Alert } from "@/components/ui/alert";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Calendar, Clock, Coins, Users, Copy, Check, AlertCircle, ChevronDown, ChevronUp, Video } from "lucide-react";
+import { Calendar, Clock, Coins, Users, Copy, Check, ChevronDown, ChevronUp, Video } from "lucide-react";
 
 interface BroadcastManagementViewProps {
   stream: LiveStreamSession;
@@ -190,15 +191,10 @@ export function BroadcastManagementView({ stream }: BroadcastManagementViewProps
 
               {showRTMPS && (
                 <div className="space-y-4 pt-2">
-                  <div className="bg-blue-100/50 rounded-lg p-4">
-                    <div className="flex items-start gap-2 mb-3">
-                      <AlertCircle className="w-5 h-5 text-blue-700 flex-shrink-0 mt-0.5" />
-                      <div className="text-sm text-blue-800">
-                        <p className="font-semibold mb-1">RTMPS streaming supports recording!</p>
-                        <p>Use OBS or similar software to stream. Your class will be automatically recorded and available to students for 7 days.</p>
-                      </div>
-                    </div>
-                  </div>
+                  <Alert variant="info">
+                    <p className="font-semibold mb-1">RTMPS streaming supports recording!</p>
+                    <p>Use OBS or similar software to stream. Your class will be automatically recorded and available to students for 7 days.</p>
+                  </Alert>
 
                   <div className="space-y-3">
                     <div>

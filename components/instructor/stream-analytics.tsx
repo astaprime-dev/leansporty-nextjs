@@ -20,6 +20,7 @@ import {
   type ReactionTimelineData,
 } from '@/types/reactions';
 import { ReactionIcon } from '@/components/stream/reaction-icon';
+import { Alert } from '@/components/ui/alert';
 import { AlertCircle, TrendingUp, Users, Clock } from 'lucide-react';
 
 // Register Chart.js components
@@ -314,8 +315,8 @@ export function StreamAnalytics({ streamId }: StreamAnalyticsProps) {
 
       {/* Technical Issues Detail */}
       {technicalIssues.length > 0 && (
-        <div className="bg-red-50 rounded-lg border border-red-200 p-6">
-          <h3 className="font-semibold text-lg mb-4 text-red-800">
+        <Alert variant="error" hideIcon className="p-6">
+          <h3 className="font-semibold text-lg mb-4">
             Technical Issues Reported
           </h3>
           <div className="space-y-4">
@@ -359,7 +360,7 @@ export function StreamAnalytics({ streamId }: StreamAnalyticsProps) {
               );
             })}
           </div>
-        </div>
+        </Alert>
       )}
     </div>
   );

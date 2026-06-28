@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { Alert } from "@/components/ui/alert";
 import { Input } from "@/components/ui/input";
 import { InstructorWithProfile } from "@/types/instructor";
 import { createClient } from "@/utils/supabase/client";
@@ -245,17 +246,15 @@ export function InstructorProfileForm({
 
       {/* Error Message */}
       {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-3">
-          <p className="text-red-700 text-sm">{error}</p>
-        </div>
+        <Alert variant="error">{error}</Alert>
       )}
 
       {/* Submit Button */}
       <div className="flex items-center gap-4">
         <Button
           type="submit"
+          variant="brand"
           disabled={isLoading}
-          className="bg-gradient-to-r from-pink-500 to-rose-400 hover:from-pink-600 hover:to-rose-500"
         >
           {isLoading ? "Saving..." : initialData ? "Update Profile" : "Create Profile"}
         </Button>

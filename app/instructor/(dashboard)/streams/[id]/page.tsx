@@ -4,6 +4,8 @@ import { LiveStreamSession } from "@/types/streaming";
 import { StreamAnalytics } from "@/components/instructor/stream-analytics";
 import { CloudflareStreamPlayer } from "@/components/CloudflareStreamPlayer";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Alert } from "@/components/ui/alert";
 import Link from "next/link";
 import {
   Calendar,
@@ -93,17 +95,17 @@ export default async function StreamDetailPage({
               <h1 className="text-3xl font-display font-light text-gray-900">
                 {streamData.title}
               </h1>
-              <span
-                className={`px-3 py-1 rounded-full text-xs font-semibold ${
+              <Badge
+                variant={
                   streamData.status === "live"
-                    ? "bg-red-100 text-red-700"
+                    ? "live"
                     : streamData.status === "scheduled"
-                    ? "bg-blue-100 text-blue-700"
-                    : "bg-gray-100 text-gray-700"
-                }`}
+                    ? "brand"
+                    : "secondary"
+                }
               >
                 {streamData.status.toUpperCase()}
-              </span>
+              </Badge>
             </div>
             <p className="text-gray-600">{streamData.description}</p>
           </div>
@@ -112,7 +114,7 @@ export default async function StreamDetailPage({
           <div className="flex gap-2">
             {streamData.status === "scheduled" && (
               <Link href={`/instructor/streams/${id}/broadcast`}>
-                <Button className="bg-gradient-to-r from-pink-500 to-rose-400 hover:from-pink-600 hover:to-rose-500">
+                <Button variant="brand">
                   <Radio className="w-4 h-4 mr-2" />
                   Go Live
                 </Button>
@@ -197,12 +199,10 @@ export default async function StreamDetailPage({
             />
           </div>
           {streamData.recording_expires_at && (
-            <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
-              <p className="text-sm text-amber-800">
-                Recording available until{" "}
-                {formatDate(streamData.recording_expires_at)}
-              </p>
-            </div>
+            <Alert variant="warning">
+              Recording available until{" "}
+              {formatDate(streamData.recording_expires_at)}
+            </Alert>
           )}
         </div>
       )}

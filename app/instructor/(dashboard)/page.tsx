@@ -1,5 +1,8 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { Alert } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
+import { EmptyState } from "@/components/empty-state";
 import { createClient } from "@/utils/supabase/server";
 import { LiveStreamSession } from "@/types/streaming";
 import { Plus, Calendar, Users, DollarSign, Eye, BookOpen } from "lucide-react";
@@ -101,13 +104,13 @@ export default async function InstructorDashboard() {
 
       {/* Profile Completion Alert */}
       {completionPercentage < 100 && (
-        <div className="mb-8 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+        <Alert variant="warning" className="mb-8">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="font-semibold text-yellow-900 mb-1">
+              <h3 className="font-semibold mb-1">
                 Complete your profile ({completionPercentage}%)
               </h3>
-              <p className="text-sm text-yellow-700">
+              <p className="text-sm">
                 {!profileCompletion.hasPhoto && "Add a profile photo. "}
                 {!profileCompletion.hasBio && "Write a bio."}
               </p>
@@ -118,7 +121,7 @@ export default async function InstructorDashboard() {
               </Button>
             </Link>
           </div>
-        </div>
+        </Alert>
       )}
 
       {/* Quick Actions */}
@@ -195,15 +198,16 @@ export default async function InstructorDashboard() {
           </div>
 
           {upcomingList.length === 0 ? (
-            <div className="bg-white rounded-lg border border-gray-200 p-8 text-center">
-              <Calendar className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-              <p className="text-gray-600 mb-3">No upcoming streams</p>
-              <Link href="/instructor/streams/create">
-                <Button size="sm" className="bg-gradient-to-r from-pink-500 to-rose-400">
-                  Schedule One
-                </Button>
-              </Link>
-            </div>
+            <EmptyState
+              title="No upcoming streams"
+              action={
+                <Link href="/instructor/streams/create">
+                  <Button variant="brand" size="sm">
+                    Schedule One
+                  </Button>
+                </Link>
+              }
+            />
           ) : (
             <div className="space-y-3">
               {upcomingList.map((stream) => (
@@ -227,9 +231,7 @@ export default async function InstructorDashboard() {
                         </div>
                       </div>
                       {stream.status === "live" && (
-                        <span className="px-2 py-1 bg-red-500 text-white text-xs font-semibold rounded-full">
-                          LIVE
-                        </span>
+                        <Badge variant="live">LIVE</Badge>
                       )}
                     </div>
                   </div>
@@ -244,10 +246,7 @@ export default async function InstructorDashboard() {
           <h2 className="text-xl font-semibold text-gray-900 mb-4">Recent Enrollments</h2>
 
           {!recentEnrollments || recentEnrollments.length === 0 ? (
-            <div className="bg-white rounded-lg border border-gray-200 p-8 text-center">
-              <Users className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-              <p className="text-gray-600">No enrollments yet</p>
-            </div>
+            <EmptyState title="No enrollments yet" />
           ) : (
             <div className="bg-white rounded-lg border border-gray-200 divide-y">
               {recentEnrollments.map((enrollment: any) => (

@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { StarRating } from '@/components/ui/star-rating';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { AlertCircle, CheckCircle } from 'lucide-react';
+import { Alert } from '@/components/ui/alert';
 import { CommentEligibility } from '@/types/comments';
 
 interface CommentFormProps {
@@ -110,37 +110,27 @@ export function CommentForm({ streamId, onSuccess }: CommentFormProps) {
   // Not eligible - show reason
   if (eligibility && !eligibility.eligible) {
     return (
-      <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
-        <div className="flex items-start gap-3">
-          <AlertCircle className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" />
-          <div>
-            <h3 className="font-semibold text-yellow-900 mb-1">Cannot Leave Comment</h3>
-            <p className="text-sm text-yellow-800">{eligibility.message}</p>
-            {eligibility.attendancePercent !== undefined && (
-              <p className="text-sm text-yellow-700 mt-2">
-                You attended {eligibility.attendancePercent}% of the live stream.
-              </p>
-            )}
-          </div>
-        </div>
-      </div>
+      <Alert variant="warning">
+        <h3 className="font-semibold mb-1">Cannot Leave Comment</h3>
+        <p>{eligibility.message}</p>
+        {eligibility.attendancePercent !== undefined && (
+          <p className="mt-2">
+            You attended {eligibility.attendancePercent}% of the live stream.
+          </p>
+        )}
+      </Alert>
     );
   }
 
   // Already commented - show status
   if (eligibility?.hasExistingComment && !eligibility.canEdit) {
     return (
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
-        <div className="flex items-start gap-3">
-          <CheckCircle className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
-          <div>
-            <h3 className="font-semibold text-blue-900 mb-1">Comment Submitted</h3>
-            <p className="text-sm text-blue-800">
-              You've already left a comment on this stream. Comments can only be edited within 24 hours of posting.
-            </p>
-          </div>
-        </div>
-      </div>
+      <Alert variant="info">
+        <h3 className="font-semibold mb-1">Comment Submitted</h3>
+        <p>
+          You've already left a comment on this stream. Comments can only be edited within 24 hours of posting.
+        </p>
+      </Alert>
     );
   }
 
@@ -151,27 +141,15 @@ export function CommentForm({ streamId, onSuccess }: CommentFormProps) {
         <h3 className="text-lg font-semibold mb-4">Leave a Review</h3>
 
         {success && (
-          <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-4">
-            <div className="flex items-start gap-3">
-              <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
-              <div>
-                <p className="text-sm text-green-800">
-                  Comment posted successfully! Thank you for your feedback.
-                </p>
-              </div>
-            </div>
-          </div>
+          <Alert variant="success" className="mb-4">
+            Comment posted successfully! Thank you for your feedback.
+          </Alert>
         )}
 
         {error && (
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
-            <div className="flex items-start gap-3">
-              <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
-              <div>
-                <p className="text-sm text-red-800">{error}</p>
-              </div>
-            </div>
-          </div>
+          <Alert variant="error" className="mb-4">
+            {error}
+          </Alert>
         )}
       </div>
 

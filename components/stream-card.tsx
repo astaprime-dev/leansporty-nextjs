@@ -87,20 +87,26 @@ export function StreamCard({ stream, enrollment, isLive, isAuthenticated }: Stre
 
           {/* Live badge */}
           {isLive && (
-            <div className="absolute top-3 left-3 bg-red-500 text-white px-4 py-2 rounded-lg font-semibold shadow-lg flex items-center gap-2">
+            <Badge
+              variant="live"
+              className="absolute top-3 left-3 gap-2 rounded-lg px-4 py-2 text-sm shadow-lg"
+            >
               <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-white"></span>
               </span>
               LIVE
-            </div>
+            </Badge>
           )}
 
           {/* Duration badge */}
           {!isLive && (
-            <div className="absolute bottom-3 left-3 bg-gradient-to-r from-pink-500 to-rose-400 text-white px-4 py-2 rounded-lg font-semibold shadow-lg">
+            <Badge
+              variant="brand"
+              className="absolute bottom-3 left-3 rounded-lg px-4 py-2 text-sm shadow-lg"
+            >
               {formatDuration(stream.scheduled_duration_seconds)}
-            </div>
+            </Badge>
           )}
         </div>
 
@@ -152,7 +158,7 @@ export function StreamCard({ stream, enrollment, isLive, isAuthenticated }: Stre
               <>
                 {/* Enrolled - show watch button */}
                 <Link href={`/streams/${stream.id}/watch`}>
-                  <Button className="bg-gradient-to-r from-pink-500 to-rose-400 hover:from-pink-600 hover:to-rose-500">
+                  <Button variant="brand">
                     {isLive ? "Watch Live" : "View Details"}
                   </Button>
                 </Link>
@@ -165,7 +171,7 @@ export function StreamCard({ stream, enrollment, isLive, isAuthenticated }: Stre
               <>
                 {/* Not authenticated - show sign in modal */}
                 <OAuthSignInModal>
-                  <Button className="bg-gradient-to-r from-pink-500 to-rose-400 hover:from-pink-600 hover:to-rose-500">
+                  <Button variant="brand">
                     Sign in to Enroll
                   </Button>
                 </OAuthSignInModal>
@@ -180,7 +186,7 @@ export function StreamCard({ stream, enrollment, isLive, isAuthenticated }: Stre
                 <Button
                   onClick={handleEnroll}
                   disabled={isEnrolling}
-                  className="bg-gradient-to-r from-pink-500 to-rose-400 hover:from-pink-600 hover:to-rose-500"
+                  variant="brand"
                 >
                   {isEnrolling ? "Enrolling..." : "Enroll Now"}
                 </Button>

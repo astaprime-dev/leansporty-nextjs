@@ -4,6 +4,8 @@ import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { getStreams, getUserEnrollments } from "@/app/actions";
 import { StreamCard } from "@/components/stream-card";
+import { EmptyState } from "@/components/empty-state";
+import { Badge } from "@/components/ui/badge";
 import GalleryDisplay from "@/components/instructor/gallery-display";
 import { Metadata } from "next";
 
@@ -261,11 +263,7 @@ export default async function ProfilePage({
                 <h1 className="text-2xl sm:text-4xl font-display font-light text-gray-900">
                   {profile.display_name}
                 </h1>
-                {isInstructor && (
-                  <span className="px-3 py-1 bg-gradient-to-r from-pink-500 to-rose-400 text-white text-xs font-semibold rounded-full">
-                    INSTRUCTOR
-                  </span>
-                )}
+                {isInstructor && <Badge variant="brand">INSTRUCTOR</Badge>}
               </div>
               <p className="text-gray-500 mb-3">@{isInstructor ? instructor.slug : userProfile.username}</p>
 
@@ -340,11 +338,11 @@ export default async function ProfilePage({
 
         {/* No Upcoming Streams Message (Instructors only) */}
         {isInstructor && (!upcomingStreams || upcomingStreams.length === 0) && (
-          <div className="bg-pink-50/50 rounded-xl border border-pink-100 p-6 sm:p-8 text-center mb-6 sm:mb-8">
-            <p className="text-sm sm:text-base text-gray-600">
-              No upcoming streams scheduled at the moment. Check back soon!
-            </p>
-          </div>
+          <EmptyState
+            title="No upcoming streams scheduled at the moment."
+            description="Check back soon!"
+            className="mb-6 sm:mb-8"
+          />
         )}
 
         {/* Past Streams (Instructors only) */}

@@ -73,7 +73,7 @@ export function StreamForm({ initialData, streamId, mode }: StreamFormProps) {
 
       <form
         onSubmit={handleSubmit}
-        className="space-y-6 bg-white rounded-2xl p-8 shadow-sm border border-gray-200"
+        className="space-y-6 bg-white rounded-2xl p-8 shadow-sm border border-pink-100"
       >
         <div>
           <label className="block text-sm font-medium mb-2">

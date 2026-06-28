@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { Play, Lock, Sparkles } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { getChallengeData } from "@/app/challenge/data";
 import {
   buildProgramDays,
@@ -56,19 +58,18 @@ export async function ProgramCard({ className = "" }: { className?: string }) {
               />
             </div>
           </div>
-          <Link
-            href="/my-program"
-            className="inline-flex flex-shrink-0 items-center justify-center gap-2 rounded-full bg-gradient-to-r from-pink-500 to-rose-400 px-6 py-2.5 text-sm font-semibold text-white transition-all hover:scale-105 hover:shadow-lg hover:shadow-pink-200/50"
-          >
-            <Play className="h-4 w-4" />
-            {done === 0
-              ? "Start Day 1"
-              : done >= total
-                ? "Revisit your program"
-                : next
-                  ? `Continue — Day ${next.dayNumber}`
-                  : "Open my program"}
-          </Link>
+          <Button asChild variant="brand" className="flex-shrink-0 gap-2">
+            <Link href="/my-program">
+              <Play className="h-4 w-4" />
+              {done === 0
+                ? "Start Day 1"
+                : done >= total
+                  ? "Revisit your program"
+                  : next
+                    ? `Continue — Day ${next.dayNumber}`
+                    : "Open my program"}
+            </Link>
+          </Button>
         </div>
       </div>
     );
@@ -89,9 +90,12 @@ export async function ProgramCard({ className = "" }: { className?: string }) {
           </p>
         </div>
       </div>
-      <span className="hidden flex-shrink-0 items-center gap-1 rounded-full bg-white px-5 py-2 text-sm font-semibold text-pink-600 transition-transform group-hover:scale-105 sm:inline-flex">
+      <Badge
+        variant="lock"
+        className="hidden flex-shrink-0 gap-1 px-5 py-2 text-sm transition-transform group-hover:scale-105 sm:inline-flex"
+      >
         <Lock className="h-3.5 w-3.5" /> {priceLabel}
-      </span>
+      </Badge>
     </Link>
   );
 }

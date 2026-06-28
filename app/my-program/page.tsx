@@ -1,11 +1,12 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { Lock, Sparkles } from "lucide-react";
 import { createClient } from "@/utils/supabase/server";
 import { getChallengeData } from "@/app/challenge/data";
 import { ProgramGrid } from "@/components/challenge/program-grid";
 import { FinalizingAccess } from "@/components/challenge/cta";
 import { Button } from "@/components/ui/button";
+import { Alert } from "@/components/ui/alert";
+import { EmptyState } from "@/components/empty-state";
 import {
   CHALLENGE_SLUG,
   buildProgramDays,
@@ -38,14 +39,11 @@ export default async function MyProgramPage({
 
   if (!data) {
     return (
-      <div className="mx-auto max-w-2xl px-4 py-20 text-center">
-        <Sparkles className="mx-auto h-10 w-10 text-pink-400" />
-        <h1 className="mt-4 text-2xl font-display font-light text-gray-900">
-          Your program is being prepared
-        </h1>
-        <p className="mt-2 text-muted-foreground">
-          Check back shortly — your sessions will appear here.
-        </p>
+      <div className="mx-auto max-w-2xl px-4 py-20">
+        <EmptyState
+          title="Your program is being prepared"
+          description="Check back shortly — your sessions will appear here."
+        />
       </div>
     );
   }
@@ -110,29 +108,24 @@ export default async function MyProgramPage({
               </p>
             )}
             {done >= total && total > 0 && (
-              <Link
-                href="/streams"
-                className="mt-4 inline-flex items-center gap-2 rounded-full border border-pink-200 px-5 py-2 text-sm font-semibold text-pink-700 transition-all hover:border-pink-300"
-              >
-                What&apos;s next? Join a live class →
-              </Link>
+              <Button asChild variant="brandOutline" className="mt-4">
+                <Link href="/streams">
+                  What&apos;s next? Join a live class →
+                </Link>
+              </Button>
             )}
           </div>
         ) : (
-          <div className="mt-4 flex flex-col items-start gap-3 rounded-xl border border-pink-200 bg-pink-50 p-4 sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex items-start gap-3">
-              <Lock className="mt-0.5 h-5 w-5 flex-shrink-0 text-pink-600" />
-              <p className="text-sm text-pink-800">
+          <Alert variant="info" className="mt-4">
+            <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <p>
                 Day 1 is free to try. Unlock all sessions with a full year of access.
               </p>
+              <Button asChild variant="brand">
+                <Link href="/challenge">Unlock the full challenge — {priceLabel}</Link>
+              </Button>
             </div>
-            <Button
-              asChild
-              className="bg-gradient-to-r from-pink-500 to-rose-400 text-white hover:from-pink-600 hover:to-rose-500"
-            >
-              <Link href="/challenge">Unlock the full challenge — {priceLabel}</Link>
-            </Button>
-          </div>
+          </Alert>
         )}
       </header>
 

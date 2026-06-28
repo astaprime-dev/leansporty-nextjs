@@ -267,12 +267,11 @@ export function ActivityView({
         <EmptyState
           title="No sessions yet — your progress will show up here."
           action={
-            <Link
-              href="/my-program"
-              className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-pink-500 to-rose-400 px-6 py-2.5 text-sm font-semibold text-white transition-all hover:scale-105 hover:shadow-lg hover:shadow-pink-200/50"
-            >
-              <Play className="h-4 w-4" /> Start Day 1
-            </Link>
+            <Button asChild variant="brand" className="gap-2">
+              <Link href="/my-program">
+                <Play className="h-4 w-4" /> Start Day 1
+              </Link>
+            </Button>
           }
         />
       ) : filteredWorkouts.length === 0 ? (

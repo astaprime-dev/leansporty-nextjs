@@ -5,6 +5,7 @@ import { StreamCard } from "@/components/stream-card";
 import { Button } from "@/components/ui/button";
 import { OAuthSignInModal } from "@/components/oauth-signin-modal";
 import { EmptyState } from "@/components/empty-state";
+import { Alert } from "@/components/ui/alert";
 
 interface StreamsViewProps {
   liveStreams: LiveStreamSession[];
@@ -28,31 +29,24 @@ export function StreamsView({
     <div className="flex-1 w-full flex flex-col gap-8 px-4 py-8 max-w-7xl mx-auto">
       {/* Recovery notice — e.g. redirected here from a class watch page */}
       {notice === "signin" && (
-        <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-pink-200 bg-pink-50 px-4 py-3">
-          <p className="text-sm text-pink-800">
-            Please sign in to watch live classes.
-          </p>
-          <OAuthSignInModal>
-            <Button
-              size="sm"
-              className="bg-gradient-to-r from-pink-500 to-rose-400 hover:from-pink-600 hover:to-rose-500"
-            >
-              Sign in
-            </Button>
-          </OAuthSignInModal>
-        </div>
+        <Alert variant="info">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <p>Please sign in to watch live classes.</p>
+            <OAuthSignInModal>
+              <Button variant="brand" size="sm">
+                Sign in
+              </Button>
+            </OAuthSignInModal>
+          </div>
+        </Alert>
       )}
       {notice === "enroll" && (
-        <div className="rounded-xl border border-pink-200 bg-pink-50 px-4 py-3">
-          <p className="text-sm text-pink-800">
-            You&apos;re not enrolled in that class yet — choose a class below to enroll.
-          </p>
-        </div>
+        <Alert variant="info">
+          You&apos;re not enrolled in that class yet — choose a class below to enroll.
+        </Alert>
       )}
       {notice === "notfound" && (
-        <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3">
-          <p className="text-sm text-amber-800">That class is no longer available.</p>
-        </div>
+        <Alert variant="warning">That class is no longer available.</Alert>
       )}
 
       {/* Header */}

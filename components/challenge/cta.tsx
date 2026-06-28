@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Alert } from "@/components/ui/alert";
 import { OAuthSignInModal } from "@/components/oauth-signin-modal";
 
 async function createCheckout(productSlug: string) {
@@ -213,9 +214,11 @@ export function FinalizingAccess({ slug }: { slug: string }) {
   if (!stillWaiting) return null;
 
   return (
-    <div className="flex items-center gap-3 rounded-lg border border-pink-200 bg-pink-50 p-4 text-sm text-pink-800">
-      <Loader2 className="h-4 w-4 animate-spin" />
-      <span>Finalizing your access — your sessions will unlock in a moment…</span>
-    </div>
+    <Alert variant="info" hideIcon>
+      <div className="flex items-center gap-3">
+        <Loader2 className="h-4 w-4 animate-spin" />
+        <span>Finalizing your access — your sessions will unlock in a moment…</span>
+      </div>
+    </Alert>
   );
 }

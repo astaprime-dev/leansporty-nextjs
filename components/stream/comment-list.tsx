@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { StarRating } from '@/components/ui/star-rating';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { EmptyState } from '@/components/empty-state';
 import { CommentWithUser, CommentsListResponse } from '@/types/comments';
 import { formatRelativeTime } from '@/lib/format-relative-time';
 
@@ -103,9 +104,10 @@ export function CommentList({
   // No comments yet
   if (!isLoading && comments.length === 0) {
     return (
-      <div className="text-center py-12">
-        <p className="text-gray-500">No comments yet. Be the first to leave a review!</p>
-      </div>
+      <EmptyState
+        title="No comments yet."
+        description="Be the first to leave a review!"
+      />
     );
   }
 

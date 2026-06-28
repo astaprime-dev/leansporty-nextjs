@@ -15,6 +15,8 @@ import {
   PreviewButton,
   ChallengeAutoCheckout,
 } from "@/components/challenge/cta";
+import { Alert } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
 import {
   CHALLENGE_SLUG,
   DEFAULT_PRICE_CENTS,
@@ -116,9 +118,9 @@ export default async function ChallengePage({
       <section className="bg-gradient-to-b from-pink-50 to-white">
         <div className="mx-auto max-w-5xl px-4 py-14 text-center">
           {canceled && (
-            <p className="mx-auto mb-6 max-w-md rounded-lg border border-pink-200 bg-white px-4 py-2 text-sm text-pink-700">
+            <Alert variant="info" className="mx-auto mb-6 max-w-md text-left">
               No worries — your spot is still here whenever you're ready.
-            </p>
+            </Alert>
           )}
           <span className="inline-flex items-center gap-2 rounded-full bg-pink-100 px-3 py-1 text-xs font-semibold text-pink-700">
             <Sparkles className="h-3.5 w-3.5" /> For women who want to enjoy
@@ -247,13 +249,13 @@ export default async function ChallengePage({
                   </div>
                   <div className="absolute right-1.5 top-1.5">
                     {isFree ? (
-                      <span className="rounded-full bg-green-500 px-1.5 py-0.5 text-[9px] font-semibold text-white">
+                      <Badge variant="free" className="px-1.5 py-0.5 text-[9px]">
                         Free
-                      </span>
+                      </Badge>
                     ) : (
-                      <span className="flex h-5 w-5 items-center justify-center rounded-full bg-black/40 text-white">
+                      <Badge variant="lock" className="h-5 w-5 justify-center p-0">
                         <Lock className="h-3 w-3" />
-                      </span>
+                      </Badge>
                     )}
                   </div>
                   <div className="relative z-10 bg-gradient-to-t from-black/70 to-transparent p-1.5 pt-4">

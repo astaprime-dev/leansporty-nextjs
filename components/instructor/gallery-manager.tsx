@@ -10,6 +10,9 @@ import {
   rectSortingStrategy,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import { Alert } from '@/components/ui/alert';
+import { Button } from '@/components/ui/button';
+import { EmptyState } from '@/components/empty-state';
 
 interface GalleryItem {
   id: string;
@@ -325,34 +328,36 @@ export default function GalleryManager({ instructorId }: GalleryManagerProps) {
               className="hidden"
               disabled={isUploading}
             />
-            <button
+            <Button
               onClick={() => fileInputRef.current?.click()}
               disabled={isUploading}
-              className="px-4 py-2 text-sm font-medium text-white bg-pink-600 rounded-md hover:bg-pink-700 disabled:opacity-50 disabled:cursor-not-allowed"
+              variant="brand"
+              size="sm"
             >
               {isUploading ? 'Uploading...' : 'Add Media'}
-            </button>
+            </Button>
           </div>
         )}
       </div>
 
       {error && (
-        <div className="p-3 bg-red-50 border border-red-200 rounded-md">
-          <p className="text-sm text-red-600">{error}</p>
-        </div>
+        <Alert variant="error">{error}</Alert>
       )}
 
       {galleryItems.length === 0 ? (
-        <div className="text-center py-12 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
-          <p className="text-gray-500 mb-4">No gallery items yet</p>
-          <button
-            onClick={() => fileInputRef.current?.click()}
-            disabled={isUploading}
-            className="px-4 py-2 text-sm font-medium text-white bg-pink-600 rounded-md hover:bg-pink-700"
-          >
-            Upload Your First Item
-          </button>
-        </div>
+        <EmptyState
+          title="No gallery items yet"
+          action={
+            <Button
+              onClick={() => fileInputRef.current?.click()}
+              disabled={isUploading}
+              variant="brand"
+              size="sm"
+            >
+              Upload Your First Item
+            </Button>
+          }
+        />
       ) : (
         <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
           <SortableContext

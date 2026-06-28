@@ -1,5 +1,6 @@
 import { createClient } from '@/utils/supabase/server';
 import { redirect } from 'next/navigation';
+import { EmptyState } from '@/components/empty-state';
 
 export default async function InstructorCommentsPage() {
   const supabase = await createClient();
@@ -75,9 +76,7 @@ export default async function InstructorCommentsPage() {
       {/* Comments List */}
       <div className="space-y-4">
         {!comments || comments.length === 0 ? (
-          <div className="text-center py-12 bg-gray-50 rounded-lg">
-            <p className="text-gray-500">No comments yet</p>
-          </div>
+          <EmptyState title="No comments yet" />
         ) : (
           comments.map((comment) => (
             <div

@@ -3,6 +3,7 @@
 import { useState, useRef } from 'react';
 import Image from 'next/image';
 import ImageCropModal from './image-crop-modal';
+import { Alert } from '@/components/ui/alert';
 
 interface ProfilePhotoUploadProps {
   currentPhotoUrl?: string | null;
@@ -147,9 +148,9 @@ export default function ProfilePhotoUpload({
 
       {/* Error Message */}
       {error && (
-        <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-md">
-          <p className="text-sm text-red-600">{error}</p>
-        </div>
+        <Alert variant="error" className="mt-4">
+          {error}
+        </Alert>
       )}
 
       {/* Crop Modal */}

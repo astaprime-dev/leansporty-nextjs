@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { WebRTCPlayer } from "@eyevinn/webrtc-player";
+import { Alert } from "@/components/ui/alert";
 
 interface WHEPPlayerProps {
   whepUrl: string;
@@ -115,10 +116,10 @@ export function WHEPPlayer({
       {/* Error state */}
       {error && (
         <div className="absolute inset-0 flex items-center justify-center bg-red-50 rounded-lg z-10">
-          <div className="text-center max-w-md p-6">
-            <p className="text-red-700 font-semibold mb-2">Stream Error</p>
-            <p className="text-sm text-red-600">{error}</p>
-          </div>
+          <Alert variant="error" className="max-w-md">
+            <p className="font-semibold">Stream Error</p>
+            <p>{error}</p>
+          </Alert>
         </div>
       )}
 

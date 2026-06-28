@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { NavLink } from "@/components/nav-link";
+import { Button } from "@/components/ui/button";
 import { X, Menu } from "lucide-react";
 import { User } from "@supabase/supabase-js";
 
@@ -40,13 +41,11 @@ export function MobileMenu({ user, isInstructor }: MobileMenuProps) {
             <div className="flex flex-col p-4 space-y-4">
               {/* Anonymous primary CTA — drive to the web offer */}
               {!user && (
-                <Link
-                  href="/challenge"
-                  className="flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-pink-500 to-rose-400 text-white text-sm font-semibold rounded-full hover:shadow-lg transition-all"
-                  onClick={close}
-                >
-                  <span>Start the Challenge</span>
-                </Link>
+                <Button asChild variant="brand" className="w-full gap-2">
+                  <Link href="/challenge" onClick={close}>
+                    <span>Start the Challenge</span>
+                  </Link>
+                </Button>
               )}
 
               {user ? (
@@ -84,15 +83,16 @@ export function MobileMenu({ user, isInstructor }: MobileMenuProps) {
 
               {/* Download App CTA */}
               <div className="border-t border-pink-100 my-2" />
-              <a
-                href="https://apps.apple.com/app/id6745218800"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-pink-500 to-rose-400 text-white text-sm font-light rounded-full hover:shadow-lg transition-all"
-                onClick={() => setIsOpen(false)}
-              >
-                <span>Download App</span>
-              </a>
+              <Button asChild variant="brand" className="w-full gap-2">
+                <a
+                  href="https://apps.apple.com/app/id6745218800"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={close}
+                >
+                  <span>Download App</span>
+                </a>
+              </Button>
             </div>
           </div>
         </>

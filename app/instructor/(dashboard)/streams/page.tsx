@@ -1,9 +1,11 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { createClient } from "@/utils/supabase/server";
 import { LiveStreamSession } from "@/types/streaming";
 import { Plus, Edit, Radio, Calendar, Coins, Users, TrendingUp } from "lucide-react";
 import { redirect } from "next/navigation";
+import { EmptyState } from "@/components/empty-state";
 
 export default async function InstructorStreamsPage() {
   const supabase = await createClient();
@@ -42,7 +44,7 @@ export default async function InstructorStreamsPage() {
           <p className="text-gray-600 mt-1">Manage your live streaming sessions</p>
         </div>
         <Link href="/instructor/streams/create" className="shrink-0">
-          <Button className="bg-gradient-to-r from-pink-500 to-rose-400 hover:from-pink-600 hover:to-rose-500 w-full sm:w-auto">
+          <Button variant="brand" className="w-full sm:w-auto">
             <Plus className="w-4 h-4 mr-2" />
             Create Stream
           </Button>
@@ -50,14 +52,16 @@ export default async function InstructorStreamsPage() {
       </div>
 
       {streamsList.length === 0 ? (
-        <div className="text-center py-12 bg-white rounded-2xl border border-gray-200">
-          <p className="text-lg text-gray-600 mb-4">No streams created yet</p>
-          <Link href="/instructor/streams/create">
-            <Button className="bg-gradient-to-r from-pink-500 to-rose-400 hover:from-pink-600 hover:to-rose-500">
-              Create Your First Stream
-            </Button>
-          </Link>
-        </div>
+        <EmptyState
+          title="No streams created yet"
+          action={
+            <Link href="/instructor/streams/create">
+              <Button variant="brand">
+                Create Your First Stream
+              </Button>
+            </Link>
+          }
+        />
       ) : (
         <div className="grid gap-4">
           {streamsList.map((stream) => (
@@ -71,17 +75,18 @@ export default async function InstructorStreamsPage() {
                     <h3 className="text-xl font-semibold text-gray-900 break-words">
                       {stream.title}
                     </h3>
-                    <span
-                      className={`px-3 py-1 rounded-full text-xs font-semibold shrink-0 ${
+                    <Badge
+                      variant={
                         stream.status === "live"
-                          ? "bg-red-100 text-red-700"
+                          ? "live"
                           : stream.status === "scheduled"
-                          ? "bg-blue-100 text-blue-700"
-                          : "bg-gray-100 text-gray-700"
-                      }`}
+                          ? "brand"
+                          : "secondary"
+                      }
+                      className="shrink-0"
                     >
                       {stream.status.toUpperCase()}
-                    </span>
+                    </Badge>
                   </div>
                   <p className="text-gray-600 mb-3 break-words">{stream.description}</p>
                   <div className="flex flex-wrap gap-3 sm:gap-6 text-sm text-gray-500">

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Alert } from "@/components/ui/alert";
 import { createClient } from "@/utils/supabase/client";
 
 export default function InstructorActivateForm() {
@@ -68,14 +69,13 @@ export default function InstructorActivateForm() {
           </div>
 
           {error && (
-            <div className="bg-red-50 border border-red-200 rounded-lg p-3">
-              <p className="text-red-700 text-sm">{error}</p>
-            </div>
+            <Alert variant="error">{error}</Alert>
           )}
 
           <Button
             type="submit"
-            className="w-full bg-gradient-to-r from-pink-500 to-rose-400 hover:from-pink-600 hover:to-rose-500"
+            variant="brand"
+            className="w-full"
             disabled={isLoading}
           >
             {isLoading ? "Activating..." : "Activate Instructor Status"}

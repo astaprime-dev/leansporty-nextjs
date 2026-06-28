@@ -3,6 +3,7 @@ import { EnvVarWarning } from "@/components/env-var-warning";
 import HeaderAuth from "@/components/header-auth";
 import HeaderNav from "@/components/header-nav";
 import MobileMenuWrapper from "@/components/mobile-menu-wrapper";
+import { Button } from "@/components/ui/button";
 import { hasEnvVars } from "@/utils/supabase/check-env-vars";
 import { createClient } from "@/utils/supabase/server";
 import { Geist, Playfair_Display } from "next/font/google";
@@ -101,21 +102,21 @@ export default async function RootLayout({
                         Anonymous → drive to the web offer (the commerce surface).
                         Signed in → Download App (iOS = watch/retention surface). */}
                     {user ? (
-                      <a
-                        href="https://apps.apple.com/app/id6745218800"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="hidden sm:inline-flex items-center gap-2 px-4 lg:px-6 py-2 lg:py-2.5 bg-gradient-to-r from-pink-500 to-rose-400 text-white text-xs lg:text-sm font-light rounded-full hover:shadow-lg hover:shadow-pink-200/50 transform hover:scale-105 transition-all duration-300"
-                      >
-                        <span>Download App</span>
-                      </a>
+                      <Button asChild variant="brand" className="hidden sm:inline-flex gap-2 text-xs lg:text-sm lg:px-6">
+                        <a
+                          href="https://apps.apple.com/app/id6745218800"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          <span>Download App</span>
+                        </a>
+                      </Button>
                     ) : (
-                      <Link
-                        href="/challenge"
-                        className="hidden sm:inline-flex items-center gap-2 px-4 lg:px-6 py-2 lg:py-2.5 bg-gradient-to-r from-pink-500 to-rose-400 text-white text-xs lg:text-sm font-semibold rounded-full hover:shadow-lg hover:shadow-pink-200/50 transform hover:scale-105 transition-all duration-300"
-                      >
-                        <span>Start the Challenge</span>
-                      </Link>
+                      <Button asChild variant="brand" className="hidden sm:inline-flex gap-2 text-xs lg:text-sm lg:px-6">
+                        <Link href="/challenge">
+                          <span>Start the Challenge</span>
+                        </Link>
+                      </Button>
                     )}
 
                     {/* Mobile Menu */}
@@ -145,12 +146,11 @@ export default async function RootLayout({
 
                     {/* Anonymous CTA → the web offer */}
                     {!user && (
-                      <Link
-                        href="/challenge"
-                        className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-pink-500 to-rose-400 px-6 py-2.5 text-sm font-semibold text-white transition-all hover:scale-105 hover:shadow-lg hover:shadow-pink-200/50"
-                      >
-                        <span>Start the 21-Day Challenge</span>
-                      </Link>
+                      <Button asChild variant="brand" className="gap-2 px-6">
+                        <Link href="/challenge">
+                          <span>Start the 21-Day Challenge</span>
+                        </Link>
+                      </Button>
                     )}
 
                     {/* Footer nav */}

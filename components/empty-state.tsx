@@ -23,7 +23,7 @@ export function EmptyState({
         className
       )}
     >
-      <p className="text-lg text-gray-700">{title}</p>
+      <p className="text-lg text-gray-900">{title}</p>
       {description && (
         <p className="text-sm text-muted-foreground">{description}</p>
       )}

@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
+import { Alert } from "@/components/ui/alert";
 import { Video, VideoOff, Mic, MicOff, MonitorPlay, Camera, Headphones } from "lucide-react";
 
 interface BrowserBroadcastProps {
@@ -515,9 +516,7 @@ export function BrowserBroadcast({
 
       {/* Error Message */}
       {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-          <p className="text-red-800 text-sm">{error}</p>
-        </div>
+        <Alert variant="error">{error}</Alert>
       )}
 
       {/* Controls */}
@@ -562,14 +561,14 @@ export function BrowserBroadcast({
       </div>
 
       {/* Browser Compatibility Warning */}
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-sm">
-        <p className="text-blue-800 font-medium mb-2">Browser Requirements:</p>
-        <ul className="text-blue-700 space-y-1 text-xs">
+      <Alert variant="info">
+        <p className="font-medium mb-2">Browser Requirements:</p>
+        <ul className="space-y-1 text-xs">
           <li>• Chrome, Firefox, Safari, or Edge (latest version)</li>
           <li>• Camera and microphone permissions required</li>
           <li>• Stable internet connection (at least 5 Mbps upload)</li>
         </ul>
-      </div>
+      </Alert>
     </div>
   );
 }

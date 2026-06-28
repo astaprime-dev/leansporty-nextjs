@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
 import { Sparkles, Zap, Music, Clock, TrendingUp, Home, Video, Users, Star, Calendar } from "lucide-react";
 
 export default function Header() {
@@ -28,18 +29,12 @@ export default function Header() {
 
           {/* Primary CTAs → the web offer */}
           <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <Link
-              href="/challenge"
-              className="inline-flex h-12 items-center justify-center rounded-full bg-gradient-to-r from-pink-500 to-rose-400 px-8 text-base font-semibold text-white shadow-sm transition-all hover:scale-105 hover:shadow-lg hover:shadow-pink-200/50"
-            >
-              Start the 21-Day Challenge — €49
-            </Link>
-            <Link
-              href="/challenge"
-              className="inline-flex h-12 items-center justify-center rounded-full border border-pink-200 bg-white px-8 text-base font-semibold text-gray-700 transition-all hover:border-pink-300"
-            >
-              Try Day 1 free
-            </Link>
+            <Button asChild variant="brand" size="pill">
+              <Link href="/challenge">Start the 21-Day Challenge — €49</Link>
+            </Button>
+            <Button asChild variant="brandOutline" size="pill">
+              <Link href="/challenge">Try Day 1 free</Link>
+            </Button>
           </div>
           <p className="mt-3 text-sm text-gray-400 font-light">
             €49 once · 15 sessions + rest days · 1 year of access · free Day 1
@@ -173,13 +168,12 @@ export default function Header() {
 
             {/* CTA Button */}
             <div className="text-center">
-              <a
-                href="/streams"
-                className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-pink-500 to-rose-400 text-white text-lg font-light rounded-full hover:shadow-lg hover:shadow-pink-200/50 transform hover:scale-105 transition-all duration-300"
-              >
-                <span>Browse Live Streams</span>
-                <span className="text-xl">→</span>
-              </a>
+              <Button asChild variant="brand" className="gap-3 px-8 h-14 text-lg">
+                <Link href="/streams">
+                  <span>Browse Live Streams</span>
+                  <span className="text-xl">→</span>
+                </Link>
+              </Button>
             </div>
           </div>
         </section>

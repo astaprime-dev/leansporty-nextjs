@@ -7,6 +7,7 @@ import { WHEPPlayer } from "@/components/whep-player";
 import { ReactionButtons } from "@/components/stream/reaction-buttons";
 import { LiveViewerCount } from "@/components/stream/live-viewer-count";
 import { Badge } from "@/components/ui/badge";
+import { Alert } from "@/components/ui/alert";
 import { Calendar, Users, Clock } from "lucide-react";
 import { useWatchSession } from "@/hooks/use-watch-session";
 import { CommentForm } from "@/components/stream/comment-form";
@@ -187,23 +188,17 @@ export function StreamWatchView({
 
         {/* Replay expiry notice */}
         {!isLive && enrollment.replay_access_expires_at && (
-          <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mt-4">
-            <p className="text-sm text-amber-800 font-medium">
-              🕒 Replay Access
-            </p>
-            <p className="text-sm text-amber-700 mt-1">
+          <Alert variant="info" className="mt-4">
+            <p className="font-medium">Replay Access</p>
+            <p className="mt-1">
               This replay is available until{" "}
               {formatDate(enrollment.replay_access_expires_at)}
             </p>
-          </div>
+          </Alert>
         )}
 
         {/* Enrollment confirmation */}
-        <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-          <p className="text-sm text-green-800">
-            ✓ You're enrolled in this stream ({enrollment.tokens_paid} tokens)
-          </p>
-        </div>
+        <Alert variant="success">You&apos;re enrolled in this class.</Alert>
 
         {/* Comments Section - Always visible */}
         <div className="mt-12 pt-8 border-t">

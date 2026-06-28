@@ -1,4 +1,5 @@
-import { BookOpen, User, Video, Coins, Share2, Calendar, AlertCircle, CheckCircle, HelpCircle } from "lucide-react";
+import { BookOpen, User, Video, Coins, Share2, Calendar, CheckCircle, HelpCircle } from "lucide-react";
+import { Alert } from "@/components/ui/alert";
 
 export default function InstructorHelpPage() {
   return (
@@ -50,7 +51,7 @@ export default function InstructorHelpPage() {
       <div className="space-y-8">
 
         {/* Getting Started */}
-        <section className="bg-white rounded-2xl border border-gray-200 p-8">
+        <section className="bg-white rounded-2xl border border-pink-100 p-8">
           <div className="flex items-start gap-4 mb-6">
             <div className="w-12 h-12 bg-gradient-to-br from-pink-500 to-rose-400 rounded-xl flex items-center justify-center flex-shrink-0">
               <User className="w-6 h-6 text-white" strokeWidth={1.5} />
@@ -77,23 +78,18 @@ export default function InstructorHelpPage() {
               </ol>
             </div>
 
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-              <div className="flex items-start gap-3">
-                <AlertCircle className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
-                <div>
-                  <p className="font-semibold text-blue-900 mb-1">Important Note</p>
-                  <p className="text-blue-800 text-sm">
-                    You only need the invite code once. After creating your profile, you can access the instructor
-                    dashboard anytime by signing in with your Google or Apple account.
-                  </p>
-                </div>
-              </div>
-            </div>
+            <Alert variant="info">
+              <p className="font-semibold mb-1">Important Note</p>
+              <p className="text-sm">
+                You only need the invite code once. After creating your profile, you can access the instructor
+                dashboard anytime by signing in with your Google or Apple account.
+              </p>
+            </Alert>
           </div>
         </section>
 
         {/* Setting Up Your Profile */}
-        <section className="bg-white rounded-2xl border border-gray-200 p-8">
+        <section className="bg-white rounded-2xl border border-pink-100 p-8">
           <div className="flex items-start gap-4 mb-6">
             <div className="w-12 h-12 bg-gradient-to-br from-pink-500 to-rose-400 rounded-xl flex items-center justify-center flex-shrink-0">
               <Share2 className="w-6 h-6 text-white" strokeWidth={1.5} />
@@ -160,23 +156,18 @@ export default function InstructorHelpPage() {
               </ul>
             </div>
 
-            <div className="bg-pink-50 border border-pink-200 rounded-lg p-4">
-              <div className="flex items-start gap-3">
-                <AlertCircle className="w-5 h-5 text-pink-600 flex-shrink-0 mt-0.5" />
-                <div>
-                  <p className="font-semibold text-pink-900 mb-1">Pro Tip</p>
-                  <p className="text-pink-800 text-sm">
-                    Complete profiles get more enrollments! The dashboard shows your profile completion percentage
-                    and reminds you what's missing.
-                  </p>
-                </div>
-              </div>
-            </div>
+            <Alert variant="info">
+              <p className="font-semibold mb-1">Pro Tip</p>
+              <p className="text-sm">
+                Complete profiles get more enrollments! The dashboard shows your profile completion percentage
+                and reminds you what's missing.
+              </p>
+            </Alert>
           </div>
         </section>
 
         {/* Creating & Managing Streams */}
-        <section className="bg-white rounded-2xl border border-gray-200 p-8">
+        <section className="bg-white rounded-2xl border border-pink-100 p-8">
           <div className="flex items-start gap-4 mb-6">
             <div className="w-12 h-12 bg-gradient-to-br from-pink-500 to-rose-400 rounded-xl flex items-center justify-center flex-shrink-0">
               <Video className="w-6 h-6 text-white" strokeWidth={1.5} />
@@ -216,33 +207,33 @@ export default function InstructorHelpPage() {
             <div>
               <h3 className="text-lg font-semibold text-gray-900 mb-3">Stream status explained</h3>
               <div className="grid md:grid-cols-3 gap-4">
-                <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
+                <Alert variant="info" hideIcon>
                   <div className="flex items-center gap-2 mb-2">
-                    <Calendar className="w-5 h-5 text-blue-600" />
-                    <p className="font-semibold text-blue-900">Scheduled</p>
+                    <Calendar className="w-5 h-5" />
+                    <p className="font-semibold">Scheduled</p>
                   </div>
-                  <p className="text-sm text-blue-800">
+                  <p className="text-sm">
                     Your stream is published and students can enroll. Appears in "Upcoming Streams".
                   </p>
-                </div>
-                <div className="bg-red-50 rounded-lg p-4 border border-red-200">
+                </Alert>
+                <Alert variant="error" hideIcon>
                   <div className="flex items-center gap-2 mb-2">
                     <div className="w-5 h-5 rounded-full bg-red-500 animate-pulse"></div>
-                    <p className="font-semibold text-red-900">Live</p>
+                    <p className="font-semibold">Live</p>
                   </div>
-                  <p className="text-sm text-red-800">
+                  <p className="text-sm">
                     Your stream is currently broadcasting. Appears in "LIVE NOW" section with special styling.
                   </p>
-                </div>
-                <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                </Alert>
+                <Alert variant="info" hideIcon>
                   <div className="flex items-center gap-2 mb-2">
-                    <CheckCircle className="w-5 h-5 text-gray-600" />
-                    <p className="font-semibold text-gray-900">Ended</p>
+                    <CheckCircle className="w-5 h-5" />
+                    <p className="font-semibold">Ended</p>
                   </div>
-                  <p className="text-sm text-gray-700">
+                  <p className="text-sm">
                     Stream finished. Shows in your "Past Classes" and recording becomes available.
                   </p>
-                </div>
+                </Alert>
               </div>
             </div>
 
@@ -279,29 +270,24 @@ export default function InstructorHelpPage() {
                 </ol>
               </div>
 
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
-                <div className="flex items-start gap-3">
-                  <AlertCircle className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
-                  <div>
-                    <p className="font-semibold text-blue-900 mb-1">What happens when you click "Start Broadcast"?</p>
-                    <ul className="text-sm text-blue-800 space-y-1 list-disc ml-4">
-                      <li>Your camera and microphone turn on (you'll see yourself on screen)</li>
-                      <li>The system connects you to the streaming servers</li>
-                      <li>Your stream automatically switches from "Scheduled" to "LIVE"</li>
-                      <li>Students who enrolled can now watch your class</li>
-                      <li>Your stream appears in the "LIVE NOW" section on the homepage</li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
+              <Alert variant="info" className="mb-4">
+                <p className="font-semibold mb-1">What happens when you click "Start Broadcast"?</p>
+                <ul className="text-sm space-y-1 list-disc ml-4">
+                  <li>Your camera and microphone turn on (you'll see yourself on screen)</li>
+                  <li>The system connects you to the streaming servers</li>
+                  <li>Your stream automatically switches from "Scheduled" to "LIVE"</li>
+                  <li>Students who enrolled can now watch your class</li>
+                  <li>Your stream appears in the "LIVE NOW" section on the homepage</li>
+                </ul>
+              </Alert>
 
-              <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-                <p className="font-semibold text-green-900 mb-1">Browser Requirements</p>
-                <p className="text-sm text-green-800">
+              <Alert variant="success">
+                <p className="font-semibold mb-1">Browser Requirements</p>
+                <p className="text-sm">
                   Works best in Chrome, Firefox, or Safari. Make sure you have a stable internet connection
                   (at least 5 Mbps upload speed recommended) and good lighting for the best experience.
                 </p>
-              </div>
+              </Alert>
             </div>
 
             <div>
@@ -332,37 +318,27 @@ export default function InstructorHelpPage() {
                 </ol>
               </div>
 
-              <div className="bg-purple-50 border border-purple-200 rounded-lg p-4 mb-4">
-                <div className="flex items-start gap-3">
-                  <AlertCircle className="w-5 h-5 text-purple-600 flex-shrink-0 mt-0.5" />
-                  <div>
-                    <p className="font-semibold text-purple-900 mb-1">What happens when you end your stream?</p>
-                    <ul className="text-sm text-purple-800 space-y-1 list-disc ml-4">
-                      <li>Your camera and microphone turn off</li>
-                      <li>The stream status changes from "LIVE" to "ENDED"</li>
-                      <li>Students can no longer join the live class</li>
-                      <li>The recording becomes available automatically</li>
-                      <li>Enrolled students can watch the replay for 7 days</li>
-                      <li>Your earnings are finalized based on total enrollments</li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
+              <Alert variant="info" className="mb-4">
+                <p className="font-semibold mb-1">What happens when you end your stream?</p>
+                <ul className="text-sm space-y-1 list-disc ml-4">
+                  <li>Your camera and microphone turn off</li>
+                  <li>The stream status changes from "LIVE" to "ENDED"</li>
+                  <li>Students can no longer join the live class</li>
+                  <li>The recording becomes available automatically</li>
+                  <li>Enrolled students can watch the replay for 7 days</li>
+                  <li>Your earnings are finalized based on total enrollments</li>
+                </ul>
+              </Alert>
 
-              <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
-                <div className="flex items-start gap-3">
-                  <AlertCircle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
-                  <div>
-                    <p className="font-semibold text-amber-900 mb-1">Important: Recording Availability</p>
-                    <p className="text-amber-800 text-sm">
-                      Your class is automatically recorded while you broadcast. After you end the stream,
-                      the recording is available to enrolled students for <strong>7 days</strong>. After that,
-                      it's automatically deleted. This gives students time to re-watch the class while keeping
-                      your content exclusive!
-                    </p>
-                  </div>
-                </div>
-              </div>
+              <Alert variant="warning">
+                <p className="font-semibold mb-1">Important: Recording Availability</p>
+                <p className="text-sm">
+                  Your class is automatically recorded while you broadcast. After you end the stream,
+                  the recording is available to enrolled students for <strong>7 days</strong>. After that,
+                  it's automatically deleted. This gives students time to re-watch the class while keeping
+                  your content exclusive!
+                </p>
+              </Alert>
             </div>
 
             <div>
@@ -372,75 +348,55 @@ export default function InstructorHelpPage() {
               </p>
 
               <div className="space-y-4">
-                <div className="bg-cyan-50 border border-cyan-200 rounded-lg p-4">
-                  <div className="flex items-start gap-3">
-                    <AlertCircle className="w-5 h-5 text-cyan-600 flex-shrink-0 mt-0.5" />
-                    <div>
-                      <p className="font-semibold text-cyan-900 mb-2">Reconnecting After Connection Loss</p>
-                      <p className="text-cyan-800 text-sm mb-3">
-                        If your connection drops during class (battery dies, browser crashes, network issues, or accidental refresh),
-                        you can easily reconnect without ending your stream:
-                      </p>
-                      <ol className="text-sm text-cyan-800 space-y-2 ml-6 list-decimal">
-                        <li>Open the broadcast page again (same device or different device)</li>
-                        <li>You'll see a blue <strong>"Reconnect Broadcast"</strong> button instead of the pink "Start Broadcast"</li>
-                        <li>Click it to continue your class from where you left off</li>
-                        <li>Your original start time and analytics are preserved</li>
-                        <li>Students stay enrolled and can continue watching</li>
-                      </ol>
-                      <p className="text-xs text-cyan-700 mt-3 font-medium">
-                        Common scenarios: laptop battery dies, switch to phone, browser refresh, network drop, computer sleep
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-                  <div className="flex items-start gap-3">
-                    <AlertCircle className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" />
-                    <div>
-                      <p className="font-semibold text-yellow-900 mb-1">Browser Warning Protection</p>
-                      <p className="text-yellow-800 text-sm">
-                        When your stream is live, if you try to close the tab or refresh the page, your browser will warn you:
-                        "Your stream is still live. Are you sure you want to leave?" This helps prevent accidental disconnections.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="bg-rose-50 border border-rose-200 rounded-lg p-4">
-                  <div className="flex items-start gap-3">
-                    <AlertCircle className="w-5 h-5 text-rose-600 flex-shrink-0 mt-0.5" />
-                    <div>
-                      <p className="font-semibold text-rose-900 mb-1">Cannot Restart Ended Streams</p>
-                      <p className="text-rose-800 text-sm">
-                        Once you've ended a stream (by clicking "Stop Broadcast" and confirming), you cannot restart it.
-                        This is intentional - each class should be a separate session with its own recording and analytics.
-                        To teach again, simply create a new stream.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-              <div className="flex items-start gap-3">
-                <AlertCircle className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
-                <div>
-                  <p className="font-semibold text-blue-900 mb-1">Easy Broadcasting</p>
-                  <p className="text-blue-800 text-sm">
-                    No special software required - everything works directly in your browser!
-                    Just allow camera and microphone access and you're ready to broadcast.
+                <Alert variant="info">
+                  <p className="font-semibold mb-2">Reconnecting After Connection Loss</p>
+                  <p className="text-sm mb-3">
+                    If your connection drops during class (battery dies, browser crashes, network issues, or accidental refresh),
+                    you can easily reconnect without ending your stream:
                   </p>
-                </div>
+                  <ol className="text-sm space-y-2 ml-6 list-decimal">
+                    <li>Open the broadcast page again (same device or different device)</li>
+                    <li>You'll see a blue <strong>"Reconnect Broadcast"</strong> button instead of the pink "Start Broadcast"</li>
+                    <li>Click it to continue your class from where you left off</li>
+                    <li>Your original start time and analytics are preserved</li>
+                    <li>Students stay enrolled and can continue watching</li>
+                  </ol>
+                  <p className="text-xs mt-3 font-medium">
+                    Common scenarios: laptop battery dies, switch to phone, browser refresh, network drop, computer sleep
+                  </p>
+                </Alert>
+
+                <Alert variant="warning">
+                  <p className="font-semibold mb-1">Browser Warning Protection</p>
+                  <p className="text-sm">
+                    When your stream is live, if you try to close the tab or refresh the page, your browser will warn you:
+                    "Your stream is still live. Are you sure you want to leave?" This helps prevent accidental disconnections.
+                  </p>
+                </Alert>
+
+                <Alert variant="warning">
+                  <p className="font-semibold mb-1">Cannot Restart Ended Streams</p>
+                  <p className="text-sm">
+                    Once you've ended a stream (by clicking "Stop Broadcast" and confirming), you cannot restart it.
+                    This is intentional - each class should be a separate session with its own recording and analytics.
+                    To teach again, simply create a new stream.
+                  </p>
+                </Alert>
               </div>
             </div>
+
+            <Alert variant="info">
+              <p className="font-semibold mb-1">Easy Broadcasting</p>
+              <p className="text-sm">
+                No special software required - everything works directly in your browser!
+                Just allow camera and microphone access and you're ready to broadcast.
+              </p>
+            </Alert>
           </div>
         </section>
 
         {/* Earning Tokens */}
-        <section className="bg-white rounded-2xl border border-gray-200 p-8">
+        <section className="bg-white rounded-2xl border border-pink-100 p-8">
           <div className="flex items-start gap-4 mb-6">
             <div className="w-12 h-12 bg-gradient-to-br from-pink-500 to-rose-400 rounded-xl flex items-center justify-center flex-shrink-0">
               <Coins className="w-6 h-6 text-white" strokeWidth={1.5} />
@@ -488,33 +444,28 @@ export default function InstructorHelpPage() {
                 <li><strong>Market Rate:</strong> Check what other instructors charge for similar classes</li>
               </ul>
 
-              <div className="mt-4 bg-green-50 border border-green-200 rounded-lg p-4">
-                <p className="font-semibold text-green-900 mb-1">Recommended Starting Prices</p>
-                <ul className="text-sm text-green-800 space-y-1 ml-4">
+              <Alert variant="success" className="mt-4">
+                <p className="font-semibold mb-1">Recommended Starting Prices</p>
+                <ul className="text-sm space-y-1 ml-4">
                   <li>• 30-minute class: 50-100 tokens</li>
                   <li>• 45-minute class: 75-150 tokens</li>
                   <li>• 60-minute class: 100-200 tokens</li>
                 </ul>
-              </div>
+              </Alert>
             </div>
 
-            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-              <div className="flex items-start gap-3">
-                <AlertCircle className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" />
-                <div>
-                  <p className="font-semibold text-yellow-900 mb-1">Token Withdrawals</p>
-                  <p className="text-yellow-800 text-sm">
-                    The ability to withdraw tokens to real money is currently being implemented.
-                    You'll be able to cash out your earnings soon! Check back for updates.
-                  </p>
-                </div>
-              </div>
-            </div>
+            <Alert variant="warning">
+              <p className="font-semibold mb-1">Token Withdrawals</p>
+              <p className="text-sm">
+                The ability to withdraw tokens to real money is currently being implemented.
+                You'll be able to cash out your earnings soon! Check back for updates.
+              </p>
+            </Alert>
           </div>
         </section>
 
         {/* Best Practices */}
-        <section className="bg-white rounded-2xl border border-gray-200 p-8">
+        <section className="bg-white rounded-2xl border border-pink-100 p-8">
           <div className="flex items-start gap-4 mb-6">
             <div className="w-12 h-12 bg-gradient-to-br from-pink-500 to-rose-400 rounded-xl flex items-center justify-center flex-shrink-0">
               <CheckCircle className="w-6 h-6 text-white" strokeWidth={1.5} />
@@ -617,7 +568,7 @@ export default function InstructorHelpPage() {
         </section>
 
         {/* FAQ */}
-        <section className="bg-white rounded-2xl border border-gray-200 p-8">
+        <section className="bg-white rounded-2xl border border-pink-100 p-8">
           <div className="flex items-start gap-4 mb-6">
             <div className="w-12 h-12 bg-gradient-to-br from-pink-500 to-rose-400 rounded-xl flex items-center justify-center flex-shrink-0">
               <HelpCircle className="w-6 h-6 text-white" strokeWidth={1.5} />

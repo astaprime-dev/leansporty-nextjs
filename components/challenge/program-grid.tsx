@@ -11,6 +11,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { SecureStreamPlayer } from "@/components/SecureStreamPlayer";
 import { setWorkoutComplete } from "@/app/challenge/actions";
@@ -66,7 +67,8 @@ export function ProgramGrid({ days, priceLabel }: ProgramGridProps) {
     <div className="flex flex-col gap-6">
       {startCta?.item?.workout && (
         <Button
-          className="self-start bg-gradient-to-r from-pink-500 to-rose-400 hover:from-pink-600 hover:to-rose-500 text-white"
+          variant="brand"
+          className="self-start"
           onClick={() => openDay(startCta)}
         >
           <Play className="mr-2 h-4 w-4" />
@@ -101,14 +103,9 @@ export function ProgramGrid({ days, priceLabel }: ProgramGridProps) {
                 paywallHref="/challenge"
               />
               <Button
-                variant={open.completed ? "outline" : "default"}
+                variant={open.completed ? "brandOutline" : "brand"}
                 onClick={toggleComplete}
                 disabled={isPending}
-                className={
-                  open.completed
-                    ? ""
-                    : "bg-gradient-to-r from-pink-500 to-rose-400 hover:from-pink-600 hover:to-rose-500 text-white"
-                }
               >
                 {open.completed ? "Mark as not done" : "Mark complete"}
               </Button>
@@ -197,19 +194,19 @@ function DayCard({
       {/* top-right badge */}
       <div className="absolute right-2 top-2 flex items-center gap-1">
         {state === "preview-free" && (
-          <span className="rounded-full bg-green-500 px-2 py-0.5 text-[10px] font-semibold text-white">
+          <Badge variant="free" className="px-2 py-0.5 text-[10px]">
             Free
-          </span>
+          </Badge>
         )}
         {state === "completed" && (
-          <span className="flex h-6 w-6 items-center justify-center rounded-full bg-green-500 text-white">
+          <Badge variant="free" className="h-6 w-6 justify-center p-0">
             <Check className="h-4 w-4" />
-          </span>
+          </Badge>
         )}
         {(state === "locked" || state === "locked-until") && (
-          <span className="flex h-6 w-6 items-center justify-center rounded-full bg-black/50 text-white">
+          <Badge variant="lock" className="h-6 w-6 justify-center p-0">
             <Lock className="h-3.5 w-3.5" />
-          </span>
+          </Badge>
         )}
         {(state === "available") && (
           <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white/80 text-pink-600 opacity-0 transition group-hover:opacity-100">
