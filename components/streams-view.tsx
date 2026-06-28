@@ -4,6 +4,7 @@ import { LiveStreamSession, StreamEnrollment } from "@/types/streaming";
 import { StreamCard } from "@/components/stream-card";
 import { Button } from "@/components/ui/button";
 import { OAuthSignInModal } from "@/components/oauth-signin-modal";
+import { EmptyState } from "@/components/empty-state";
 
 interface StreamsViewProps {
   liveStreams: LiveStreamSession[];
@@ -69,7 +70,7 @@ export function StreamsView({
       {/* LIVE NOW Section */}
       {liveStreams.length > 0 && (
         <div>
-          <h2 className="text-2xl font-semibold mb-4 flex items-center gap-3">
+          <h2 className="text-2xl font-semibold text-gray-900 mb-4 flex items-center gap-3">
             <span className="relative flex h-3 w-3">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
@@ -92,16 +93,12 @@ export function StreamsView({
 
       {/* Upcoming Streams Section */}
       <div>
-        <h2 className="text-2xl font-semibold mb-4">Upcoming Streams</h2>
+        <h2 className="text-2xl font-semibold text-gray-900 mb-4">Upcoming Streams</h2>
         {upcomingStreams.length === 0 ? (
-          <div className="text-center py-12 bg-gradient-to-br from-pink-50 to-rose-50 rounded-2xl border border-pink-100">
-            <p className="text-lg text-gray-600 mb-2">
-              No upcoming streams scheduled yet.
-            </p>
-            <p className="text-sm text-muted-foreground">
-              Check back soon for new live sessions!
-            </p>
-          </div>
+          <EmptyState
+            title="No upcoming streams scheduled yet."
+            description="Check back soon for new live sessions!"
+          />
         ) : (
           <div className="grid gap-6">
             {upcomingStreams.map((stream) => (

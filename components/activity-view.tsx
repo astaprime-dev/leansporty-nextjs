@@ -4,6 +4,7 @@ import { WorkoutHistoryItem } from "@/types/database";
 import { LiveStreamSession, StreamEnrollment } from "@/types/streaming";
 import { useState, useMemo } from "react";
 import { ChevronLeft, ChevronRight, Radio, Calendar, Dumbbell, Clock, Flame, Play } from "lucide-react";
+import { EmptyState } from "@/components/empty-state";
 import { Button } from "@/components/ui/button";
 import { StreamCard } from "@/components/stream-card";
 import Link from "next/link";
@@ -263,22 +264,22 @@ export function ActivityView({
 
       {/* Workout History Table */}
       {workoutHistory.length === 0 ? (
-        <div className="flex flex-col items-center gap-4 rounded-2xl border border-pink-100 bg-pink-50/40 py-14 text-center">
-          <p className="text-base sm:text-lg text-gray-700">No sessions yet — your progress will show up here.</p>
-          <Link
-            href="/my-program"
-            className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-pink-500 to-rose-400 px-6 py-2.5 text-sm font-semibold text-white transition-all hover:scale-105 hover:shadow-lg hover:shadow-pink-200/50"
-          >
-            <Play className="h-4 w-4" /> Start Day 1
-          </Link>
-        </div>
+        <EmptyState
+          title="No sessions yet — your progress will show up here."
+          action={
+            <Link
+              href="/my-program"
+              className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-pink-500 to-rose-400 px-6 py-2.5 text-sm font-semibold text-white transition-all hover:scale-105 hover:shadow-lg hover:shadow-pink-200/50"
+            >
+              <Play className="h-4 w-4" /> Start Day 1
+            </Link>
+          }
+        />
       ) : filteredWorkouts.length === 0 ? (
-        <div className="text-center py-12">
-          <p className="text-base sm:text-lg text-muted-foreground">No workout sessions in {getMonthYear(selectedDate)}.</p>
-          <p className="text-xs sm:text-sm text-muted-foreground mt-2">
-            Try a different month, or jump back into your program.
-          </p>
-        </div>
+        <EmptyState
+          title={`No workout sessions in ${getMonthYear(selectedDate)}.`}
+          description="Try a different month, or jump back into your program."
+        />
       ) : (
         <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
           <table className="w-full border-collapse min-w-[640px] sm:min-w-full">
