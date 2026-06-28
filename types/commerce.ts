@@ -8,6 +8,8 @@ export interface ChallengeConfig {
   program_length_days?: number;
   drip_enabled?: boolean;
   workout_count?: number;
+  /** Access duration in months; entitlement expires_at = grant + this. Omit/0 = lifetime. */
+  access_months?: number;
 }
 
 export interface Product {

@@ -44,10 +44,23 @@ export async function POST(req: NextRequest) {
       const expiresAt = s.metadata?.expires_at ?? null; // null = lifetime; set for membership
 
       if (!userId || !productId) {
-        console.error(
-          `checkout.session.completed missing identifiers (session ${s.id}): user=${userId} product=${productId}`
+        // No LeanSporty identifiers → not our event (this Stripe account is
+        // shared with another app). Acknowledge and ignore.
+        return NextResponse.json({ received: true });
+      }
+
+      // Confirm the product is ours before writing. Guards against another app's
+      // sessions on this shared account (a stray product_id would otherwise hit
+      // the entitlements FK and make Stripe retry forever).
+      const { data: ourProduct } = await db
+        .from("products")
+        .select("id")
+        .eq("id", productId)
+        .maybeSingle();
+      if (!ourProduct) {
+        console.log(
+          `Ignoring checkout.session.completed for unknown product_id=${productId} (session ${s.id}) — not a LeanSporty product.`
         );
-        // Acknowledge so Stripe stops retrying; this is a config bug, not transient.
         return NextResponse.json({ received: true });
       }
 

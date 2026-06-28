@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
 
   const { data: product } = await supabase
     .from("products")
-    .select("id, stripe_price_id, kind, is_active")
+    .select("id, stripe_price_id, kind, is_active, config")
     .eq("slug", productSlug)
     .single();
   if (!product || !product.is_active) {
@@ -59,13 +59,25 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ alreadyOwned: true });
   }
 
+  // Time-boxed access: if the product config sets access_months, compute the
+  // entitlement expiry now and carry it in metadata; the webhook applies it.
+  // Omit/0 → lifetime (expires_at stays null).
+  const metadata: Record<string, string> = { product_id: product.id };
+  const accessMonths = (product.config as { access_months?: number } | null)
+    ?.access_months;
+  if (typeof accessMonths === "number" && accessMonths > 0) {
+    const expires = new Date();
+    expires.setMonth(expires.getMonth() + accessMonths);
+    metadata.expires_at = expires.toISOString();
+  }
+
   const origin = req.headers.get("origin") ?? "https://leansporty.com";
   const session = await getStripe().checkout.sessions.create({
     mode: product.kind === "membership" ? "subscription" : "payment",
     line_items: [{ price: product.stripe_price_id, quantity: 1 }],
     client_reference_id: user.id, // entitlement owner
     customer_email: user.email ?? undefined,
-    metadata: { product_id: product.id }, // which product
+    metadata, // product_id (+ expires_at for time-boxed grants)
     success_url: `${origin}/my-program?purchased=1&sid={CHECKOUT_SESSION_ID}`,
     cancel_url: `${origin}/challenge?canceled=1`,
     ...(stripeAutomaticTax ? { automatic_tax: { enabled: true } } : {}),

@@ -47,8 +47,8 @@ const BENEFITS = [
   },
   {
     icon: InfinityIcon,
-    title: "Yours for life",
-    body: "Buy once and keep lifetime access. Revisit any session whenever you like, on web and iOS.",
+    title: "A full year of access",
+    body: "Buy once and get a full year — revisit any session whenever you like, on web and iOS.",
   },
 ];
 
@@ -59,7 +59,7 @@ const FAQ = [
   },
   {
     q: "Is this a subscription?",
-    a: "No. It's a one-time purchase with lifetime access — no recurring charge, ever.",
+    a: "No — it's a one-time payment with no recurring charge. Your access runs for a full year.",
   },
   {
     q: "What if I miss a day?",
@@ -172,7 +172,7 @@ export default async function ChallengePage({
             )}
           </div>
           <p className="mt-3 text-sm text-muted-foreground">
-            {priceLabel} once · lifetime access · not a subscription
+            {priceLabel} once · 1 year of access · not a subscription
           </p>
         </div>
       </section>
@@ -296,14 +296,14 @@ export default async function ChallengePage({
         <div className="rounded-2xl border-2 border-pink-200 bg-white p-8 text-center shadow-sm">
           <h2 className="text-2xl font-bold text-gray-800">{title}</h2>
           <p className="mt-1 text-sm text-muted-foreground">
-            One-time purchase · lifetime access
+            One-time purchase · 1 year of access
           </p>
           <p className="mt-4 text-5xl font-bold text-gray-900">{priceLabel}</p>
           <p className="text-sm text-muted-foreground">not a subscription</p>
           <ul className="mt-6 space-y-2 text-left text-sm">
             {[
               `${workoutCount} guided sessions + rest days`,
-              "Lifetime access — yours forever",
+              "A full year of access",
               "Watch on web & iOS",
               "Beginner-friendly, no equipment",
             ].map((line) => (

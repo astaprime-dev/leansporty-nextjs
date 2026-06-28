@@ -26,7 +26,7 @@ values
    4900, 'eur',
    null,                         -- TODO: Stripe Price id (e.g. price_...) when wiring checkout
    true,
-   '{"program_length_days":21,"drip_enabled":false,"workout_count":14}'::jsonb)
+   '{"program_length_days":21,"drip_enabled":false,"workout_count":14,"access_months":12}'::jsonb)
 on conflict (slug) do update set
   title       = excluded.title,
   subtitle    = excluded.subtitle,

@@ -12,6 +12,7 @@ export interface ChallengeData {
   isAuthenticated: boolean;
   owned: boolean;
   grantedAt: string | null;
+  expiresAt: string | null;
   completedContentIds: string[];
   social: { average: number; count: number } | null;
 }
@@ -59,6 +60,7 @@ export async function getChallengeData(): Promise<ChallengeData | null> {
 
   let owned = false;
   let grantedAt: string | null = null;
+  let expiresAt: string | null = null;
   let completedContentIds: string[] = [];
 
   if (user) {
@@ -72,6 +74,7 @@ export async function getChallengeData(): Promise<ChallengeData | null> {
     if (ent) {
       owned = true;
       grantedAt = ent.granted_at ?? null;
+      expiresAt = ent.expires_at ?? null;
     }
 
     const { data: progress } = await supabase
@@ -105,6 +108,7 @@ export async function getChallengeData(): Promise<ChallengeData | null> {
     isAuthenticated: !!user,
     owned,
     grantedAt,
+    expiresAt,
     completedContentIds,
     social,
   };

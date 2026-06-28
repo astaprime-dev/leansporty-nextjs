@@ -49,7 +49,14 @@ export default async function MyProgramPage({
     );
   }
 
-  const { product, owned } = data;
+  const { product, owned, expiresAt } = data;
+  const accessUntil = expiresAt
+    ? new Date(expiresAt).toLocaleDateString("en-IE", {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      })
+    : null;
   const totalDays = programLengthDays(product.config);
   const priceLabel = formatPrice(product.price_cents, product.currency);
 
@@ -92,13 +99,18 @@ export default async function MyProgramPage({
                   ? "You finished the challenge — amazing work! 🎉"
                   : "Keep the momentum going — your next session is ready."}
             </p>
+            {accessUntil && (
+              <p className="mt-1 text-xs text-muted-foreground">
+                Access until {accessUntil}
+              </p>
+            )}
           </div>
         ) : (
           <div className="mt-4 flex flex-col items-start gap-3 rounded-xl border border-pink-200 bg-pink-50 p-4 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-start gap-3">
               <Lock className="mt-0.5 h-5 w-5 flex-shrink-0 text-pink-600" />
               <p className="text-sm text-pink-800">
-                Day 1 is free to try. Unlock all sessions with lifetime access.
+                Day 1 is free to try. Unlock all sessions with a full year of access.
               </p>
             </div>
             <Button
