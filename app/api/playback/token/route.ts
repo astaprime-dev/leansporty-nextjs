@@ -2,7 +2,11 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createServerClient } from '@supabase/ssr';
 import { createClient } from '@supabase/supabase-js';
 import { cookies } from 'next/headers';
-import { signStreamToken, getSignedPlaybackURLs } from '@/lib/cloudflare-stream';
+import {
+  signStreamToken,
+  getSignedPlaybackURLs,
+  getStreamPlaybackURL,
+} from '@/lib/cloudflare-stream';
 
 // RS256 signing requires the Node.js runtime (not Edge).
 export const runtime = 'nodejs';
@@ -89,6 +93,35 @@ export async function POST(req: NextRequest) {
   if (!uid) {
     // Not entitled and not a free preview → paywall.
     return NextResponse.json({ error: 'forbidden' }, { status: 403 });
+  }
+
+  // The entitlement gate above has already passed. Now produce a playback URL.
+  const haveSigningKey =
+    !!process.env.CLOUDFLARE_STREAM_KEY_ID &&
+    !!process.env.CLOUDFLARE_STREAM_KEY_PEM;
+
+  if (!haveSigningKey) {
+    // TEMPORARY soft-launch mode: no signing key configured. Serve the PUBLIC
+    // (unsigned) URL so the entitled-playback flow works against unsecured
+    // videos. The app-level entitlement gate still applies, but the asset is
+    // NOT locked at the CDN — a raw URL still plays. Must NOT be used for a
+    // paid launch: create a signing key + requireSignedURLs and drop the flag.
+    if (process.env.ALLOW_UNSIGNED_PLAYBACK === 'true') {
+      console.warn(
+        `[playback] ALLOW_UNSIGNED_PLAYBACK active — serving PUBLIC url for ${uid}. ` +
+          `Content is NOT protected at the CDN. Configure the Stream signing key before paid launch.`
+      );
+      return NextResponse.json({
+        ...getStreamPlaybackURL(uid as string),
+        watermark: user.email,
+        expiresAt: Date.now() + 4 * 60 * 60 * 1000,
+        insecure: true,
+      });
+    }
+    console.error(
+      'Playback signing key missing and ALLOW_UNSIGNED_PLAYBACK not set — refusing to serve.'
+    );
+    return NextResponse.json({ error: 'playback not configured' }, { status: 500 });
   }
 
   const token = await signStreamToken(uid as string);
