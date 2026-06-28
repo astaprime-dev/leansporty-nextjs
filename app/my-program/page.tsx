@@ -40,7 +40,7 @@ export default async function MyProgramPage({
     return (
       <div className="mx-auto max-w-2xl px-4 py-20 text-center">
         <Sparkles className="mx-auto h-10 w-10 text-pink-400" />
-        <h1 className="mt-4 text-2xl font-bold text-gray-800">
+        <h1 className="mt-4 text-2xl font-display font-light text-gray-900">
           Your program is being prepared
         </h1>
         <p className="mt-2 text-muted-foreground">

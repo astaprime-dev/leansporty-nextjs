@@ -94,7 +94,7 @@ export function BroadcastManagementView({ stream }: BroadcastManagementViewProps
         {/* Left Column - Broadcast */}
         <div className="lg:col-span-2 space-y-6">
           <div>
-            <h1 className="text-3xl font-bold mb-2">{stream.title}</h1>
+            <h1 className="text-3xl font-display font-light mb-2">{stream.title}</h1>
             <p className="text-gray-600">{stream.description}</p>
           </div>
 
@@ -123,7 +123,7 @@ export function BroadcastManagementView({ stream }: BroadcastManagementViewProps
                 <div className="inline-flex items-center justify-center w-16 h-16 bg-gray-100 rounded-full mb-4">
                   <Check className="w-8 h-8 text-gray-600" />
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-2">Stream Has Ended</h3>
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">Stream Has Ended</h3>
                 <p className="text-gray-600 mb-6">
                   This class has finished. The recording is now available to enrolled students for 7 days.
                 </p>
@@ -147,7 +147,7 @@ export function BroadcastManagementView({ stream }: BroadcastManagementViewProps
 
           {/* Stream Info */}
           <div className="bg-white rounded-lg border p-6 space-y-4">
-            <h2 className="font-bold text-lg">Stream Details</h2>
+            <h2 className="font-semibold text-lg">Stream Details</h2>
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div className="flex items-center gap-2">
                 <Calendar className="w-4 h-4 text-gray-400" />
@@ -179,7 +179,7 @@ export function BroadcastManagementView({ stream }: BroadcastManagementViewProps
               >
                 <div className="flex items-center gap-2">
                   <Video className="w-5 h-5 text-blue-600" />
-                  <h3 className="font-bold text-blue-900">Advanced: Stream with OBS (Recording Available)</h3>
+                  <h3 className="font-semibold text-blue-900">Advanced: Stream with OBS (Recording Available)</h3>
                 </div>
                 {showRTMPS ? (
                   <ChevronUp className="w-5 h-5 text-blue-600" />
@@ -256,7 +256,7 @@ export function BroadcastManagementView({ stream }: BroadcastManagementViewProps
 
           {/* Comments Section */}
           <div className="bg-white rounded-lg border p-6">
-            <h2 className="font-bold text-lg mb-6">Viewer Comments</h2>
+            <h2 className="font-semibold text-lg mb-6">Viewer Comments</h2>
             <CommentList
               streamId={stream.id}
               isInstructor={true}
@@ -269,7 +269,7 @@ export function BroadcastManagementView({ stream }: BroadcastManagementViewProps
         <div className="space-y-6">
           {/* Status Card */}
           <div className="bg-white rounded-lg border p-6">
-            <h3 className="font-bold mb-4">Stream Status</h3>
+            <h3 className="font-semibold mb-4">Stream Status</h3>
             <div className="space-y-3">
               <div
                 className={`px-4 py-2 rounded-lg text-center font-semibold ${
@@ -315,7 +315,7 @@ export function BroadcastManagementView({ stream }: BroadcastManagementViewProps
 
           {/* Stats Card */}
           <div className="bg-white rounded-lg border p-6">
-            <h3 className="font-bold mb-4">Statistics</h3>
+            <h3 className="font-semibold mb-4">Statistics</h3>
             <div className="space-y-3">
               <div>
                 <p className="text-sm text-gray-600">Total Enrollments</p>

@@ -18,7 +18,7 @@ export default function InstructorHelpPage() {
 
       {/* Quick Start Section */}
       <section className="bg-gradient-to-br from-pink-50 to-rose-50 rounded-2xl p-8 mb-8 border border-pink-100">
-        <h2 className="text-2xl font-bold text-gray-900 mb-4 flex items-center gap-3">
+        <h2 className="text-2xl font-semibold text-gray-900 mb-4 flex items-center gap-3">
           <CheckCircle className="w-6 h-6 text-pink-500" />
           Quick Start Checklist
         </h2>
@@ -56,7 +56,7 @@ export default function InstructorHelpPage() {
               <User className="w-6 h-6 text-white" strokeWidth={1.5} />
             </div>
             <div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">Getting Started as an Instructor</h2>
+              <h2 className="text-2xl font-semibold text-gray-900 mb-2">Getting Started as an Instructor</h2>
               <p className="text-gray-600">How to join the Lean Sporty instructor community</p>
             </div>
           </div>
@@ -99,7 +99,7 @@ export default function InstructorHelpPage() {
               <Share2 className="w-6 h-6 text-white" strokeWidth={1.5} />
             </div>
             <div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">Setting Up Your Profile</h2>
+              <h2 className="text-2xl font-semibold text-gray-900 mb-2">Setting Up Your Profile</h2>
               <p className="text-gray-600">Create a professional profile that attracts students</p>
             </div>
           </div>
@@ -182,7 +182,7 @@ export default function InstructorHelpPage() {
               <Video className="w-6 h-6 text-white" strokeWidth={1.5} />
             </div>
             <div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">Creating & Managing Streams</h2>
+              <h2 className="text-2xl font-semibold text-gray-900 mb-2">Creating & Managing Streams</h2>
               <p className="text-gray-600">Schedule and run your live fitness classes</p>
             </div>
           </div>
@@ -446,7 +446,7 @@ export default function InstructorHelpPage() {
               <Coins className="w-6 h-6 text-white" strokeWidth={1.5} />
             </div>
             <div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">Earning Tokens</h2>
+              <h2 className="text-2xl font-semibold text-gray-900 mb-2">Earning Tokens</h2>
               <p className="text-gray-600">How you get paid for teaching classes</p>
             </div>
           </div>
@@ -520,7 +520,7 @@ export default function InstructorHelpPage() {
               <CheckCircle className="w-6 h-6 text-white" strokeWidth={1.5} />
             </div>
             <div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">Best Practices for Success</h2>
+              <h2 className="text-2xl font-semibold text-gray-900 mb-2">Best Practices for Success</h2>
               <p className="text-gray-600">Tips to maximize your enrollments and build a following</p>
             </div>
           </div>
@@ -623,7 +623,7 @@ export default function InstructorHelpPage() {
               <HelpCircle className="w-6 h-6 text-white" strokeWidth={1.5} />
             </div>
             <div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">Frequently Asked Questions</h2>
+              <h2 className="text-2xl font-semibold text-gray-900 mb-2">Frequently Asked Questions</h2>
               <p className="text-gray-600">Quick answers to common questions</p>
             </div>
           </div>
@@ -709,7 +709,7 @@ export default function InstructorHelpPage() {
 
         {/* Need More Help */}
         <section className="bg-gradient-to-br from-pink-500 to-rose-400 rounded-2xl p-8 text-white text-center">
-          <h2 className="text-2xl font-bold mb-3">Still Have Questions?</h2>
+          <h2 className="text-2xl font-semibold mb-3">Still Have Questions?</h2>
           <p className="text-pink-50 mb-6 max-w-2xl mx-auto">
             We're here to help! Reach out to the Lean Sporty team for support, feedback, or suggestions.
           </p>

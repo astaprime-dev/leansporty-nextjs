@@ -135,7 +135,7 @@ export default async function RootLayout({
                   <div className="flex flex-col items-center gap-6">
                     {/* Brand + tagline */}
                     <div className="flex items-center gap-2">
-                      <span className="font-display text-xl md:text-2xl font-normal text-gray-800">
+                      <span className="font-display text-xl md:text-2xl font-normal text-gray-900">
                         Lean <span className="font-medium bg-gradient-to-r from-pink-500 to-rose-400 bg-clip-text text-transparent">Sporty</span>
                       </span>
                     </div>

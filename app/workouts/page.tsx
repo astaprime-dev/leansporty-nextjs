@@ -23,7 +23,7 @@ export default async function WorkoutsPage() {
             <Smartphone className="w-10 h-10 text-pink-500" strokeWidth={1.5} />
           </div>
           <div className="flex-1">
-            <h3 className="text-lg font-semibold text-gray-800 mb-2">
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">
               Available on iOS
             </h3>
             <p className="text-gray-600">
@@ -100,7 +100,7 @@ export default async function WorkoutsPage() {
 
                 {/* Content */}
                 <div className="flex-1 p-6 flex flex-col justify-center">
-                  <h2 className="text-2xl font-bold mb-3 text-gray-800 group-hover:text-pink-500 transition-colors">
+                  <h2 className="text-2xl font-semibold mb-3 text-gray-900 group-hover:text-pink-500 transition-colors">
                     {workout.title || 'Untitled Workout'}
                   </h2>
 

@@ -38,7 +38,7 @@ export default async function InstructorStreamsPage() {
     <div className="max-w-7xl mx-auto px-4 py-8">
       <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4 mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">My Streams</h1>
+          <h1 className="text-3xl font-display font-light text-gray-900">My Streams</h1>
           <p className="text-gray-600 mt-1">Manage your live streaming sessions</p>
         </div>
         <Link href="/instructor/streams/create" className="shrink-0">

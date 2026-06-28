@@ -18,21 +18,23 @@ export default async function StreamWatchPage({
   } = await supabase.auth.getUser();
 
   if (!user) {
-    redirect("/");
+    // Not signed in — send to the classes list with a clear reason, not home.
+    redirect("/streams?notice=signin");
   }
 
   // Check enrollment
   const enrollment = await checkStreamEnrollment(streamId);
 
   if (!enrollment) {
-    redirect("/streams");
+    // Not enrolled — explain the redirect instead of bouncing silently.
+    redirect("/streams?notice=enroll");
   }
 
   // Get stream details
   let stream = await getStreamById(streamId);
 
   if (!stream) {
-    redirect("/streams");
+    redirect("/streams?notice=notfound");
   }
 
   // If stream is ended but recording is not available yet, try to fetch it from Cloudflare

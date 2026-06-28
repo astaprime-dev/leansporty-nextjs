@@ -321,7 +321,7 @@ export default async function ProfilePage({
         {/* Upcoming Streams (Instructors only) */}
         {isInstructor && upcomingStreams && upcomingStreams.length > 0 && (
           <div className="mb-6 sm:mb-8">
-            <h2 className="text-xl sm:text-2xl font-bold mb-4 text-gray-800 px-2 sm:px-0">
+            <h2 className="text-xl sm:text-2xl font-semibold mb-4 text-gray-900 px-2 sm:px-0">
               Upcoming Streams
             </h2>
             <div className="grid gap-4 sm:gap-6">
@@ -350,7 +350,7 @@ export default async function ProfilePage({
         {/* Past Streams (Instructors only) */}
         {isInstructor && pastStreams && pastStreams.length > 0 && (
           <div className="mb-6 sm:mb-8">
-            <h2 className="text-xl sm:text-2xl font-bold mb-4 text-gray-800 px-2 sm:px-0">
+            <h2 className="text-xl sm:text-2xl font-semibold mb-4 text-gray-900 px-2 sm:px-0">
               Past Classes
             </h2>
             <div className="grid sm:grid-cols-2 gap-4">
@@ -359,7 +359,7 @@ export default async function ProfilePage({
                   key={stream.id}
                   className="bg-white rounded-xl border border-gray-200 p-4"
                 >
-                  <h3 className="font-semibold text-gray-800 mb-2">
+                  <h3 className="font-semibold text-gray-900 mb-2">
                     {stream.title}
                   </h3>
                   <div className="text-sm text-gray-500">
@@ -374,7 +374,7 @@ export default async function ProfilePage({
         {/* Reviews (Instructors only) */}
         {isInstructor && instructorComments && instructorComments.length > 0 && (
           <div className="mb-6 sm:mb-8">
-            <h2 className="text-xl sm:text-2xl font-bold mb-4 text-gray-800 px-2 sm:px-0">
+            <h2 className="text-xl sm:text-2xl font-semibold mb-4 text-gray-900 px-2 sm:px-0">
               Student Reviews
             </h2>
             <div className="grid gap-4">

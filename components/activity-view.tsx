@@ -123,7 +123,7 @@ export function ActivityView({
         <div className="bg-gradient-to-br from-pink-50 to-rose-50 rounded-2xl p-4 sm:p-6 border border-pink-100">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 mb-4">
             <div className="flex-1">
-              <h2 className="text-xl sm:text-2xl font-bold text-gray-800 flex items-center gap-2">
+              <h2 className="text-xl sm:text-2xl font-semibold text-gray-900 flex items-center gap-2">
                 {liveStreams.length > 0 && (
                   <Radio className="w-5 h-5 sm:w-6 sm:h-6 text-red-500 animate-pulse" />
                 )}
@@ -159,7 +159,7 @@ export function ActivityView({
         <div className="bg-gradient-to-br from-purple-50 to-indigo-50 rounded-2xl p-4 sm:p-6 border border-purple-100">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 mb-4">
             <div className="flex-1">
-              <h2 className="text-xl sm:text-2xl font-bold text-gray-800">
+              <h2 className="text-xl sm:text-2xl font-semibold text-gray-900">
                 Past Classes
               </h2>
               <p className="text-xs sm:text-sm text-gray-600 mt-1">

@@ -4,7 +4,13 @@ import { createClient } from "@/utils/supabase/server";
 
 export const dynamic = 'force-dynamic';
 
-export default async function StreamsPage() {
+export default async function StreamsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ notice?: string }>;
+}) {
+  const { notice } = await searchParams;
+
   // Check auth status
   const supabase = await createClient();
   const {
@@ -26,6 +32,7 @@ export default async function StreamsPage() {
       upcomingStreams={streams.upcomingStreams}
       enrollments={enrollments}
       isAuthenticated={!!user}
+      notice={notice}
     />
   );
 }

@@ -90,7 +90,7 @@ export default async function StreamDetailPage({
         <div className="flex flex-col sm:flex-row justify-between sm:items-start gap-4 mb-4">
           <div className="flex-1">
             <div className="flex items-center gap-3 mb-2">
-              <h1 className="text-3xl font-bold text-gray-900">
+              <h1 className="text-3xl font-display font-light text-gray-900">
                 {streamData.title}
               </h1>
               <span
@@ -186,7 +186,7 @@ export default async function StreamDetailPage({
         <div className="bg-white rounded-lg border p-6">
           <div className="flex items-center gap-2 mb-6">
             <PlayCircle className="w-6 h-6 text-pink-500" />
-            <h2 className="text-2xl font-bold">Recording Preview</h2>
+            <h2 className="text-2xl font-semibold">Recording Preview</h2>
           </div>
           <div className="mb-4">
             <CloudflareStreamPlayer
@@ -212,7 +212,7 @@ export default async function StreamDetailPage({
         <div className="bg-white rounded-lg border p-6">
           <div className="flex items-center gap-2 mb-6">
             <TrendingUp className="w-6 h-6 text-pink-500" />
-            <h2 className="text-2xl font-bold">Stream Analytics</h2>
+            <h2 className="text-2xl font-semibold">Stream Analytics</h2>
           </div>
           <StreamAnalytics streamId={id} />
         </div>

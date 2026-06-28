@@ -178,7 +178,7 @@ export default async function ChallengePage({
               <div className="mx-auto mb-3 flex h-11 w-11 items-center justify-center rounded-full bg-pink-100 text-pink-600">
                 <b.icon className="h-5 w-5" />
               </div>
-              <h3 className="font-semibold text-gray-800">{b.title}</h3>
+              <h3 className="font-semibold text-gray-900">{b.title}</h3>
               <p className="mt-2 text-sm text-muted-foreground">{b.body}</p>
             </div>
           ))}
@@ -286,7 +286,7 @@ export default async function ChallengePage({
               />
             ))}
           </div>
-          <p className="mt-2 text-lg font-semibold text-gray-800">
+          <p className="mt-2 text-lg font-semibold text-gray-900">
             {data.social.average.toFixed(1)} from {data.social.count} reviews
           </p>
           <p className="text-sm text-muted-foreground">
@@ -338,7 +338,7 @@ export default async function ChallengePage({
         <div className="mt-6 divide-y divide-gray-100 rounded-2xl border border-gray-100 bg-white">
           {FAQ.map((f) => (
             <div key={f.q} className="p-5">
-              <h3 className="font-semibold text-gray-800">{f.q}</h3>
+              <h3 className="font-semibold text-gray-900">{f.q}</h3>
               <p className="mt-1 text-sm text-muted-foreground">{f.a}</p>
             </div>
           ))}

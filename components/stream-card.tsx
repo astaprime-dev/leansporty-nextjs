@@ -21,16 +21,18 @@ interface StreamCardProps {
 
 export function StreamCard({ stream, enrollment, isLive, isAuthenticated }: StreamCardProps) {
   const [isEnrolling, setIsEnrolling] = useState(false);
+  const [enrollError, setEnrollError] = useState<string | null>(null);
   const router = useRouter();
 
   const handleEnroll = async () => {
     setIsEnrolling(true);
+    setEnrollError(null);
     const result = await enrollInStream(stream.id);
 
     if (result.success) {
       router.refresh(); // Refresh to show enrollment status
     } else {
-      alert(result.error || "Enrollment failed. Please try again.");
+      setEnrollError(result.error || "Enrollment failed. Please try again.");
     }
 
     setIsEnrolling(false);
@@ -105,7 +107,7 @@ export function StreamCard({ stream, enrollment, isLive, isAuthenticated }: Stre
         {/* Content */}
         <div className="flex-1 p-6 flex flex-col justify-between">
           <div>
-            <h2 className="text-2xl font-bold mb-2 text-gray-800 group-hover:text-pink-500 transition-colors">
+            <h2 className="text-2xl font-semibold mb-2 text-gray-900 group-hover:text-pink-500 transition-colors">
               {stream.title}
             </h2>
 
@@ -202,6 +204,10 @@ export function StreamCard({ stream, enrollment, isLive, isAuthenticated }: Stre
               </Button>
             )}
           </div>
+
+          {enrollError && (
+            <p className="mt-3 text-sm text-red-600">{enrollError}</p>
+          )}
         </div>
       </div>
     </div>

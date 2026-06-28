@@ -273,7 +273,7 @@ export function StreamAnalytics({ streamId }: StreamAnalyticsProps) {
 
       {/* Reaction Breakdown */}
       <div className="bg-white rounded-lg border p-6">
-        <h3 className="font-bold text-lg mb-4">Reaction Breakdown</h3>
+        <h3 className="font-semibold text-lg mb-4">Reaction Breakdown</h3>
         <div className="space-y-3">
           {breakdown.map((item) => {
             const config = getReactionConfig(item.reaction_type);
@@ -305,7 +305,7 @@ export function StreamAnalytics({ streamId }: StreamAnalyticsProps) {
       {/* Timeline Graph */}
       {timeline.length > 0 && (
         <div className="bg-white rounded-lg border p-6">
-          <h3 className="font-bold text-lg mb-4">Reaction Timeline</h3>
+          <h3 className="font-semibold text-lg mb-4">Reaction Timeline</h3>
           <div className="h-80">
             <Line data={chartData} options={chartOptions} />
           </div>
@@ -315,7 +315,7 @@ export function StreamAnalytics({ streamId }: StreamAnalyticsProps) {
       {/* Technical Issues Detail */}
       {technicalIssues.length > 0 && (
         <div className="bg-red-50 rounded-lg border border-red-200 p-6">
-          <h3 className="font-bold text-lg mb-4 text-red-800">
+          <h3 className="font-semibold text-lg mb-4 text-red-800">
             Technical Issues Reported
           </h3>
           <div className="space-y-4">

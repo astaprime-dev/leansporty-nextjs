@@ -16,7 +16,7 @@ export default function TermsOfServicePage() {
             Terms of Service
           </h1>
           <p className="text-gray-600">
-            Last updated: {new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+            Last updated: June 28, 2026
           </p>
         </div>
 
@@ -52,13 +52,13 @@ export default function TermsOfServicePage() {
             {/* 2. Use of Service */}
             <section className="mb-8">
               <h2 className="text-2xl font-semibold text-gray-900 mb-4">2. Use of Service</h2>
-              <h3 className="text-xl font-medium text-gray-800 mb-3">Permitted Use</h3>
+              <h3 className="text-xl font-medium text-gray-900 mb-3">Permitted Use</h3>
               <p className="text-gray-700 leading-relaxed">
                 You may use Lean Sporty for personal, non-commercial purposes to participate in fitness classes, track
                 your workout progress, and engage with our community.
               </p>
 
-              <h3 className="text-xl font-medium text-gray-800 mb-3 mt-6">Prohibited Activities</h3>
+              <h3 className="text-xl font-medium text-gray-900 mb-3 mt-6">Prohibited Activities</h3>
               <p className="text-gray-700 leading-relaxed mb-2">You agree not to:</p>
               <ul className="list-disc list-inside text-gray-700 leading-relaxed space-y-2 ml-4">
                 <li>Record, copy, or redistribute our live streams or workout content without permission</li>
@@ -259,7 +259,7 @@ export default function TermsOfServicePage() {
                 If you have any questions, concerns, or feedback about these Terms of Service, please contact us:
               </p>
               <div className="mt-4 p-4 bg-pink-50 rounded-lg border border-pink-100">
-                <p className="text-gray-800 font-medium">Astaprime Sp. z o.o.</p>
+                <p className="text-gray-900 font-medium">Astaprime Sp. z o.o.</p>
                 <p className="text-gray-700 mt-2">
                   Email:{" "}
                   <a href="mailto:team@leansporty.com" className="text-pink-600 hover:text-pink-700 font-medium">

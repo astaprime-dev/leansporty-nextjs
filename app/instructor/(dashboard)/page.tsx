@@ -93,7 +93,7 @@ export default async function InstructorDashboard() {
     <div className="max-w-7xl mx-auto px-4 py-8">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">
+        <h1 className="text-3xl font-display font-light text-gray-900 mb-2">
           Welcome back, {userProfile?.display_name || 'Instructor'}
         </h1>
         <p className="text-gray-600">Here's what's happening with your streams</p>
@@ -186,7 +186,7 @@ export default async function InstructorDashboard() {
         {/* Upcoming Streams */}
         <div>
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-bold text-gray-900">Upcoming Streams</h2>
+            <h2 className="text-xl font-semibold text-gray-900">Upcoming Streams</h2>
             <Link href="/instructor/streams">
               <Button variant="ghost" size="sm">
                 View All →
@@ -241,7 +241,7 @@ export default async function InstructorDashboard() {
 
         {/* Recent Enrollments */}
         <div>
-          <h2 className="text-xl font-bold text-gray-900 mb-4">Recent Enrollments</h2>
+          <h2 className="text-xl font-semibold text-gray-900 mb-4">Recent Enrollments</h2>
 
           {!recentEnrollments || recentEnrollments.length === 0 ? (
             <div className="bg-white rounded-lg border border-gray-200 p-8 text-center">

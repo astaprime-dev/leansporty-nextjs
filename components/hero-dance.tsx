@@ -1,5 +1,4 @@
 import Link from "next/link";
-import LeanSportyLogo from "./lean-sporty-logo";
 import { Sparkles, Zap, Music, Clock, TrendingUp, Home, Video, Users, Star, Calendar } from "lucide-react";
 
 export default function Header() {
@@ -13,13 +12,8 @@ export default function Header() {
       {/* Content Layer - Centered with max-width */}
       <div className="relative z-10 flex flex-col items-center py-16 gap-20">
 
-        {/* Logo Section */}
-        <div className="w-full flex justify-center pt-8">
-          <LeanSportyLogo />
-        </div>
-
         {/* Hero Section */}
-        <div className="w-full max-w-4xl px-6 text-center">
+        <div className="w-full max-w-4xl px-6 pt-8 text-center">
           <h1 className="font-display animate-fade-up text-5xl lg:text-7xl font-light mb-8 text-gray-900 tracking-tight leading-[1.05]">
             Dance Your Way to <span className="font-medium text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-rose-400">Fitness</span>
           </h1>
@@ -52,16 +46,15 @@ export default function Header() {
           </p>
         </div>
 
-        {/* YouTube Video Section */}
-        <div className="w-full max-w-6xl px-6">
-          <div className="relative aspect-video rounded-3xl overflow-hidden shadow-2xl">
-            <div className="absolute -inset-4 bg-gradient-to-r from-pink-500/10 to-rose-500/10 blur-2xl"></div>
+        {/* Video Section — the hero media */}
+        <div className="w-full max-w-5xl px-6">
+          <div className="relative aspect-video overflow-hidden rounded-2xl border border-pink-100 shadow-lg">
             <iframe
-              src="https://www.youtube.com/embed/PWauX9QceBY??rel=0&modestbranding=1&autoplay=1&mute=1&controls=1"
+              src="https://www.youtube.com/embed/PWauX9QceBY?rel=0&modestbranding=1&autoplay=1&mute=1&loop=1&playlist=PWauX9QceBY&controls=1"
               title="Lean Sporty Dance Workout"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
-              className="relative w-full h-full border-0 rounded-3xl"
+              className="absolute inset-0 h-full w-full border-0"
             ></iframe>
           </div>
         </div>
@@ -83,8 +76,6 @@ export default function Header() {
           </a>
         </div>
 
-        {/* Elegant Divider */}
-        <div className="w-24 h-1 bg-gradient-to-r from-pink-300 via-rose-300 to-pink-300 rounded-full"></div>
 
         {/* Why Lean Sporty Section */}
         <section className="w-full px-6 py-16">
@@ -107,12 +98,12 @@ export default function Header() {
             ].map((feature, idx) => {
               const Icon = feature.icon;
               return (
-                <div key={idx} className="relative group bg-white/80 backdrop-blur-sm p-8 rounded-3xl border border-pink-100 hover:border-pink-300 shadow-lg hover:shadow-pink-200/50 transition-all duration-300">
-                  <div className="absolute inset-0 bg-gradient-to-br from-pink-50/50 to-transparent rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div key={idx} className="relative group bg-white/80 backdrop-blur-sm p-8 rounded-2xl border border-pink-100 hover:border-pink-300 shadow-lg hover:shadow-pink-200/50 transition-all duration-300">
+                  <div className="absolute inset-0 bg-gradient-to-br from-pink-50/50 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                   <div className="relative mb-6 transform group-hover:scale-110 transition-transform duration-300">
                     <Icon className="w-12 h-12 text-pink-500" strokeWidth={1.5} />
                   </div>
-                  <h3 className="relative font-semibold text-xl mb-4 text-gray-800">{feature.title}</h3>
+                  <h3 className="relative font-semibold text-xl mb-4 text-gray-900">{feature.title}</h3>
                   <p className="relative text-gray-500 leading-relaxed font-light">{feature.desc}</p>
                 </div>
               );
@@ -136,44 +127,44 @@ export default function Header() {
             {/* Live Streaming Features */}
             <div className="grid md:grid-cols-2 gap-8 mb-12">
               {/* Feature 1 */}
-              <div className="relative group bg-gradient-to-br from-pink-50 to-white p-8 rounded-3xl border border-pink-100 hover:border-pink-300 shadow-lg hover:shadow-pink-200/50 transition-all duration-300">
+              <div className="relative group bg-gradient-to-br from-pink-50 to-white p-8 rounded-2xl border border-pink-100 hover:border-pink-300 shadow-lg hover:shadow-pink-200/50 transition-all duration-300">
                 <div className="relative mb-6 transform group-hover:scale-110 transition-transform duration-300">
                   <Video className="w-12 h-12 text-pink-500" strokeWidth={1.5} />
                 </div>
-                <h3 className="relative font-semibold text-xl mb-4 text-gray-800">Real-Time Interaction</h3>
+                <h3 className="relative font-semibold text-xl mb-4 text-gray-900">Real-Time Interaction</h3>
                 <p className="relative text-gray-600 leading-relaxed font-light">
                   Stream live dance workouts with certified instructors. Get real-time feedback, motivation, and guidance as you move.
                 </p>
               </div>
 
               {/* Feature 2 */}
-              <div className="relative group bg-gradient-to-br from-pink-50 to-white p-8 rounded-3xl border border-pink-100 hover:border-pink-300 shadow-lg hover:shadow-pink-200/50 transition-all duration-300">
+              <div className="relative group bg-gradient-to-br from-pink-50 to-white p-8 rounded-2xl border border-pink-100 hover:border-pink-300 shadow-lg hover:shadow-pink-200/50 transition-all duration-300">
                 <div className="relative mb-6 transform group-hover:scale-110 transition-transform duration-300">
                   <Users className="w-12 h-12 text-pink-500" strokeWidth={1.5} />
                 </div>
-                <h3 className="relative font-semibold text-xl mb-4 text-gray-800">Community Energy</h3>
+                <h3 className="relative font-semibold text-xl mb-4 text-gray-900">Community Energy</h3>
                 <p className="relative text-gray-600 leading-relaxed font-light">
                   Work out alongside others in a supportive, energizing environment. Share the journey and stay motivated together.
                 </p>
               </div>
 
               {/* Feature 3 */}
-              <div className="relative group bg-gradient-to-br from-pink-50 to-white p-8 rounded-3xl border border-pink-100 hover:border-pink-300 shadow-lg hover:shadow-pink-200/50 transition-all duration-300">
+              <div className="relative group bg-gradient-to-br from-pink-50 to-white p-8 rounded-2xl border border-pink-100 hover:border-pink-300 shadow-lg hover:shadow-pink-200/50 transition-all duration-300">
                 <div className="relative mb-6 transform group-hover:scale-110 transition-transform duration-300">
                   <Star className="w-12 h-12 text-pink-500" strokeWidth={1.5} />
                 </div>
-                <h3 className="relative font-semibold text-xl mb-4 text-gray-800">Expert Instructors</h3>
+                <h3 className="relative font-semibold text-xl mb-4 text-gray-900">Expert Instructors</h3>
                 <p className="relative text-gray-600 leading-relaxed font-light">
                   Learn from passionate, certified dance fitness instructors who bring expertise, creativity, and positive vibes to every session.
                 </p>
               </div>
 
               {/* Feature 4 */}
-              <div className="relative group bg-gradient-to-br from-pink-50 to-white p-8 rounded-3xl border border-pink-100 hover:border-pink-300 shadow-lg hover:shadow-pink-200/50 transition-all duration-300">
+              <div className="relative group bg-gradient-to-br from-pink-50 to-white p-8 rounded-2xl border border-pink-100 hover:border-pink-300 shadow-lg hover:shadow-pink-200/50 transition-all duration-300">
                 <div className="relative mb-6 transform group-hover:scale-110 transition-transform duration-300">
                   <Calendar className="w-12 h-12 text-pink-500" strokeWidth={1.5} />
                 </div>
-                <h3 className="relative font-semibold text-xl mb-4 text-gray-800">Scheduled Sessions</h3>
+                <h3 className="relative font-semibold text-xl mb-4 text-gray-900">Scheduled Sessions</h3>
                 <p className="relative text-gray-600 leading-relaxed font-light">
                   Browse upcoming live classes, book your spot, and join from anywhere. Flexible scheduling to fit your lifestyle.
                 </p>
@@ -193,8 +184,6 @@ export default function Header() {
           </div>
         </section>
 
-        {/* Elegant Divider */}
-        <div className="w-24 h-1 bg-gradient-to-r from-pink-300 via-rose-300 to-pink-300 rounded-full"></div>
 
       </div>
 
