@@ -20,27 +20,30 @@ export default async function HeaderNav() {
 
   return (
     <div className="hidden md:flex items-center gap-3 lg:gap-6">
-      {/* Challenge - first for prominence; the pink CTA carries the emphasis */}
-      <NavLink href="/challenge" className="text-sm font-light">
-        Challenge
-      </NavLink>
-
-      {/* Streams - live discovery, everyone */}
-      <NavLink href="/streams" className="text-sm font-light">
-        Streams
-      </NavLink>
-
-      {/* Authenticated user links (Workouts is the iOS-preview page → signed-in only) */}
-      {user && (
+      {user ? (
         <>
+          {/* Signed in → lead with the buyer's program */}
           <NavLink href="/my-program" className="text-sm font-light">
             My Program
+          </NavLink>
+          <NavLink href="/activity" className="text-sm font-light">
+            Activity
+          </NavLink>
+          <NavLink href="/streams" className="text-sm font-light">
+            Streams
           </NavLink>
           <NavLink href="/workouts" className="text-sm font-light">
             Workouts
           </NavLink>
-          <NavLink href="/activity" className="text-sm font-light">
-            Activity
+        </>
+      ) : (
+        <>
+          {/* Anonymous → lead with the offer */}
+          <NavLink href="/challenge" className="text-sm font-light">
+            Challenge
+          </NavLink>
+          <NavLink href="/streams" className="text-sm font-light">
+            Streams
           </NavLink>
         </>
       )}

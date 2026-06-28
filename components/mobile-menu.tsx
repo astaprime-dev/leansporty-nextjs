@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { NavLink } from "@/components/nav-link";
 import { X, Menu } from "lucide-react";
 import { User } from "@supabase/supabase-js";
 
@@ -13,13 +13,7 @@ interface MobileMenuProps {
 
 export function MobileMenu({ user, isInstructor }: MobileMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const pathname = usePathname();
-  const navCls = (href: string) =>
-    `text-base font-light transition-colors py-2 ${
-      pathname === href || pathname.startsWith(href + "/")
-        ? "text-pink-600"
-        : "text-gray-600 hover:text-pink-500"
-    }`;
+  const close = () => setIsOpen(false);
 
   return (
     <>
@@ -49,65 +43,45 @@ export function MobileMenu({ user, isInstructor }: MobileMenuProps) {
                 <Link
                   href="/challenge"
                   className="flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-pink-500 to-rose-400 text-white text-sm font-semibold rounded-full hover:shadow-lg transition-all"
-                  onClick={() => setIsOpen(false)}
+                  onClick={close}
                 >
                   <span>Start the Challenge</span>
                 </Link>
               )}
 
-              {/* Challenge - first for prominence; the pink CTA carries the emphasis */}
-              <Link
-                href="/challenge"
-                className={navCls("/challenge")}
-                onClick={() => setIsOpen(false)}
-              >
-                Challenge
-              </Link>
-
-              <Link
-                href="/streams"
-                className={navCls("/streams")}
-                onClick={() => setIsOpen(false)}
-              >
-                Streams
-              </Link>
-
-              {user && (
+              {user ? (
                 <>
-                  <Link
-                    href="/my-program"
-                    className={navCls("/my-program")}
-                    onClick={() => setIsOpen(false)}
-                  >
+                  {/* Signed in → lead with the program */}
+                  <NavLink href="/my-program" onClick={close} className="text-base font-light py-2">
                     My Program
-                  </Link>
-                  <Link
-                    href="/workouts"
-                    className={navCls("/workouts")}
-                    onClick={() => setIsOpen(false)}
-                  >
-                    Workouts
-                  </Link>
-                  <Link
-                    href="/activity"
-                    className={navCls("/activity")}
-                    onClick={() => setIsOpen(false)}
-                  >
+                  </NavLink>
+                  <NavLink href="/activity" onClick={close} className="text-base font-light py-2">
                     Activity
-                  </Link>
+                  </NavLink>
+                  <NavLink href="/streams" onClick={close} className="text-base font-light py-2">
+                    Streams
+                  </NavLink>
+                  <NavLink href="/workouts" onClick={close} className="text-base font-light py-2">
+                    Workouts
+                  </NavLink>
+                </>
+              ) : (
+                <>
+                  <NavLink href="/challenge" onClick={close} className="text-base font-light py-2">
+                    Challenge
+                  </NavLink>
+                  <NavLink href="/streams" onClick={close} className="text-base font-light py-2">
+                    Streams
+                  </NavLink>
                 </>
               )}
 
               {isInstructor && (
                 <>
                   <div className="border-t border-pink-100 my-2" />
-                  <Link
-                    href="/instructor"
-                    className={navCls("/instructor")}
-                    onClick={() => setIsOpen(false)}
-                  >
+                  <NavLink href="/instructor" onClick={close} className="text-base font-light py-2">
                     Instructor Studio
-                  </Link>
+                  </NavLink>
                 </>
               )}
 

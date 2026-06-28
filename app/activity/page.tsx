@@ -1,5 +1,6 @@
 import { getWorkoutHistory, getStreams, getUserEnrollments, getPastStreams } from "@/app/actions";
 import { ActivityView } from "@/components/activity-view";
+import { ProgramCard } from "@/components/challenge/program-card";
 import { createClient } from "@/utils/supabase/server";
 
 export default async function ActivityPage() {
@@ -22,13 +23,19 @@ export default async function ActivityPage() {
   ]);
 
   return (
-    <ActivityView
-      workoutHistory={workoutHistory}
-      upcomingStreams={streams.upcomingStreams}
-      liveStreams={streams.liveStreams}
-      pastStreams={pastStreams}
-      enrollments={enrollments}
-      isAuthenticated={!!user}
-    />
+    <>
+      {/* Surface the buyer's program first — activation/retention */}
+      <div className="w-full max-w-7xl mx-auto px-4 pt-6 sm:pt-8">
+        <ProgramCard />
+      </div>
+      <ActivityView
+        workoutHistory={workoutHistory}
+        upcomingStreams={streams.upcomingStreams}
+        liveStreams={streams.liveStreams}
+        pastStreams={pastStreams}
+        enrollments={enrollments}
+        isAuthenticated={!!user}
+      />
+    </>
   );
 }

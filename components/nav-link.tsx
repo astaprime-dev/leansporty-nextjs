@@ -13,12 +13,14 @@ export function NavLink({
   href,
   children,
   className,
+  onClick,
   activeClassName = "text-pink-600",
   inactiveClassName = "text-gray-600 hover:text-pink-500",
 }: {
   href: string;
   children: React.ReactNode;
   className?: string;
+  onClick?: () => void;
   activeClassName?: string;
   inactiveClassName?: string;
 }) {
@@ -27,6 +29,7 @@ export function NavLink({
   return (
     <Link
       href={href}
+      onClick={onClick}
       aria-current={active ? "page" : undefined}
       className={cn(
         "transition-colors duration-300",

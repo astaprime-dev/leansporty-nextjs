@@ -29,8 +29,8 @@ export async function GET(request: Request) {
       return NextResponse.redirect(`${origin}${redirectTo}`);
     }
 
-    // Redirect instructors to dashboard, regular users to activity
-    const defaultRedirect = isInstructor ? '/instructor' : '/activity';
+    // Instructors → dashboard; everyone else → their program (post-login home)
+    const defaultRedirect = isInstructor ? '/instructor' : '/my-program';
     return NextResponse.redirect(`${origin}${defaultRedirect}`);
   }
 
@@ -39,5 +39,5 @@ export async function GET(request: Request) {
   }
 
   // URL to redirect to after sign in process completes
-  return NextResponse.redirect(`${origin}/activity`);
+  return NextResponse.redirect(`${origin}/my-program`);
 }

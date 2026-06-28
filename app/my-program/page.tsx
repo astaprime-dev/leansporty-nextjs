@@ -109,6 +109,14 @@ export default async function MyProgramPage({
                 Access until {accessUntil}
               </p>
             )}
+            {done >= total && total > 0 && (
+              <Link
+                href="/streams"
+                className="mt-4 inline-flex items-center gap-2 rounded-full border border-pink-200 px-5 py-2 text-sm font-semibold text-pink-700 transition-all hover:border-pink-300"
+              >
+                What&apos;s next? Join a live class →
+              </Link>
+            )}
           </div>
         ) : (
           <div className="mt-4 flex flex-col items-start gap-3 rounded-xl border border-pink-200 bg-pink-50 p-4 sm:flex-row sm:items-center sm:justify-between">
