@@ -67,3 +67,31 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer utilities {
+  /* Elegant editorial display face for headlines (Fraunces). */
+  .font-display {
+    font-family: var(--font-fraunces), Georgia, "Times New Roman", serif;
+    letter-spacing: -0.015em;
+  }
+
+  /* Gentle entrance — animates on mount, always ends visible (no FOUC). */
+  @keyframes ls-fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(18px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  .animate-fade-up {
+    animation: ls-fade-up 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .animate-fade-up {
+      animation: none;
+    }
+  }
+}

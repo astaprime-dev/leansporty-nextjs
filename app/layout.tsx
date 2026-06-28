@@ -5,7 +5,7 @@ import HeaderNav from "@/components/header-nav";
 import MobileMenuWrapper from "@/components/mobile-menu-wrapper";
 import { hasEnvVars } from "@/utils/supabase/check-env-vars";
 import { createClient } from "@/utils/supabase/server";
-import { Geist } from "next/font/google";
+import { Geist, Fraunces } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import Link from "next/link";
 import "./globals.css";
@@ -53,6 +53,14 @@ const geistSans = Geist({
   subsets: ["latin"],
 });
 
+// Elegant editorial display face for headlines.
+const fraunces = Fraunces({
+  display: "swap",
+  subsets: ["latin"],
+  variable: "--font-fraunces",
+  axes: ["opsz"],
+});
+
 export default async function RootLayout({
   children,
 }: Readonly<{
@@ -62,7 +70,7 @@ export default async function RootLayout({
   const { data: { user } } = await supabase.auth.getUser();
 
   return (
-    <html lang="en" className={geistSans.className} suppressHydrationWarning>
+    <html lang="en" className={`${geistSans.className} ${fraunces.variable}`} suppressHydrationWarning>
       <body className="bg-background text-foreground">
         <ThemeProvider
           attribute="class"

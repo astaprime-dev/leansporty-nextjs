@@ -5,25 +5,9 @@ import { Sparkles, Zap, Music, Clock, TrendingUp, Home, Video, Users, Star, Cale
 export default function Header() {
   return (
     <div className="relative w-full overflow-hidden">
-      {/* Full-Width Background Layer - Spans entire viewport */}
-      <div className="absolute inset-0 w-full bg-gradient-to-b from-pink-50/30 via-white to-pink-50/20 pointer-events-none">
-        {/* Floating Blobs - Full width */}
-        <div className="absolute -top-20 -right-20 w-96 h-96 bg-gradient-to-br from-pink-200/20 to-rose-200/20 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute top-1/4 -left-32 w-80 h-80 bg-gradient-to-br from-rose-200/15 to-pink-300/15 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-20 right-1/4 w-72 h-72 bg-gradient-to-br from-pink-300/20 to-rose-100/20 rounded-full blur-3xl animate-pulse"></div>
-
-        {/* Dot Pattern - Full width */}
-        <div className="absolute inset-0 opacity-30" style={{
-          backgroundImage: 'radial-gradient(circle, #ffc0cb 1px, transparent 1px)',
-          backgroundSize: '40px 40px'
-        }}></div>
-
-        {/* Decorative Sparkles */}
-        <div className="absolute top-32 left-1/4 text-pink-300/40 text-2xl">✦</div>
-        <div className="absolute top-96 right-1/3 text-rose-300/40 text-xl">✦</div>
-        <div className="absolute bottom-1/3 left-1/3 text-pink-400/30 text-3xl">✦</div>
-        <div className="absolute top-1/2 right-1/4 text-rose-200/50 text-lg">✧</div>
-        <div className="absolute bottom-40 left-1/4 text-pink-300/40 text-2xl">✧</div>
+      {/* Soft editorial background — one faint warm glow, no clutter */}
+      <div className="absolute inset-0 w-full bg-gradient-to-b from-rose-50 via-white to-white pointer-events-none">
+        <div className="absolute -top-40 right-[-10%] h-[32rem] w-[32rem] rounded-full bg-pink-200/25 blur-3xl"></div>
       </div>
 
       {/* Content Layer - Centered with max-width */}
@@ -36,21 +20,10 @@ export default function Header() {
 
         {/* Hero Section */}
         <div className="w-full max-w-4xl px-6 text-center">
-          {/* Decorative ornament */}
-          <div className="flex justify-center mb-6">
-            <div className="flex items-center gap-3 text-pink-300/60">
-              <span className="text-xl">✦</span>
-              <div className="w-12 h-px bg-gradient-to-r from-transparent via-pink-300 to-transparent"></div>
-              <span className="text-2xl">✧</span>
-              <div className="w-12 h-px bg-gradient-to-r from-transparent via-pink-300 to-transparent"></div>
-              <span className="text-xl">✦</span>
-            </div>
-          </div>
-
-          <h1 className="text-5xl lg:text-7xl font-light mb-8 text-gray-800 tracking-tight leading-tight">
-            Dance Your Way to <span className="font-semibold text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-rose-400 drop-shadow-sm">Fitness</span>
+          <h1 className="font-display animate-fade-up text-5xl lg:text-7xl font-light mb-8 text-gray-900 tracking-tight leading-[1.05]">
+            Dance Your Way to <span className="italic font-medium text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-rose-400">Fitness</span>
           </h1>
-          <p className="text-2xl lg:text-3xl text-gray-600 mb-6 font-light leading-relaxed">
+          <p className="animate-fade-up text-2xl lg:text-3xl text-gray-600 mb-6 font-light leading-relaxed" style={{ animationDelay: "0.08s" }}>
             Feel confident, strong, and energized — right from your living room.
           </p>
           <p className="text-lg lg:text-xl text-gray-500 max-w-3xl mx-auto leading-relaxed font-light">
@@ -116,16 +89,10 @@ export default function Header() {
         {/* Why Lean Sporty Section */}
         <section className="w-full px-6 py-16">
           <div className="w-full max-w-4xl mx-auto text-center mb-16">
-            <div className="flex justify-center mb-6">
-              <span className="text-3xl text-pink-300/50">✧</span>
-            </div>
-            <h2 className="text-4xl lg:text-5xl font-light mb-6 text-gray-800 tracking-tight">
-              Why <span className="font-semibold text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-rose-400">Lean Sporty</span>?
+            <h2 className="font-display text-4xl lg:text-5xl font-light mb-6 text-gray-900 tracking-tight">
+              Why <span className="italic font-medium text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-rose-400">Lean Sporty</span>?
             </h2>
             <p className="text-lg text-gray-500 font-light">Designed for your lifestyle, your goals, your journey.</p>
-            <div className="flex justify-center mt-8">
-              <div className="w-32 h-px bg-gradient-to-r from-transparent via-pink-300 to-transparent"></div>
-            </div>
           </div>
 
           {/* Feature Cards Grid */}
@@ -159,18 +126,12 @@ export default function Header() {
           <div className="w-full max-w-6xl mx-auto">
             {/* Section Header */}
             <div className="text-center mb-16">
-              <div className="flex justify-center mb-6">
-                <span className="text-3xl text-pink-300/50">✧</span>
-              </div>
-              <h2 className="text-4xl lg:text-5xl font-light mb-6 text-gray-800 tracking-tight">
-                Join <span className="font-semibold text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-rose-400">Live Classes</span>
+              <h2 className="font-display text-4xl lg:text-5xl font-light mb-6 text-gray-900 tracking-tight">
+                Join <span className="italic font-medium text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-rose-400">Live Classes</span>
               </h2>
               <p className="text-lg text-gray-500 font-light max-w-2xl mx-auto">
                 Connect with expert instructors in real-time for an interactive, community-driven fitness experience.
               </p>
-              <div className="flex justify-center mt-8">
-                <div className="w-32 h-px bg-gradient-to-r from-transparent via-pink-300 to-transparent"></div>
-              </div>
             </div>
 
             {/* Live Streaming Features */}
@@ -253,20 +214,9 @@ export default function Header() {
 
         {/* Centered Content */}
         <div className="relative z-10 w-full max-w-3xl mx-auto px-6 text-center text-white">
-          {/* Decorative top ornament */}
-          <div className="flex justify-center mb-8">
-            <div className="flex items-center gap-3 text-white/60">
-              <span className="text-2xl">✦</span>
-              <div className="w-16 h-px bg-white/40"></div>
-              <span className="text-3xl">✧</span>
-              <div className="w-16 h-px bg-white/40"></div>
-              <span className="text-2xl">✦</span>
-            </div>
-          </div>
-
-          <h2 className="text-4xl lg:text-5xl font-light mb-6 leading-tight drop-shadow-lg">
+          <h2 className="font-display text-4xl lg:text-5xl font-light mb-6 leading-tight drop-shadow-lg">
             Join a Community of Women<br/>
-            <span className="font-semibold">Moving with Joy</span>
+            <span className="italic font-medium">Moving with Joy</span>
           </h2>
           <p className="text-xl lg:text-2xl mb-10 font-light opacity-95 leading-relaxed">
             No stress. Just sweat, rhythm, and results.

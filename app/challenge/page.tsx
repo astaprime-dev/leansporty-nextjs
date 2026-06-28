@@ -124,7 +124,7 @@ export default async function ChallengePage({
             <Sparkles className="h-3.5 w-3.5" /> For women who want to enjoy
             moving again
           </span>
-          <h1 className="mt-5 text-4xl font-bold tracking-tight sm:text-5xl">
+          <h1 className="font-display animate-fade-up mt-5 text-4xl font-light tracking-tight sm:text-6xl">
             <span className="bg-gradient-to-r from-pink-500 to-rose-400 bg-clip-text text-transparent">
               {title}
             </span>
@@ -188,7 +188,7 @@ export default async function ChallengePage({
       {/* Curriculum */}
       <section className="bg-pink-50/50 py-14">
         <div className="mx-auto max-w-5xl px-4">
-          <h2 className="text-center text-3xl font-bold text-gray-800">
+          <h2 className="font-display text-center text-4xl font-light text-gray-900">
             Your {totalDays} days, mapped out
           </h2>
           <p className="mt-2 text-center text-muted-foreground">
@@ -298,7 +298,7 @@ export default async function ChallengePage({
       {/* Pricing card */}
       <section className="mx-auto max-w-md px-4 py-12">
         <div className="rounded-2xl border-2 border-pink-200 bg-white p-8 text-center shadow-sm">
-          <h2 className="text-2xl font-bold text-gray-800">{title}</h2>
+          <h2 className="font-display text-3xl font-light text-gray-900">{title}</h2>
           <p className="mt-1 text-sm text-muted-foreground">
             One-time purchase · 1 year of access
           </p>
@@ -332,7 +332,7 @@ export default async function ChallengePage({
 
       {/* FAQ */}
       <section className="mx-auto max-w-3xl px-4 py-12">
-        <h2 className="text-center text-2xl font-bold text-gray-800">
+        <h2 className="font-display text-center text-3xl font-light text-gray-900">
           Questions, answered
         </h2>
         <div className="mt-6 divide-y divide-gray-100 rounded-2xl border border-gray-100 bg-white">
