@@ -5,7 +5,7 @@ import HeaderNav from "@/components/header-nav";
 import MobileMenuWrapper from "@/components/mobile-menu-wrapper";
 import { hasEnvVars } from "@/utils/supabase/check-env-vars";
 import { createClient } from "@/utils/supabase/server";
-import { Geist, Fraunces } from "next/font/google";
+import { Geist, Playfair_Display } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import Link from "next/link";
 import "./globals.css";
@@ -54,11 +54,10 @@ const geistSans = Geist({
 });
 
 // Elegant editorial display face for headlines.
-const fraunces = Fraunces({
+const playfair = Playfair_Display({
   display: "swap",
   subsets: ["latin"],
-  variable: "--font-fraunces",
-  axes: ["opsz"],
+  variable: "--font-display",
 });
 
 export default async function RootLayout({
@@ -70,7 +69,7 @@ export default async function RootLayout({
   const { data: { user } } = await supabase.auth.getUser();
 
   return (
-    <html lang="en" className={`${geistSans.className} ${fraunces.variable}`} suppressHydrationWarning>
+    <html lang="en" className={`${geistSans.className} ${playfair.variable}`} suppressHydrationWarning>
       <body className="bg-background text-foreground">
         <ThemeProvider
           attribute="class"
@@ -85,8 +84,8 @@ export default async function RootLayout({
                 <div className="w-full max-w-7xl mx-auto px-4 md:px-6 h-16 md:h-20 flex justify-between items-center">
                   {/* Logo/Brand */}
                   <Link href={"/"} className="group flex items-center gap-2 md:gap-3">
-                    <span className="text-xl md:text-2xl font-light tracking-tight text-gray-800 group-hover:text-pink-500 transition-colors duration-300">
-                      Lean <span className="font-semibold bg-gradient-to-r from-pink-500 to-rose-400 bg-clip-text text-transparent">Sporty</span>
+                    <span className="font-display text-2xl md:text-3xl font-normal tracking-tight text-gray-900 group-hover:text-pink-500 transition-colors duration-300">
+                      Lean <span className="font-medium bg-gradient-to-r from-pink-500 to-rose-400 bg-clip-text text-transparent">Sporty</span>
                     </span>
                     <div className="hidden sm:flex items-center gap-2 text-pink-300/60 text-xs">
                       <span>✦</span>
@@ -117,7 +116,7 @@ export default async function RootLayout({
                     ) : (
                       <Link
                         href="/challenge"
-                        className="hidden sm:inline-flex items-center gap-2 px-4 lg:px-6 py-2 lg:py-2.5 bg-gradient-to-r from-pink-500 to-rose-400 text-white text-xs lg:text-sm font-medium rounded-full hover:shadow-lg hover:shadow-pink-200/50 transform hover:scale-105 transition-all duration-300"
+                        className="hidden sm:inline-flex items-center gap-2 px-4 lg:px-6 py-2 lg:py-2.5 bg-gradient-to-r from-pink-500 to-rose-400 text-white text-xs lg:text-sm font-semibold rounded-full hover:shadow-lg hover:shadow-pink-200/50 transform hover:scale-105 transition-all duration-300"
                       >
                         <span>Start the Challenge</span>
                         <span className="text-xs">✧</span>
@@ -141,8 +140,8 @@ export default async function RootLayout({
                   <div className="flex flex-col items-center gap-6">
                     {/* Brand + tagline */}
                     <div className="flex items-center gap-2">
-                      <span className="text-lg md:text-xl font-light text-gray-700">
-                        Lean <span className="font-semibold bg-gradient-to-r from-pink-500 to-rose-400 bg-clip-text text-transparent">Sporty</span>
+                      <span className="font-display text-xl md:text-2xl font-normal text-gray-800">
+                        Lean <span className="font-medium bg-gradient-to-r from-pink-500 to-rose-400 bg-clip-text text-transparent">Sporty</span>
                       </span>
                       <span className="text-pink-300/50 text-sm">✦</span>
                     </div>

@@ -21,7 +21,7 @@ export default function Header() {
         {/* Hero Section */}
         <div className="w-full max-w-4xl px-6 text-center">
           <h1 className="font-display animate-fade-up text-5xl lg:text-7xl font-light mb-8 text-gray-900 tracking-tight leading-[1.05]">
-            Dance Your Way to <span className="italic font-medium text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-rose-400">Fitness</span>
+            Dance Your Way to <span className="font-medium text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-rose-400">Fitness</span>
           </h1>
           <p className="animate-fade-up text-2xl lg:text-3xl text-gray-600 mb-6 font-light leading-relaxed" style={{ animationDelay: "0.08s" }}>
             Feel confident, strong, and energized — right from your living room.
@@ -42,7 +42,7 @@ export default function Header() {
             </Link>
             <Link
               href="/challenge"
-              className="inline-flex h-12 items-center justify-center rounded-full border border-pink-200 bg-white px-8 text-base font-medium text-gray-700 transition-all hover:border-pink-300"
+              className="inline-flex h-12 items-center justify-center rounded-full border border-pink-200 bg-white px-8 text-base font-semibold text-gray-700 transition-all hover:border-pink-300"
             >
               Try Day 1 free
             </Link>
@@ -90,7 +90,7 @@ export default function Header() {
         <section className="w-full px-6 py-16">
           <div className="w-full max-w-4xl mx-auto text-center mb-16">
             <h2 className="font-display text-4xl lg:text-5xl font-light mb-6 text-gray-900 tracking-tight">
-              Why <span className="italic font-medium text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-rose-400">Lean Sporty</span>?
+              Why <span className="font-medium text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-rose-400">Lean Sporty</span>?
             </h2>
             <p className="text-lg text-gray-500 font-light">Designed for your lifestyle, your goals, your journey.</p>
           </div>
@@ -127,7 +127,7 @@ export default function Header() {
             {/* Section Header */}
             <div className="text-center mb-16">
               <h2 className="font-display text-4xl lg:text-5xl font-light mb-6 text-gray-900 tracking-tight">
-                Join <span className="italic font-medium text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-rose-400">Live Classes</span>
+                Join <span className="font-medium text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-rose-400">Live Classes</span>
               </h2>
               <p className="text-lg text-gray-500 font-light max-w-2xl mx-auto">
                 Connect with expert instructors in real-time for an interactive, community-driven fitness experience.
@@ -216,7 +216,7 @@ export default function Header() {
         <div className="relative z-10 w-full max-w-3xl mx-auto px-6 text-center text-white">
           <h2 className="font-display text-4xl lg:text-5xl font-light mb-6 leading-tight drop-shadow-lg">
             Join a Community of Women<br/>
-            <span className="italic font-medium">Moving with Joy</span>
+            <span className="font-medium">Moving with Joy</span>
           </h2>
           <p className="text-xl lg:text-2xl mb-10 font-light opacity-95 leading-relaxed">
             No stress. Just sweat, rhythm, and results.

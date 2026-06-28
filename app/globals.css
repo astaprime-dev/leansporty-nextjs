@@ -69,10 +69,10 @@
 }
 
 @layer utilities {
-  /* Elegant editorial display face for headlines (Fraunces). */
+  /* Elegant editorial display face for headlines (Playfair Display). */
   .font-display {
-    font-family: var(--font-fraunces), Georgia, "Times New Roman", serif;
-    letter-spacing: -0.015em;
+    font-family: var(--font-display), Georgia, "Times New Roman", serif;
+    letter-spacing: -0.01em;
   }
 
   /* Gentle entrance — animates on mount, always ends visible (no FOUC). */
