@@ -1,5 +1,5 @@
 import { createClient } from "@/utils/supabase/server";
-import Link from "next/link";
+import { NavLink } from "@/components/nav-link";
 
 export default async function HeaderNav() {
   const supabase = await createClient();
@@ -21,53 +21,38 @@ export default async function HeaderNav() {
   return (
     <div className="hidden md:flex items-center gap-3 lg:gap-6">
       {/* Challenge - first for prominence; the pink CTA carries the emphasis */}
-      <Link
-        href="/challenge"
-        className="text-sm font-light text-gray-600 hover:text-pink-500 transition-colors duration-300"
-      >
+      <NavLink href="/challenge" className="text-sm font-light">
         Challenge
-      </Link>
+      </NavLink>
 
       {/* Streams - live discovery, everyone */}
-      <Link
-        href="/streams"
-        className="text-sm font-light text-gray-600 hover:text-pink-500 transition-colors duration-300"
-      >
+      <NavLink href="/streams" className="text-sm font-light">
         Streams
-      </Link>
+      </NavLink>
 
       {/* Authenticated user links (Workouts is the iOS-preview page → signed-in only) */}
       {user && (
         <>
-          <Link
-            href="/my-program"
-            className="text-sm font-light text-gray-600 hover:text-pink-500 transition-colors duration-300"
-          >
+          <NavLink href="/my-program" className="text-sm font-light">
             My Program
-          </Link>
-          <Link
-            href="/workouts"
-            className="text-sm font-light text-gray-600 hover:text-pink-500 transition-colors duration-300"
-          >
+          </NavLink>
+          <NavLink href="/workouts" className="text-sm font-light">
             Workouts
-          </Link>
-          <Link
-            href="/activity"
-            className="text-sm font-light text-gray-600 hover:text-pink-500 transition-colors duration-300"
-          >
+          </NavLink>
+          <NavLink href="/activity" className="text-sm font-light">
             Activity
-          </Link>
+          </NavLink>
         </>
       )}
 
       {/* Instructor dashboard link - only visible to instructors */}
       {isInstructor && (
-        <Link
+        <NavLink
           href="/instructor"
-          className="text-sm font-semibold text-gray-900 hover:text-pink-500 transition-colors duration-300 whitespace-nowrap"
+          className="text-sm font-light whitespace-nowrap"
         >
           Instructor Studio
-        </Link>
+        </NavLink>
       )}
     </div>
   );

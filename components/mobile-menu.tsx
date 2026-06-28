@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { X, Menu } from "lucide-react";
 import { User } from "@supabase/supabase-js";
 
@@ -12,6 +13,13 @@ interface MobileMenuProps {
 
 export function MobileMenu({ user, isInstructor }: MobileMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const pathname = usePathname();
+  const navCls = (href: string) =>
+    `text-base font-light transition-colors py-2 ${
+      pathname === href || pathname.startsWith(href + "/")
+        ? "text-pink-600"
+        : "text-gray-600 hover:text-pink-500"
+    }`;
 
   return (
     <>
@@ -50,7 +58,7 @@ export function MobileMenu({ user, isInstructor }: MobileMenuProps) {
               {/* Challenge - first for prominence; the pink CTA carries the emphasis */}
               <Link
                 href="/challenge"
-                className="text-base font-light text-gray-600 hover:text-pink-500 transition-colors py-2"
+                className={navCls("/challenge")}
                 onClick={() => setIsOpen(false)}
               >
                 Challenge
@@ -58,7 +66,7 @@ export function MobileMenu({ user, isInstructor }: MobileMenuProps) {
 
               <Link
                 href="/streams"
-                className="text-base font-light text-gray-600 hover:text-pink-500 transition-colors py-2"
+                className={navCls("/streams")}
                 onClick={() => setIsOpen(false)}
               >
                 Streams
@@ -68,21 +76,21 @@ export function MobileMenu({ user, isInstructor }: MobileMenuProps) {
                 <>
                   <Link
                     href="/my-program"
-                    className="text-base font-light text-gray-600 hover:text-pink-500 transition-colors py-2"
+                    className={navCls("/my-program")}
                     onClick={() => setIsOpen(false)}
                   >
                     My Program
                   </Link>
                   <Link
                     href="/workouts"
-                    className="text-base font-light text-gray-600 hover:text-pink-500 transition-colors py-2"
+                    className={navCls("/workouts")}
                     onClick={() => setIsOpen(false)}
                   >
                     Workouts
                   </Link>
                   <Link
                     href="/activity"
-                    className="text-base font-light text-gray-600 hover:text-pink-500 transition-colors py-2"
+                    className={navCls("/activity")}
                     onClick={() => setIsOpen(false)}
                   >
                     Activity
@@ -95,7 +103,7 @@ export function MobileMenu({ user, isInstructor }: MobileMenuProps) {
                   <div className="border-t border-pink-100 my-2" />
                   <Link
                     href="/instructor"
-                    className="text-base font-semibold text-gray-900 hover:text-pink-500 transition-colors py-2"
+                    className={navCls("/instructor")}
                     onClick={() => setIsOpen(false)}
                   >
                     Instructor Studio
