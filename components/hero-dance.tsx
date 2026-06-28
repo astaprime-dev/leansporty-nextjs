@@ -1,3 +1,4 @@
+import Link from "next/link";
 import LeanSportyLogo from "./lean-sporty-logo";
 import { Sparkles, Zap, Music, Clock, TrendingUp, Home, Video, Users, Star, Calendar } from "lucide-react";
 
@@ -53,9 +54,28 @@ export default function Header() {
             Feel confident, strong, and energized — right from your living room.
           </p>
           <p className="text-lg lg:text-xl text-gray-500 max-w-3xl mx-auto leading-relaxed font-light">
-            Lean Sporty is the ultimate dance-inspired fitness app designed for women who want to enjoy working out.
-            Whether you're a beginner or getting back into shape, our short and fun dance workouts help you burn calories,
-            tone your body, and boost your mood — without needing any equipment.
+            A follow-along dance program you can start in your browser today —
+            short, fun, equipment-free sessions for women who want to enjoy moving
+            again. Beginner-friendly, and Day 1 is free to try.
+          </p>
+
+          {/* Primary CTAs → the web offer */}
+          <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
+            <Link
+              href="/challenge"
+              className="inline-flex h-12 items-center justify-center rounded-full bg-gradient-to-r from-pink-500 to-rose-400 px-8 text-base font-semibold text-white shadow-sm transition-all hover:scale-105 hover:shadow-lg hover:shadow-pink-200/50"
+            >
+              Start the 21-Day Challenge — €49
+            </Link>
+            <Link
+              href="/challenge"
+              className="inline-flex h-12 items-center justify-center rounded-full border border-pink-200 bg-white px-8 text-base font-medium text-gray-700 transition-all hover:border-pink-300"
+            >
+              Try Day 1 free
+            </Link>
+          </div>
+          <p className="mt-3 text-sm text-gray-400 font-light">
+            €49 once · 15 sessions + rest days · 1 year of access · free Day 1
           </p>
         </div>
 
@@ -73,24 +93,21 @@ export default function Header() {
           </div>
         </div>
 
-        {/* App Store Download */}
-        <div className="w-full flex flex-col items-center gap-6">
-          <div className="relative">
-            <div className="absolute inset-0 bg-pink-400/20 blur-xl rounded-xl opacity-0 hover:opacity-100 transition-opacity duration-300"></div>
-            <a
-              href="https://apps.apple.com/app/id6745218800"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="relative inline-block transform hover:scale-105 transition-all duration-300"
-            >
-              <img
-                src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/en-us?size=250x83"
-                alt="Download on the App Store"
-                className="h-16"
-              />
-            </a>
-          </div>
-          <p className="text-sm text-gray-400 font-light tracking-wide">Available now on iOS</p>
+        {/* Secondary: iOS app (watch on the go — purchases happen on web) */}
+        <div className="w-full flex flex-col items-center gap-2">
+          <p className="text-sm text-gray-400 font-light tracking-wide">Prefer your phone? Also on iOS.</p>
+          <a
+            href="https://apps.apple.com/app/id6745218800"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-block opacity-80 transition-all duration-300 hover:opacity-100 hover:scale-105"
+          >
+            <img
+              src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/en-us?size=250x83"
+              alt="Download on the App Store"
+              className="h-11"
+            />
+          </a>
         </div>
 
         {/* Elegant Divider */}
@@ -255,26 +272,34 @@ export default function Header() {
             No stress. Just sweat, rhythm, and results.
           </p>
 
-          {/* App Store Button */}
-          <div className="relative inline-block">
-            <div className="absolute inset-0 bg-white/20 blur-2xl rounded-xl transform scale-110"></div>
+          {/* Primary CTA → the web offer */}
+          <Link
+            href="/challenge"
+            className="inline-flex h-14 items-center justify-center rounded-full bg-white px-10 text-lg font-semibold text-pink-600 shadow-lg transition-all duration-300 hover:scale-105"
+          >
+            Start the 21-Day Challenge — €49
+          </Link>
+
+          <p className="text-base lg:text-lg mt-6 font-light opacity-90">
+            €49 once · free Day 1 · 1 year of access
+          </p>
+
+          {/* Secondary: iOS */}
+          <div className="mt-6 flex flex-col items-center gap-2">
+            <p className="text-sm font-light opacity-80">Or watch on iOS</p>
             <a
               href="https://apps.apple.com/app/id6745218800"
               target="_blank"
               rel="noopener noreferrer"
-              className="relative inline-block transform hover:scale-105 transition-all duration-300"
+              className="inline-block opacity-90 transition-all duration-300 hover:scale-105"
             >
               <img
                 src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/white/en-us?size=250x83"
                 alt="Download on the App Store"
-                className="h-16 drop-shadow-lg"
+                className="h-11 drop-shadow-lg"
               />
             </a>
           </div>
-
-          <p className="text-lg lg:text-xl mt-8 font-light opacity-90">
-            Start your journey today with Lean Sporty — fitness made fun.
-          </p>
 
           {/* Decorative bottom */}
           <div className="flex justify-center mt-8">

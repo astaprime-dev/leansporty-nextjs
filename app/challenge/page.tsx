@@ -133,22 +133,15 @@ export default async function ChallengePage({
             {subtitle}
           </p>
 
-          {/* Trailer / poster (marketing asset, not a signed session video) */}
-          <div className="relative mx-auto mt-8 flex aspect-video max-w-2xl items-center justify-center overflow-hidden rounded-2xl border border-pink-100 bg-gradient-to-br from-pink-100 via-rose-50 to-white shadow-sm">
-            {product?.cover_image_url ? (
-              <Image
-                src={product.cover_image_url}
-                alt={title}
-                fill
-                className="object-cover"
-                sizes="(max-width: 640px) 100vw, 672px"
-              />
-            ) : (
-              <div className="flex flex-col items-center gap-2 text-pink-400">
-                <Sparkles className="h-12 w-12" />
-                <span className="text-sm font-medium">A taste of the program</span>
-              </div>
-            )}
+          {/* Trailer — public marketing video (not one of the signed sessions) */}
+          <div className="relative mx-auto mt-8 aspect-video max-w-2xl overflow-hidden rounded-2xl border border-pink-100 shadow-sm">
+            <iframe
+              src="https://www.youtube.com/embed/PWauX9QceBY?rel=0&modestbranding=1&autoplay=1&mute=1&loop=1&playlist=PWauX9QceBY&controls=1"
+              title="21-Day Dance Challenge preview"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+              className="absolute inset-0 h-full w-full border-0"
+            />
           </div>
 
           <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
