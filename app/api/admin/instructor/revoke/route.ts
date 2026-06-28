@@ -10,10 +10,6 @@ import { createClient } from "@/utils/supabase/server";
  */
 export async function POST(request: NextRequest) {
   try {
-    // TODO: Add admin authentication check here
-    // For now, we'll just process the request
-    // In production, verify the requesting user is an admin
-
     const supabase = await createClient();
     const { data: { user: currentUser } } = await supabase.auth.getUser();
 
@@ -24,13 +20,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // TODO: Check if currentUser is an admin
-    // if (!currentUser.app_metadata?.roles?.includes('admin')) {
-    //   return NextResponse.json(
-    //     { error: "Forbidden - admin access required" },
-    //     { status: 403 }
-    //   );
-    // }
+    // Admin-only (DEF-2): the requesting user must carry the 'admin' role.
+    if (!currentUser.app_metadata?.roles?.includes("admin")) {
+      return NextResponse.json(
+        { error: "Forbidden - admin access required" },
+        { status: 403 }
+      );
+    }
 
     const { userId } = await request.json();
 

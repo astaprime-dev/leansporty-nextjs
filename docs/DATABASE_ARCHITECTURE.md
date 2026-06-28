@@ -398,6 +398,18 @@ const merged = comments.map(c => ({
 
 ---
 
+## Commerce & entitlements (Phase 1 — `20260628120000_payments_and_entitlements.sql`)
+
+Added the access-control spine. **Entitlements are the single source of truth for paid content access** (replacing the deprecated free `stream_enrollments` gate and the retired token model).
+
+- **`products`** — what is sold (`slug`, `kind ∈ {course,challenge,membership,single}`, `title`, `price_cents`, `currency`, `stripe_price_id`, `is_active`, `config jsonb`). RLS: public select.
+- **`product_items`** — maps a product to `workouts` rows (`content_id → workouts.id`), with `position`, `day_number`, `is_preview`, `item_label`. RLS: public select.
+- **`entitlements`** — what a user owns (`user_id → auth.users`, `product_id`, `source ∈ {stripe,voucher,comp}`, `stripe_session_id`, `expires_at` NULL=lifetime), unique `(user_id, product_id)`. RLS: **read-own only**; **written exclusively by the service-role Stripe webhook** — no user insert/update policy (users must not self-grant).
+- **`workouts.cloudflare_uid`** (new column) — the Cloudflare Stream UID, reused as "content" (OD-3) instead of a separate `content` table. Replaces legacy `mux_playback_id`.
+- **`get_playable_uid(p_content_id)`** — `security definer` gate returning the UID iff the content is a free preview **or** the caller holds a live entitlement. Consumed by `POST /api/playback/token` for both web and **iOS** (E5.1). `revoke from public; grant execute to authenticated`.
+
+**Cross-client note (iOS):** iOS reads `workouts.cloudflare_uid` and calls the playback-token route (Bearer auth) → `get_playable_uid`. A change to that function or column signature affects iOS playback.
+
 ## Migration Timeline
 
 ### December 27, 2024

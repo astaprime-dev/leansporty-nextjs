@@ -138,6 +138,63 @@ export const signOutAction = async () => {
   return redirect("/");
 };
 
+/**
+ * State returned by signInWithMagicLinkAction, rendered inline in the auth modal
+ * (via useActionState) so the user gets immediate feedback without navigating away.
+ */
+export type MagicLinkState = {
+  status: "success" | "error";
+  message: string;
+} | null;
+
+/**
+ * Email magic-link sign-in (OD-4 / FR-1.0.4). Lets a cold buyer who has neither
+ * an Apple nor a Google account create one and authenticate at checkout. The
+ * link returns through /auth/callback, which honors `redirect_to` so the user
+ * resumes their original intent (e.g. checkout) instead of landing on the home page.
+ *
+ * Returns state (not a redirect) so the modal can show "check your email" inline
+ * and stay open — the confirmation IS the flow for passwordless auth.
+ */
+export const signInWithMagicLinkAction = async (
+  _prevState: MagicLinkState,
+  formData: FormData
+): Promise<MagicLinkState> => {
+  const email = formData.get("email")?.toString().trim();
+  const next = formData.get("next")?.toString();
+  const supabase = await createClient();
+  const origin = (await headers()).get("origin");
+
+  if (!email) {
+    return { status: "error", message: "Please enter your email address." };
+  }
+
+  const redirectTo = next
+    ? `${origin}/auth/callback?redirect_to=${encodeURIComponent(next)}`
+    : `${origin}/auth/callback`;
+
+  const { error } = await supabase.auth.signInWithOtp({
+    email,
+    options: {
+      emailRedirectTo: redirectTo,
+      shouldCreateUser: true,
+    },
+  });
+
+  if (error) {
+    console.error(error.code + " " + error.message);
+    return {
+      status: "error",
+      message: "We couldn't send your sign-in link. Please try again.",
+    };
+  }
+
+  return {
+    status: "success",
+    message: `Check your email — we sent a sign-in link to ${email}.`,
+  };
+};
+
 export const signInWithAppleAction = async () => {
   const supabase = await createClient();
   const origin = (await headers()).get("origin");
@@ -504,8 +561,14 @@ export const checkStreamEnrollment = async (
 };
 
 /**
- * Enroll user in a stream
- * TODO: Integrate with existing token deduction API/function
+ * Add the current user to a stream's roster (free, live-only sessions).
+ *
+ * The deprecated "tokens" model is retired (FR-1.0.3): no balance is charged and
+ * no token price is recorded here. Content access truth now lives in the
+ * `entitlements` table via `get_playable_uid` (E1.1/E1.3) — a roster row does NOT
+ * by itself unlock paid playback. Paid sessions go through Stripe Checkout →
+ * webhook → entitlement; turning this into an entitlement-created cohort roster
+ * is the Phase 2 work (E2.1). Safe today because no paid live product exists yet.
  */
 export const enrollInStream = async (
   streamId: string
@@ -535,21 +598,20 @@ export const enrollInStream = async (
     return { success: false, error: 'Already enrolled' };
   }
 
-  // TODO: Call existing token deduction API here
-  // For now, this is a placeholder - you'll need to replace this with your actual token API
-  // Example: await deductTokens(user.id, stream.price_in_tokens, streamId);
+  // Tokens are retired — no deduction, no balance check. `tokens_paid` is kept at
+  // 0 only because the column still exists on the deprecated schema.
 
   // Calculate replay expiry (7 days from now, or from actual stream end)
   const replayExpiresAt = stream.recording_expires_at ||
     new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
 
-  // Create enrollment
+  // Create roster row (free live access only — not a paid-content grant)
   const { error: enrollError } = await supabase
     .from('stream_enrollments')
     .insert({
       stream_id: streamId,
       user_id: user.id,
-      tokens_paid: stream.price_in_tokens,
+      tokens_paid: 0,
       replay_access_expires_at: replayExpiresAt,
     });
 

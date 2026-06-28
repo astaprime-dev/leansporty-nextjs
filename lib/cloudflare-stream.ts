@@ -1,6 +1,7 @@
 // Cloudflare Stream API Service
 // Handles live streaming with WebRTC (browser-based) and video playback
 
+import { SignJWT, importPKCS8 } from 'jose';
 import {
   CloudflareAPIResponse,
   CloudflareStreamLiveInput,
@@ -214,14 +215,62 @@ export function getIframeEmbedURL(
 }
 
 /**
- * Generate signed URL for private streams (future enhancement)
- * Currently not needed as streams are public to enrolled users
+ * Mint a short-lived, signed playback token for a Cloudflare Stream UID.
+ *
+ * The video MUST have `requireSignedURLs = true` set on Cloudflare for this to
+ * matter — otherwise the raw UID plays without any token and the gate is bypassed.
+ * Signing happens server-side only; the key never reaches the client.
+ *
+ * SECURE_PLAYBACK_SPEC §3 / E1.3.
  */
-export function getSignedStreamURL(
-  playbackId: string,
-  expiresIn: number = 3600
-): string {
-  // For now, return public URL
-  // TODO: Implement signing when needed for additional security
-  return getStreamPlaybackURL(playbackId).hls;
+export async function signStreamToken(
+  uid: string,
+  opts: { ttlSeconds?: number; accessRules?: unknown[] } = {}
+): Promise<string> {
+  const keyId = process.env.CLOUDFLARE_STREAM_KEY_ID;
+  const pemB64 = process.env.CLOUDFLARE_STREAM_KEY_PEM;
+  if (!keyId || !pemB64) {
+    throw new Error('Missing Cloudflare Stream signing key (CLOUDFLARE_STREAM_KEY_ID / CLOUDFLARE_STREAM_KEY_PEM)');
+  }
+
+  const pem = Buffer.from(pemB64, 'base64').toString('utf-8'); // CF returns the PEM base64-encoded
+  const privateKey = await importPKCS8(pem, 'RS256');
+
+  const ttl = opts.ttlSeconds ?? 60 * 60 * 4; // 4h comfortably outlives any single session
+  const now = Math.floor(Date.now() / 1000);
+
+  return await new SignJWT({
+    sub: uid,
+    kid: keyId,
+    exp: now + ttl,
+    nbf: now - 30,
+    downloadable: false,
+    ...(opts.accessRules ? { accessRules: opts.accessRules } : {}),
+  })
+    .setProtectedHeader({ alg: 'RS256', kid: keyId })
+    .sign(privateKey);
+}
+
+/**
+ * Build playback URLs where the SIGNED TOKEN replaces the UID in the path.
+ * Pair with `signStreamToken()`. Domain locking is done by `allowedOrigins` on
+ * the video, not here.
+ */
+export function getSignedPlaybackURLs(token: string): {
+  hls: string;
+  dash: string;
+  iframe: string;
+} {
+  const code = process.env.NEXT_PUBLIC_CLOUDFLARE_STREAM_CUSTOMER_CODE;
+
+  if (!code) {
+    throw new Error('Missing NEXT_PUBLIC_CLOUDFLARE_STREAM_CUSTOMER_CODE');
+  }
+
+  const base = `https://customer-${code}.cloudflarestream.com/${token}`;
+  return {
+    hls: `${base}/manifest/video.m3u8`,
+    dash: `${base}/manifest/video.mpd`,
+    iframe: `${base}/iframe`,
+  };
 }

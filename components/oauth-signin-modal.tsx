@@ -1,6 +1,10 @@
 "use client";
 
-import { signInWithAppleAction, signInWithGoogleAction } from "@/app/actions";
+import {
+  signInWithAppleAction,
+  signInWithGoogleAction,
+  signInWithMagicLinkAction,
+} from "@/app/actions";
 import { SubmitButton } from "@/components/submit-button";
 import {
   Dialog,
@@ -10,9 +14,24 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { CheckCircle2 } from "lucide-react";
+import { useActionState } from "react";
 import Link from "next/link";
 
-export function OAuthSignInModal({ children }: { children: React.ReactNode }) {
+export function OAuthSignInModal({
+  children,
+  next,
+}: {
+  children: React.ReactNode;
+  /** Path to return to after auth (intent resume), e.g. a checkout flow. */
+  next?: string;
+}) {
+  const [magicLink, magicLinkAction] = useActionState(
+    signInWithMagicLinkAction,
+    null
+  );
+
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -87,6 +106,51 @@ export function OAuthSignInModal({ children }: { children: React.ReactNode }) {
               <span className="font-semibold">Continue with Apple</span>
             </SubmitButton>
           </form>
+
+          {/* Divider */}
+          <div className="flex items-center gap-3 py-1">
+            <div className="h-px flex-1 bg-gray-200" />
+            <span className="text-xs text-gray-400">or</span>
+            <div className="h-px flex-1 bg-gray-200" />
+          </div>
+
+          {/* Email magic link — no Apple/Google account required */}
+          {magicLink?.status === "success" ? (
+            <div className="flex flex-col items-center gap-2 rounded-lg border border-green-200 bg-green-50 p-4 text-center">
+              <CheckCircle2 className="h-6 w-6 text-green-600" />
+              <p className="text-sm font-medium text-green-800">
+                {magicLink.message}
+              </p>
+              <p className="text-xs text-green-700">
+                Open the link on this device to finish signing in. You can close
+                this window.
+              </p>
+            </div>
+          ) : (
+            <form action={magicLinkAction} className="flex flex-col gap-2">
+              {next ? <input type="hidden" name="next" value={next} /> : null}
+              <Input
+                type="email"
+                name="email"
+                required
+                autoComplete="email"
+                placeholder="you@example.com"
+                className="h-12"
+                aria-invalid={magicLink?.status === "error"}
+              />
+              <SubmitButton
+                pendingText="Sending link..."
+                className="w-full h-12 bg-gradient-to-r from-pink-500 to-rose-400 hover:from-pink-600 hover:to-rose-500 text-white font-semibold rounded-lg transition-all"
+              >
+                Email me a sign-in link
+              </SubmitButton>
+              {magicLink?.status === "error" && (
+                <p className="text-sm text-red-600 text-center" role="alert">
+                  {magicLink.message}
+                </p>
+              )}
+            </form>
+          )}
 
           <div className="mt-2 p-3 bg-pink-50/50 border border-pink-100 rounded-lg">
             <p className="text-xs text-gray-600 text-center leading-relaxed">
