@@ -3,7 +3,7 @@
 import { WorkoutHistoryItem } from "@/types/database";
 import { LiveStreamSession, StreamEnrollment } from "@/types/streaming";
 import { useState, useMemo } from "react";
-import { ChevronLeft, ChevronRight, Radio, Calendar } from "lucide-react";
+import { ChevronLeft, ChevronRight, Radio, Calendar, Dumbbell, Clock, Flame, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { StreamCard } from "@/components/stream-card";
 import Link from "next/link";
@@ -107,9 +107,31 @@ export function ActivityView({
     return {
       totalWorkouts: filteredWorkouts.length,
       totalDuration: filteredWorkouts.reduce((total, session) => total + session.duration_seconds, 0),
-      totalCalories: filteredWorkouts.reduce((total, session) => total + (session.calories_burned || 0), 0),
     };
   }, [filteredWorkouts]);
+
+  // Current consistency streak (consecutive days with a session, all-time).
+  // Web's value metric is consistency, not calories (calories need weight,
+  // which is only tracked in the iOS app).
+  const currentStreak = useMemo(() => {
+    const days = new Set(
+      workoutHistory
+        .filter((s) => s.workout_date)
+        .map((s) => new Date(s.workout_date!).toDateString())
+    );
+    if (days.size === 0) return 0;
+    const cursor = new Date();
+    if (!days.has(cursor.toDateString())) {
+      cursor.setDate(cursor.getDate() - 1);
+      if (!days.has(cursor.toDateString())) return 0; // last activity > 1 day ago
+    }
+    let streak = 0;
+    while (days.has(cursor.toDateString())) {
+      streak += 1;
+      cursor.setDate(cursor.getDate() - 1);
+    }
+    return streak;
+  }, [workoutHistory]);
 
   return (
     <div className="flex-1 w-full flex flex-col gap-6 sm:gap-8 px-4 py-6 sm:py-8 max-w-7xl mx-auto">
@@ -181,6 +203,9 @@ export function ActivityView({
         </div>
       )}
 
+      {/* Month nav + stats only once there's any history */}
+      {workoutHistory.length > 0 && (
+      <>
       {/* Month Navigation */}
       <div className="flex items-center justify-between gap-2">
         <Button
@@ -209,26 +234,49 @@ export function ActivityView({
 
       {/* Summary Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
-        <div className="bg-muted rounded-lg p-4 sm:p-6">
-          <h3 className="text-xs sm:text-sm font-medium text-muted-foreground mb-2">Total Workouts</h3>
-          <p className="text-2xl sm:text-3xl font-bold">{stats.totalWorkouts}</p>
+        <div className="rounded-2xl border border-pink-100 bg-gradient-to-br from-pink-50 to-rose-50 p-4 sm:p-6">
+          <div className="mb-2 flex items-center gap-2 text-pink-600">
+            <Dumbbell className="h-4 w-4" />
+            <h3 className="text-xs sm:text-sm font-medium text-muted-foreground">Sessions this month</h3>
+          </div>
+          <p className="text-2xl sm:text-3xl font-semibold text-gray-900">{stats.totalWorkouts}</p>
         </div>
-        <div className="bg-muted rounded-lg p-4 sm:p-6">
-          <h3 className="text-xs sm:text-sm font-medium text-muted-foreground mb-2">Total Duration</h3>
-          <p className="text-2xl sm:text-3xl font-bold">{formatDuration(stats.totalDuration)}</p>
+        <div className="rounded-2xl border border-pink-100 bg-gradient-to-br from-pink-50 to-rose-50 p-4 sm:p-6">
+          <div className="mb-2 flex items-center gap-2 text-pink-600">
+            <Clock className="h-4 w-4" />
+            <h3 className="text-xs sm:text-sm font-medium text-muted-foreground">Time moving</h3>
+          </div>
+          <p className="text-2xl sm:text-3xl font-semibold text-gray-900">{formatDuration(stats.totalDuration)}</p>
         </div>
-        <div className="bg-muted rounded-lg p-4 sm:p-6">
-          <h3 className="text-xs sm:text-sm font-medium text-muted-foreground mb-2">Total Calories</h3>
-          <p className="text-2xl sm:text-3xl font-bold">{stats.totalCalories} kcal</p>
+        <div className="rounded-2xl border border-pink-100 bg-gradient-to-br from-pink-50 to-rose-50 p-4 sm:p-6">
+          <div className="mb-2 flex items-center gap-2 text-pink-600">
+            <Flame className="h-4 w-4" />
+            <h3 className="text-xs sm:text-sm font-medium text-muted-foreground">Day streak</h3>
+          </div>
+          <p className="text-2xl sm:text-3xl font-semibold text-gray-900">
+            {currentStreak} {currentStreak === 1 ? "day" : "days"}
+          </p>
         </div>
       </div>
+      </>
+      )}
 
       {/* Workout History Table */}
-      {filteredWorkouts.length === 0 ? (
+      {workoutHistory.length === 0 ? (
+        <div className="flex flex-col items-center gap-4 rounded-2xl border border-pink-100 bg-pink-50/40 py-14 text-center">
+          <p className="text-base sm:text-lg text-gray-700">No sessions yet — your progress will show up here.</p>
+          <Link
+            href="/my-program"
+            className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-pink-500 to-rose-400 px-6 py-2.5 text-sm font-semibold text-white transition-all hover:scale-105 hover:shadow-lg hover:shadow-pink-200/50"
+          >
+            <Play className="h-4 w-4" /> Start Day 1
+          </Link>
+        </div>
+      ) : filteredWorkouts.length === 0 ? (
         <div className="text-center py-12">
           <p className="text-base sm:text-lg text-muted-foreground">No workout sessions in {getMonthYear(selectedDate)}.</p>
           <p className="text-xs sm:text-sm text-muted-foreground mt-2">
-            Start your first workout to see your activity here!
+            Try a different month, or jump back into your program.
           </p>
         </div>
       ) : (
@@ -239,7 +287,6 @@ export function ActivityView({
                 <th className="text-left py-3 sm:py-4 px-2 sm:px-4 font-semibold text-xs sm:text-sm">Date</th>
                 <th className="text-left py-3 sm:py-4 px-2 sm:px-4 font-semibold text-xs sm:text-sm">Workout</th>
                 <th className="text-left py-3 sm:py-4 px-2 sm:px-4 font-semibold text-xs sm:text-sm">Duration</th>
-                <th className="text-left py-3 sm:py-4 px-2 sm:px-4 font-semibold text-xs sm:text-sm">Calories</th>
               </tr>
             </thead>
             <tbody>
@@ -253,9 +300,6 @@ export function ActivityView({
                   </td>
                   <td className="py-3 sm:py-4 px-2 sm:px-4 text-xs sm:text-sm">
                     {formatDuration(session.duration_seconds)}
-                  </td>
-                  <td className="py-3 sm:py-4 px-2 sm:px-4 text-xs sm:text-sm">
-                    {session.calories_burned || 0} kcal
                   </td>
                 </tr>
               ))}
