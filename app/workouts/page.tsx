@@ -1,5 +1,6 @@
 import { getWorkouts } from "@/app/actions";
 import Image from "next/image";
+import Link from "next/link";
 import { Smartphone, Sparkles, Flame, Zap, Star } from "lucide-react";
 
 export default async function WorkoutsPage() {
@@ -31,6 +32,25 @@ export default async function WorkoutsPage() {
           </div>
         </div>
       </div>
+
+      {/* Challenge CTA — guided program available on the web */}
+      <Link
+        href="/challenge"
+        className="group flex items-center justify-between gap-4 rounded-xl border-2 border-pink-200 bg-gradient-to-r from-pink-500 to-rose-400 p-6 text-white shadow-sm transition-all hover:shadow-lg hover:shadow-pink-200/50"
+      >
+        <div className="flex items-center gap-4">
+          <Sparkles className="h-8 w-8 flex-shrink-0" strokeWidth={1.5} />
+          <div>
+            <h3 className="text-lg font-semibold">Try the 21-Day Dance Challenge</h3>
+            <p className="text-sm text-white/90">
+              A guided, follow-along program you can start today — watch right here on the web.
+            </p>
+          </div>
+        </div>
+        <span className="hidden flex-shrink-0 rounded-full bg-white px-5 py-2 text-sm font-semibold text-pink-600 transition-transform group-hover:scale-105 sm:inline-block">
+          Start now
+        </span>
+      </Link>
 
       {/* Header */}
       <div>

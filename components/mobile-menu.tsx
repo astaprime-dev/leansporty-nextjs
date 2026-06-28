@@ -53,14 +53,31 @@ export function MobileMenu({ user, isInstructor }: MobileMenuProps) {
                 Workouts
               </Link>
 
+              <Link
+                href="/challenge"
+                className="text-base font-light text-gray-600 hover:text-pink-500 transition-colors py-2"
+                onClick={() => setIsOpen(false)}
+              >
+                Challenge
+              </Link>
+
               {user && (
-                <Link
-                  href="/activity"
-                  className="text-base font-light text-gray-600 hover:text-pink-500 transition-colors py-2"
-                  onClick={() => setIsOpen(false)}
-                >
-                  Activity
-                </Link>
+                <>
+                  <Link
+                    href="/my-program"
+                    className="text-base font-light text-gray-600 hover:text-pink-500 transition-colors py-2"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    My Program
+                  </Link>
+                  <Link
+                    href="/activity"
+                    className="text-base font-light text-gray-600 hover:text-pink-500 transition-colors py-2"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    Activity
+                  </Link>
+                </>
               )}
 
               {isInstructor && (

@@ -36,14 +36,30 @@ export default async function HeaderNav() {
         Workouts
       </Link>
 
+      {/* Challenge - visible to everyone for discovery */}
+      <Link
+        href="/challenge"
+        className="text-sm font-light text-gray-600 hover:text-pink-500 transition-colors duration-300"
+      >
+        Challenge
+      </Link>
+
       {/* Authenticated user links */}
       {user && (
-        <Link
-          href="/activity"
-          className="text-sm font-light text-gray-600 hover:text-pink-500 transition-colors duration-300"
-        >
-          Activity
-        </Link>
+        <>
+          <Link
+            href="/my-program"
+            className="text-sm font-light text-gray-600 hover:text-pink-500 transition-colors duration-300"
+          >
+            My Program
+          </Link>
+          <Link
+            href="/activity"
+            className="text-sm font-light text-gray-600 hover:text-pink-500 transition-colors duration-300"
+          >
+            Activity
+          </Link>
+        </>
       )}
 
       {/* Instructor dashboard link - only visible to instructors */}
