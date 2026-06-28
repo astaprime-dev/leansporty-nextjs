@@ -258,7 +258,7 @@ export default async function ProfilePage({
             {/* Profile Info */}
             <div className="flex-1 text-center md:text-left w-full">
               <div className="flex flex-col sm:flex-row items-center md:items-center gap-2 sm:gap-3 mb-2">
-                <h1 className="text-2xl sm:text-4xl font-bold bg-gradient-to-r from-pink-500 to-rose-400 bg-clip-text text-transparent">
+                <h1 className="text-2xl sm:text-4xl font-display font-light text-gray-900">
                   {profile.display_name}
                 </h1>
                 {isInstructor && (

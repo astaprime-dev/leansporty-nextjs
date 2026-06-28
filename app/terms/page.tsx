@@ -12,7 +12,7 @@ export default function TermsOfServicePage() {
           >
             ← Back to Home
           </Link>
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-pink-500 to-rose-400 bg-clip-text text-transparent mb-2">
+          <h1 className="text-4xl font-display font-light text-gray-900 mb-2">
             Terms of Service
           </h1>
           <p className="text-gray-600">

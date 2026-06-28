@@ -44,7 +44,6 @@ export function MobileMenu({ user, isInstructor }: MobileMenuProps) {
                   onClick={() => setIsOpen(false)}
                 >
                   <span>Start the Challenge</span>
-                  <span className="text-xs">✧</span>
                 </Link>
               )}
 
@@ -114,7 +113,6 @@ export function MobileMenu({ user, isInstructor }: MobileMenuProps) {
                 onClick={() => setIsOpen(false)}
               >
                 <span>Download App</span>
-                <span className="text-xs">✧</span>
               </a>
             </div>
           </div>

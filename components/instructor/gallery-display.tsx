@@ -54,7 +54,7 @@ export default function GalleryDisplay({ galleryItems }: GalleryDisplayProps) {
 
   return (
     <div className="mt-12">
-      <h2 className="text-2xl font-bold mb-6 bg-gradient-to-r from-pink-500 to-rose-400 bg-clip-text text-transparent">
+      <h2 className="text-2xl font-display font-light text-gray-900 mb-6">
         Portfolio
       </h2>
 

@@ -87,9 +87,6 @@ export default async function RootLayout({
                     <span className="font-display text-2xl md:text-3xl font-normal tracking-tight text-gray-900 group-hover:text-pink-500 transition-colors duration-300">
                       Lean <span className="font-medium bg-gradient-to-r from-pink-500 to-rose-400 bg-clip-text text-transparent">Sporty</span>
                     </span>
-                    <div className="hidden sm:flex items-center gap-2 text-pink-300/60 text-xs">
-                      <span>✦</span>
-                    </div>
                   </Link>
 
                   {/* Navigation Links */}
@@ -111,7 +108,6 @@ export default async function RootLayout({
                         className="hidden sm:inline-flex items-center gap-2 px-4 lg:px-6 py-2 lg:py-2.5 bg-gradient-to-r from-pink-500 to-rose-400 text-white text-xs lg:text-sm font-light rounded-full hover:shadow-lg hover:shadow-pink-200/50 transform hover:scale-105 transition-all duration-300"
                       >
                         <span>Download App</span>
-                        <span className="text-xs">✧</span>
                       </a>
                     ) : (
                       <Link
@@ -119,7 +115,6 @@ export default async function RootLayout({
                         className="hidden sm:inline-flex items-center gap-2 px-4 lg:px-6 py-2 lg:py-2.5 bg-gradient-to-r from-pink-500 to-rose-400 text-white text-xs lg:text-sm font-semibold rounded-full hover:shadow-lg hover:shadow-pink-200/50 transform hover:scale-105 transition-all duration-300"
                       >
                         <span>Start the Challenge</span>
-                        <span className="text-xs">✧</span>
                       </Link>
                     )}
 
@@ -143,7 +138,6 @@ export default async function RootLayout({
                       <span className="font-display text-xl md:text-2xl font-normal text-gray-800">
                         Lean <span className="font-medium bg-gradient-to-r from-pink-500 to-rose-400 bg-clip-text text-transparent">Sporty</span>
                       </span>
-                      <span className="text-pink-300/50 text-sm">✦</span>
                     </div>
                     <p className="max-w-md text-center text-sm text-gray-500 font-light">
                       Dance-inspired fitness for women who want to enjoy moving — start in your browser, watch anywhere.
@@ -156,7 +150,6 @@ export default async function RootLayout({
                         className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-pink-500 to-rose-400 px-6 py-2.5 text-sm font-semibold text-white transition-all hover:scale-105 hover:shadow-lg hover:shadow-pink-200/50"
                       >
                         <span>Start the 21-Day Challenge</span>
-                        <span className="text-xs">✧</span>
                       </Link>
                     )}
 

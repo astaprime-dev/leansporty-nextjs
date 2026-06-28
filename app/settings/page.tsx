@@ -29,7 +29,7 @@ export default async function AccountSettingsPage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-pink-50 to-white">
       <div className="max-w-3xl mx-auto px-4 py-12">
-        <h1 className="text-4xl font-bold bg-gradient-to-r from-pink-500 to-rose-400 bg-clip-text text-transparent mb-8">
+        <h1 className="text-4xl font-display font-light text-gray-900 mb-8">
           Settings
         </h1>
 

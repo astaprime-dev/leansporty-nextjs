@@ -54,7 +54,7 @@ export default async function WorkoutsPage() {
 
       {/* Header */}
       <div>
-        <h1 className="text-5xl font-bold mb-2 bg-gradient-to-r from-pink-500 to-rose-400 bg-clip-text text-transparent">
+        <h1 className="text-5xl font-display font-light text-gray-900 mb-2">
           Latest Dance Workouts
         </h1>
         <p className="text-muted-foreground">Preview our workout collection</p>

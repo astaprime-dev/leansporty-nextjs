@@ -47,7 +47,7 @@ export default async function InstructorProfilePage() {
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2 bg-gradient-to-r from-pink-500 to-rose-400 bg-clip-text text-transparent">
+        <h1 className="text-3xl font-display font-light text-gray-900 mb-2">
           {instructorProfile ? "Edit Your Profile" : "Create Your Instructor Profile"}
         </h1>
         <p className="text-gray-600">

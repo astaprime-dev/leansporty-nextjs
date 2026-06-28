@@ -109,7 +109,6 @@ export default function Header() {
               return (
                 <div key={idx} className="relative group bg-white/80 backdrop-blur-sm p-8 rounded-3xl border border-pink-100 hover:border-pink-300 shadow-lg hover:shadow-pink-200/50 transition-all duration-300">
                   <div className="absolute inset-0 bg-gradient-to-br from-pink-50/50 to-transparent rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                  <div className="absolute -top-2 -right-2 text-pink-200/30 text-4xl">✦</div>
                   <div className="relative mb-6 transform group-hover:scale-110 transition-transform duration-300">
                     <Icon className="w-12 h-12 text-pink-500" strokeWidth={1.5} />
                   </div>
@@ -138,7 +137,6 @@ export default function Header() {
             <div className="grid md:grid-cols-2 gap-8 mb-12">
               {/* Feature 1 */}
               <div className="relative group bg-gradient-to-br from-pink-50 to-white p-8 rounded-3xl border border-pink-100 hover:border-pink-300 shadow-lg hover:shadow-pink-200/50 transition-all duration-300">
-                <div className="absolute -top-2 -right-2 text-pink-200/30 text-4xl">✦</div>
                 <div className="relative mb-6 transform group-hover:scale-110 transition-transform duration-300">
                   <Video className="w-12 h-12 text-pink-500" strokeWidth={1.5} />
                 </div>
@@ -150,7 +148,6 @@ export default function Header() {
 
               {/* Feature 2 */}
               <div className="relative group bg-gradient-to-br from-pink-50 to-white p-8 rounded-3xl border border-pink-100 hover:border-pink-300 shadow-lg hover:shadow-pink-200/50 transition-all duration-300">
-                <div className="absolute -top-2 -right-2 text-pink-200/30 text-4xl">✦</div>
                 <div className="relative mb-6 transform group-hover:scale-110 transition-transform duration-300">
                   <Users className="w-12 h-12 text-pink-500" strokeWidth={1.5} />
                 </div>
@@ -162,7 +159,6 @@ export default function Header() {
 
               {/* Feature 3 */}
               <div className="relative group bg-gradient-to-br from-pink-50 to-white p-8 rounded-3xl border border-pink-100 hover:border-pink-300 shadow-lg hover:shadow-pink-200/50 transition-all duration-300">
-                <div className="absolute -top-2 -right-2 text-pink-200/30 text-4xl">✦</div>
                 <div className="relative mb-6 transform group-hover:scale-110 transition-transform duration-300">
                   <Star className="w-12 h-12 text-pink-500" strokeWidth={1.5} />
                 </div>
@@ -174,7 +170,6 @@ export default function Header() {
 
               {/* Feature 4 */}
               <div className="relative group bg-gradient-to-br from-pink-50 to-white p-8 rounded-3xl border border-pink-100 hover:border-pink-300 shadow-lg hover:shadow-pink-200/50 transition-all duration-300">
-                <div className="absolute -top-2 -right-2 text-pink-200/30 text-4xl">✦</div>
                 <div className="relative mb-6 transform group-hover:scale-110 transition-transform duration-300">
                   <Calendar className="w-12 h-12 text-pink-500" strokeWidth={1.5} />
                 </div>
@@ -206,10 +201,6 @@ export default function Header() {
       {/* CTA Section - Full Width Pink Background */}
       <div className="relative w-full bg-gradient-to-br from-pink-500 via-rose-400 to-pink-400 py-20 overflow-hidden">
         {/* Decorative elements */}
-        <div className="absolute top-10 left-10 text-white/10 text-6xl">✦</div>
-        <div className="absolute bottom-10 right-10 text-white/10 text-6xl">✦</div>
-        <div className="absolute top-1/2 left-20 text-white/5 text-8xl">✧</div>
-        <div className="absolute top-1/3 right-20 text-white/5 text-7xl">✧</div>
         <div className="absolute inset-0 bg-gradient-to-t from-rose-600/20 to-transparent"></div>
 
         {/* Centered Content */}

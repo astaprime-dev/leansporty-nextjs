@@ -114,7 +114,7 @@ export function ActivityView({
   return (
     <div className="flex-1 w-full flex flex-col gap-6 sm:gap-8 px-4 py-6 sm:py-8 max-w-7xl mx-auto">
       <div>
-        <h1 className="text-3xl sm:text-4xl font-bold mb-2">Activity</h1>
+        <h1 className="font-display text-3xl sm:text-4xl font-light text-gray-900 mb-2">Activity</h1>
         <p className="text-sm sm:text-base text-muted-foreground">Your workout history and progress</p>
       </div>
 

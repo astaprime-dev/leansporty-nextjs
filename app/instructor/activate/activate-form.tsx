@@ -45,7 +45,7 @@ export default function InstructorActivateForm() {
     <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-pink-50 to-rose-50">
       <div className="max-w-md w-full bg-white rounded-2xl shadow-lg p-8 border border-pink-100">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold mb-2 bg-gradient-to-r from-pink-500 to-rose-400 bg-clip-text text-transparent">
+          <h1 className="text-3xl font-display font-light text-gray-900 mb-2">
             Activate Instructor Status
           </h1>
           <p className="text-gray-600">Enter your activation code to enable instructor features</p>
