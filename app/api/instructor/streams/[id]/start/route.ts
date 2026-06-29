@@ -34,6 +34,7 @@ export async function POST(
       .from("live_stream_sessions")
       .select("status, actual_start_time")
       .eq("id", id)
+      .eq("instructor_id", instructorProfile.id) // owner scope — can't touch another instructor's stream
       .single();
 
     if (fetchError || !stream) {
@@ -77,7 +78,8 @@ export async function POST(
     const { error } = await supabase
       .from("live_stream_sessions")
       .update(updateData)
-      .eq("id", id);
+      .eq("id", id)
+      .eq("instructor_id", instructorProfile.id);
 
     if (error) {
       console.error("Error starting stream:", error);

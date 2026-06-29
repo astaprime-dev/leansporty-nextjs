@@ -35,6 +35,7 @@ export async function POST(
       .from("live_stream_sessions")
       .select("cloudflare_stream_id")
       .eq("id", id)
+      .eq("instructor_id", instructorProfile.id) // owner scope — can't end another instructor's stream
       .single();
 
     if (!stream?.cloudflare_stream_id) {
@@ -79,7 +80,8 @@ export async function POST(
         recording_available: recordingAvailable,
         recording_cloudflare_video_id: recordingId,
       })
-      .eq("id", id);
+      .eq("id", id)
+      .eq("instructor_id", instructorProfile.id);
 
     if (error) {
       console.error("Error ending stream:", error);
