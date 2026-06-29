@@ -4,7 +4,8 @@
     "dev": "next dev",
     "dev:https": "node server.js",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "smoke": "node --env-file=.env.local scripts/smoke-test-funnel.mjs"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
