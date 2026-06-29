@@ -17,6 +17,7 @@ import {
 } from "@/components/challenge/cta";
 import { Alert } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
+import { LeadCaptureForm } from "@/components/lead-capture-form";
 import {
   CHALLENGE_SLUG,
   DEFAULT_PRICE_CENTS,
@@ -364,6 +365,15 @@ export default async function ChallengePage({
           ))}
         </div>
       </section>
+
+      {/* Lead capture — exit offer for non-buyers who aren't ready to checkout */}
+      {!owned && (
+        <section className="border-y border-pink-100/70 bg-pink-50/40 py-14">
+          <div className="mx-auto max-w-3xl px-4">
+            <LeadCaptureForm source="challenge-exit" />
+          </div>
+        </section>
+      )}
 
       {/* Disclaimer / waiver */}
       <section className="mx-auto max-w-3xl px-4 pb-16">

@@ -6,6 +6,7 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { WorkoutHistoryItem, Workout } from "@/types/database";
 import { LiveStreamSession, StreamEnrollment } from "@/types/streaming";
+import { recordLead } from "@/lib/leads";
 
 // Commented out - no longer needed with Apple OAuth
 // Keeping for reference in case of migration needs
@@ -192,6 +193,56 @@ export const signInWithMagicLinkAction = async (
   return {
     status: "success",
     message: `Check your email — we sent a sign-in link to ${email}.`,
+  };
+};
+
+/**
+ * State for captureLeadAction, rendered inline by the lead-capture form (useActionState)
+ * so a non-buyer gets immediate feedback without navigating away.
+ */
+export type LeadCaptureState = {
+  status: "success" | "error";
+  message: string;
+} | null;
+
+/**
+ * Email / lead capture (E1.7, FR-1.7.1/1.7.2). Stores a non-buyer's email at the
+ * top of the funnel for the Phase-3 nurture sequences. `source` (a hidden field)
+ * records where it was captured. Capture must not block on the email provider:
+ * recordLead stores first and sends the welcome best-effort.
+ *
+ * If a logged-in user submits, we attach their user_id; anonymous cold leads are fine.
+ */
+export const captureLeadAction = async (
+  _prevState: LeadCaptureState,
+  formData: FormData
+): Promise<LeadCaptureState> => {
+  const email = formData.get("email")?.toString().trim();
+  const source = formData.get("source")?.toString() || "unknown";
+
+  if (!email) {
+    return { status: "error", message: "Please enter your email address." };
+  }
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const result = await recordLead({ email, source, userId: user?.id ?? null });
+
+  if (!result.ok) {
+    return result.reason === "invalid_email"
+      ? { status: "error", message: "Please enter a valid email address." }
+      : {
+          status: "error",
+          message: "Something went wrong. Please try again.",
+        };
+  }
+
+  return {
+    status: "success",
+    message: "You're on the list — check your inbox for your free Day 1.",
   };
 };
 

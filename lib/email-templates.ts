@@ -228,3 +228,37 @@ export function renderPurchaseConfirmationEmail(ctx: {
   });
   return { subject: `You're in! ${ctx.productTitle} is ready`, html };
 }
+
+/**
+ * Welcome / lead-magnet email sent best-effort when a non-buyer leaves their email
+ * (E1.7). Marketing email → carries an unsubscribe link and is suppressed against
+ * email_opt_outs before sending. The CTA points at the genuine taster: Day 1 of the
+ * challenge is free to try, no purchase required.
+ */
+export function renderLeadWelcomeEmail(ctx: {
+  email: string;
+}): { subject: string; html: string } {
+  const ctaUrl = (() => {
+    const u = new URL(`${siteUrl()}/challenge`);
+    u.searchParams.set("utm_source", "email");
+    u.searchParams.set("utm_medium", "lead");
+    u.searchParams.set("utm_campaign", "lead_welcome");
+    return u.toString();
+  })();
+
+  const body = [
+    `Hi — it's ${FROM_NAME} from Lean Sporty. Thanks for joining the list!`,
+    "Here's the best way to start: <strong>Day 1 of the 21-Day Dance Challenge is free</strong>. Short, joyful dance workouts you can do in your living room — built for women who'd rather move than grind.",
+    "Give it a go, see how it feels, and dance it out whenever suits you. No equipment, no pressure.",
+  ];
+
+  const html = layout({
+    preheader: "Your free Day 1 is ready — dance it out at home, no equipment.",
+    heading: "Welcome — your free Day 1 is ready",
+    body,
+    cta: "Try Day 1 free",
+    ctaUrl,
+    unsubUrl: unsubscribeUrl(ctx.email),
+  });
+  return { subject: "Welcome to Lean Sporty — your free Day 1 is ready", html };
+}
