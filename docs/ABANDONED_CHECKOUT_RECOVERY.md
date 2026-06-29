@@ -56,6 +56,17 @@ unique index, so retries/repeat abandonments never start overlapping sequences.
 - `app/api/email/unsubscribe` — GET (link click, HTML confirmation) + POST (RFC 8058
   one-click). Sends `List-Unsubscribe` + `List-Unsubscribe-Post` headers.
 
+## Purchase confirmation (transactional)
+
+On `checkout.session.completed`, after the entitlement grant, the webhook sends a
+branded **purchase confirmation** (`renderPurchaseConfirmationEmail`): welcome +
+what they bought + access terms (lifetime or "until <date>") + amount paid + a
+"Start Day 1" CTA → `/my-program`. It is **transactional** — no unsubscribe link and
+**not** subject to `email_opt_outs` (a buyer must always get their access email).
+Best-effort: a send failure is logged and never fails the grant. Same Resend
+sender/Reply-To as recovery; needs the same env. (This is the welcome/access email,
+not the formal VAT invoice — that's OD-1 / Stripe Tax territory.)
+
 ## Go-live checklist (ops)
 
 1. **Resend** (reuse the existing account):

@@ -6,6 +6,8 @@ import {
   maybeSendNextStep,
   markCompletedFor,
 } from "@/lib/checkout-recovery";
+import { sendEmail } from "@/lib/email";
+import { renderPurchaseConfirmationEmail } from "@/lib/email-templates";
 
 export const runtime = "nodejs";
 
@@ -59,7 +61,7 @@ export async function POST(req: NextRequest) {
       // the entitlements FK and make Stripe retry forever).
       const { data: ourProduct } = await db
         .from("products")
-        .select("id")
+        .select("id, title")
         .eq("id", productId)
         .maybeSingle();
       if (!ourProduct) {
@@ -92,6 +94,24 @@ export async function POST(req: NextRequest) {
         await markCompletedFor(db, userId, productId);
       } catch (e) {
         console.error("Failed to close recovery row on purchase:", e);
+      }
+
+      // Transactional purchase confirmation (welcome + access + Start Day 1).
+      // Best-effort: a send failure must never fail the entitlement grant.
+      const buyerEmail = s.customer_details?.email ?? s.customer_email ?? null;
+      if (buyerEmail) {
+        try {
+          const { subject, html } = renderPurchaseConfirmationEmail({
+            productTitle: ourProduct.title,
+            amountCents: s.amount_total,
+            currency: s.currency,
+            expiresAt: expiresAt,
+          });
+          await sendEmail({ to: buyerEmail, subject, html });
+          console.log(`Purchase confirmation sent to ${buyerEmail} (session ${s.id})`);
+        } catch (e) {
+          console.error(`Purchase confirmation email FAILED for session ${s.id}:`, e);
+        }
       }
       break;
     }

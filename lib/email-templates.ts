@@ -87,7 +87,9 @@ function layout(opts: {
   body: string[];
   cta: string;
   ctaUrl: string;
-  unsubUrl: string;
+  /** Marketing emails pass this → footer shows an unsubscribe link. Omit for
+   *  transactional emails (receipts/access), which must not carry one. */
+  unsubUrl?: string;
 }): string {
   const paragraphs = opts.body
     .map(
@@ -95,6 +97,13 @@ function layout(opts: {
         `<p style="margin:0 0 16px;font-size:16px;line-height:1.6;color:${INK};">${p}</p>`
     )
     .join("");
+
+  const footer = opts.unsubUrl
+    ? `<p style="margin:0 0 6px;">You're receiving this because you started a purchase at Lean Sporty.</p>
+              <p style="margin:0 0 6px;">${IMPRINT}</p>
+              <p style="margin:0;"><a href="${opts.unsubUrl}" style="color:${MUTED};text-decoration:underline;">Unsubscribe from these emails</a></p>`
+    : `<p style="margin:0 0 6px;">This is a confirmation of your order at Lean Sporty.</p>
+              <p style="margin:0;">${IMPRINT}</p>`;
 
   return `<!doctype html>
 <html lang="en">
@@ -140,9 +149,7 @@ function layout(opts: {
         <table role="presentation" width="560" cellpadding="0" cellspacing="0" style="max-width:560px;width:100%;">
           <tr>
             <td style="padding:20px 32px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-size:12px;line-height:1.6;color:${MUTED};text-align:center;">
-              <p style="margin:0 0 6px;">You're receiving this because you started a purchase at Lean Sporty.</p>
-              <p style="margin:0 0 6px;">${IMPRINT}</p>
-              <p style="margin:0;"><a href="${opts.unsubUrl}" style="color:${MUTED};text-decoration:underline;">Unsubscribe from these emails</a></p>
+              ${footer}
             </td>
           </tr>
         </table>
@@ -167,4 +174,57 @@ export function renderRecoveryEmail(
     unsubUrl: unsubscribeUrl(ctx.email),
   });
   return { subject: content.subject, html };
+}
+
+function formatMoney(amountCents: number | null, currency: string | null): string {
+  if (amountCents == null) return "";
+  try {
+    return new Intl.NumberFormat("en-IE", {
+      style: "currency",
+      currency: (currency ?? "eur").toUpperCase(),
+    }).format(amountCents / 100);
+  } catch {
+    return `${(amountCents / 100).toFixed(2)} ${(currency ?? "eur").toUpperCase()}`;
+  }
+}
+
+function formatDate(iso: string): string {
+  return new Intl.DateTimeFormat("en-GB", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  }).format(new Date(iso));
+}
+
+/**
+ * Transactional purchase confirmation — sent after the webhook grants access.
+ * No unsubscribe link / no opt-out suppression: a buyer must always receive their
+ * access email. The CTA opens their buyer area (My Program).
+ */
+export function renderPurchaseConfirmationEmail(ctx: {
+  productTitle: string;
+  amountCents: number | null;
+  currency: string | null;
+  expiresAt: string | null;
+}): { subject: string; html: string } {
+  const price = formatMoney(ctx.amountCents, ctx.currency);
+  const access = ctx.expiresAt
+    ? `Your access runs until <strong>${formatDate(ctx.expiresAt)}</strong>.`
+    : `It's yours for life — no subscription, nothing to renew.`;
+
+  const body = [
+    `Payment confirmed — welcome aboard! You now have full access to <strong>${ctx.productTitle}</strong>.`,
+    `${access}${price ? ` You paid ${price}.` : ""}`,
+    `Everything's waiting in your program — start whenever suits you, no equipment needed.`,
+  ];
+
+  const html = layout({
+    preheader: "Your purchase is confirmed — your first session is ready.",
+    heading: "You're in — let's get moving",
+    body,
+    cta: "Start Day 1",
+    ctaUrl: `${siteUrl()}/my-program`,
+    // no unsubUrl → transactional footer (imprint only, no unsubscribe)
+  });
+  return { subject: `You're in! ${ctx.productTitle} is ready`, html };
 }
