@@ -13,7 +13,7 @@ export default async function InstructorStreamsPage() {
   // Check if instructor has profile
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) {
-    redirect("/login");
+    redirect("/sign-in?redirect=/instructor/streams");
   }
 
   const { data: instructorProfile } = await supabase

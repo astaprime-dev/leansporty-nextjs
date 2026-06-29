@@ -15,7 +15,7 @@ export default async function EditStreamPage({ params }: EditStreamPageProps) {
   // Check authentication
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) {
-    redirect("/login");
+    redirect("/sign-in?redirect=/instructor/streams");
   }
 
   // Get instructor profile

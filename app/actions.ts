@@ -195,14 +195,25 @@ export const signInWithMagicLinkAction = async (
   };
 };
 
-export const signInWithAppleAction = async () => {
+// Build the OAuth callback URL, carrying the intent-resume path (UX-FR-2) when one
+// is supplied via the form's hidden `next` field. Only same-site paths are honored
+// (must start with "/") to avoid an open-redirect.
+const oauthCallbackUrl = (origin: string | null, formData?: FormData) => {
+  const next = formData?.get("next")?.toString();
+  const safeNext = next && next.startsWith("/") ? next : undefined;
+  return safeNext
+    ? `${origin}/auth/callback?redirect_to=${encodeURIComponent(safeNext)}`
+    : `${origin}/auth/callback`;
+};
+
+export const signInWithAppleAction = async (formData?: FormData) => {
   const supabase = await createClient();
   const origin = (await headers()).get("origin");
 
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'apple',
     options: {
-      redirectTo: `${origin}/auth/callback`,
+      redirectTo: oauthCallbackUrl(origin, formData),
     },
   });
 
@@ -213,14 +224,14 @@ export const signInWithAppleAction = async () => {
   return redirect(data.url);
 };
 
-export const signInWithGoogleAction = async () => {
+export const signInWithGoogleAction = async (formData?: FormData) => {
   const supabase = await createClient();
   const origin = (await headers()).get("origin");
 
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
     options: {
-      redirectTo: `${origin}/auth/callback`,
+      redirectTo: oauthCallbackUrl(origin, formData),
     },
   });
 

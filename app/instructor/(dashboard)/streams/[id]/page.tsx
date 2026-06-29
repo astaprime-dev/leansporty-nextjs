@@ -33,7 +33,7 @@ export default async function StreamDetailPage({
   } = await supabase.auth.getUser();
 
   if (!user) {
-    redirect("/login");
+    redirect("/sign-in?redirect=/instructor/streams");
   }
 
   const { data: instructorProfile } = await supabase
