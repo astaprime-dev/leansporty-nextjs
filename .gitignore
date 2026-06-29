@@ -37,6 +37,10 @@ yarn-error.log*
 # vercel
 .vercel
 
+# claude code — commit shared skills, never the local/personal bits
+.claude/settings.local.json
+.claude/**/*.local.*
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
