@@ -1,6 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import type Stripe from "stripe";
 import { getStripe, getServiceRoleClient } from "@/lib/stripe";
+import {
+  recordAbandonment,
+  maybeSendNextStep,
+  markCompletedFor,
+} from "@/lib/checkout-recovery";
 
 export const runtime = "nodejs";
 
@@ -81,6 +86,61 @@ export async function POST(req: NextRequest) {
       console.log(
         `Entitlement granted: user=${userId} product=${productId} session=${s.id}`
       );
+      // They bought (possibly via a recovery link / new session) → stop any open
+      // recovery sequence for this (user, product). Best-effort; never fail the grant.
+      try {
+        await markCompletedFor(db, userId, productId);
+      } catch (e) {
+        console.error("Failed to close recovery row on purchase:", e);
+      }
+      break;
+    }
+
+    // Abandoned checkout (session expired without payment) → start the recovery
+    // sequence. The buyer was authenticated before checkout, so the session carries
+    // user + email + product. Send the first touch inline; the daily cron sends the
+    // follow-ups and is the backstop if this send fails.
+    case "checkout.session.expired": {
+      const s = event.data.object as Stripe.Checkout.Session;
+      const userId = s.client_reference_id;
+      const productId = s.metadata?.product_id;
+      const productSlug = s.metadata?.product_slug;
+      const email = s.customer_email ?? s.customer_details?.email ?? null;
+
+      if (!userId || !productId || !productSlug || !email) {
+        // Missing our identifiers (another app's session on this shared account, or
+        // a pre-recovery session without product_slug) → acknowledge and ignore.
+        return NextResponse.json({ received: true });
+      }
+
+      const { data: ourProduct } = await db
+        .from("products")
+        .select("id")
+        .eq("id", productId)
+        .maybeSingle();
+      if (!ourProduct) return NextResponse.json({ received: true });
+
+      try {
+        const row = await recordAbandonment(db, {
+          sessionId: s.id,
+          userId,
+          email,
+          productId,
+          productSlug,
+        });
+        if (row) {
+          try {
+            await maybeSendNextStep(db, row);
+          } catch (e) {
+            console.error(
+              `Recovery step-1 send failed for session ${s.id} (cron will retry):`,
+              e
+            );
+          }
+        }
+      } catch (e) {
+        console.error(`recordAbandonment failed for session ${s.id}:`, e);
+      }
       break;
     }
 

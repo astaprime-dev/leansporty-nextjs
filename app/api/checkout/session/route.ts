@@ -62,7 +62,10 @@ export async function POST(req: NextRequest) {
   // Time-boxed access: if the product config sets access_months, compute the
   // entitlement expiry now and carry it in metadata; the webhook applies it.
   // Omit/0 → lifetime (expires_at stays null).
-  const metadata: Record<string, string> = { product_id: product.id };
+  const metadata: Record<string, string> = {
+    product_id: product.id,
+    product_slug: productSlug, // carried to the webhook for the recovery resume link
+  };
   const accessMonths = (product.config as { access_months?: number } | null)
     ?.access_months;
   if (typeof accessMonths === "number" && accessMonths > 0) {
@@ -72,14 +75,27 @@ export async function POST(req: NextRequest) {
   }
 
   const origin = req.headers.get("origin") ?? "https://leansporty.com";
+
+  // Short expiry so an abandoned session fires `checkout.session.expired` ~1h later,
+  // which triggers the recovery sequence promptly (Stripe allows 30min–24h). A genuine
+  // buyer completes in minutes; anyone past the window is recovered via email.
+  // Subscriptions (Phase 2) don't support expires_at on Checkout, so payment-mode only.
+  const isPayment = product.kind !== "membership";
+  const RECOVERY_EXPIRY_MINUTES = 60;
   const session = await getStripe().checkout.sessions.create({
-    mode: product.kind === "membership" ? "subscription" : "payment",
+    mode: isPayment ? "payment" : "subscription",
     line_items: [{ price: product.stripe_price_id, quantity: 1 }],
     client_reference_id: user.id, // entitlement owner
     customer_email: user.email ?? undefined,
-    metadata, // product_id (+ expires_at for time-boxed grants)
+    metadata, // product_id, product_slug (+ expires_at for time-boxed grants)
     success_url: `${origin}/my-program?purchased=1&sid={CHECKOUT_SESSION_ID}`,
     cancel_url: `${origin}/challenge?canceled=1`,
+    ...(isPayment
+      ? {
+          expires_at:
+            Math.floor(Date.now() / 1000) + RECOVERY_EXPIRY_MINUTES * 60,
+        }
+      : {}),
     ...(stripeAutomaticTax ? { automatic_tax: { enabled: true } } : {}),
   });
 
