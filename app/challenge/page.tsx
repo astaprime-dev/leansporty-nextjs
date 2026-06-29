@@ -73,6 +73,26 @@ const FAQ = [
   },
 ];
 
+/**
+ * Marketing hero title: highlight one accent word ("Dance") in the brand
+ * gradient, rest in the plain page-title serif — same pattern as the homepage
+ * hero. Falls back to plain text if the word isn't present.
+ */
+function accentTitle(title: string) {
+  const accent = "Dance";
+  const i = title.toLowerCase().indexOf(accent.toLowerCase());
+  if (i === -1) return title;
+  return (
+    <>
+      {title.slice(0, i)}
+      <span className="bg-gradient-to-r from-pink-500 to-rose-400 bg-clip-text text-transparent">
+        {title.slice(i, i + accent.length)}
+      </span>
+      {title.slice(i + accent.length)}
+    </>
+  );
+}
+
 export default async function ChallengePage({
   searchParams,
 }: {
@@ -127,7 +147,7 @@ export default async function ChallengePage({
             moving again
           </span>
           <h1 className="font-display animate-fade-up mt-5 text-4xl font-light tracking-tight text-gray-900 sm:text-6xl">
-            {title}
+            {accentTitle(title)}
           </h1>
           <p className="mx-auto mt-4 max-w-2xl text-lg text-muted-foreground">
             {subtitle}
