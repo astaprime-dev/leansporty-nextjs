@@ -17,6 +17,34 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Authenticate FIRST — never create a Cloudflare live input for an
+    // unauthenticated / non-instructor caller (resource-abuse guard).
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      return NextResponse.json(
+        { error: "User not authenticated" },
+        { status: 401 }
+      );
+    }
+
+    const { data: instructorProfile, error: instructorError } = await supabase
+      .from("instructors")
+      .select("id")
+      .eq("user_id", user.id)
+      .single();
+
+    if (instructorError || !instructorProfile) {
+      console.error("Instructor lookup error:", instructorError);
+      return NextResponse.json(
+        { error: "Instructor profile not found. Please create your profile first." },
+        { status: 400 }
+      );
+    }
+
     // Check Cloudflare environment variables
     if (!process.env.CLOUDFLARE_ACCOUNT_ID || !process.env.CLOUDFLARE_API_TOKEN) {
       console.error("Missing Cloudflare credentials");
@@ -26,7 +54,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Create Cloudflare live input
+    // Create Cloudflare live input (only reached by an authenticated instructor)
     let cloudflare;
     try {
       cloudflare = await createLiveInput(data.title);
@@ -48,34 +76,6 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         { error: `Cloudflare error: ${cloudflareError.message || "Failed to create live input"}` },
         { status: 500 }
-      );
-    }
-
-    // Get authenticated user and instructor profile
-    const supabase = await createClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    if (!user) {
-      return NextResponse.json(
-        { error: "User not authenticated" },
-        { status: 401 }
-      );
-    }
-
-    // Get instructor profile
-    const { data: instructorProfile, error: instructorError } = await supabase
-      .from("instructors")
-      .select("id")
-      .eq("user_id", user.id)
-      .single();
-
-    if (instructorError || !instructorProfile) {
-      console.error("Instructor lookup error:", instructorError);
-      return NextResponse.json(
-        { error: "Instructor profile not found. Please create your profile first." },
-        { status: 400 }
       );
     }
 

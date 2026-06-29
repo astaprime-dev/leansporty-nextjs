@@ -34,8 +34,32 @@ export async function GET(
       timestamp: new Date().toISOString(),
     };
 
-    // If instructor requests details, include viewer list
+    // Viewer identities (who is watching) are disclosed ONLY to the stream's
+    // owning instructor — not to anonymous callers or other users.
+    let isOwner = false;
     if (includeDetails) {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (user) {
+        const { data: streamRow } = await supabase
+          .from('live_stream_sessions')
+          .select('instructor_id')
+          .eq('id', streamId)
+          .maybeSingle();
+        if (streamRow?.instructor_id) {
+          const { data: instructorProfile } = await supabase
+            .from('instructors')
+            .select('id')
+            .eq('user_id', user.id)
+            .maybeSingle();
+          isOwner = !!instructorProfile && instructorProfile.id === streamRow.instructor_id;
+        }
+      }
+    }
+
+    // If the owning instructor requests details, include the viewer list
+    if (includeDetails && isOwner) {
       // Get active viewer IDs and watch data from database function
       const { data: activeViewers, error: viewersError } = await supabase.rpc(
         'get_active_viewers',
