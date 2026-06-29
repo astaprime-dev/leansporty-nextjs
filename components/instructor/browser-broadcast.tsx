@@ -420,7 +420,7 @@ export function BrowserBroadcast({
       {/* Device Selection */}
       {(videoDevices.length > 1 || audioDevices.length > 1) && (
         <div className="bg-white rounded-lg border p-4 space-y-3">
-          <h3 className="font-medium text-sm text-gray-700 flex items-center gap-2">
+          <h3 className="font-semibold text-sm text-gray-700 flex items-center gap-2">
             <Camera className="w-4 h-4" />
             Device Settings
           </h3>

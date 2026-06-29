@@ -95,7 +95,7 @@ export function BroadcastManagementView({ stream }: BroadcastManagementViewProps
         {/* Left Column - Broadcast */}
         <div className="lg:col-span-2 space-y-6">
           <div>
-            <h1 className="text-3xl font-display font-light mb-2">{stream.title}</h1>
+            <h1 className="text-3xl sm:text-4xl font-display font-light text-gray-900 mb-2">{stream.title}</h1>
             <p className="text-gray-600">{stream.description}</p>
           </div>
 
@@ -124,7 +124,7 @@ export function BroadcastManagementView({ stream }: BroadcastManagementViewProps
                 <div className="inline-flex items-center justify-center w-16 h-16 bg-gray-100 rounded-full mb-4">
                   <Check className="w-8 h-8 text-gray-600" />
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">Stream Has Ended</h3>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">Stream Has Ended</h3>
                 <p className="text-gray-600 mb-6">
                   This class has finished. The recording is now available to enrolled students for 7 days.
                 </p>
@@ -148,7 +148,7 @@ export function BroadcastManagementView({ stream }: BroadcastManagementViewProps
 
           {/* Stream Info */}
           <div className="bg-white rounded-lg border p-6 space-y-4">
-            <h2 className="font-semibold text-lg">Stream Details</h2>
+            <h2 className="text-2xl font-semibold text-gray-900">Stream Details</h2>
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div className="flex items-center gap-2">
                 <Calendar className="w-4 h-4 text-gray-400" />
@@ -252,7 +252,7 @@ export function BroadcastManagementView({ stream }: BroadcastManagementViewProps
 
           {/* Comments Section */}
           <div className="bg-white rounded-lg border p-6">
-            <h2 className="font-semibold text-lg mb-6">Viewer Comments</h2>
+            <h2 className="text-2xl font-semibold text-gray-900 mb-6">Viewer Comments</h2>
             <CommentList
               streamId={stream.id}
               isInstructor={true}
@@ -335,8 +335,7 @@ export function BroadcastManagementView({ stream }: BroadcastManagementViewProps
           {/* WebRTC Info Card */}
           {/* {stream.cloudflare_webrtc_url && (
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-              <h4 className="font-medium text-blue-900 mb-2 flex items-center gap-2">
-                <span>🌐</span>
+              <h4 className="font-semibold text-gray-900 mb-2 flex items-center gap-2">
                 WebRTC Connection
               </h4>
               <p className="text-xs text-blue-700 mb-3">

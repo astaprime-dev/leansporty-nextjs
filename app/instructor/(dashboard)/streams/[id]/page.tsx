@@ -92,7 +92,7 @@ export default async function StreamDetailPage({
         <div className="flex flex-col sm:flex-row justify-between sm:items-start gap-4 mb-4">
           <div className="flex-1">
             <div className="flex items-center gap-3 mb-2">
-              <h1 className="text-3xl font-display font-light text-gray-900">
+              <h1 className="text-3xl sm:text-4xl font-display font-light text-gray-900">
                 {streamData.title}
               </h1>
               <Badge
@@ -222,7 +222,7 @@ export default async function StreamDetailPage({
       {streamData.status !== "ended" && (
         <div className="bg-gray-50 rounded-lg border p-12 text-center">
           <TrendingUp className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-          <h3 className="text-lg font-semibold text-gray-700 mb-2">
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">
             Analytics Coming Soon
           </h3>
           <p className="text-gray-600">

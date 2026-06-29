@@ -133,7 +133,7 @@ export function StreamWatchView({
       <div className="flex flex-col gap-4">
         <div className="flex items-start justify-between flex-wrap gap-4">
           <div className="flex-1">
-            <h1 className="text-3xl font-display font-light mb-2 text-gray-900">
+            <h1 className="text-3xl sm:text-4xl font-display font-light mb-2 text-gray-900">
               {stream.title}
             </h1>
             {stream.instructor_name && (

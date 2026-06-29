@@ -126,10 +126,8 @@ export default async function ChallengePage({
             <Sparkles className="h-3.5 w-3.5" /> For women who want to enjoy
             moving again
           </span>
-          <h1 className="font-display animate-fade-up mt-5 text-4xl font-light tracking-tight sm:text-6xl">
-            <span className="bg-gradient-to-r from-pink-500 to-rose-400 bg-clip-text text-transparent">
-              {title}
-            </span>
+          <h1 className="font-display animate-fade-up mt-5 text-4xl font-light tracking-tight text-gray-900 sm:text-6xl">
+            {title}
           </h1>
           <p className="mx-auto mt-4 max-w-2xl text-lg text-muted-foreground">
             {subtitle}

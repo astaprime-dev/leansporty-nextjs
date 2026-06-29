@@ -187,7 +187,7 @@ export function StreamAnalytics({ streamId }: StreamAnalyticsProps) {
     return (
       <div className="bg-gray-50 rounded-lg p-12 text-center">
         <TrendingUp className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-        <h3 className="text-lg font-semibold text-gray-700 mb-2">
+        <h3 className="text-lg font-semibold text-gray-900 mb-2">
           No Reactions Yet
         </h3>
         <p className="text-gray-600">
@@ -211,7 +211,7 @@ export function StreamAnalytics({ streamId }: StreamAnalyticsProps) {
             <div className="bg-pink-500 rounded-full p-2">
               <TrendingUp className="w-5 h-5 text-white" />
             </div>
-            <h3 className="font-semibold text-gray-700">Total Reactions</h3>
+            <h3 className="font-semibold text-gray-900">Total Reactions</h3>
           </div>
           <p className="text-3xl font-bold text-pink-600">{totalReactions}</p>
         </div>
@@ -223,7 +223,7 @@ export function StreamAnalytics({ streamId }: StreamAnalyticsProps) {
               <div className="bg-green-500 rounded-full p-2">
                 <Users className="w-5 h-5 text-white" />
               </div>
-              <h3 className="font-semibold text-gray-700">Most Popular</h3>
+              <h3 className="font-semibold text-gray-900">Most Popular</h3>
             </div>
             <div className="flex items-center gap-2">
               <span className="text-3xl">
@@ -257,7 +257,7 @@ export function StreamAnalytics({ streamId }: StreamAnalyticsProps) {
             >
               <AlertCircle className="w-5 h-5 text-white" />
             </div>
-            <h3 className="font-semibold text-gray-700">Technical Issues</h3>
+            <h3 className="font-semibold text-gray-900">Technical Issues</h3>
           </div>
           <p
             className={`text-3xl font-bold ${

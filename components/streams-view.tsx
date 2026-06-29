@@ -52,7 +52,7 @@ export function StreamsView({
       {/* Header */}
       <div className="flex justify-between items-start flex-wrap gap-4">
         <div>
-          <h1 className="text-5xl font-display font-light text-gray-900 mb-2">
+          <h1 className="text-3xl sm:text-4xl font-display font-light text-gray-900 mb-2">
             Live Streams
           </h1>
           <p className="text-muted-foreground">

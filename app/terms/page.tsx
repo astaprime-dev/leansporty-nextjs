@@ -12,7 +12,7 @@ export default function TermsOfServicePage() {
           >
             ← Back to Home
           </Link>
-          <h1 className="text-4xl font-display font-light text-gray-900 mb-2">
+          <h1 className="text-3xl sm:text-4xl font-display font-light text-gray-900 mb-2">
             Terms of Service
           </h1>
           <p className="text-gray-600">
@@ -52,13 +52,13 @@ export default function TermsOfServicePage() {
             {/* 2. Use of Service */}
             <section className="mb-8">
               <h2 className="text-2xl font-semibold text-gray-900 mb-4">2. Use of Service</h2>
-              <h3 className="text-xl font-medium text-gray-900 mb-3">Permitted Use</h3>
+              <h3 className="text-xl font-semibold text-gray-900 mb-3">Permitted Use</h3>
               <p className="text-gray-700 leading-relaxed">
                 You may use Lean Sporty for personal, non-commercial purposes to participate in fitness classes, track
                 your workout progress, and engage with our community.
               </p>
 
-              <h3 className="text-xl font-medium text-gray-900 mb-3 mt-6">Prohibited Activities</h3>
+              <h3 className="text-xl font-semibold text-gray-900 mb-3 mt-6">Prohibited Activities</h3>
               <p className="text-gray-700 leading-relaxed mb-2">You agree not to:</p>
               <ul className="list-disc list-inside text-gray-700 leading-relaxed space-y-2 ml-4">
                 <li>Record, copy, or redistribute our live streams or workout content without permission</li>

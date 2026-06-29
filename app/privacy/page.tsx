@@ -12,7 +12,7 @@ export default function PrivacyPolicyPage() {
           >
             ← Back to Home
           </Link>
-          <h1 className="text-4xl font-display font-light text-gray-900 mb-2">
+          <h1 className="text-3xl sm:text-4xl font-display font-light text-gray-900 mb-2">
             Privacy Policy
           </h1>
           <p className="text-gray-600">
@@ -34,7 +34,7 @@ export default function PrivacyPolicyPage() {
 
         {/* Contact Section */}
         <div className="mt-8 p-6 bg-pink-50 rounded-lg border border-pink-100">
-          <h2 className="text-xl font-semibold text-gray-900 mb-2">
+          <h2 className="text-2xl font-semibold text-gray-900 mb-2">
             Questions about our Privacy Policy?
           </h2>
           <p className="text-gray-700">

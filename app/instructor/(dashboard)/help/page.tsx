@@ -9,7 +9,7 @@ export default function InstructorHelpPage() {
         <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-pink-500 to-rose-400 rounded-full mb-4">
           <BookOpen className="w-8 h-8 text-white" strokeWidth={1.5} />
         </div>
-        <h1 className="text-4xl font-display font-light text-gray-900 mb-3">
+        <h1 className="text-3xl sm:text-4xl font-display font-light text-gray-900 mb-3">
           Instructor Guide
         </h1>
         <p className="text-lg text-gray-600 max-w-2xl mx-auto">

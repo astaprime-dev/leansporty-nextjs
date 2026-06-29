@@ -260,7 +260,7 @@ export default async function ProfilePage({
             {/* Profile Info */}
             <div className="flex-1 text-center md:text-left w-full">
               <div className="flex flex-col sm:flex-row items-center md:items-center gap-2 sm:gap-3 mb-2">
-                <h1 className="text-2xl sm:text-4xl font-display font-light text-gray-900">
+                <h1 className="text-3xl sm:text-4xl font-display font-light text-gray-900">
                   {profile.display_name}
                 </h1>
                 {isInstructor && <Badge variant="brand">INSTRUCTOR</Badge>}
@@ -319,7 +319,7 @@ export default async function ProfilePage({
         {/* Upcoming Streams (Instructors only) */}
         {isInstructor && upcomingStreams && upcomingStreams.length > 0 && (
           <div className="mb-6 sm:mb-8">
-            <h2 className="text-xl sm:text-2xl font-semibold mb-4 text-gray-900 px-2 sm:px-0">
+            <h2 className="text-2xl font-semibold mb-4 text-gray-900 px-2 sm:px-0">
               Upcoming Streams
             </h2>
             <div className="grid gap-4 sm:gap-6">
@@ -348,7 +348,7 @@ export default async function ProfilePage({
         {/* Past Streams (Instructors only) */}
         {isInstructor && pastStreams && pastStreams.length > 0 && (
           <div className="mb-6 sm:mb-8">
-            <h2 className="text-xl sm:text-2xl font-semibold mb-4 text-gray-900 px-2 sm:px-0">
+            <h2 className="text-2xl font-semibold mb-4 text-gray-900 px-2 sm:px-0">
               Past Classes
             </h2>
             <div className="grid sm:grid-cols-2 gap-4">
@@ -372,7 +372,7 @@ export default async function ProfilePage({
         {/* Reviews (Instructors only) */}
         {isInstructor && instructorComments && instructorComments.length > 0 && (
           <div className="mb-6 sm:mb-8">
-            <h2 className="text-xl sm:text-2xl font-semibold mb-4 text-gray-900 px-2 sm:px-0">
+            <h2 className="text-2xl font-semibold mb-4 text-gray-900 px-2 sm:px-0">
               Student Reviews
             </h2>
             <div className="grid gap-4">

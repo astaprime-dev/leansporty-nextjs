@@ -55,7 +55,7 @@ export default async function InstructorCommentsPage() {
   return (
     <div className="flex-1 w-full flex flex-col gap-6 px-4 py-8 max-w-6xl mx-auto">
       <div>
-        <h1 className="text-3xl font-display font-light mb-2">Comment Management</h1>
+        <h1 className="text-3xl sm:text-4xl font-display font-light text-gray-900 mb-2">Comment Management</h1>
         <p className="text-gray-600">
           View and manage comments on your streams
         </p>

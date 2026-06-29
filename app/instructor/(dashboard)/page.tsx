@@ -96,7 +96,7 @@ export default async function InstructorDashboard() {
     <div className="max-w-7xl mx-auto px-4 py-8">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-display font-light text-gray-900 mb-2">
+        <h1 className="text-3xl sm:text-4xl font-display font-light text-gray-900 mb-2">
           Welcome back, {userProfile?.display_name || 'Instructor'}
         </h1>
         <p className="text-gray-600">Here's what's happening with your streams</p>
@@ -156,7 +156,7 @@ export default async function InstructorDashboard() {
             <Calendar className="w-5 h-5 text-blue-500" />
             <span className="text-2xl font-bold text-gray-900">{stats.scheduled}</span>
           </div>
-          <h3 className="text-sm font-medium text-gray-600">Scheduled</h3>
+          <h3 className="text-sm font-semibold text-gray-600">Scheduled</h3>
         </div>
 
         <div className="bg-white rounded-lg border border-gray-200 p-6">
@@ -164,7 +164,7 @@ export default async function InstructorDashboard() {
             <div className="w-5 h-5 bg-red-500 rounded-full animate-pulse" />
             <span className="text-2xl font-bold text-gray-900">{stats.live}</span>
           </div>
-          <h3 className="text-sm font-medium text-gray-600">Live Now</h3>
+          <h3 className="text-sm font-semibold text-gray-600">Live Now</h3>
         </div>
 
         <div className="bg-white rounded-lg border border-gray-200 p-6">
@@ -172,7 +172,7 @@ export default async function InstructorDashboard() {
             <Users className="w-5 h-5 text-green-500" />
             <span className="text-2xl font-bold text-gray-900">{stats.totalEnrollments}</span>
           </div>
-          <h3 className="text-sm font-medium text-gray-600">Total Enrollments</h3>
+          <h3 className="text-sm font-semibold text-gray-600">Total Enrollments</h3>
         </div>
 
         <div className="bg-white rounded-lg border border-gray-200 p-6">
@@ -180,7 +180,7 @@ export default async function InstructorDashboard() {
             <DollarSign className="w-5 h-5 text-purple-500" />
             <span className="text-2xl font-bold text-gray-900">{stats.totalTokens}</span>
           </div>
-          <h3 className="text-sm font-medium text-gray-600">Tokens Earned</h3>
+          <h3 className="text-sm font-semibold text-gray-600">Tokens Earned</h3>
         </div>
       </div>
 
@@ -189,7 +189,7 @@ export default async function InstructorDashboard() {
         {/* Upcoming Streams */}
         <div>
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-semibold text-gray-900">Upcoming Streams</h2>
+            <h2 className="text-2xl font-semibold text-gray-900">Upcoming Streams</h2>
             <Link href="/instructor/streams">
               <Button variant="ghost" size="sm">
                 View All →
@@ -219,7 +219,7 @@ export default async function InstructorDashboard() {
                   <div className="bg-white rounded-lg border border-gray-200 p-4 hover:border-pink-300 hover:shadow-md transition-all">
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
-                        <h3 className="font-semibold text-gray-900 mb-1">
+                        <h3 className="text-lg font-semibold text-gray-900 mb-1">
                           {stream.title}
                         </h3>
                         <p className="text-sm text-gray-600 mb-2">
@@ -243,7 +243,7 @@ export default async function InstructorDashboard() {
 
         {/* Recent Enrollments */}
         <div>
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">Recent Enrollments</h2>
+          <h2 className="text-2xl font-semibold text-gray-900 mb-4">Recent Enrollments</h2>
 
           {!recentEnrollments || recentEnrollments.length === 0 ? (
             <EmptyState title="No enrollments yet" />

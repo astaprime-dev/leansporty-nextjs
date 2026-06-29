@@ -80,7 +80,7 @@ export default async function MyProgramPage({
       {purchased === "1" && !owned && <FinalizingAccess slug={CHALLENGE_SLUG} />}
 
       <header className="mb-8">
-        <h1 className="font-display text-4xl font-light text-gray-900">{product.title}</h1>
+        <h1 className="font-display text-3xl sm:text-4xl font-light text-gray-900">{product.title}</h1>
         {owned ? (
           <div className="mt-4">
             <div className="flex items-center justify-between text-sm text-muted-foreground">
