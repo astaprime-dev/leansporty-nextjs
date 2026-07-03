@@ -11,15 +11,16 @@ export default async function InstructorCommentsPage() {
     redirect('/sign-in?redirect=/instructor/comments');
   }
 
-  // Get instructor profile
+  // Get instructor profile. NOTE: instructors no longer has display_name (migrated to
+  // user_profiles) — selecting it errored, nulling `instructor` and bouncing to home.
   const { data: instructor } = await supabase
     .from('instructors')
-    .select('id, display_name')
+    .select('id')
     .eq('user_id', user.id)
     .single();
 
   if (!instructor) {
-    redirect('/');
+    redirect('/instructor/profile');
   }
 
   // Get all comments on instructor's streams
