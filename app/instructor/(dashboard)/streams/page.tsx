@@ -74,9 +74,11 @@ export default async function InstructorStreamsPage() {
               <div className="flex flex-col sm:flex-row justify-between sm:items-start gap-4">
                 <div className="flex-1 min-w-0">
                   <div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-2">
-                    <h3 className="text-xl font-semibold text-gray-900 break-words">
-                      {stream.title}
-                    </h3>
+                    <Link href={`/instructor/streams/${stream.id}`} className="group/title min-w-0">
+                      <h3 className="text-xl font-semibold text-gray-900 break-words transition-colors group-hover/title:text-pink-500">
+                        {stream.title}
+                      </h3>
+                    </Link>
                     <Badge
                       variant={
                         stream.status === "live"
