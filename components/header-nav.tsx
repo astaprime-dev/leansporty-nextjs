@@ -42,6 +42,9 @@ export default async function HeaderNav() {
           <NavLink href="/streams" className="text-sm font-light">
             Streams
           </NavLink>
+          <NavLink href="/teach" className="text-sm font-light">
+            Teach
+          </NavLink>
         </>
       )}
 

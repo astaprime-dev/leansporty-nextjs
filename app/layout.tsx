@@ -160,9 +160,11 @@ export default async function RootLayout({
                       {user && (
                         <Link href="/my-program" className="hover:text-pink-500 transition-colors">My Program</Link>
                       )}
-                      {user && (
-                        <Link href="/instructor/activate" className="hover:text-pink-500 transition-colors">Become an instructor</Link>
-                      )}
+                      {/* Instructor entry points: /teach recruits new instructors;
+                          /instructor is the Studio login (signed-out users are routed
+                          through sign-in, non-instructors on to activation). */}
+                      <Link href="/teach" className="hover:text-pink-500 transition-colors">Teach with us</Link>
+                      <Link href="/instructor" className="hover:text-pink-500 transition-colors">Instructor Studio</Link>
                     </div>
 
                     {/* Decorative Divider */}

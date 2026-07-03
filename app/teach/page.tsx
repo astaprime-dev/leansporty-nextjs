@@ -1,0 +1,396 @@
+import type { Metadata } from "next";
+import Link from "next/link";
+import {
+  Banknote,
+  Check,
+  Film,
+  Globe,
+  LifeBuoy,
+  MonitorPlay,
+  Sparkles,
+  Store,
+  TrendingUp,
+  Users,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { TeachApplyForm } from "@/components/teach/apply-form";
+
+export const metadata: Metadata = {
+  title: "Teach on Lean Sporty — keep 85% of every sale",
+  description:
+    "Live-stream your dance & fitness classes, sell seats worldwide, and get paid automatically. No tech setup, no monthly fee — you teach, we run everything else.",
+};
+
+/**
+ * Instructor recruiting landing page. Copy source of truth: INSTRUCTOR_PITCH.md
+ * (repo root) — keep numbers and promises in sync when the deal changes.
+ * CTA is an application (leads table, source 'teach-apply'), not self-serve
+ * signup: instructor activation stays curated/invite-only.
+ */
+
+const PLATFORM_FEATURES = [
+  {
+    icon: MonitorPlay,
+    title: "Go live from your browser",
+    body: "One click and you're streaming in broadcast quality. Prefer OBS? That works too. No software to learn, no setup calls.",
+  },
+  {
+    icon: Store,
+    title: "Your storefront, built for you",
+    body: "Every class gets a clean sales page with your profile, sign-ups, reminders, and checkout. You never touch a website builder.",
+  },
+  {
+    icon: Globe,
+    title: "Fair pricing, worldwide",
+    body: "You set one price. Students in Germany, Poland, or Brazil each see a fair local price — so far more of them can afford to join you.",
+  },
+  {
+    icon: Banknote,
+    title: "Money arrives by itself",
+    body: "Payments are collected for you and your share is paid straight to your bank on a regular schedule. No invoices, no chasing.",
+  },
+  {
+    icon: Film,
+    title: "Every class is recorded",
+    body: "Your live classes are saved automatically in full quality — your work keeps introducing you to new students after the stream ends.",
+  },
+  {
+    icon: LifeBuoy,
+    title: "Support handled",
+    body: "Failed cards, refunds, “I can’t log in” emails — our problem, not yours. You show up and teach.",
+  },
+];
+
+const DIY_LIST = [
+  "A streaming service subscription",
+  "A payment provider and checkout setup",
+  "A website with a booking page",
+  "Currency conversion and country pricing",
+  "Sending invoices and chasing payments",
+  "Refunds and customer-support emails",
+  "Hosting and protecting your recordings",
+];
+
+const STEPS = [
+  {
+    n: "1",
+    title: "Set up once — about 10 minutes",
+    body: "Create your profile and securely connect your bank account (handled by Stripe; we never see your bank details). You never do this again.",
+  },
+  {
+    n: "2",
+    title: "Schedule a class, set one price",
+    body: "Pick the date, the time, and one price in one currency. We handle everything else, including fair local pricing worldwide.",
+  },
+  {
+    n: "3",
+    title: "Teach",
+    body: "Go live from your browser or OBS. Only people who paid can watch — access is our job.",
+  },
+  {
+    n: "4",
+    title: "Get paid automatically",
+    body: "Your share lands in your bank on a regular schedule, and your earnings dashboard shows every sale.",
+  },
+];
+
+const OPPORTUNITIES = [
+  {
+    icon: Globe,
+    title: "Teach beyond your city",
+    body: "Your in-person class holds 20 people. Online, with fair local pricing, your audience is anyone, anywhere — without you leaving your living room.",
+  },
+  {
+    icon: TrendingUp,
+    title: "Your classes compound",
+    body: "Recordings join the members' library, where members keep discovering you long after the live class — and keep booking your next one.",
+  },
+  {
+    icon: Users,
+    title: "Grow with the platform",
+    body: "As Lean Sporty's member base grows, our audience discovers your classes too — students you'd never have reached on your own.",
+  },
+];
+
+const FAQ = [
+  {
+    q: "Could I ever end up owing money or earning nothing on a sale?",
+    a: "No. Your share is a percentage of every sale, so you're always positive. If a class doesn't sell, you've spent your time — never your money. There's no listing fee and no monthly fee.",
+  },
+  {
+    q: "Do I have to deal with refunds, failed cards, or support emails?",
+    a: "No. We handle payment problems, refunds, and customer support. You teach.",
+  },
+  {
+    q: "Different countries and currencies — do I have to figure that out?",
+    a: "No. You set one price; we handle all local pricing and conversion. Your percentage applies to whatever was actually paid. (On very small local prices we apply a small minimum fee of about €1.50 so card fees don't eat the sale — you still always earn.)",
+  },
+  {
+    q: "Does my share ever change?",
+    a: "Your 85% (founding 90%) applies to students you bring — your classes, your Instagram, your community. When our own marketing brings you students you'd never have reached, we keep a larger share on those specific sales — bonus income on top, never a cut of what your audience pays you.",
+  },
+  {
+    q: "Why do you keep the recordings?",
+    a: "It's the heart of the deal — and why we charge 15% instead of the 30–50% others take. Your recordings grow the members' library, the library grows the audience, and that audience keeps finding you and booking your future classes.",
+  },
+  {
+    q: "What about taxes?",
+    a: "You're paid as an independent instructor, so your earnings are yours to report — you get the records you need. Your share is your share; nothing surprising is deducted.",
+  },
+];
+
+export default function TeachPage() {
+  return (
+    <div className="w-full">
+      {/* Hero */}
+      <section className="bg-gradient-to-b from-pink-50 to-white">
+        <div className="mx-auto max-w-5xl px-4 py-16 text-center">
+          <span className="inline-flex items-center gap-2 rounded-full bg-pink-100 px-3 py-1 text-xs font-semibold text-pink-700">
+            <Sparkles className="h-3.5 w-3.5" /> For dance &amp; fitness
+            instructors
+          </span>
+          <h1 className="font-display animate-fade-up mt-5 text-4xl font-light tracking-tight text-gray-900 sm:text-6xl">
+            You{" "}
+            <span className="bg-gradient-to-r from-pink-500 to-rose-400 bg-clip-text text-transparent">
+              teach
+            </span>
+            . We run everything else.
+          </h1>
+          <p className="mx-auto mt-4 max-w-2xl text-lg text-muted-foreground">
+            Live-stream your classes, sell seats all over the world, and get
+            paid automatically — while you keep{" "}
+            <strong className="font-semibold text-gray-900">
+              85% of every sale
+            </strong>
+            . No website to build, no payments to chase, no monthly fee.
+          </p>
+          <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+            <Button
+              asChild
+              variant="brand"
+              className="h-12 px-8 text-base font-semibold"
+            >
+              <Link href="#apply">Apply to teach</Link>
+            </Button>
+            <Button
+              asChild
+              variant="brandOutline"
+              className="h-12 px-8 text-base"
+            >
+              <Link href="#how-it-works">See how it works</Link>
+            </Button>
+          </div>
+          <p className="mt-3 text-sm text-muted-foreground">
+            Free to join · no listing fees · founding instructors keep 90%
+          </p>
+          <p className="mt-6 text-sm text-muted-foreground">
+            Already teach on Lean Sporty?{" "}
+            <Link
+              href="/instructor"
+              className="font-semibold text-pink-600 transition-colors hover:text-pink-500"
+            >
+              Sign in to your Studio
+            </Link>
+          </p>
+        </div>
+      </section>
+
+      {/* Platform features — the convenience */}
+      <section className="mx-auto max-w-5xl px-4 py-14">
+        <h2 className="font-display text-center text-3xl font-light text-gray-900">
+          Everything you&apos;d have to build — already running
+        </h2>
+        <p className="mx-auto mt-2 max-w-2xl text-center text-muted-foreground">
+          The entire operation behind a paid online class, done for you from
+          day one.
+        </p>
+        <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {PLATFORM_FEATURES.map((f) => (
+            <div
+              key={f.title}
+              className="rounded-2xl border border-pink-100 bg-white p-6 shadow-sm"
+            >
+              <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-full bg-pink-100 text-pink-600">
+                <f.icon className="h-5 w-5" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900">{f.title}</h3>
+              <p className="mt-2 text-sm text-muted-foreground">{f.body}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* DIY comparison */}
+      <section className="bg-pink-50/50 py-14">
+        <div className="mx-auto max-w-5xl px-4">
+          <div className="grid items-center gap-8 lg:grid-cols-2">
+            <div>
+              <h2 className="font-display text-3xl font-light text-gray-900">
+                Doing it yourself means juggling all of this
+              </h2>
+              <ul className="mt-6 space-y-3">
+                {DIY_LIST.map((line) => (
+                  <li
+                    key={line}
+                    className="flex items-start gap-2 text-sm text-gray-700"
+                  >
+                    <Check className="mt-0.5 h-4 w-4 flex-shrink-0 text-pink-400" />
+                    {line}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="rounded-2xl border border-pink-100 bg-white p-8 text-center shadow-sm">
+              <p className="text-sm font-semibold uppercase tracking-wide text-pink-600">
+                On Lean Sporty
+              </p>
+              <p className="font-display mt-3 text-3xl font-light text-gray-900">
+                You set one price and press &ldquo;go live&rdquo;.
+              </p>
+              <p className="mt-3 text-sm text-muted-foreground">
+                Most platforms charge a monthly fee whether or not anyone shows
+                up. Here you pay nothing up front — ever. We only earn a small
+                share when you do.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* How it works */}
+      <section id="how-it-works" className="mx-auto max-w-5xl px-4 py-14">
+        <h2 className="font-display text-center text-3xl font-light text-gray-900">
+          From idea to money in the bank
+        </h2>
+        <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          {STEPS.map((s) => (
+            <div
+              key={s.n}
+              className="rounded-2xl border border-pink-100 bg-white p-6 shadow-sm"
+            >
+              <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-r from-pink-500 to-rose-400 text-sm font-semibold text-white">
+                {s.n}
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900">{s.title}</h3>
+              <p className="mt-2 text-sm text-muted-foreground">{s.body}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* The deal — worked example */}
+      <section className="bg-pink-50/50 py-14">
+        <div className="mx-auto max-w-3xl px-4">
+          <h2 className="font-display text-center text-3xl font-light text-gray-900">
+            The deal, in real numbers
+          </h2>
+          <p className="mx-auto mt-2 max-w-xl text-center text-muted-foreground">
+            You run a 60-minute live class and set the price at €49. Students
+            join from different countries, each paying a fair local price — and
+            you keep 85% of every sale.
+          </p>
+          <div className="mt-8 overflow-hidden rounded-2xl border border-pink-100 bg-white shadow-sm">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-pink-100 bg-pink-50/60 text-left">
+                  <th className="p-4 font-semibold text-gray-900">Student</th>
+                  <th className="p-4 font-semibold text-gray-900">
+                    Their fair local price
+                  </th>
+                  <th className="p-4 font-semibold text-gray-900">
+                    Your 85%
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-pink-50">
+                {[
+                  ["Anna, Germany", "€59", "€50.15"],
+                  ["Marta, Poland", "€39", "€33.15"],
+                  ["Lucia, Brazil", "€25", "€21.25"],
+                ].map(([who, paid, share]) => (
+                  <tr key={who}>
+                    <td className="p-4 text-gray-700">{who}</td>
+                    <td className="p-4 text-gray-700">{paid}</td>
+                    <td className="p-4 font-semibold text-gray-900">{share}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <div className="border-t border-pink-100 bg-pink-50/40 p-4 text-center text-sm text-gray-700">
+              30 students at an average of ~€45 ≈{" "}
+              <strong className="font-semibold text-gray-900">
+                €1,350 collected → ~€1,148 to your bank
+              </strong>{" "}
+              — automatically, for one class you taught once.
+            </div>
+          </div>
+          <p className="mt-4 text-center text-xs text-muted-foreground">
+            Every sale puts money in your pocket — there is no country where
+            you lose. On very small local prices a small minimum fee (~€1.50)
+            applies so card fees don&apos;t eat the sale.
+          </p>
+        </div>
+      </section>
+
+      {/* Opportunities */}
+      <section className="mx-auto max-w-5xl px-4 py-14">
+        <h2 className="font-display text-center text-3xl font-light text-gray-900">
+          What teaching here opens up
+        </h2>
+        <div className="mt-8 grid gap-6 sm:grid-cols-3">
+          {OPPORTUNITIES.map((o) => (
+            <div
+              key={o.title}
+              className="rounded-2xl border border-pink-100 bg-white p-6 text-center shadow-sm"
+            >
+              <div className="mx-auto mb-3 flex h-11 w-11 items-center justify-center rounded-full bg-pink-100 text-pink-600">
+                <o.icon className="h-5 w-5" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900">{o.title}</h3>
+              <p className="mt-2 text-sm text-muted-foreground">{o.body}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* FAQ */}
+      <section className="mx-auto max-w-3xl px-4 py-12">
+        <h2 className="font-display text-center text-3xl font-light text-gray-900">
+          The worries you probably have — answered
+        </h2>
+        <div className="mt-6 divide-y divide-gray-100 rounded-2xl border border-gray-100 bg-white">
+          {FAQ.map((f) => (
+            <div key={f.q} className="p-5">
+              <h3 className="text-lg font-semibold text-gray-900">{f.q}</h3>
+              <p className="mt-1 text-sm text-muted-foreground">{f.a}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Apply */}
+      <section id="apply" className="border-y border-pink-100/70 bg-pink-50/40 py-14">
+        <div className="mx-auto max-w-2xl px-4">
+          <div className="text-center">
+            <Badge variant="brand" className="mb-4">
+              Founding instructors keep 90%
+            </Badge>
+            <h2 className="font-display text-3xl font-light text-gray-900">
+              Become a founding instructor
+            </h2>
+            <p className="mx-auto mt-3 max-w-xl text-sm text-muted-foreground">
+              We&apos;re opening a small number of founding spots: keep 90% of
+              every sale, work directly with the founder, and shape the
+              platform around how you actually teach. Tell us a little about
+              yourself — it takes a minute.
+            </p>
+          </div>
+          <div className="mt-8 rounded-2xl border border-pink-100 bg-white p-6 shadow-sm sm:p-8">
+            <TeachApplyForm />
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+}

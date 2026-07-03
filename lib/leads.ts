@@ -33,6 +33,11 @@ export type RecordLeadArgs = {
   userId?: string | null;
   /** Free-form attribution payload (utm params, intent, etc.). */
   metadata?: Record<string, unknown>;
+  /**
+   * The default welcome email pitches the free Day 1 of the challenge — wrong for
+   * non-consumer leads (e.g. instructor applications). Pass false to store only.
+   */
+  sendWelcome?: boolean;
 };
 
 export type RecordLeadResult =
@@ -44,6 +49,7 @@ export async function recordLead({
   source,
   userId,
   metadata,
+  sendWelcome = true,
 }: RecordLeadArgs): Promise<RecordLeadResult> {
   const email = normalizeEmail(rawEmail);
   if (!isValidEmail(email)) return { ok: false, reason: "invalid_email" };
@@ -70,7 +76,7 @@ export async function recordLead({
   }
 
   // Best-effort welcome email — never blocks or fails the capture (FR-1.7.2).
-  void sendWelcomeEmail(db, email);
+  if (sendWelcome) void sendWelcomeEmail(db, email);
 
   return { ok: true };
 }
