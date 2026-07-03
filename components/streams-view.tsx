@@ -71,7 +71,7 @@ export function StreamsView({
             </span>
             <span>LIVE NOW</span>
           </h2>
-          <div className="grid gap-6">
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {liveStreams.map((stream) => (
               <StreamCard
                 key={stream.id}
@@ -94,7 +94,7 @@ export function StreamsView({
             description="Check back soon for new live sessions!"
           />
         ) : (
-          <div className="grid gap-6">
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {upcomingStreams.map((stream) => (
               <StreamCard
                 key={stream.id}

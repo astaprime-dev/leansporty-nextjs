@@ -453,8 +453,17 @@ export const getStreams = async (options?: {
   // 'scheduled' (so live / ended / cancelled are excluded). A class stays
   // discoverable while scheduled even if its start time has passed — it doesn't
   // vanish from the catalog because the clock moved; the instructor cancels it to
-  // remove it.
-  const upcomingData = allScheduledData || [];
+  // remove it. Order: soonest-upcoming first; already-passed classes sink to the
+  // end (most-recent first). Sorted server-side, so no hydration mismatch.
+  const nowIso = new Date().toISOString();
+  const upcomingData = (allScheduledData || []).slice().sort((a, b) => {
+    const aFuture = a.scheduled_start_time >= nowIso;
+    const bFuture = b.scheduled_start_time >= nowIso;
+    if (aFuture !== bFuture) return aFuture ? -1 : 1;
+    return aFuture
+      ? a.scheduled_start_time.localeCompare(b.scheduled_start_time)
+      : b.scheduled_start_time.localeCompare(a.scheduled_start_time);
+  });
 
   // Fetch user_profiles for all instructors
   const allStreams = [...(liveData || []), ...(upcomingData || [])];

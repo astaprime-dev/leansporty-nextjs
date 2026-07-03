@@ -106,159 +106,149 @@ export function StreamCard({ stream, enrollment, isLive, isAuthenticated }: Stre
   const { date, time } = formatDateTime(stream.scheduled_start_time);
 
   return (
-    <div className="group relative bg-white rounded-2xl border border-pink-100 hover:border-pink-300 shadow-sm hover:shadow-lg hover:shadow-pink-200/50 transition-all duration-300 overflow-hidden">
-      <div className="flex flex-col sm:flex-row gap-0 sm:gap-6">
-        {/* Thumbnail */}
-        <div className="relative w-full sm:w-64 h-48 sm:h-auto flex-shrink-0 bg-gradient-to-br from-pink-50 to-rose-50">
-          {stream.thumbnail_url ? (
-            <Image
-              src={stream.thumbnail_url}
-              alt={stream.title}
-              fill
-              className="object-cover"
-              sizes="(max-width: 640px) 100vw, 256px"
-            />
+    <div className="group relative flex flex-col overflow-hidden rounded-2xl border border-pink-100 bg-white shadow-sm transition-all duration-300 hover:border-pink-300 hover:shadow-lg hover:shadow-pink-200/50">
+      {/* Cover */}
+      <div className="relative aspect-video w-full overflow-hidden bg-gradient-to-br from-pink-50 to-rose-50">
+        {stream.thumbnail_url ? (
+          <Image
+            src={stream.thumbnail_url}
+            alt={stream.title}
+            fill
+            className="object-cover transition-transform duration-500 group-hover:scale-105"
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 400px"
+          />
+        ) : (
+          <div className="flex h-full w-full items-center justify-center">
+            <Video className="h-10 w-10 text-pink-300" strokeWidth={1.5} />
+          </div>
+        )}
+
+        {/* Live badge (top-left) */}
+        {isLive && (
+          <Badge
+            variant="live"
+            className="absolute left-3 top-3 gap-1.5 rounded-full px-3 py-1 text-xs shadow-sm"
+          >
+            <span className="relative flex h-1.5 w-1.5">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-white opacity-75"></span>
+              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-white"></span>
+            </span>
+            LIVE
+          </Badge>
+        )}
+
+        {/* Status / price (top-right) */}
+        <div className="absolute right-3 top-3">
+          {enrollment ? (
+            <span className="inline-flex items-center gap-1 rounded-full bg-green-500 px-2.5 py-1 text-xs font-semibold text-white shadow-sm">
+              <Check className="h-3 w-3" strokeWidth={2.5} /> Enrolled
+            </span>
+          ) : isPaid ? (
+            <span className="rounded-full bg-white/90 px-2.5 py-1 text-xs font-semibold text-gray-900 shadow-sm backdrop-blur-sm">
+              {priceLabel}
+            </span>
           ) : (
-            <div className="w-full h-full flex items-center justify-center">
-              <Video className="w-16 h-16 text-pink-400" strokeWidth={1.5} />
-            </div>
-          )}
-
-          {/* Live badge */}
-          {isLive && (
-            <Badge
-              variant="live"
-              className="absolute top-3 left-3 gap-2 rounded-lg px-4 py-2 text-sm shadow-lg"
-            >
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-white"></span>
-              </span>
-              LIVE
-            </Badge>
-          )}
-
-          {/* Duration badge */}
-          {!isLive && (
-            <Badge
-              variant="brand"
-              className="absolute bottom-3 left-3 rounded-lg px-4 py-2 text-sm shadow-lg"
-            >
-              {formatDuration(stream.scheduled_duration_seconds)}
-            </Badge>
+            <span className="rounded-full bg-white/90 px-2.5 py-1 text-xs font-semibold text-green-600 shadow-sm backdrop-blur-sm">
+              Free
+            </span>
           )}
         </div>
 
-        {/* Content */}
-        <div className="flex-1 p-6 flex flex-col justify-between">
-          <div>
-            <h2 className="text-2xl font-semibold mb-2 text-gray-900 group-hover:text-pink-500 transition-colors">
-              {stream.title}
-            </h2>
+        {/* Duration (bottom-right) */}
+        <span className="absolute bottom-3 right-3 rounded-full bg-white/85 px-2.5 py-1 text-xs font-medium text-gray-700 shadow-sm backdrop-blur-sm">
+          {formatDuration(stream.scheduled_duration_seconds)}
+        </span>
+      </div>
 
-            {stream.instructor && (
-              <p className="text-gray-600 mb-3">
-                with{" "}
-                <Link
-                  href={`/@${stream.instructor.slug}`}
-                  className="font-semibold hover:text-pink-500 transition-colors"
-                >
-                  {stream.instructor.display_name}
-                </Link>
-              </p>
-            )}
+      {/* Body */}
+      <div className="flex flex-1 flex-col p-5">
+        <h3 className="line-clamp-1 text-lg font-semibold text-gray-900 transition-colors group-hover:text-pink-500">
+          {stream.title}
+        </h3>
 
-            {stream.description && (
-              <p className="text-gray-500 mb-4 line-clamp-2">{stream.description}</p>
-            )}
+        {stream.instructor && (
+          <p className="mt-1 text-sm text-gray-600">
+            with{" "}
+            <Link
+              href={`/@${stream.instructor.slug}`}
+              className="font-semibold text-gray-900 transition-colors hover:text-pink-500"
+            >
+              {stream.instructor.display_name}
+            </Link>
+          </p>
+        )}
 
-            {/* Stream info */}
-            <div className="flex flex-wrap gap-4 text-sm text-gray-600 mb-4">
-              <div className="flex items-center gap-2">
-                <Calendar className="w-4 h-4 text-pink-500" />
-                <span>{date}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Clock className="w-4 h-4 text-pink-500" />
-                <span>
-                  {time} • {formatDuration(stream.scheduled_duration_seconds)}
-                </span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Users className="w-4 h-4 text-pink-500" />
-                <span>{stream.total_enrollments} enrolled</span>
-              </div>
-            </div>
-          </div>
+        {stream.description && (
+          <p className="mt-2 line-clamp-2 text-sm text-gray-500">
+            {stream.description}
+          </p>
+        )}
 
-          {/* Action buttons */}
-          <div className="flex flex-wrap items-center gap-3">
-            {enrollment ? (
-              <>
-                {/* Enrolled - show watch button */}
-                <Link href={`/streams/${stream.id}/watch`}>
-                  <Button variant="brand">
-                    {isLive ? "Watch Live" : "View Details"}
-                  </Button>
-                </Link>
-                <Badge variant="outline" className="border-green-500 text-green-700 bg-green-50 flex items-center gap-1">
-                  <Check className="w-3 h-3" strokeWidth={2.5} />
-                  Enrolled
-                </Badge>
-              </>
-            ) : !isAuthenticated ? (
-              <>
-                {/* Not authenticated - show sign in modal */}
-                <OAuthSignInModal>
-                  <Button variant="brand">
-                    {isPaid ? "Sign in to buy" : "Sign in to Enroll"}
-                  </Button>
-                </OAuthSignInModal>
-                {isPaid ? (
-                  <span className="font-semibold text-gray-900">{priceLabel}</span>
-                ) : (
-                  <span className="font-semibold text-green-600">Free</span>
-                )}
-              </>
-            ) : isPaid ? (
-              <>
-                {/* Authenticated, paid class - buy */}
-                <Button onClick={handleBuy} disabled={isBuying} variant="brand">
-                  {isBuying ? "Starting checkout…" : `Buy for ${priceLabel}`}
-                </Button>
-              </>
-            ) : (
-              <>
-                {/* Authenticated, free class - enroll */}
-                <Button
-                  onClick={handleEnroll}
-                  disabled={isEnrolling}
-                  variant="brand"
-                >
-                  {isEnrolling ? "Enrolling..." : "Enroll Now"}
-                </Button>
-                <span className="font-semibold text-green-600">Free</span>
-              </>
-            )}
+        {/* Meta */}
+        <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-gray-500">
+          <span className="inline-flex items-center gap-1.5">
+            <Calendar className="h-4 w-4 text-pink-400" /> {date}
+          </span>
+          <span className="inline-flex items-center gap-1.5">
+            <Clock className="h-4 w-4 text-pink-400" /> {time}
+          </span>
+          {stream.total_enrollments > 0 && (
+            <span className="inline-flex items-center gap-1.5">
+              <Users className="h-4 w-4 text-pink-400" /> {stream.total_enrollments} enrolled
+            </span>
+          )}
+        </div>
 
-            {/* Calendar download (only for upcoming streams) */}
-            {!isLive && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleDownloadCalendar}
-                className="border-pink-200 text-pink-600 hover:bg-pink-50"
-              >
-                <Download className="w-4 h-4 mr-2" />
-                Add to Calendar
+        {/* Actions */}
+        <div className="mt-auto flex items-center gap-2 border-t border-pink-50 pt-4">
+          {enrollment ? (
+            <Button asChild variant="brand" className="flex-1">
+              <Link href={`/streams/${stream.id}/watch`}>
+                {isLive ? "Watch live" : "View class"}
+              </Link>
+            </Button>
+          ) : !isAuthenticated ? (
+            <OAuthSignInModal>
+              <Button variant="brand" className="flex-1">
+                {isPaid ? "Sign in to buy" : "Sign in to enroll"}
               </Button>
-            )}
-          </div>
+            </OAuthSignInModal>
+          ) : isPaid ? (
+            <Button
+              onClick={handleBuy}
+              disabled={isBuying}
+              variant="brand"
+              className="flex-1"
+            >
+              {isBuying ? "Starting checkout…" : `Buy for ${priceLabel}`}
+            </Button>
+          ) : (
+            <Button
+              onClick={handleEnroll}
+              disabled={isEnrolling}
+              variant="brand"
+              className="flex-1"
+            >
+              {isEnrolling ? "Enrolling…" : "Enroll now"}
+            </Button>
+          )}
 
-          {enrollError && (
-            <p className="mt-3 text-sm text-red-600">{enrollError}</p>
+          {!isLive && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleDownloadCalendar}
+              aria-label="Add to calendar"
+              className="shrink-0 border-pink-200 text-pink-600 hover:bg-pink-50"
+            >
+              <Download className="h-4 w-4" />
+            </Button>
           )}
         </div>
+
+        {enrollError && (
+          <p className="mt-3 text-sm text-red-600">{enrollError}</p>
+        )}
       </div>
     </div>
   );
