@@ -338,7 +338,7 @@ const streamsWithInstructors = streams.map(s => ({
 }));
 ```
 
-**Why not nested joins?** Supabase PostgREST requires explicit foreign key constraints for nested selects. Since `stream_comments.user_id` and `instructors.user_id` both reference `auth.users.id` (not `user_profiles.user_id`), we fetch and merge separately.
+**Why not nested joins?** We fetch and merge display data (`user_profiles`) separately rather than nest-joining it. Note the reason has shifted: `stream_comments.user_id` now has **two** FK relationships — the inline one to `auth.users(id)` *plus* `stream_comments_user_profiles_fk` to `user_profiles(user_id)` (added in `20251227000000`). Two relationships on one column make a bare `user_profiles(...)` nested select **ambiguous** in PostgREST (it can't pick which FK). Other tables like `stream_enrollments.user_id` have **no** FK to `user_profiles` at all, so a nested select there simply fails. Either way, the fetch-and-merge pattern (below) is the reliable approach across all of them. *(The older rationale — "no FK to user_profiles exists" — is now only true for the non-comments tables.)*
 
 ---
 
@@ -369,9 +369,10 @@ const streamsWithInstructors = streams.map(s => ({
 
 ### Why Separate Fetch + Merge Pattern?
 
-**Problem:** Supabase nested selects require explicit foreign key constraints:
+**Problem:** Supabase nested selects need an *unambiguous* FK to the joined table — which we don't reliably have:
 ```typescript
-// This FAILS without FK from stream_comments.user_id to user_profiles
+// stream_enrollments: FAILS (no FK to user_profiles)
+// stream_comments:   AMBIGUOUS (two FKs on user_id — to auth.users AND user_profiles)
 .select('*, user_profiles!inner(display_name)')
 ```
 
@@ -410,9 +411,32 @@ Added the access-control spine. **Entitlements are the single source of truth fo
 
 **Cross-client note (iOS):** iOS reads `workouts.cloudflare_uid` and calls the playback-token route (Bearer auth) → `get_playable_uid`. A change to that function or column signature affects iOS playback.
 
+## Live streaming & instructor economics (S0–S5, `202607*`)
+
+The live-streaming tables predate this doc; the July 2026 Studio work (see
+`INSTRUCTOR_STUDIO_PLAN.md`) added the instructor-commerce layer and hardened RLS.
+
+- **`live_stream_sessions`** — one row per class. Public `SELECT` (discovery). Writes are owner-scoped (`20260629170000`); `DELETE` owner-scoped (`20260703000000`). Key columns: `instructor_id`, `status`, `broadcast_method`, recording columns, `thumbnail_url`, `max_viewers`, `total_enrollments` (bumped by a `SECURITY DEFINER` trigger, `20260703020000`), and **`product_id`** (null = free class; set = paid, links to `products`).
+- **`live_stream_ingest`** (`20260703000000`) — RTMPS/WHIP url+key secrets moved OUT of `live_stream_sessions` (which is publicly readable) into this **owner-only** table. RLS: only the owning instructor. Never expose to anon.
+- **`stream_enrollments`** — the class roster. `INSERT` is now **free-classes-only** (`20260704000000`); paid-class roster rows are written by the Stripe webhook (service-role). Instructors read their own classes' rosters (`20260704000000`).
+- **`products`** additions (`20260704000000`/`20260705000000`): `instructor_id` (null = platform product like the challenge), `stripe_product_id`, `split_pct` (default 85). **`instructors.split_pct`** (nullable; founding instructors → 90) is copied onto new products at creation.
+- **`stripe_class_prices`** (`20260704010000`) — reusable Stripe Prices keyed by `(currency, amount)` so paid classes share one Stripe Product + a Price pool instead of one product per class. Service-role only.
+- **`instructor_payouts`** (`20260705000000`) — per-sale ledger (gross, platform_fee, instructor_share, split_pct, status, batch). Webhook-only writes; instructor reads own. Basis for manual monthly payouts (`docs/INSTRUCTOR_PAYOUTS.md`).
+- **`instructor_invites`** (`20260703030000`) — single-use activation codes (replaced the shared token). RLS-locked, service-role only.
+- **`stream_reactions`** — `INSERT` re-gated to enrolled users + `user_id` defaults to `auth.uid()` (`20260703010000`).
+- **`stream_watch_sessions`** — instructors read their own classes' sessions for watch-time analytics (`20260706000000`).
+- **Function hygiene** (`20260707000000`): `get_playable_uid` + trivial timestamp/validation triggers pinned to `search_path = ''`. Left unpinned (SECURITY INVOKER, table refs, lower risk): `check_reaction_rate_limit`, `aggregate_stream_reactions`, `set_migration_schedule`.
+
+### Not attributed to instructors (platform-level, no `instructor_id`)
+`workout_progress`, `checkout_recovery`, `email_opt_outs`, `leads` — commerce/lifecycle tables tied to `auth.users`, not instructors. **Not yet built:** `cohorts` (multi-week programs), Stripe Connect tables — deferred (see plan).
+
+### Dead / replay hazards
+- **`stream_chat_messages`** is superseded by the comments system and unused by web or iOS — safe to drop later; left in place (dropping a prod table is destructive).
+- Two `create_user_profiles` migrations (`20250125000001`, `20251227`) both create the same policy without `DROP … IF EXISTS` guards, and the untimestamped `20251227_*` batch sorts such that `cleanup_instructors_table` runs before `migrate_data_to_user_profiles`. Both are **fresh-replay hazards only** (prod already applied them in the working order); mind them when standing up a new database.
+
 ## Migration Timeline
 
-### December 27, 2024
+### December 27, 2025
 
 1. **`20251227_create_user_profiles.sql`**
    - Created `user_profiles` table
