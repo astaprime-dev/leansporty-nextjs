@@ -105,7 +105,7 @@ export default async function InstructorEarningsPage() {
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         {tiles.map((t) => (
-          <div key={t.label} className="bg-white rounded-lg border border-gray-200 p-6">
+          <div key={t.label} className="bg-white rounded-2xl border border-pink-100 p-6">
             <div className="flex items-center justify-between mb-2">
               <t.icon className="w-5 h-5 text-pink-500" />
             </div>

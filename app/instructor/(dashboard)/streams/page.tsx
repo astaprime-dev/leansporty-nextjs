@@ -69,7 +69,7 @@ export default async function InstructorStreamsPage() {
           {streamsList.map((stream) => (
             <div
               key={stream.id}
-              className="bg-white rounded-lg border border-gray-200 p-6 hover:border-pink-300 hover:shadow-md transition-all"
+              className="bg-white rounded-2xl border border-pink-100 p-6 hover:border-pink-300 hover:shadow-md transition-all"
             >
               <div className="flex flex-col sm:flex-row justify-between sm:items-start gap-4">
                 <div className="flex-1 min-w-0">

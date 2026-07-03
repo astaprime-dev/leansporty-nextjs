@@ -67,7 +67,7 @@ function SortableGalleryItem({
       ref={setNodeRef}
       style={style}
       {...attributes}
-      className="relative group bg-white rounded-lg border-2 border-gray-200 overflow-hidden hover:border-pink-300 transition-colors"
+      className="relative group bg-white rounded-lg border-2 border-pink-100 overflow-hidden hover:border-pink-300 transition-colors"
     >
       {/* Drag Handle */}
       <div

@@ -147,59 +147,78 @@ export default async function InstructorDashboard() {
 
       {/* Quick Actions */}
       <div className="grid md:grid-cols-3 gap-4 mb-8">
-        <Link href="/instructor/streams/create">
-          <div className="bg-gradient-to-r from-pink-500 to-rose-400 rounded-lg p-6 text-white hover:shadow-lg transition-shadow cursor-pointer">
-            <Plus className="w-8 h-8 mb-2" />
-            <h3 className="text-xl font-semibold mb-1">Create New Stream</h3>
-            <p className="text-pink-50 text-sm">Schedule your next live class</p>
+        <Link href="/instructor/streams/create" className="group">
+          <div className="bg-gradient-to-r from-pink-500 to-rose-400 rounded-2xl p-6 text-white shadow-sm hover:shadow-lg hover:shadow-pink-200/50 transition-all cursor-pointer h-full">
+            <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-full bg-white/20">
+              <Plus className="w-5 h-5" />
+            </div>
+            <h3 className="text-lg font-semibold mb-1">Create a class</h3>
+            <p className="text-pink-50 text-sm">Schedule your next live session</p>
           </div>
         </Link>
-        <Link href={`/@${instructorProfile.slug}`} target="_blank">
-          <div className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-lg transition-shadow cursor-pointer">
-            <Eye className="w-8 h-8 mb-2 text-gray-600" />
-            <h3 className="text-xl font-semibold mb-1 text-gray-900">View Public Profile</h3>
-            <p className="text-gray-600 text-sm">See how others see your profile</p>
+        <Link href={`/@${instructorProfile.slug}`} target="_blank" className="group">
+          <div className="bg-white border border-pink-100 rounded-2xl p-6 shadow-sm hover:border-pink-300 hover:shadow-lg hover:shadow-pink-200/50 transition-all cursor-pointer h-full">
+            <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-full bg-pink-100 text-pink-600">
+              <Eye className="w-5 h-5" />
+            </div>
+            <h3 className="text-lg font-semibold mb-1 text-gray-900">View public profile</h3>
+            <p className="text-gray-600 text-sm">See how students see you</p>
           </div>
         </Link>
-        <Link href="/instructor/help">
-          <div className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-lg transition-shadow cursor-pointer">
-            <BookOpen className="w-8 h-8 mb-2 text-gray-600" />
-            <h3 className="text-xl font-semibold mb-1 text-gray-900">Instructor Guide</h3>
-            <p className="text-gray-600 text-sm">Learn how to maximize your success</p>
+        <Link href="/instructor/help" className="group">
+          <div className="bg-white border border-pink-100 rounded-2xl p-6 shadow-sm hover:border-pink-300 hover:shadow-lg hover:shadow-pink-200/50 transition-all cursor-pointer h-full">
+            <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-full bg-pink-100 text-pink-600">
+              <BookOpen className="w-5 h-5" />
+            </div>
+            <h3 className="text-lg font-semibold mb-1 text-gray-900">Instructor guide</h3>
+            <p className="text-gray-600 text-sm">Tips to teach and grow</p>
           </div>
         </Link>
       </div>
 
       {/* Statistics Grid */}
-      <div className="grid md:grid-cols-4 gap-4 mb-8">
-        <div className="bg-white rounded-lg border border-gray-200 p-6">
-          <div className="flex items-center justify-between mb-2">
-            <Calendar className="w-5 h-5 text-blue-500" />
-            <span className="text-2xl font-bold text-gray-900">{stats.scheduled}</span>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+        <div className="bg-white rounded-2xl border border-pink-100 p-6 shadow-sm">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-pink-100 text-pink-600">
+              <Calendar className="w-5 h-5" />
+            </div>
+            <span className="text-3xl font-semibold text-gray-900">{stats.scheduled}</span>
           </div>
           <h3 className="text-sm font-semibold text-gray-600">Scheduled</h3>
         </div>
 
-        <div className="bg-white rounded-lg border border-gray-200 p-6">
-          <div className="flex items-center justify-between mb-2">
-            <div className="w-5 h-5 bg-red-500 rounded-full animate-pulse" />
-            <span className="text-2xl font-bold text-gray-900">{stats.live}</span>
+        <div className="bg-white rounded-2xl border border-pink-100 p-6 shadow-sm">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-red-100">
+              <span className="relative flex h-2.5 w-2.5">
+                {stats.live > 0 && (
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-400 opacity-75"></span>
+                )}
+                <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-red-500"></span>
+              </span>
+            </div>
+            <span className="text-3xl font-semibold text-gray-900">{stats.live}</span>
           </div>
-          <h3 className="text-sm font-semibold text-gray-600">Live Now</h3>
+          <h3 className="text-sm font-semibold text-gray-600">Live now</h3>
         </div>
 
-        <div className="bg-white rounded-lg border border-gray-200 p-6">
-          <div className="flex items-center justify-between mb-2">
-            <Users className="w-5 h-5 text-green-500" />
-            <span className="text-2xl font-bold text-gray-900">{stats.totalEnrollments}</span>
+        <div className="bg-white rounded-2xl border border-pink-100 p-6 shadow-sm">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-pink-100 text-pink-600">
+              <Users className="w-5 h-5" />
+            </div>
+            <span className="text-3xl font-semibold text-gray-900">{stats.totalEnrollments}</span>
           </div>
-          <h3 className="text-sm font-semibold text-gray-600">Total Enrollments</h3>
+          <h3 className="text-sm font-semibold text-gray-600">Enrollments</h3>
         </div>
 
-        <div className="bg-white rounded-lg border border-gray-200 p-6">
-          <div className="flex items-center justify-between mb-2">
-            <CheckCircle2 className="w-5 h-5 text-purple-500" />
-            <span className="text-2xl font-bold text-gray-900">{stats.ended}</span>
+        <div className="bg-white rounded-2xl border border-pink-100 p-6 shadow-sm">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-pink-100 text-pink-600">
+              <CheckCircle2 className="w-5 h-5" />
+            </div>
+            <span className="text-3xl font-semibold text-gray-900">{stats.ended}</span>
           </div>
           <h3 className="text-sm font-semibold text-gray-600">Completed</h3>
         </div>
@@ -237,7 +256,7 @@ export default async function InstructorDashboard() {
                   href={`/instructor/streams/${stream.id}/broadcast`}
                   className="block"
                 >
-                  <div className="bg-white rounded-lg border border-gray-200 p-4 hover:border-pink-300 hover:shadow-md transition-all">
+                  <div className="bg-white rounded-2xl border border-pink-100 p-4 hover:border-pink-300 hover:shadow-md hover:shadow-pink-200/50 transition-all">
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
                         <h3 className="text-lg font-semibold text-gray-900 mb-1">
@@ -271,7 +290,7 @@ export default async function InstructorDashboard() {
           {!recentEnrollments || recentEnrollments.length === 0 ? (
             <EmptyState title="No enrollments yet" />
           ) : (
-            <div className="bg-white rounded-lg border border-gray-200 divide-y">
+            <div className="bg-white rounded-2xl border border-pink-100 divide-y divide-pink-50">
               {recentEnrollments.map((enrollment) => (
                 <Link
                   key={enrollment.id}

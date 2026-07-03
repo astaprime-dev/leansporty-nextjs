@@ -150,7 +150,7 @@ export function BroadcastManagementView({
 
           {/* Message when stream has ended */}
           {streamStatus === "ended" && (
-            <div className="bg-gray-50 rounded-lg border-2 border-gray-200 p-12">
+            <div className="bg-gray-50 rounded-lg border-2 border-pink-100 p-12">
               <div className="text-center">
                 <div className="inline-flex items-center justify-center w-16 h-16 bg-gray-100 rounded-full mb-4">
                   <Check className="w-8 h-8 text-gray-600" />

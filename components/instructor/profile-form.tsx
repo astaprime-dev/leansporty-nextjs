@@ -139,7 +139,7 @@ export function InstructorProfileForm({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6 bg-white rounded-lg border border-gray-200 p-6">
+    <form onSubmit={handleSubmit} className="space-y-6 bg-white rounded-lg border border-pink-100 p-6">
       {/* Display Name */}
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">

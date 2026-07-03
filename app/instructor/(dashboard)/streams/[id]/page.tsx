@@ -284,7 +284,7 @@ export default async function StreamDetailPage({
           <h2 className="text-2xl font-semibold">Class performance</h2>
         </div>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="rounded-lg border border-pink-100 bg-pink-50/40 p-4">
+          <div className="rounded-2xl border border-pink-100 bg-pink-50/40 p-4">
             <p className="text-sm text-gray-600">
               {isPaidClass ? "Sales" : "Enrolled"}
             </p>
@@ -293,22 +293,22 @@ export default async function StreamDetailPage({
             </p>
           </div>
           {isPaidClass ? (
-            <div className="rounded-lg border border-pink-100 bg-pink-50/40 p-4">
+            <div className="rounded-2xl border border-pink-100 bg-pink-50/40 p-4">
               <p className="text-sm text-gray-600">Your earnings</p>
               <p className="text-2xl font-bold text-gray-900">{fmtMoney(shareCents)}</p>
               <p className="text-xs text-gray-500 mt-1">{fmtMoney(grossCents)} gross</p>
             </div>
           ) : (
-            <div className="rounded-lg border border-pink-100 bg-pink-50/40 p-4">
+            <div className="rounded-2xl border border-pink-100 bg-pink-50/40 p-4">
               <p className="text-sm text-gray-600">Price</p>
               <p className="text-2xl font-bold text-green-600">Free</p>
             </div>
           )}
-          <div className="rounded-lg border border-pink-100 bg-pink-50/40 p-4">
+          <div className="rounded-2xl border border-pink-100 bg-pink-50/40 p-4">
             <p className="text-sm text-gray-600">Peak viewers</p>
             <p className="text-2xl font-bold text-gray-900">{streamData.max_viewers}</p>
           </div>
-          <div className="rounded-lg border border-pink-100 bg-pink-50/40 p-4">
+          <div className="rounded-2xl border border-pink-100 bg-pink-50/40 p-4">
             <p className="text-sm text-gray-600">Watch time</p>
             <p className="text-2xl font-bold text-gray-900">{fmtWatch(watchSeconds)}</p>
           </div>

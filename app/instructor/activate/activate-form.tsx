@@ -82,7 +82,7 @@ export default function InstructorActivateForm() {
           </Button>
         </form>
 
-        <div className="mt-6 pt-6 border-t border-gray-200">
+        <div className="mt-6 pt-6 border-t border-pink-100">
           <p className="text-xs text-gray-500 text-center">
             This is a secure instructor-only area. If you don't have an activation
             code, please contact the administrator.

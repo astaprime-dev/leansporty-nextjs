@@ -40,7 +40,7 @@ export function InstructorMobileMenu({
               {/* Navigation Links */}
               <Link
                 href="/instructor"
-                className="text-base font-medium text-gray-600 hover:text-pink-500 transition-colors py-2"
+                className="text-base font-light text-gray-600 hover:text-pink-500 transition-colors py-2"
                 onClick={() => setIsOpen(false)}
               >
                 Dashboard
@@ -48,7 +48,7 @@ export function InstructorMobileMenu({
 
               <Link
                 href="/instructor/streams"
-                className="text-base font-medium text-gray-600 hover:text-pink-500 transition-colors py-2"
+                className="text-base font-light text-gray-600 hover:text-pink-500 transition-colors py-2"
                 onClick={() => setIsOpen(false)}
               >
                 My Streams
@@ -56,7 +56,7 @@ export function InstructorMobileMenu({
 
               <Link
                 href="/instructor/streams/create"
-                className="text-base font-medium text-gray-600 hover:text-pink-500 transition-colors py-2"
+                className="text-base font-light text-gray-600 hover:text-pink-500 transition-colors py-2"
                 onClick={() => setIsOpen(false)}
               >
                 Create Stream
@@ -64,7 +64,7 @@ export function InstructorMobileMenu({
 
               <Link
                 href="/instructor/comments"
-                className="text-base font-medium text-gray-600 hover:text-pink-500 transition-colors py-2"
+                className="text-base font-light text-gray-600 hover:text-pink-500 transition-colors py-2"
                 onClick={() => setIsOpen(false)}
               >
                 Comments
@@ -72,7 +72,7 @@ export function InstructorMobileMenu({
 
               <Link
                 href="/instructor/earnings"
-                className="text-base font-medium text-gray-600 hover:text-pink-500 transition-colors py-2"
+                className="text-base font-light text-gray-600 hover:text-pink-500 transition-colors py-2"
                 onClick={() => setIsOpen(false)}
               >
                 Earnings
@@ -80,7 +80,7 @@ export function InstructorMobileMenu({
 
               <Link
                 href="/instructor/profile"
-                className="text-base font-medium text-gray-600 hover:text-pink-500 transition-colors py-2"
+                className="text-base font-light text-gray-600 hover:text-pink-500 transition-colors py-2"
                 onClick={() => setIsOpen(false)}
               >
                 My Profile
@@ -88,7 +88,7 @@ export function InstructorMobileMenu({
 
               <Link
                 href="/instructor/help"
-                className="text-base font-medium text-gray-600 hover:text-pink-500 transition-colors py-2"
+                className="text-base font-light text-gray-600 hover:text-pink-500 transition-colors py-2"
                 onClick={() => setIsOpen(false)}
               >
                 Help
