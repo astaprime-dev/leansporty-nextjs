@@ -408,7 +408,6 @@ export const getStreams = async (options?: {
   upcomingStreams: LiveStreamSession[];
 }> => {
   const supabase = await createClient();
-  const now = new Date().toISOString();
 
   // Build live streams query with instructor data (only id, slug, user_id)
   let liveQuery = supabase
@@ -450,21 +449,12 @@ export const getStreams = async (options?: {
     console.error("Error fetching upcoming streams:", upcomingError);
   }
 
-  // Filter upcoming streams based on context:
-  // - If viewing instructor profile: show ALL their scheduled streams
-  // - Otherwise: show future scheduled OR enrolled past scheduled
-  const upcomingData = (allScheduledData || []).filter((stream) => {
-    if (options?.instructorId) {
-      // On instructor profile: show all scheduled streams
-      return true;
-    }
-
-    const isFutureScheduled = stream.scheduled_start_time >= now;
-    const isEnrolled = options?.enrolledStreamIds?.includes(stream.id);
-
-    // Show if future scheduled OR user is enrolled (even if past scheduled)
-    return isFutureScheduled || isEnrolled;
-  });
+  // Show every scheduled class. The query above already restricts to status
+  // 'scheduled' (so live / ended / cancelled are excluded). A class stays
+  // discoverable while scheduled even if its start time has passed — it doesn't
+  // vanish from the catalog because the clock moved; the instructor cancels it to
+  // remove it.
+  const upcomingData = allScheduledData || [];
 
   // Fetch user_profiles for all instructors
   const allStreams = [...(liveData || []), ...(upcomingData || [])];
