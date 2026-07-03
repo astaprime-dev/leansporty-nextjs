@@ -40,6 +40,9 @@ interface StreamFormProps {
   mode: "create" | "edit";
 }
 
+/** Suggested class prices in EUR ("" = Free). Instructors can also enter a custom amount. */
+const PRESET_PRICES = ["", "5", "9", "12", "15", "19", "25", "39", "49"];
+
 export function StreamForm({ initialData, streamId, mode }: StreamFormProps) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
@@ -51,6 +54,10 @@ export function StreamForm({ initialData, streamId, mode }: StreamFormProps) {
     durationMinutes: initialData?.durationMinutes ?? 60,
     priceEuros: initialData?.priceEuros ?? "",
   });
+  // A price not in the preset list (e.g. an existing custom amount) starts in custom mode.
+  const [customPrice, setCustomPrice] = useState(
+    !!initialData?.priceEuros && !PRESET_PRICES.includes(initialData.priceEuros)
+  );
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -188,22 +195,47 @@ export function StreamForm({ initialData, streamId, mode }: StreamFormProps) {
         </div>
 
         <div className="space-y-1.5">
-          <Label htmlFor="stream-price">Price (EUR)</Label>
-          <Input
+          <Label htmlFor="stream-price">Price</Label>
+          <select
             id="stream-price"
-            type="number"
-            min={0}
-            step="0.01"
-            inputMode="decimal"
-            value={formData.priceEuros}
-            onChange={(e) =>
-              setFormData({ ...formData, priceEuros: e.target.value })
-            }
-            placeholder="0.00"
-          />
+            value={customPrice ? "custom" : formData.priceEuros}
+            onChange={(e) => {
+              const v = e.target.value;
+              if (v === "custom") {
+                setCustomPrice(true);
+                setFormData({ ...formData, priceEuros: "" });
+              } else {
+                setCustomPrice(false);
+                setFormData({ ...formData, priceEuros: v });
+              }
+            }}
+            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+          >
+            {PRESET_PRICES.map((p) => (
+              <option key={p || "free"} value={p}>
+                {p === "" ? "Free" : `€${p}`}
+              </option>
+            ))}
+            <option value="custom">Custom amount…</option>
+          </select>
+          {customPrice && (
+            <Input
+              type="number"
+              min={0.5}
+              step="0.01"
+              inputMode="decimal"
+              value={formData.priceEuros}
+              onChange={(e) =>
+                setFormData({ ...formData, priceEuros: e.target.value })
+              }
+              placeholder="e.g. 22.00"
+              aria-label="Custom price in euros"
+            />
+          )}
           <p className="text-xs text-gray-500">
-            Leave empty or 0 for a free class. Set a price and students pay to join;
-            you keep 85% (90% as a founding instructor), paid out via Stripe.
+            Pick a price or set a custom amount — students pay to join and you keep 85%
+            (90% as a founding instructor), paid out via Stripe. Choose Free to open the
+            class to everyone.
           </p>
         </div>
 

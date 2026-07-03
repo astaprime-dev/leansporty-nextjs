@@ -93,7 +93,7 @@ export async function PATCH(
       if (existingStream.product_id) {
         const { data: prod } = await supabase
           .from("products")
-          .select("id, slug, stripe_product_id")
+          .select("id, slug")
           .eq("id", existingStream.product_id)
           .maybeSingle();
         existing = prod;
