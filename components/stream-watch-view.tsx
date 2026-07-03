@@ -63,12 +63,24 @@ export function StreamWatchView({
   }
 
   if (!isLive && !recordingPlaybackId) {
+    const scheduled = stream.status === "scheduled";
+    const startsAt = new Date(stream.scheduled_start_time).toLocaleString(undefined, {
+      dateStyle: "medium",
+      timeStyle: "short",
+    });
     return (
       <div className="flex-1 w-full flex items-center justify-center p-8">
         <div className="text-center max-w-md">
-          <p className="text-xl text-gray-600 mb-4">Recording not available</p>
+          <Alert variant="success" className="mb-4 text-left">
+            You&apos;re enrolled in this class.
+          </Alert>
+          <p className="text-xl text-gray-900 mb-2">
+            {scheduled ? "Your class hasn't started yet" : "Recording not available"}
+          </p>
           <p className="text-sm text-gray-500">
-            The recording is not available at this time.
+            {scheduled
+              ? `It begins ${startsAt}. Come back then to join live — you're all set.`
+              : "The recording isn't available at this time."}
           </p>
         </div>
       </div>
