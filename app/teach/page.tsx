@@ -128,7 +128,7 @@ const FAQ = [
   },
   {
     q: "Does my share ever change?",
-    a: "Your 85% (founding 90%) applies to students you bring — your classes, your Instagram, your community. When our own marketing brings you students you'd never have reached, we keep a larger share on those specific sales — bonus income on top, never a cut of what your audience pays you.",
+    a: "Your 85% (featured 90%) applies to students you bring — your classes, your Instagram, your community. When our own marketing brings you students you'd never have reached, we keep a larger share on those specific sales — bonus income on top, never a cut of what your audience pays you.",
   },
   {
     q: "Why do you keep the recordings?",
@@ -182,7 +182,7 @@ export default function TeachPage() {
             </Button>
           </div>
           <p className="mt-3 text-sm text-muted-foreground">
-            Free to join · no listing fees · founding instructors keep 90%
+            Free to join · no listing fees · featured instructors keep 90%
           </p>
           <p className="mt-6 text-sm text-muted-foreground">
             Already teach on Lean Sporty?{" "}
@@ -374,16 +374,16 @@ export default function TeachPage() {
         <div className="mx-auto max-w-2xl px-4">
           <div className="text-center">
             <Badge variant="brand" className="mb-4">
-              Founding instructors keep 90%
+              Featured instructors keep 90%
             </Badge>
             <h2 className="font-display text-3xl font-light text-gray-900">
-              Become a founding instructor
+              Become a featured instructor
             </h2>
             <p className="mx-auto mt-3 max-w-xl text-sm text-muted-foreground">
-              We&apos;re opening a small number of founding spots: keep 90% of
-              every sale, work directly with the founder, and shape the
-              platform around how you actually teach. Tell us a little about
-              yourself — it takes a minute.
+              We&apos;re featuring a small number of instructors to start: keep 90%
+              of every sale, work directly with the founder, and shape the platform
+              around how you actually teach. Tell us a little about yourself — it
+              takes a minute.
             </p>
           </div>
           <div className="mt-8 rounded-2xl border border-pink-100 bg-white p-6 shadow-sm sm:p-8">

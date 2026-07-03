@@ -98,7 +98,7 @@ export default async function InstructorEarningsPage() {
 
       <Alert variant="info" className="mb-8">
         <p className="text-sm">
-          You keep your agreed share of every sale (85%, or 90% as a founding instructor).
+          You keep your agreed share of every sale (85%, or 90% as a featured instructor).
           Pending amounts are paid to your bank on a regular schedule.
         </p>
       </Alert>

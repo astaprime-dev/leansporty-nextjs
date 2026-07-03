@@ -422,7 +422,7 @@ export default function InstructorHelpPage() {
               <h3 className="text-lg font-semibold text-gray-900 mb-3">Paid classes are coming</h3>
               <p className="text-gray-700 mb-3">
                 When paid classes launch, you&apos;ll set one price and{" "}
-                <strong>keep 85% of every sale</strong> (90% for founding instructors).
+                <strong>keep 85% of every sale</strong> (90% for featured instructors).
                 We handle checkout, global pricing, and payouts; your share is paid
                 straight to your bank via Stripe. You&apos;ll never be out of pocket —
                 you only ever earn on a sale.

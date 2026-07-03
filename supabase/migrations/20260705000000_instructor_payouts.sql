@@ -7,13 +7,13 @@
 
 -- The instructor's share % is stored per product (locked when the class is created) so
 -- a later default change doesn't retroactively alter past classes. Default 85 (platform
--- keeps 15%); founding instructors can be set to 90 on their instructors row, which the
+-- keeps 15%); featured instructors can be set to 90 on their instructors row, which the
 -- provisioning helper copies onto new products.
 alter table public.products
   add column if not exists split_pct int not null default 85;
 
 alter table public.instructors
-  add column if not exists split_pct int;   -- null = platform default (85); e.g. 90 for founding
+  add column if not exists split_pct int;   -- null = platform default (85); e.g. 90 for featured
 
 create table if not exists public.instructor_payouts (
   id                    uuid primary key default gen_random_uuid(),

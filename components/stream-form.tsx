@@ -304,7 +304,7 @@ export function StreamForm({ initialData, streamId, mode }: StreamFormProps) {
           )}
           <p className="text-xs text-gray-500">
             Pick a price or set a custom amount — students pay to join and you keep 85%
-            (90% as a founding instructor), paid out via Stripe. Choose Free to open the
+            (90% as a featured instructor), paid out via Stripe. Choose Free to open the
             class to everyone.
           </p>
         </div>
