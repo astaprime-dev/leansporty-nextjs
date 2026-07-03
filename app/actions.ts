@@ -503,9 +503,31 @@ export const getStreams = async (options?: {
     } : null
   }));
 
+  // Attach linked products (paid classes) by a separate lookup — kept out of the
+  // stream select so /streams keeps working whether or not the S2 migration is applied.
+  const productIds = Array.from(new Set(
+    [...mergeLiveStreams, ...mergeUpcomingStreams]
+      .map((s) => (s as { product_id?: string | null }).product_id)
+      .filter((id): id is string => !!id)
+  ));
+  const productMap = new Map<string, { slug: string; price_cents: number; currency: string }>();
+  if (productIds.length > 0) {
+    const { data: products } = await supabase
+      .from('products')
+      .select('id, slug, price_cents, currency')
+      .in('id', productIds);
+    for (const p of products ?? []) {
+      productMap.set(p.id, { slug: p.slug, price_cents: p.price_cents, currency: p.currency });
+    }
+  }
+  const attachProduct = (s: Record<string, unknown>) => ({
+    ...s,
+    product: s.product_id ? productMap.get(s.product_id as string) ?? null : null,
+  });
+
   return {
-    liveStreams: mergeLiveStreams as LiveStreamSession[],
-    upcomingStreams: mergeUpcomingStreams as LiveStreamSession[],
+    liveStreams: mergeLiveStreams.map(attachProduct) as LiveStreamSession[],
+    upcomingStreams: mergeUpcomingStreams.map(attachProduct) as LiveStreamSession[],
   };
 };
 
@@ -654,6 +676,13 @@ export const enrollInStream = async (
     return { success: false, error: 'Stream not found' };
   }
 
+  // Paid classes are joined by purchasing (Stripe → webhook grants the roster row),
+  // not by this free self-serve enroll. The DB RLS also blocks it; this is the clean
+  // error. (S2)
+  if (stream.product_id) {
+    return { success: false, error: 'This class requires purchase.' };
+  }
+
   // Check if already enrolled
   const existing = await checkStreamEnrollment(streamId);
   if (existing) {
@@ -706,6 +735,18 @@ export const getStreamById = async (
   if (error) {
     console.error("Error fetching stream:", error);
     return null;
+  }
+
+  // Attach the linked product (paid class), if any. Fetched separately rather than
+  // nest-joined so the query works whether or not the S2 migration has been applied.
+  const productId = (data as { product_id?: string | null }).product_id;
+  if (productId) {
+    const { data: product } = await supabase
+      .from('products')
+      .select('slug, price_cents, currency')
+      .eq('id', productId)
+      .maybeSingle();
+    (data as LiveStreamSession).product = product ?? null;
   }
 
   return data as LiveStreamSession;

@@ -41,6 +41,19 @@ export default async function EditStreamPage({ params }: EditStreamPageProps) {
     notFound();
   }
 
+  // If this is a paid class, load its price so the form can prefill it.
+  let priceEuros = "";
+  if (stream.product_id) {
+    const { data: product } = await supabase
+      .from("products")
+      .select("price_cents")
+      .eq("id", stream.product_id)
+      .maybeSingle();
+    if (product?.price_cents) {
+      priceEuros = (product.price_cents / 100).toString();
+    }
+  }
+
   // Only allow editing streams that haven't started yet
   if (stream.status !== "scheduled") {
     redirect(`/instructor/streams/${id}/broadcast`);
@@ -56,7 +69,7 @@ export default async function EditStreamPage({ params }: EditStreamPageProps) {
     description: stream.description || "",
     scheduledStartTime,
     durationMinutes: Math.floor(stream.scheduled_duration_seconds / 60),
-    priceInTokens: stream.price_in_tokens,
+    priceEuros,
   };
 
   return <StreamForm mode="edit" streamId={id} initialData={initialData} />;

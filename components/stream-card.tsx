@@ -21,8 +21,47 @@ interface StreamCardProps {
 
 export function StreamCard({ stream, enrollment, isLive, isAuthenticated }: StreamCardProps) {
   const [isEnrolling, setIsEnrolling] = useState(false);
+  const [isBuying, setIsBuying] = useState(false);
   const [enrollError, setEnrollError] = useState<string | null>(null);
   const router = useRouter();
+
+  const isPaid = !!stream.product && stream.product.price_cents > 0;
+  const priceLabel = isPaid
+    ? new Intl.NumberFormat(undefined, {
+        style: "currency",
+        currency: (stream.product!.currency || "eur").toUpperCase(),
+      }).format(stream.product!.price_cents / 100)
+    : null;
+
+  const handleBuy = async () => {
+    if (!stream.product) return;
+    setIsBuying(true);
+    setEnrollError(null);
+    try {
+      const res = await fetch("/api/checkout/session", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          productSlug: stream.product.slug,
+          returnPath: `/streams/${stream.id}/watch`,
+        }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (data.alreadyOwned) {
+        router.push(`/streams/${stream.id}/watch`);
+        return;
+      }
+      if (data.url) {
+        window.location.href = data.url;
+        return;
+      }
+      setEnrollError("We couldn't start checkout. Please try again.");
+    } catch {
+      setEnrollError("We couldn't start checkout. Please try again.");
+    } finally {
+      setIsBuying(false);
+    }
+  };
 
   const handleEnroll = async () => {
     setIsEnrolling(true);
@@ -172,14 +211,25 @@ export function StreamCard({ stream, enrollment, isLive, isAuthenticated }: Stre
                 {/* Not authenticated - show sign in modal */}
                 <OAuthSignInModal>
                   <Button variant="brand">
-                    Sign in to Enroll
+                    {isPaid ? "Sign in to buy" : "Sign in to Enroll"}
                   </Button>
                 </OAuthSignInModal>
-                <span className="font-semibold text-green-600">Free</span>
+                {isPaid ? (
+                  <span className="font-semibold text-gray-900">{priceLabel}</span>
+                ) : (
+                  <span className="font-semibold text-green-600">Free</span>
+                )}
+              </>
+            ) : isPaid ? (
+              <>
+                {/* Authenticated, paid class - buy */}
+                <Button onClick={handleBuy} disabled={isBuying} variant="brand">
+                  {isBuying ? "Starting checkout…" : `Buy for ${priceLabel}`}
+                </Button>
               </>
             ) : (
               <>
-                {/* Authenticated but not enrolled - show enroll button */}
+                {/* Authenticated, free class - enroll */}
                 <Button
                   onClick={handleEnroll}
                   disabled={isEnrolling}

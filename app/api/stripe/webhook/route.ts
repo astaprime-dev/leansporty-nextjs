@@ -88,6 +88,29 @@ export async function POST(req: NextRequest) {
       console.log(
         `Entitlement granted: user=${userId} product=${productId} session=${s.id}`
       );
+
+      // If this product backs a paid live class, add the buyer to that class's
+      // roster (stream_enrollments). Users can't self-insert paid-class rosters
+      // (RLS), so this service-role write is the only way a buyer lands on the
+      // roster. Idempotent via the unique(stream_id,user_id) constraint.
+      try {
+        const { data: paidStream } = await db
+          .from("live_stream_sessions")
+          .select("id")
+          .eq("product_id", productId)
+          .maybeSingle();
+        if (paidStream) {
+          await db
+            .from("stream_enrollments")
+            .upsert(
+              { stream_id: paidStream.id, user_id: userId, tokens_paid: 0 },
+              { onConflict: "stream_id,user_id" }
+            );
+        }
+      } catch (e) {
+        console.error("Roster row insert failed (buyer still entitled):", e);
+      }
+
       // They bought (possibly via a recovery link / new session) → stop any open
       // recovery sequence for this (user, product). Best-effort; never fail the grant.
       try {
@@ -186,6 +209,14 @@ export async function POST(req: NextRequest) {
       const sessionId = sessions.data[0]?.id;
       if (!sessionId) break;
 
+      // Read the entitlement first so we can also remove the matching paid-class
+      // roster row (otherwise a refunded buyer keeps a roster row → keeps watch access).
+      const { data: revoking } = await db
+        .from("entitlements")
+        .select("user_id, product_id")
+        .eq("stripe_session_id", sessionId)
+        .maybeSingle();
+
       const { error } = await db
         .from("entitlements")
         .delete()
@@ -197,6 +228,26 @@ export async function POST(req: NextRequest) {
       console.log(
         `Entitlement revoked (${event.type}) for session=${sessionId}`
       );
+
+      // Remove the paid-class roster row for this buyer, if the product backs a class.
+      if (revoking) {
+        try {
+          const { data: paidStream } = await db
+            .from("live_stream_sessions")
+            .select("id")
+            .eq("product_id", revoking.product_id)
+            .maybeSingle();
+          if (paidStream) {
+            await db
+              .from("stream_enrollments")
+              .delete()
+              .eq("stream_id", paidStream.id)
+              .eq("user_id", revoking.user_id);
+          }
+        } catch (e) {
+          console.error("Roster row cleanup on refund failed:", e);
+        }
+      }
       break;
     }
 

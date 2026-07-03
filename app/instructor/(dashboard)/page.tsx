@@ -70,23 +70,38 @@ export default async function InstructorDashboard() {
     )
     .slice(0, 3);
 
-  // Fetch recent enrollments (we'll need to join with stream_enrollments table)
-  const { data: recentEnrollments } = await supabase
+  // Recent enrollments across this instructor's classes. Names are merged from
+  // user_profiles separately — stream_enrollments.user_id FKs to auth.users, not
+  // user_profiles, so a nested select can't join. (Reads rely on the instructor-roster
+  // SELECT policy from 20260704000000.)
+  const { data: recentRaw } = await supabase
     .from("stream_enrollments")
-    .select(`
-      *,
-      live_stream_sessions!inner (
-        title,
-        instructor_id
-      ),
-      user_profiles (
-        display_name,
-        username
-      )
-    `)
+    .select(`user_id, enrolled_at, stream_id, live_stream_sessions!inner(title, instructor_id)`)
     .eq("live_stream_sessions.instructor_id", instructorProfile.id)
     .order("enrolled_at", { ascending: false })
     .limit(5);
+
+  const enrolleeIds = (recentRaw ?? []).map((r) => r.user_id);
+  const nameById = new Map<string, string>();
+  if (enrolleeIds.length > 0) {
+    const { data: profs } = await supabase
+      .from("user_profiles")
+      .select("user_id, display_name")
+      .in("user_id", enrolleeIds);
+    for (const p of profs ?? []) nameById.set(p.user_id, p.display_name || "Member");
+  }
+  const recentEnrollments = (recentRaw ?? []).map((r) => {
+    const session = Array.isArray(r.live_stream_sessions)
+      ? r.live_stream_sessions[0]
+      : r.live_stream_sessions;
+    return {
+      id: `${r.stream_id}-${r.user_id}`,
+      streamId: r.stream_id,
+      streamTitle: session?.title ?? "Class",
+      name: nameById.get(r.user_id) || "Member",
+      enrolledAt: r.enrolled_at,
+    };
+  });
 
   // Check profile completion from user_profiles (only essential fields)
   const profileCompletion = {
@@ -257,24 +272,24 @@ export default async function InstructorDashboard() {
             <EmptyState title="No enrollments yet" />
           ) : (
             <div className="bg-white rounded-lg border border-gray-200 divide-y">
-              {recentEnrollments.map((enrollment: any) => (
-                <div key={enrollment.id} className="p-4">
+              {recentEnrollments.map((enrollment) => (
+                <Link
+                  key={enrollment.id}
+                  href={`/instructor/streams/${enrollment.streamId}/roster`}
+                  className="block p-4 hover:bg-pink-50/40 transition-colors"
+                >
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="font-medium text-gray-900">
-                        {enrollment.user_profiles?.display_name || "User"}
-                      </p>
-                      <p className="text-sm text-gray-600">
-                        {enrollment.live_stream_sessions.title}
-                      </p>
+                      <p className="font-medium text-gray-900">{enrollment.name}</p>
+                      <p className="text-sm text-gray-600">{enrollment.streamTitle}</p>
                     </div>
                     <div className="text-right">
                       <p className="text-xs text-gray-500">
-                        {new Date(enrollment.enrolled_at).toLocaleDateString()}
+                        {new Date(enrollment.enrolledAt).toLocaleDateString()}
                       </p>
                     </div>
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           )}

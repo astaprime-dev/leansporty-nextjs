@@ -2,14 +2,18 @@ import { checkStreamEnrollment, getStreamById } from "@/app/actions";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import { StreamWatchView } from "@/components/stream-watch-view";
+import { FinalizingAccess } from "@/components/challenge/cta";
 import { getStreamRecordings } from "@/lib/cloudflare-stream";
 
 export default async function StreamWatchPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ purchased?: string }>;
 }) {
   const { id: streamId } = await params;
+  const { purchased } = await searchParams;
 
   // Check authentication
   const supabase = await createClient();
@@ -22,19 +26,37 @@ export default async function StreamWatchPage({
     redirect("/streams?notice=signin");
   }
 
-  // Check enrollment
-  const enrollment = await checkStreamEnrollment(streamId);
-
-  if (!enrollment) {
-    // Not enrolled — explain the redirect instead of bouncing silently.
-    redirect("/streams?notice=enroll");
-  }
-
-  // Get stream details
+  // Get stream details first — we need product_id to tell free from paid.
   let stream = await getStreamById(streamId);
 
   if (!stream) {
     redirect("/streams?notice=notfound");
+  }
+
+  // Access = a roster row (stream_enrollments). For FREE classes users self-enroll;
+  // for PAID classes only the Stripe webhook inserts the row (self-enroll is
+  // RLS-blocked), so a roster row on a paid class is proof of purchase.
+  const enrollment = await checkStreamEnrollment(streamId);
+
+  if (!enrollment) {
+    // Paid class, buyer just returned from Checkout → the webhook grants access
+    // asynchronously. Poll for it instead of bouncing them to the catalog.
+    if (stream.product_id && purchased) {
+      const { data: prod } = await supabase
+        .from("products")
+        .select("slug")
+        .eq("id", stream.product_id)
+        .maybeSingle();
+      if (prod?.slug) {
+        return (
+          <div className="max-w-md mx-auto px-4 py-24">
+            <FinalizingAccess slug={prod.slug} />
+          </div>
+        );
+      }
+    }
+    // Not enrolled — explain the redirect instead of bouncing silently.
+    redirect("/streams?notice=enroll");
   }
 
   // If stream is ended but recording is not available yet, try to fetch it from Cloudflare

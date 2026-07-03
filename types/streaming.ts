@@ -31,7 +31,16 @@ export interface LiveStreamSession {
   // Broadcast method (which protocol is being used for streaming)
   broadcast_method: 'webrtc' | 'rtmps' | null;
 
-  // Pricing
+  // Pricing — real money (S2). product_id links a PAID class to its products row;
+  // null = free class. `product` is the joined price/slug for buy CTAs.
+  product_id: string | null;
+  product?: {
+    slug: string;
+    price_cents: number;
+    currency: string;
+  } | null;
+
+  // Pricing — legacy token column, retained (NOT NULL) but unused; always 0.
   price_in_tokens: number;
 
   // Cloudflare Stream — egress/playback only. Ingest secrets (WHIP/RTMPS url+key)

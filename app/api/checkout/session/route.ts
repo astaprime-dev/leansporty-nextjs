@@ -17,14 +17,21 @@ export const runtime = "nodejs";
  */
 export async function POST(req: NextRequest) {
   let productSlug: string | undefined;
+  let returnPath: string | undefined;
   try {
-    ({ productSlug } = await req.json());
+    ({ productSlug, returnPath } = await req.json());
   } catch {
     /* ignore */
   }
   if (!productSlug) {
     return NextResponse.json({ error: "productSlug required" }, { status: 400 });
   }
+  // Only accept a same-site relative path (open-redirect guard). Used by paid live
+  // classes to return the buyer to the class page instead of /my-program.
+  const safeReturnPath =
+    typeof returnPath === "string" && returnPath.startsWith("/") && !returnPath.startsWith("//")
+      ? returnPath
+      : null;
 
   const supabase = await createClient();
   const {
@@ -88,8 +95,12 @@ export async function POST(req: NextRequest) {
     client_reference_id: user.id, // entitlement owner
     customer_email: user.email ?? undefined,
     metadata, // product_id, product_slug (+ expires_at for time-boxed grants)
-    success_url: `${origin}/my-program?purchased=1&sid={CHECKOUT_SESSION_ID}`,
-    cancel_url: `${origin}/challenge?canceled=1`,
+    success_url: safeReturnPath
+      ? `${origin}${safeReturnPath}${safeReturnPath.includes("?") ? "&" : "?"}purchased=1&sid={CHECKOUT_SESSION_ID}`
+      : `${origin}/my-program?purchased=1&sid={CHECKOUT_SESSION_ID}`,
+    cancel_url: safeReturnPath
+      ? `${origin}${safeReturnPath}${safeReturnPath.includes("?") ? "&" : "?"}canceled=1`
+      : `${origin}/challenge?canceled=1`,
     ...(isPayment
       ? {
           expires_at:

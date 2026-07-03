@@ -132,6 +132,12 @@ export default async function StreamDetailPage({
                 </Button>
               </Link>
             )}
+            <Link href={`/instructor/streams/${id}/roster`}>
+              <Button variant="outline">
+                <Users className="w-4 h-4 mr-2" />
+                Roster
+              </Button>
+            </Link>
             {streamData.status === "scheduled" && (
               <Link href={`/instructor/streams/${id}/edit`}>
                 <Button variant="outline">

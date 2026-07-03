@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
 import { createLiveInput } from "@/lib/cloudflare-stream";
+import { provisionStreamProduct } from "@/lib/stream-products";
+
+export const runtime = "nodejs";
 
 export async function POST(request: NextRequest) {
   try {
@@ -37,15 +40,19 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Validate price (non-negative integer). Token pricing is vestigial (S1), but the
-    // column is NOT NULL — keep it valid until S2 re-founds pricing on real money.
-    const priceInTokens = Number(data.priceInTokens ?? 0);
-    if (!Number.isInteger(priceInTokens) || priceInTokens < 0) {
+    // Validate price in minor units (S2): 0 = free, otherwise a whole number of cents
+    // ≥ 50 (Stripe's practical minimum). Currency defaults to eur.
+    const priceCents = Number(data.priceCents ?? 0);
+    if (!Number.isInteger(priceCents) || priceCents < 0 || (priceCents > 0 && priceCents < 50)) {
       return NextResponse.json(
-        { error: "Price must be a whole, non-negative number." },
+        { error: "Price must be 0 (free) or at least 50 cents." },
         { status: 400 }
       );
     }
+    const currency =
+      typeof data.currency === "string" && data.currency.trim()
+        ? data.currency.trim().toLowerCase()
+        : "eur";
 
     // Validate scheduled time: must be a real date AND in the future. Guard against
     // the `new Date(undefined) <= now` bypass (NaN comparisons are always false).
@@ -130,7 +137,7 @@ export async function POST(request: NextRequest) {
         instructor_id: instructorProfile.id,
         scheduled_start_time: scheduledDate.toISOString(),
         scheduled_duration_seconds: durationMinutes * 60,
-        price_in_tokens: priceInTokens,
+        price_in_tokens: 0, // legacy column (NOT NULL); real pricing lives on the linked product
         cloudflare_stream_id: cloudflare.streamId,
         cloudflare_playback_id: cloudflare.playbackId,
         cloudflare_whep_playback_url: cloudflare.whepPlaybackUrl,
@@ -169,6 +176,36 @@ export async function POST(request: NextRequest) {
         { error: "Failed to save stream. Please try again." },
         { status: 500 }
       );
+    }
+
+    // Paid class → provision its Stripe product/price and link it. The stream is
+    // already saved (as free) if this fails, so we surface the error but keep the
+    // class; the instructor can re-price via Edit.
+    if (priceCents > 0) {
+      try {
+        const { productId } = await provisionStreamProduct({
+          instructorId: instructorProfile.id,
+          streamId: stream.id,
+          title,
+          priceCents,
+          currency,
+        });
+        await supabase
+          .from("live_stream_sessions")
+          .update({ product_id: productId })
+          .eq("id", stream.id)
+          .eq("instructor_id", instructorProfile.id);
+      } catch (e) {
+        console.error("Stream product provisioning failed:", e);
+        return NextResponse.json(
+          {
+            streamId: stream.id,
+            success: true,
+            warning: "Your class was created, but pricing couldn't be set up. Edit the class to add a price.",
+          },
+          { status: 200 }
+        );
+      }
     }
 
     return NextResponse.json({ streamId: stream.id, success: true });

@@ -30,7 +30,8 @@ interface StreamFormData {
   description: string;
   scheduledStartTime: string;
   durationMinutes: number;
-  priceInTokens: number;
+  /** Price in EUR as the instructor types it ("" or "0" = free). */
+  priceEuros: string;
 }
 
 interface StreamFormProps {
@@ -48,7 +49,7 @@ export function StreamForm({ initialData, streamId, mode }: StreamFormProps) {
     description: initialData?.description || "",
     scheduledStartTime: initialData?.scheduledStartTime || "",
     durationMinutes: initialData?.durationMinutes ?? 60,
-    priceInTokens: initialData?.priceInTokens ?? 0,
+    priceEuros: initialData?.priceEuros ?? "",
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -56,15 +57,34 @@ export function StreamForm({ initialData, streamId, mode }: StreamFormProps) {
     setIsLoading(true);
     setError(null);
 
+    // "" / invalid / ≤0 → free (0 cents). Otherwise euros → integer cents.
+    const eurosNum = parseFloat(formData.priceEuros);
+    const priceCents =
+      Number.isFinite(eurosNum) && eurosNum > 0 ? Math.round(eurosNum * 100) : 0;
+    if (priceCents > 0 && priceCents < 50) {
+      setIsLoading(false);
+      setError("A paid class must be at least €0.50, or leave the price empty for free.");
+      return;
+    }
+
     try {
       const url = mode === "create"
         ? "/api/instructor/streams/create"
         : `/api/instructor/streams/${streamId}/update`;
 
+      const payload = {
+        title: formData.title,
+        description: formData.description,
+        scheduledStartTime: formData.scheduledStartTime,
+        durationMinutes: formData.durationMinutes,
+        priceCents,
+        currency: "eur",
+      };
+
       const response = await fetch(url, {
         method: mode === "create" ? "POST" : "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(payload),
       });
 
       const result = await response.json();
@@ -167,13 +187,23 @@ export function StreamForm({ initialData, streamId, mode }: StreamFormProps) {
           </div>
         </div>
 
-        <div className="rounded-lg border border-pink-100 bg-pink-50/40 p-4">
-          <p className="text-sm font-medium text-gray-900">
-            Free while in early access
-          </p>
-          <p className="text-xs text-gray-500 mt-1">
-            Your classes are free for students right now. Paid classes — where you
-            set a price and get paid — are coming soon.
+        <div className="space-y-1.5">
+          <Label htmlFor="stream-price">Price (EUR)</Label>
+          <Input
+            id="stream-price"
+            type="number"
+            min={0}
+            step="0.01"
+            inputMode="decimal"
+            value={formData.priceEuros}
+            onChange={(e) =>
+              setFormData({ ...formData, priceEuros: e.target.value })
+            }
+            placeholder="0.00"
+          />
+          <p className="text-xs text-gray-500">
+            Leave empty or 0 for a free class. Set a price and students pay to join;
+            you keep 85% (90% as a founding instructor), paid out via Stripe.
           </p>
         </div>
 
