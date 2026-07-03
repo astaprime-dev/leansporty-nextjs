@@ -69,6 +69,18 @@ export default async function RootLayout({
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
+  // Instructors are creators, not app-download targets — hide the consumer
+  // "Download App" CTA for them.
+  let isInstructor = false;
+  if (user) {
+    const { data: instr } = await supabase
+      .from("instructors")
+      .select("id")
+      .eq("user_id", user.id)
+      .maybeSingle();
+    isInstructor = !!instr;
+  }
+
   return (
     <html lang="en" className={`${geistSans.className} ${playfair.variable}`} suppressHydrationWarning>
       <body className="bg-background text-foreground">
@@ -101,7 +113,13 @@ export default async function RootLayout({
                     {/* Primary CTA - Desktop only.
                         Anonymous → drive to the web offer (the commerce surface).
                         Signed in → Download App (iOS = watch/retention surface). */}
-                    {user ? (
+                    {!user ? (
+                      <Button asChild variant="brand" className="hidden sm:inline-flex gap-2 text-xs lg:text-sm lg:px-6">
+                        <Link href="/challenge">
+                          <span>Start the Challenge</span>
+                        </Link>
+                      </Button>
+                    ) : !isInstructor ? (
                       <Button asChild variant="brand" className="hidden sm:inline-flex gap-2 text-xs lg:text-sm lg:px-6">
                         <a
                           href="https://apps.apple.com/app/id6745218800"
@@ -111,13 +129,7 @@ export default async function RootLayout({
                           <span>Download App</span>
                         </a>
                       </Button>
-                    ) : (
-                      <Button asChild variant="brand" className="hidden sm:inline-flex gap-2 text-xs lg:text-sm lg:px-6">
-                        <Link href="/challenge">
-                          <span>Start the Challenge</span>
-                        </Link>
-                      </Button>
-                    )}
+                    ) : null}
 
                     {/* Mobile Menu */}
                     <MobileMenuWrapper />

@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/empty-state";
 import { createClient } from "@/utils/supabase/server";
 import { LiveStreamSession } from "@/types/streaming";
-import { Plus, Calendar, Users, CheckCircle2, Eye, BookOpen } from "lucide-react";
+import { Plus, Calendar, Users, CheckCircle2, BookOpen } from "lucide-react";
 import { redirect } from "next/navigation";
 
 export default async function InstructorDashboard() {
@@ -116,11 +116,19 @@ export default async function InstructorDashboard() {
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
       {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-3xl sm:text-4xl font-display font-light text-gray-900 mb-2">
-          Welcome back, {userProfile?.display_name || 'Instructor'}
-        </h1>
-        <p className="text-gray-600">Here's what's happening with your streams</p>
+      <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h1 className="text-3xl sm:text-4xl font-display font-light text-gray-900 mb-2">
+            Welcome back, {userProfile?.display_name || 'Instructor'}
+          </h1>
+          <p className="text-gray-600">Here&apos;s what&apos;s happening with your classes</p>
+        </div>
+        <Button asChild variant="brand" className="shrink-0 gap-2">
+          <Link href="/instructor/streams/create">
+            <Plus className="w-4 h-4" />
+            Create a class
+          </Link>
+        </Button>
       </div>
 
       {/* Profile Completion Alert */}
@@ -144,37 +152,6 @@ export default async function InstructorDashboard() {
           </div>
         </Alert>
       )}
-
-      {/* Quick Actions */}
-      <div className="grid md:grid-cols-3 gap-4 mb-8">
-        <Link href="/instructor/streams/create" className="group">
-          <div className="bg-gradient-to-r from-pink-500 to-rose-400 rounded-2xl p-6 text-white shadow-sm hover:shadow-lg hover:shadow-pink-200/50 transition-all cursor-pointer h-full">
-            <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-full bg-white/20">
-              <Plus className="w-5 h-5" />
-            </div>
-            <h3 className="text-lg font-semibold mb-1">Create a class</h3>
-            <p className="text-pink-50 text-sm">Schedule your next live session</p>
-          </div>
-        </Link>
-        <Link href={`/@${instructorProfile.slug}`} target="_blank" className="group">
-          <div className="bg-white border border-pink-100 rounded-2xl p-6 shadow-sm hover:border-pink-300 hover:shadow-lg hover:shadow-pink-200/50 transition-all cursor-pointer h-full">
-            <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-full bg-pink-100 text-pink-600">
-              <Eye className="w-5 h-5" />
-            </div>
-            <h3 className="text-lg font-semibold mb-1 text-gray-900">View public profile</h3>
-            <p className="text-gray-600 text-sm">See how students see you</p>
-          </div>
-        </Link>
-        <Link href="/instructor/help" className="group">
-          <div className="bg-white border border-pink-100 rounded-2xl p-6 shadow-sm hover:border-pink-300 hover:shadow-lg hover:shadow-pink-200/50 transition-all cursor-pointer h-full">
-            <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-full bg-pink-100 text-pink-600">
-              <BookOpen className="w-5 h-5" />
-            </div>
-            <h3 className="text-lg font-semibold mb-1 text-gray-900">Instructor guide</h3>
-            <p className="text-gray-600 text-sm">Tips to teach and grow</p>
-          </div>
-        </Link>
-      </div>
 
       {/* Statistics Grid */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
@@ -314,6 +291,20 @@ export default async function InstructorDashboard() {
           )}
         </div>
       </div>
+
+      {/* Instructor guide — helpful pointer, below the day-to-day */}
+      <Link href="/instructor/help" className="group mt-8 block">
+        <div className="flex items-center gap-4 rounded-2xl border border-pink-100 bg-white p-6 shadow-sm transition-all hover:border-pink-300 hover:shadow-md hover:shadow-pink-200/50">
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-pink-100 text-pink-600">
+            <BookOpen className="h-5 w-5" />
+          </div>
+          <div className="flex-1">
+            <h3 className="text-lg font-semibold text-gray-900">Instructor guide</h3>
+            <p className="text-sm text-gray-600">Tips to teach and grow your classes.</p>
+          </div>
+          <span className="shrink-0 text-pink-400 transition-transform group-hover:translate-x-0.5">→</span>
+        </div>
+      </Link>
     </div>
   );
 }

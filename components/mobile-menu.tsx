@@ -84,18 +84,22 @@ export function MobileMenu({ user, isInstructor }: MobileMenuProps) {
                 </>
               )}
 
-              {/* Download App CTA */}
-              <div className="border-t border-pink-100 my-2" />
-              <Button asChild variant="brand" className="w-full gap-2">
-                <a
-                  href="https://apps.apple.com/app/id6745218800"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={close}
-                >
-                  <span>Download App</span>
-                </a>
-              </Button>
+              {/* Download App CTA — hidden for instructors (creators, not app users) */}
+              {!isInstructor && (
+                <>
+                  <div className="border-t border-pink-100 my-2" />
+                  <Button asChild variant="brand" className="w-full gap-2">
+                    <a
+                      href="https://apps.apple.com/app/id6745218800"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={close}
+                    >
+                      <span>Download App</span>
+                    </a>
+                  </Button>
+                </>
+              )}
             </div>
           </div>
         </>
