@@ -44,7 +44,7 @@ export async function POST(request: NextRequest) {
   } catch (error: any) {
     console.error("Error granting instructor role:", error);
     return NextResponse.json(
-      { error: error.message || "Failed to grant instructor role" },
+      { error: "Failed to grant instructor role" },
       { status: 500 }
     );
   }

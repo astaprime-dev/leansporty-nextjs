@@ -106,7 +106,7 @@ export async function POST(
   } catch (error: any) {
     console.error('Create reply error:', error);
     return NextResponse.json(
-      { error: error.message || 'Failed to create reply' },
+      { error: 'Failed to create reply' },
       { status: 500 }
     );
   }

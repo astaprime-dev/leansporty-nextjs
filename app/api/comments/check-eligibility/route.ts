@@ -77,7 +77,7 @@ export async function GET(request: NextRequest) {
   } catch (error: any) {
     console.error('Check eligibility error:', error);
     return NextResponse.json(
-      { error: error.message || 'Failed to check eligibility' },
+      { error: 'Failed to check eligibility' },
       { status: 500 }
     );
   }

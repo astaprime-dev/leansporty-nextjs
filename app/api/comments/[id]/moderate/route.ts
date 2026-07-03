@@ -43,7 +43,25 @@ export async function PATCH(
       );
     }
 
-    // Update comment (RLS policy validates stream ownership)
+    // Defense-in-depth ownership check (S0.4.5): don't rely on RLS alone. The comment
+    // carries the instructor_id of the stream it belongs to; it must match the caller.
+    const { data: target } = await supabase
+      .from('stream_comments')
+      .select('instructor_id')
+      .eq('id', commentId)
+      .single();
+
+    if (!target) {
+      return NextResponse.json({ error: 'Comment not found' }, { status: 404 });
+    }
+    if (target.instructor_id !== instructor.id) {
+      return NextResponse.json(
+        { error: 'You do not have permission to moderate this comment' },
+        { status: 403 }
+      );
+    }
+
+    // Update comment (RLS policy also validates stream ownership)
     const { data: comment, error: updateError } = await supabase
       .from('stream_comments')
       .update({
@@ -75,7 +93,7 @@ export async function PATCH(
   } catch (error: any) {
     console.error('Moderate comment error:', error);
     return NextResponse.json(
-      { error: error.message || 'Failed to moderate comment' },
+      { error: 'Failed to moderate comment' },
       { status: 500 }
     );
   }

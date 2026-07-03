@@ -106,7 +106,7 @@ export async function GET(
     console.error('[Viewer Count API] Error:', error);
     return NextResponse.json(
       {
-        error: error.message || 'Failed to get viewer count',
+        error: 'Failed to get viewer count',
         timestamp: new Date().toISOString(),
       },
       { status: 500 }

@@ -682,11 +682,9 @@ export const enrollInStream = async (
     return { success: false, error: 'Enrollment failed' };
   }
 
-  // Update stream enrollment count
-  await supabase
-    .from('live_stream_sessions')
-    .update({ total_enrollments: stream.total_enrollments + 1 })
-    .eq('id', streamId);
+  // total_enrollments is incremented atomically by the DB trigger
+  // trg_bump_stream_enrollment_count (see 20260703020000) — no client-side bump,
+  // which was both racy and RLS-blocked for non-instructor enrollees.
 
   return { success: true };
 };

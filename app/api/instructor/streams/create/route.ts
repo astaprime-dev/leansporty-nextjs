@@ -4,15 +4,55 @@ import { createLiveInput } from "@/lib/cloudflare-stream";
 
 export async function POST(request: NextRequest) {
   try {
-    const data = await request.json();
+    const data = await request.json().catch(() => null);
+    if (!data || typeof data !== "object") {
+      return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
+    }
 
-    // Validate scheduled time is in the future
-    const scheduledDate = new Date(data.scheduledStartTime);
-    const now = new Date();
-
-    if (scheduledDate <= now) {
+    // Validate title.
+    const title = typeof data.title === "string" ? data.title.trim() : "";
+    if (!title || title.length > 255) {
       return NextResponse.json(
-        { error: "Scheduled start time must be in the future" },
+        { error: "Title is required and must be 255 characters or fewer." },
+        { status: 400 }
+      );
+    }
+
+    // Validate description (optional).
+    const description =
+      typeof data.description === "string" ? data.description.trim() : "";
+    if (description.length > 2000) {
+      return NextResponse.json(
+        { error: "Description must be 2000 characters or fewer." },
+        { status: 400 }
+      );
+    }
+
+    // Validate duration (integer minutes, 15–180).
+    const durationMinutes = Number(data.durationMinutes);
+    if (!Number.isInteger(durationMinutes) || durationMinutes < 15 || durationMinutes > 180) {
+      return NextResponse.json(
+        { error: "Duration must be a whole number of minutes between 15 and 180." },
+        { status: 400 }
+      );
+    }
+
+    // Validate price (non-negative integer). Token pricing is vestigial (S1), but the
+    // column is NOT NULL — keep it valid until S2 re-founds pricing on real money.
+    const priceInTokens = Number(data.priceInTokens ?? 0);
+    if (!Number.isInteger(priceInTokens) || priceInTokens < 0) {
+      return NextResponse.json(
+        { error: "Price must be a whole, non-negative number." },
+        { status: 400 }
+      );
+    }
+
+    // Validate scheduled time: must be a real date AND in the future. Guard against
+    // the `new Date(undefined) <= now` bypass (NaN comparisons are always false).
+    const scheduledDate = new Date(data.scheduledStartTime);
+    if (Number.isNaN(scheduledDate.getTime()) || scheduledDate <= new Date()) {
+      return NextResponse.json(
+        { error: "Scheduled start time must be a valid time in the future." },
         { status: 400 }
       );
     }
@@ -57,7 +97,7 @@ export async function POST(request: NextRequest) {
     // Create Cloudflare live input (only reached by an authenticated instructor)
     let cloudflare;
     try {
-      cloudflare = await createLiveInput(data.title);
+      cloudflare = await createLiveInput(title);
 
       // Validate Cloudflare response
       if (!cloudflare.webrtcUrl || !cloudflare.streamId) {
@@ -74,28 +114,26 @@ export async function POST(request: NextRequest) {
     } catch (cloudflareError: any) {
       console.error("Cloudflare API error:", cloudflareError);
       return NextResponse.json(
-        { error: `Cloudflare error: ${cloudflareError.message || "Failed to create live input"}` },
+        { error: "Could not set up the live stream. Please try again." },
         { status: 500 }
       );
     }
 
-    // Create stream session in database
+    // Create stream session in database. NOTE: the live-ingest secrets (WHIP/RTMPS
+    // url + key) are deliberately NOT stored here — live_stream_sessions is publicly
+    // readable, so they go into the owner-only live_stream_ingest table below.
     const { data: stream, error } = await supabase
       .from("live_stream_sessions")
       .insert({
-        title: data.title,
-        description: data.description,
+        title,
+        description: description || null,
         instructor_id: instructorProfile.id,
-        scheduled_start_time: data.scheduledStartTime,
-        scheduled_duration_seconds: data.durationMinutes * 60,
-        price_in_tokens: data.priceInTokens,
+        scheduled_start_time: scheduledDate.toISOString(),
+        scheduled_duration_seconds: durationMinutes * 60,
+        price_in_tokens: priceInTokens,
         cloudflare_stream_id: cloudflare.streamId,
-        cloudflare_webrtc_url: cloudflare.webrtcUrl,
-        cloudflare_webrtc_token: cloudflare.webrtcToken,
         cloudflare_playback_id: cloudflare.playbackId,
         cloudflare_whep_playback_url: cloudflare.whepPlaybackUrl,
-        cloudflare_rtmps_url: cloudflare.rtmpsUrl,
-        cloudflare_rtmps_stream_key: cloudflare.rtmpsStreamKey,
         status: "scheduled",
       })
       .select()
@@ -104,7 +142,31 @@ export async function POST(request: NextRequest) {
     if (error) {
       console.error("Database error:", error);
       return NextResponse.json(
-        { error: `Database error: ${error.message || "Failed to save stream"}` },
+        { error: "Failed to save stream. Please try again." },
+        { status: 500 }
+      );
+    }
+
+    // Store the ingest secrets in the owner-only table. RLS allows this because the
+    // stream we just created belongs to this instructor.
+    const { error: ingestError } = await supabase
+      .from("live_stream_ingest")
+      .insert({
+        stream_id: stream.id,
+        webrtc_url: cloudflare.webrtcUrl,
+        webrtc_token: cloudflare.webrtcToken,
+        rtmps_url: cloudflare.rtmpsUrl,
+        rtmps_stream_key: cloudflare.rtmpsStreamKey,
+      });
+
+    if (ingestError) {
+      // Without ingest credentials the stream can't be broadcast — don't leave a
+      // half-created stream around. Best-effort delete of the row we just made
+      // (owner-scoped) so the instructor can cleanly retry.
+      console.error("Ingest secret store error:", ingestError);
+      await supabase.from("live_stream_sessions").delete().eq("id", stream.id);
+      return NextResponse.json(
+        { error: "Failed to save stream. Please try again." },
         { status: 500 }
       );
     }
@@ -113,7 +175,7 @@ export async function POST(request: NextRequest) {
   } catch (error: any) {
     console.error("Stream creation error:", error);
     return NextResponse.json(
-      { error: error.message || "Failed to create stream" },
+      { error: "Failed to create stream. Please try again." },
       { status: 500 }
     );
   }

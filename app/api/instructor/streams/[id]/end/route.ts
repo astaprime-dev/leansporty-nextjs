@@ -30,16 +30,32 @@ export async function POST(
 
     const { id } = await params;
 
-    // Fetch stream to get cloudflare_stream_id
+    // Fetch stream to get status + cloudflare_stream_id
     const { data: stream } = await supabase
       .from("live_stream_sessions")
-      .select("cloudflare_stream_id")
+      .select("status, cloudflare_stream_id")
       .eq("id", id)
       .eq("instructor_id", instructorProfile.id) // owner scope — can't end another instructor's stream
       .single();
 
-    if (!stream?.cloudflare_stream_id) {
-      console.error("Stream missing cloudflare_stream_id");
+    if (!stream) {
+      return NextResponse.json({ error: "Stream not found" }, { status: 404 });
+    }
+
+    // Only a LIVE stream may be ended. Ending a `scheduled` stream that never went
+    // live would falsely fire the recording-migration trigger and a Cloudflare
+    // recording lookup for an input that never ingested (Studio plan S0.2 / A-2).
+    // A scheduled stream should be cancelled (S1.4), not ended.
+    if (stream.status !== "live") {
+      const message =
+        stream.status === "ended"
+          ? "This stream has already ended."
+          : "Only a live stream can be ended. Cancel a scheduled stream instead.";
+      return NextResponse.json({ error: message }, { status: 409 });
+    }
+
+    if (!stream.cloudflare_stream_id) {
+      console.error("Live stream missing cloudflare_stream_id");
       return NextResponse.json(
         { error: "Stream configuration error" },
         { status: 500 }
@@ -81,7 +97,8 @@ export async function POST(
         recording_cloudflare_video_id: recordingId,
       })
       .eq("id", id)
-      .eq("instructor_id", instructorProfile.id);
+      .eq("instructor_id", instructorProfile.id)
+      .eq("status", "live"); // compare-and-set: a concurrent end can't fire the migration twice
 
     if (error) {
       console.error("Error ending stream:", error);

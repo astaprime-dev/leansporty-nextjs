@@ -1,5 +1,48 @@
 import { createClient } from "@supabase/supabase-js";
 
+/** Service-role client (bypasses RLS). Server-only — never import into client code. */
+function serviceRoleClient() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    { auth: { autoRefreshToken: false, persistSession: false } }
+  );
+}
+
+/**
+ * Atomically redeem a single-use instructor invite code (Studio plan S0.3).
+ *
+ * The redemption is a single UPDATE guarded by `used_by IS NULL` and the expiry, so
+ * two concurrent redemptions of the same code can never both succeed (the second
+ * matches zero rows). Uses the service-role client because `instructor_invites` is
+ * RLS-locked with no public policies — codes must never be readable by clients.
+ *
+ * Returns true iff the code was valid, unexpired, and previously unused (now consumed).
+ */
+export async function consumeInstructorInvite(
+  code: string,
+  userId: string
+): Promise<boolean> {
+  const trimmed = code?.trim();
+  if (!trimmed) return false;
+
+  const supabase = serviceRoleClient();
+  const { data, error } = await supabase
+    .from("instructor_invites")
+    .update({ used_by: userId, used_at: new Date().toISOString() })
+    .eq("code", trimmed)
+    .is("used_by", null)
+    .or(`expires_at.is.null,expires_at.gt.${new Date().toISOString()}`)
+    .select("code")
+    .maybeSingle();
+
+  if (error) {
+    console.error("consumeInstructorInvite error:", error.message);
+    return false;
+  }
+  return !!data;
+}
+
 /**
  * Grant instructor role to a user
  * Creates instructor profile and sets role in app_metadata

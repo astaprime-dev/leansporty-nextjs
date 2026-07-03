@@ -123,7 +123,7 @@ export async function POST(request: NextRequest) {
   } catch (error: any) {
     console.error('Create comment error:', error);
     return NextResponse.json(
-      { error: error.message || 'Failed to create comment' },
+      { error: 'Failed to create comment' },
       { status: 500 }
     );
   }

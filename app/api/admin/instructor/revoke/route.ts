@@ -44,7 +44,7 @@ export async function POST(request: NextRequest) {
   } catch (error: any) {
     console.error("Error revoking instructor role:", error);
     return NextResponse.json(
-      { error: error.message || "Failed to revoke instructor role" },
+      { error: "Failed to revoke instructor role" },
       { status: 500 }
     );
   }

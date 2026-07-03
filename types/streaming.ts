@@ -34,14 +34,12 @@ export interface LiveStreamSession {
   // Pricing
   price_in_tokens: number;
 
-  // Cloudflare Stream
+  // Cloudflare Stream — egress/playback only. Ingest secrets (WHIP/RTMPS url+key)
+  // live in the owner-only `live_stream_ingest` table (see StreamIngest), never here,
+  // because this table is publicly readable. Fetch them owner-scoped for broadcast.
   cloudflare_stream_id: string | null;
-  cloudflare_webrtc_url: string | null; // WHIP URL for browser streaming (ingestion)
-  cloudflare_webrtc_token: string | null;
   cloudflare_playback_id: string | null;
   cloudflare_whep_playback_url: string | null; // WHEP URL for WebRTC playback (egress)
-  cloudflare_rtmps_url: string | null; // RTMPS URL for OBS streaming (optional)
-  cloudflare_rtmps_stream_key: string | null; // RTMPS stream key for OBS (optional)
 
   // Recording
   recording_available: boolean;
@@ -60,6 +58,17 @@ export interface LiveStreamSession {
   // Timestamps
   created_at: string;
   updated_at: string;
+}
+
+// Owner-only live-ingest secrets, from the `live_stream_ingest` table. Only ever
+// fetched with the owning instructor's session (RLS-gated) and passed to the
+// broadcast UI — never included in any viewer-facing stream payload.
+export interface StreamIngest {
+  stream_id: string;
+  rtmps_url: string | null;
+  rtmps_stream_key: string | null;
+  webrtc_url: string | null; // WHIP URL for browser streaming (ingestion)
+  webrtc_token: string | null;
 }
 
 export interface StreamEnrollment {

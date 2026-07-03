@@ -1,6 +1,6 @@
 "use client";
 
-import { LiveStreamSession } from "@/types/streaming";
+import { LiveStreamSession, StreamIngest } from "@/types/streaming";
 import { BrowserBroadcast } from "@/components/instructor/browser-broadcast";
 import { ReactionDisplay } from "@/components/instructor/reaction-display";
 import { LiveViewerCount } from "@/components/stream/live-viewer-count";
@@ -13,9 +13,14 @@ import { Calendar, Clock, Coins, Users, Copy, Check, ChevronDown, ChevronUp, Vid
 
 interface BroadcastManagementViewProps {
   stream: LiveStreamSession;
+  /** Owner-only ingest secrets, fetched server-side for the owning instructor. */
+  ingest: StreamIngest | null;
 }
 
-export function BroadcastManagementView({ stream }: BroadcastManagementViewProps) {
+export function BroadcastManagementView({
+  stream,
+  ingest,
+}: BroadcastManagementViewProps) {
   const [streamStatus, setStreamStatus] = useState(stream.status);
   const [copied, setCopied] = useState(false);
   const [showRTMPS, setShowRTMPS] = useState(false);
@@ -100,11 +105,11 @@ export function BroadcastManagementView({ stream }: BroadcastManagementViewProps
           </div>
 
           {/* Broadcast Component */}
-          {stream.cloudflare_webrtc_url && streamStatus !== "ended" && (
+          {ingest?.webrtc_url && streamStatus !== "ended" && (
             <div className="relative">
               <BrowserBroadcast
-                webrtcUrl={stream.cloudflare_webrtc_url}
-                webrtcToken={stream.cloudflare_webrtc_token || undefined}
+                webrtcUrl={ingest.webrtc_url}
+                webrtcToken={ingest.webrtc_token || undefined}
                 isReconnection={isReconnection}
                 onStreamStart={() => handleMarkLive(true)}
                 onStreamEnd={handleEndStream}
@@ -172,7 +177,7 @@ export function BroadcastManagementView({ stream }: BroadcastManagementViewProps
           </div>
 
           {/* Advanced: RTMPS for OBS */}
-          {stream.cloudflare_rtmps_url && stream.cloudflare_rtmps_stream_key && streamStatus !== "ended" && (
+          {ingest?.rtmps_url && ingest?.rtmps_stream_key && streamStatus !== "ended" && (
             <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg border border-blue-200 p-6 space-y-4">
               <button
                 onClick={() => setShowRTMPS(!showRTMPS)}
@@ -202,14 +207,14 @@ export function BroadcastManagementView({ stream }: BroadcastManagementViewProps
                       <div className="flex gap-2">
                         <input
                           type="text"
-                          value={stream.cloudflare_rtmps_url}
+                          value={ingest.rtmps_url}
                           readOnly
                           className="flex-1 px-3 py-2 bg-white border border-gray-300 rounded text-sm font-mono"
                         />
                         <Button
                           size="sm"
                           variant="outline"
-                          onClick={() => copyToClipboard(stream.cloudflare_rtmps_url!)}
+                          onClick={() => copyToClipboard(ingest.rtmps_url!)}
                         >
                           {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
                         </Button>
@@ -221,14 +226,14 @@ export function BroadcastManagementView({ stream }: BroadcastManagementViewProps
                       <div className="flex gap-2">
                         <input
                           type="password"
-                          value={stream.cloudflare_rtmps_stream_key}
+                          value={ingest.rtmps_stream_key}
                           readOnly
                           className="flex-1 px-3 py-2 bg-white border border-gray-300 rounded text-sm font-mono"
                         />
                         <Button
                           size="sm"
                           variant="outline"
-                          onClick={() => copyToClipboard(stream.cloudflare_rtmps_stream_key!)}
+                          onClick={() => copyToClipboard(ingest.rtmps_stream_key!)}
                         >
                           {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
                         </Button>
@@ -331,34 +336,6 @@ export function BroadcastManagementView({ stream }: BroadcastManagementViewProps
               )}
             </div>
           </div>
-
-          {/* WebRTC Info Card */}
-          {/* {stream.cloudflare_webrtc_url && (
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-              <h4 className="font-semibold text-gray-900 mb-2 flex items-center gap-2">
-                WebRTC Connection
-              </h4>
-              <p className="text-xs text-blue-700 mb-3">
-                Browser-based streaming (no software needed)
-              </p>
-              <div className="space-y-2">
-                <div>
-                  <p className="text-xs text-blue-600 font-medium mb-1">Connection URL:</p>
-                  <div className="bg-white rounded p-2 flex items-center gap-2">
-                    <code className="text-xs flex-1 truncate">
-                      {stream.cloudflare_webrtc_url.substring(0, 40)}...
-                    </code>
-                    <button
-                      onClick={() => copyToClipboard(stream.cloudflare_webrtc_url!)}
-                      className="text-blue-600 hover:text-blue-800"
-                    >
-                      {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )} */}
 
           {/* Help Card */}
           <div className="bg-gradient-to-br from-pink-50 to-rose-50 border border-pink-200 rounded-lg p-4">

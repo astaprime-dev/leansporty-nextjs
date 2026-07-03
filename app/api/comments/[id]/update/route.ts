@@ -90,7 +90,7 @@ export async function PATCH(
   } catch (error: any) {
     console.error('Update comment error:', error);
     return NextResponse.json(
-      { error: error.message || 'Failed to update comment' },
+      { error: 'Failed to update comment' },
       { status: 500 }
     );
   }

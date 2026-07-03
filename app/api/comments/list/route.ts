@@ -126,7 +126,7 @@ export async function GET(request: NextRequest) {
   } catch (error: any) {
     console.error('List comments error:', error);
     return NextResponse.json(
-      { error: error.message || 'Failed to fetch comments' },
+      { error: 'Failed to fetch comments' },
       { status: 500 }
     );
   }

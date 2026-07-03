@@ -47,7 +47,7 @@ export async function GET(request: NextRequest) {
   } catch (error: any) {
     console.error('Gallery fetch error:', error);
     return NextResponse.json(
-      { error: error.message || 'Failed to fetch gallery' },
+      { error: 'Failed to fetch gallery' },
       { status: 500 }
     );
   }
@@ -209,7 +209,7 @@ export async function POST(request: NextRequest) {
   } catch (error: any) {
     console.error('Gallery upload error:', error);
     return NextResponse.json(
-      { error: error.message || 'Upload failed' },
+      { error: 'Upload failed' },
       { status: 500 }
     );
   }
@@ -275,7 +275,7 @@ export async function DELETE(request: NextRequest) {
   } catch (error: any) {
     console.error('Gallery delete error:', error);
     return NextResponse.json(
-      { error: error.message || 'Delete failed' },
+      { error: 'Delete failed' },
       { status: 500 }
     );
   }
@@ -341,7 +341,7 @@ export async function PATCH(request: NextRequest) {
   } catch (error: any) {
     console.error('Gallery update error:', error);
     return NextResponse.json(
-      { error: error.message || 'Update failed' },
+      { error: 'Update failed' },
       { status: 500 }
     );
   }
