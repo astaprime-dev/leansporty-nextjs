@@ -64,6 +64,43 @@ export default async function StreamDetailPage({
 
   const streamData = stream as LiveStreamSession;
 
+  // Class performance (S4.1). All server-side reads, scoped by RLS to the owning
+  // instructor (roster / payouts / watch-sessions policies).
+  const [{ count: enrolledCount }, { data: payoutRows }, { data: watchRows }] =
+    await Promise.all([
+      supabase
+        .from("stream_enrollments")
+        .select("id", { count: "exact", head: true })
+        .eq("stream_id", id),
+      supabase
+        .from("instructor_payouts")
+        .select("gross_cents, instructor_share_cents, currency")
+        .eq("stream_id", id),
+      supabase
+        .from("stream_watch_sessions")
+        .select("total_watch_seconds")
+        .eq("stream_id", id),
+    ]);
+
+  const sales = payoutRows?.length ?? 0;
+  const grossCents = (payoutRows ?? []).reduce((s, r) => s + (r.gross_cents ?? 0), 0);
+  const shareCents = (payoutRows ?? []).reduce((s, r) => s + (r.instructor_share_cents ?? 0), 0);
+  const payoutCurrency = payoutRows?.[0]?.currency ?? "eur";
+  const watchSeconds = (watchRows ?? []).reduce((s, r) => s + (r.total_watch_seconds ?? 0), 0);
+  const isPaidClass = !!streamData.product_id;
+
+  const fmtMoney = (cents: number) =>
+    new Intl.NumberFormat(undefined, {
+      style: "currency",
+      currency: payoutCurrency.toUpperCase(),
+    }).format(cents / 100);
+
+  const fmtWatch = (secs: number) => {
+    const h = Math.floor(secs / 3600);
+    const m = Math.round((secs % 3600) / 60);
+    return h > 0 ? `${h}h ${m}m` : `${m}m`;
+  };
+
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleString("en-US", {
       month: "long",
@@ -240,29 +277,57 @@ export default async function StreamDetailPage({
         </div>
       )}
 
-      {/* Analytics Section - Only show after stream ends */}
+      {/* Class performance — real numbers, for every status */}
+      <div className="bg-white rounded-lg border p-6 mb-6">
+        <div className="flex items-center gap-2 mb-6">
+          <TrendingUp className="w-6 h-6 text-pink-500" />
+          <h2 className="text-2xl font-semibold">Class performance</h2>
+        </div>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="rounded-lg border border-pink-100 bg-pink-50/40 p-4">
+            <p className="text-sm text-gray-600">
+              {isPaidClass ? "Sales" : "Enrolled"}
+            </p>
+            <p className="text-2xl font-bold text-gray-900">
+              {isPaidClass ? sales : enrolledCount ?? 0}
+            </p>
+          </div>
+          {isPaidClass ? (
+            <div className="rounded-lg border border-pink-100 bg-pink-50/40 p-4">
+              <p className="text-sm text-gray-600">Your earnings</p>
+              <p className="text-2xl font-bold text-gray-900">{fmtMoney(shareCents)}</p>
+              <p className="text-xs text-gray-500 mt-1">{fmtMoney(grossCents)} gross</p>
+            </div>
+          ) : (
+            <div className="rounded-lg border border-pink-100 bg-pink-50/40 p-4">
+              <p className="text-sm text-gray-600">Price</p>
+              <p className="text-2xl font-bold text-green-600">Free</p>
+            </div>
+          )}
+          <div className="rounded-lg border border-pink-100 bg-pink-50/40 p-4">
+            <p className="text-sm text-gray-600">Peak viewers</p>
+            <p className="text-2xl font-bold text-gray-900">{streamData.max_viewers}</p>
+          </div>
+          <div className="rounded-lg border border-pink-100 bg-pink-50/40 p-4">
+            <p className="text-sm text-gray-600">Watch time</p>
+            <p className="text-2xl font-bold text-gray-900">{fmtWatch(watchSeconds)}</p>
+          </div>
+        </div>
+        {streamData.status === "scheduled" && (
+          <p className="mt-4 text-sm text-muted-foreground">
+            Viewers and watch time populate once your class goes live.
+          </p>
+        )}
+      </div>
+
+      {/* Reaction analytics — after the class ends */}
       {streamData.status === "ended" && (
         <div className="bg-white rounded-lg border p-6">
           <div className="flex items-center gap-2 mb-6">
             <TrendingUp className="w-6 h-6 text-pink-500" />
-            <h2 className="text-2xl font-semibold">Stream Analytics</h2>
+            <h2 className="text-2xl font-semibold">Reactions &amp; feedback</h2>
           </div>
           <StreamAnalytics streamId={id} />
-        </div>
-      )}
-
-      {/* Placeholder for live/scheduled streams */}
-      {streamData.status !== "ended" && (
-        <div className="bg-gray-50 rounded-lg border p-12 text-center">
-          <TrendingUp className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">
-            Analytics Coming Soon
-          </h3>
-          <p className="text-gray-600">
-            Detailed analytics will be available after your stream ends. You'll
-            see reaction data, engagement metrics, and technical issue reports
-            here.
-          </p>
         </div>
       )}
     </div>

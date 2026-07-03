@@ -80,6 +80,10 @@ export async function PATCH(
       typeof body?.currency === "string" && body.currency.trim()
         ? body.currency.trim().toLowerCase()
         : "eur";
+    const thumbnailUrl =
+      typeof body?.thumbnailUrl === "string" && body.thumbnailUrl.trim().length <= 500
+        ? body.thumbnailUrl.trim() || null
+        : null;
 
     const scheduledDate = new Date(body?.scheduledStartTime);
     if (Number.isNaN(scheduledDate.getTime()) || scheduledDate <= new Date()) {
@@ -126,6 +130,7 @@ export async function PATCH(
         scheduled_start_time: scheduledDate.toISOString(),
         scheduled_duration_seconds: durationMinutes * 60,
         product_id: newProductId,
+        thumbnail_url: thumbnailUrl,
         updated_at: new Date().toISOString(),
       })
       .eq("id", id)

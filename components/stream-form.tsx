@@ -32,6 +32,8 @@ interface StreamFormData {
   durationMinutes: number;
   /** Price in EUR as the instructor types it ("" or "0" = free). */
   priceEuros: string;
+  /** Cover image URL (Cloudflare Images), or "" for none. */
+  thumbnailUrl: string;
 }
 
 interface StreamFormProps {
@@ -53,11 +55,38 @@ export function StreamForm({ initialData, streamId, mode }: StreamFormProps) {
     scheduledStartTime: initialData?.scheduledStartTime || "",
     durationMinutes: initialData?.durationMinutes ?? 60,
     priceEuros: initialData?.priceEuros ?? "",
+    thumbnailUrl: initialData?.thumbnailUrl ?? "",
   });
   // A price not in the preset list (e.g. an existing custom amount) starts in custom mode.
   const [customPrice, setCustomPrice] = useState(
     !!initialData?.priceEuros && !PRESET_PRICES.includes(initialData.priceEuros)
   );
+  const [uploadingCover, setUploadingCover] = useState(false);
+
+  const handleCoverUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploadingCover(true);
+    setError(null);
+    try {
+      const body = new FormData();
+      body.append("file", file);
+      const res = await fetch("/api/instructor/streams/thumbnail", {
+        method: "POST",
+        body,
+      });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok && data.url) {
+        setFormData((prev) => ({ ...prev, thumbnailUrl: data.url }));
+      } else {
+        setError(data.error || "Couldn't upload the cover image.");
+      }
+    } catch {
+      setError("Couldn't upload the cover image. Please try again.");
+    } finally {
+      setUploadingCover(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -86,6 +115,7 @@ export function StreamForm({ initialData, streamId, mode }: StreamFormProps) {
         durationMinutes: formData.durationMinutes,
         priceCents,
         currency: "eur",
+        thumbnailUrl: formData.thumbnailUrl || null,
       };
 
       const response = await fetch(url, {
@@ -151,6 +181,46 @@ export function StreamForm({ initialData, streamId, mode }: StreamFormProps) {
             }
             placeholder="Tell students what to expect in this class..."
           />
+        </div>
+
+        <div className="space-y-1.5">
+          <Label htmlFor="stream-cover">Cover image</Label>
+          <div className="flex items-center gap-4">
+            {formData.thumbnailUrl ? (
+              <img
+                src={formData.thumbnailUrl}
+                alt="Class cover"
+                className="h-20 w-32 rounded-lg border border-pink-100 object-cover"
+              />
+            ) : (
+              <div className="flex h-20 w-32 items-center justify-center rounded-lg border border-dashed border-pink-200 bg-pink-50/40 text-xs text-gray-400">
+                No cover
+              </div>
+            )}
+            <div className="flex flex-col gap-1.5">
+              <input
+                id="stream-cover"
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                onChange={handleCoverUpload}
+                disabled={uploadingCover}
+                className="text-sm file:mr-3 file:rounded-md file:border-0 file:bg-pink-100 file:px-3 file:py-1.5 file:text-sm file:font-semibold file:text-pink-700 hover:file:bg-pink-200"
+              />
+              {uploadingCover ? (
+                <span className="text-xs text-gray-500">Uploading…</span>
+              ) : formData.thumbnailUrl ? (
+                <button
+                  type="button"
+                  onClick={() => setFormData({ ...formData, thumbnailUrl: "" })}
+                  className="w-fit text-xs text-gray-500 hover:text-pink-500"
+                >
+                  Remove
+                </button>
+              ) : (
+                <span className="text-xs text-gray-500">JPG, PNG, or WebP · up to 5MB</span>
+              )}
+            </div>
+          </div>
         </div>
 
         <div className="grid md:grid-cols-2 gap-4">
@@ -245,7 +315,7 @@ export function StreamForm({ initialData, streamId, mode }: StreamFormProps) {
           <Button
             type="submit"
             variant="brand"
-            disabled={isLoading}
+            disabled={isLoading || uploadingCover}
             className="flex-1"
           >
             {isLoading

@@ -70,6 +70,7 @@ export default async function EditStreamPage({ params }: EditStreamPageProps) {
     scheduledStartTime,
     durationMinutes: Math.floor(stream.scheduled_duration_seconds / 60),
     priceEuros,
+    thumbnailUrl: stream.thumbnail_url || "",
   };
 
   return <StreamForm mode="edit" streamId={id} initialData={initialData} />;

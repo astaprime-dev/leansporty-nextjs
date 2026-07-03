@@ -54,6 +54,11 @@ export async function POST(request: NextRequest) {
         ? data.currency.trim().toLowerCase()
         : "eur";
 
+    const thumbnailUrl =
+      typeof data.thumbnailUrl === "string" && data.thumbnailUrl.trim().length <= 500
+        ? data.thumbnailUrl.trim() || null
+        : null;
+
     // Validate scheduled time: must be a real date AND in the future. Guard against
     // the `new Date(undefined) <= now` bypass (NaN comparisons are always false).
     const scheduledDate = new Date(data.scheduledStartTime);
@@ -138,6 +143,7 @@ export async function POST(request: NextRequest) {
         scheduled_start_time: scheduledDate.toISOString(),
         scheduled_duration_seconds: durationMinutes * 60,
         price_in_tokens: 0, // legacy column (NOT NULL); real pricing lives on the linked product
+        thumbnail_url: thumbnailUrl,
         cloudflare_stream_id: cloudflare.streamId,
         cloudflare_playback_id: cloudflare.playbackId,
         cloudflare_whep_playback_url: cloudflare.whepPlaybackUrl,
