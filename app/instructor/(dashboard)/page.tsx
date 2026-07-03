@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/empty-state";
 import { createClient } from "@/utils/supabase/server";
 import { LiveStreamSession } from "@/types/streaming";
-import { Plus, Calendar, Users, DollarSign, Eye, BookOpen } from "lucide-react";
+import { Plus, Calendar, Users, CheckCircle2, Eye, BookOpen } from "lucide-react";
 import { redirect } from "next/navigation";
 
 export default async function InstructorDashboard() {
@@ -49,20 +49,26 @@ export default async function InstructorDashboard() {
     scheduled: streamsList.filter(s => s.status === "scheduled").length,
     ended: streamsList.filter(s => s.status === "ended").length,
     totalEnrollments: streamsList.reduce((sum, s) => sum + (s.total_enrollments || 0), 0),
-    totalTokens: streamsList.reduce((sum, s) => sum + (s.total_enrollments || 0) * s.price_in_tokens, 0),
   };
 
-  // Fetch upcoming streams (next 3)
-  const { data: upcomingStreams } = await supabase
+  // Fetch upcoming streams: currently-live OR future-scheduled. A live stream's
+  // scheduled_start_time is in the past, so we can't filter on it in SQL without
+  // dropping live streams (A-1) — fetch both statuses and filter in JS.
+  const now = new Date();
+  const { data: candidateStreams } = await supabase
     .from("live_stream_sessions")
     .select("*")
     .eq("instructor_id", instructorProfile.id)
     .in("status", ["scheduled", "live"])
-    .gte("scheduled_start_time", new Date().toISOString())
-    .order("scheduled_start_time", { ascending: true })
-    .limit(3);
+    .order("scheduled_start_time", { ascending: true });
 
-  const upcomingList = (upcomingStreams || []) as LiveStreamSession[];
+  const upcomingList = ((candidateStreams || []) as LiveStreamSession[])
+    .filter(
+      (s) =>
+        s.status === "live" ||
+        new Date(s.scheduled_start_time) >= now
+    )
+    .slice(0, 3);
 
   // Fetch recent enrollments (we'll need to join with stream_enrollments table)
   const { data: recentEnrollments } = await supabase
@@ -177,10 +183,10 @@ export default async function InstructorDashboard() {
 
         <div className="bg-white rounded-lg border border-gray-200 p-6">
           <div className="flex items-center justify-between mb-2">
-            <DollarSign className="w-5 h-5 text-purple-500" />
-            <span className="text-2xl font-bold text-gray-900">{stats.totalTokens}</span>
+            <CheckCircle2 className="w-5 h-5 text-purple-500" />
+            <span className="text-2xl font-bold text-gray-900">{stats.ended}</span>
           </div>
-          <h3 className="text-sm font-semibold text-gray-600">Tokens Earned</h3>
+          <h3 className="text-sm font-semibold text-gray-600">Completed</h3>
         </div>
       </div>
 
@@ -226,8 +232,10 @@ export default async function InstructorDashboard() {
                           {new Date(stream.scheduled_start_time).toLocaleString()}
                         </p>
                         <div className="flex items-center gap-3 text-xs text-gray-500">
-                          <span>💰 {stream.price_in_tokens} tokens</span>
-                          <span>👥 {stream.total_enrollments} enrolled</span>
+                          <span className="flex items-center gap-1">
+                            <Users className="w-3.5 h-3.5" />
+                            {stream.total_enrollments} enrolled
+                          </span>
                         </div>
                       </div>
                       {stream.status === "live" && (

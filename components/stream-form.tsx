@@ -4,6 +4,26 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Alert } from "@/components/ui/alert";
+
+/** Local `datetime-local` min = now, formatted in the browser's own timezone.
+ *  (toISOString() would give UTC and reject valid local times near the boundary.) */
+function localDateTimeMin(): string {
+  const now = new Date();
+  const offsetMs = now.getTimezoneOffset() * 60_000;
+  return new Date(now.getTime() - offsetMs).toISOString().slice(0, 16);
+}
+
+/** The viewer's IANA timezone label (e.g. "Europe/Warsaw"), for the schedule hint. */
+function localTimezoneLabel(): string {
+  try {
+    return Intl.DateTimeFormat().resolvedOptions().timeZone || "your local time";
+  } catch {
+    return "your local time";
+  }
+}
 
 interface StreamFormData {
   title: string;
@@ -22,6 +42,7 @@ interface StreamFormProps {
 export function StreamForm({ initialData, streamId, mode }: StreamFormProps) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [formData, setFormData] = useState<StreamFormData>({
     title: initialData?.title || "",
     description: initialData?.description || "",
@@ -33,6 +54,7 @@ export function StreamForm({ initialData, streamId, mode }: StreamFormProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
+    setError(null);
 
     try {
       const url = mode === "create"
@@ -49,12 +71,14 @@ export function StreamForm({ initialData, streamId, mode }: StreamFormProps) {
 
       if (response.ok) {
         const id = mode === "create" ? result.streamId : streamId;
-        router.push(`/instructor/streams/${id}/broadcast`);
+        // Land on the class detail page (share the link, go live when ready) rather
+        // than dropping straight into the camera/broadcast screen (S1.3).
+        router.push(`/instructor/streams/${id}?created=${mode === "create" ? 1 : 0}`);
       } else {
-        alert(result.error || `Failed to ${mode} stream`);
+        setError(result.error || `Failed to ${mode} the class.`);
       }
-    } catch (error) {
-      alert(`Failed to ${mode} stream. Please try again.`);
+    } catch {
+      setError(`Failed to ${mode} the class. Please try again.`);
     } finally {
       setIsLoading(false);
     }
@@ -75,12 +99,12 @@ export function StreamForm({ initialData, streamId, mode }: StreamFormProps) {
         onSubmit={handleSubmit}
         className="space-y-6 bg-white rounded-2xl p-8 shadow-sm border border-pink-100"
       >
-        <div>
-          <label className="block text-sm font-medium mb-2">
-            Stream Title *
-          </label>
+        <div className="space-y-1.5">
+          <Label htmlFor="stream-title">Class title *</Label>
           <Input
+            id="stream-title"
             required
+            maxLength={255}
             value={formData.title}
             onChange={(e) =>
               setFormData({ ...formData, title: e.target.value })
@@ -89,27 +113,27 @@ export function StreamForm({ initialData, streamId, mode }: StreamFormProps) {
           />
         </div>
 
-        <div>
-          <label className="block text-sm font-medium mb-2">Description</label>
-          <textarea
-            className="w-full border rounded-lg p-3 min-h-[100px]"
+        <div className="space-y-1.5">
+          <Label htmlFor="stream-description">Description</Label>
+          <Textarea
+            id="stream-description"
+            rows={4}
             value={formData.description}
             onChange={(e) =>
               setFormData({ ...formData, description: e.target.value })
             }
-            placeholder="Tell users what to expect in this workout..."
+            placeholder="Tell students what to expect in this class..."
           />
         </div>
 
         <div className="grid md:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium mb-2">
-              Start Date & Time *
-            </label>
+          <div className="space-y-1.5">
+            <Label htmlFor="stream-start">Start date &amp; time *</Label>
             <Input
+              id="stream-start"
               type="datetime-local"
               required
-              min={new Date().toISOString().slice(0, 16)}
+              min={localDateTimeMin()}
               value={formData.scheduledStartTime}
               onChange={(e) =>
                 setFormData({
@@ -118,16 +142,15 @@ export function StreamForm({ initialData, streamId, mode }: StreamFormProps) {
                 })
               }
             />
-            <p className="text-xs text-gray-500 mt-1">
-              Must be a future date and time
+            <p className="text-xs text-gray-500">
+              Future date and time, in your timezone ({localTimezoneLabel()})
             </p>
           </div>
 
-          <div>
-            <label className="block text-sm font-medium mb-2">
-              Duration (minutes) *
-            </label>
+          <div className="space-y-1.5">
+            <Label htmlFor="stream-duration">Duration (minutes) *</Label>
             <Input
+              id="stream-duration"
               type="number"
               required
               min={15}
@@ -140,35 +163,28 @@ export function StreamForm({ initialData, streamId, mode }: StreamFormProps) {
                 })
               }
             />
+            <p className="text-xs text-gray-500">Between 15 and 180 minutes</p>
           </div>
         </div>
 
-        <div>
-          <label className="block text-sm font-medium mb-2">
-            Price (tokens) *
-          </label>
-          <Input
-            type="number"
-            required
-            min={0}
-            value={formData.priceInTokens}
-            onChange={(e) =>
-              setFormData({
-                ...formData,
-                priceInTokens: parseInt(e.target.value),
-              })
-            }
-          />
+        <div className="rounded-lg border border-pink-100 bg-pink-50/40 p-4">
+          <p className="text-sm font-medium text-gray-900">
+            Free while in early access
+          </p>
           <p className="text-xs text-gray-500 mt-1">
-            Set to 0 for a free stream
+            Your classes are free for students right now. Paid classes — where you
+            set a price and get paid — are coming soon.
           </p>
         </div>
+
+        {error && <Alert variant="error">{error}</Alert>}
 
         <div className="flex gap-4 pt-4">
           <Button
             type="submit"
+            variant="brand"
             disabled={isLoading}
-            className="flex-1 bg-gradient-to-r from-pink-500 to-rose-400 hover:from-pink-600 hover:to-rose-500"
+            className="flex-1"
           >
             {isLoading
               ? (mode === "create" ? "Creating..." : "Saving...")

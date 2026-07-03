@@ -3,9 +3,11 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { createClient } from "@/utils/supabase/server";
 import { LiveStreamSession } from "@/types/streaming";
-import { Plus, Edit, Radio, Calendar, Coins, Users, TrendingUp } from "lucide-react";
+import { Plus, Edit, Radio, Calendar, Users, TrendingUp } from "lucide-react";
 import { redirect } from "next/navigation";
 import { EmptyState } from "@/components/empty-state";
+import { CopyLinkButton } from "@/components/instructor/copy-link-button";
+import { CancelStreamButton } from "@/components/instructor/cancel-stream-button";
 
 export default async function InstructorStreamsPage() {
   const supabase = await createClient();
@@ -95,16 +97,15 @@ export default async function InstructorStreamsPage() {
                       <span className="truncate">{new Date(stream.scheduled_start_time).toLocaleString()}</span>
                     </span>
                     <span className="flex items-center gap-1 shrink-0">
-                      <Coins className="w-4 h-4" />
-                      {stream.price_in_tokens} tokens
-                    </span>
-                    <span className="flex items-center gap-1 shrink-0">
                       <Users className="w-4 h-4" />
                       {stream.total_enrollments} enrolled
                     </span>
                   </div>
                 </div>
-                <div className="flex gap-2 shrink-0 sm:flex-col sm:items-end">
+                <div className="flex flex-wrap gap-2 shrink-0 sm:flex-col sm:items-stretch sm:w-40">
+                  {stream.status !== "cancelled" && (
+                    <CopyLinkButton path={`/streams/${stream.id}/watch`} className="w-full" />
+                  )}
                   {stream.status === "scheduled" && (
                     <Link href={`/instructor/streams/${stream.id}/edit`} className="flex-1 sm:flex-initial">
                       <Button variant="outline" size="sm" className="w-full">
@@ -113,18 +114,15 @@ export default async function InstructorStreamsPage() {
                       </Button>
                     </Link>
                   )}
-                  {stream.status === "ended" ? (
+                  {stream.status === "ended" && (
                     <Link href={`/instructor/streams/${stream.id}`} className="flex-1 sm:flex-initial">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="w-full"
-                      >
+                      <Button variant="outline" size="sm" className="w-full">
                         <TrendingUp className="w-4 h-4 mr-1" />
                         View Analytics
                       </Button>
                     </Link>
-                  ) : (
+                  )}
+                  {(stream.status === "scheduled" || stream.status === "live") && (
                     <Link href={`/instructor/streams/${stream.id}/broadcast`} className="flex-1 sm:flex-initial">
                       <Button
                         variant={stream.status === "scheduled" ? "outline" : "default"}
@@ -141,6 +139,9 @@ export default async function InstructorStreamsPage() {
                         )}
                       </Button>
                     </Link>
+                  )}
+                  {stream.status === "scheduled" && (
+                    <CancelStreamButton streamId={stream.id} />
                   )}
                 </div>
               </div>

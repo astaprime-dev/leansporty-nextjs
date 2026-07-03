@@ -1,13 +1,14 @@
 import { createClient } from '@/utils/supabase/server';
 import { redirect } from 'next/navigation';
 import { EmptyState } from '@/components/empty-state';
+import { CommentModerationButton } from '@/components/instructor/comment-moderation-button';
 
 export default async function InstructorCommentsPage() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) {
-    redirect('/');
+    redirect('/sign-in?redirect=/instructor/comments');
   }
 
   // Get instructor profile
@@ -112,13 +113,17 @@ export default async function InstructorCommentsPage() {
                 {new Date(comment.created_at).toLocaleDateString()}
               </p>
 
-              <div className="mt-4 text-sm text-gray-600">
+              <div className="mt-4 flex items-center justify-between gap-3 text-sm text-gray-600">
                 <a
                   href={`/streams/${comment.stream_id}/watch`}
                   className="text-pink-600 hover:underline"
                 >
                   View on stream page →
                 </a>
+                <CommentModerationButton
+                  commentId={comment.id}
+                  isHidden={comment.is_hidden}
+                />
               </div>
             </div>
           ))

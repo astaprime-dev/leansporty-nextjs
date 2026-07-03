@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { LiveStreamSession } from "@/types/streaming";
 import { StreamAnalytics } from "@/components/instructor/stream-analytics";
 import { CloudflareStreamPlayer } from "@/components/CloudflareStreamPlayer";
+import { CopyLinkButton } from "@/components/instructor/copy-link-button";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Alert } from "@/components/ui/alert";
@@ -10,7 +11,7 @@ import Link from "next/link";
 import {
   Calendar,
   Clock,
-  Coins,
+  Eye,
   Users,
   Edit,
   Radio,
@@ -21,11 +22,14 @@ import {
 
 export default async function StreamDetailPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ created?: string }>;
 }) {
   const supabase = await createClient();
   const { id } = await params;
+  const { created } = await searchParams;
 
   // Verify instructor access
   const {
@@ -128,14 +132,37 @@ export default async function StreamDetailPage({
                 </Button>
               </Link>
             )}
-            <Link href={`/instructor/streams/${id}/edit`}>
-              <Button variant="outline">
-                <Edit className="w-4 h-4 mr-2" />
-                Edit
-              </Button>
-            </Link>
+            {streamData.status === "scheduled" && (
+              <Link href={`/instructor/streams/${id}/edit`}>
+                <Button variant="outline">
+                  <Edit className="w-4 h-4 mr-2" />
+                  Edit
+                </Button>
+              </Link>
+            )}
           </div>
         </div>
+
+        {/* Share — for classes that haven't ended */}
+        {streamData.status !== "ended" && streamData.status !== "cancelled" && (
+          <Alert variant={created ? "success" : "info"} className="mb-4">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+              <div>
+                <p className="font-semibold">
+                  {created ? "Your class is scheduled" : "Share your class"}
+                </p>
+                <p className="text-sm">
+                  Share this link so students can find and join your class.
+                </p>
+              </div>
+              <CopyLinkButton
+                path={`/streams/${id}/watch`}
+                variant="brandOutline"
+                className="shrink-0"
+              />
+            </div>
+          </Alert>
+        )}
 
         {/* Stats Grid */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
@@ -170,12 +197,12 @@ export default async function StreamDetailPage({
           </div>
 
           <div className="bg-white rounded-lg border p-4">
-            <div className="flex items-center gap-2 text-amber-600 mb-1">
-              <Coins className="w-4 h-4" />
-              <p className="text-sm">Revenue</p>
+            <div className="flex items-center gap-2 text-gray-600 mb-1">
+              <Eye className="w-4 h-4" />
+              <p className="text-sm">Peak Viewers</p>
             </div>
-            <p className="text-lg font-semibold text-amber-600">
-              {streamData.total_enrollments * streamData.price_in_tokens} tokens
+            <p className="text-lg font-semibold">
+              {streamData.max_viewers}
             </p>
           </div>
         </div>

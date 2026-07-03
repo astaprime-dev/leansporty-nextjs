@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
 import Link from "next/link";
-import { Calendar, Clock, Coins, Users, Download, Video, Check } from "lucide-react";
+import { Calendar, Clock, Users, Download, Video, Check } from "lucide-react";
 import { enrollInStream } from "@/app/actions";
 import { downloadICS } from "@/lib/ics-generator";
 import { OAuthSignInModal } from "@/components/oauth-signin-modal";
@@ -175,10 +175,7 @@ export function StreamCard({ stream, enrollment, isLive, isAuthenticated }: Stre
                     Sign in to Enroll
                   </Button>
                 </OAuthSignInModal>
-                <div className="flex items-center gap-2 text-gray-700">
-                  <Coins className="w-5 h-5 text-amber-500" />
-                  <span className="font-semibold">{stream.price_in_tokens} tokens</span>
-                </div>
+                <span className="font-semibold text-green-600">Free</span>
               </>
             ) : (
               <>
@@ -190,10 +187,7 @@ export function StreamCard({ stream, enrollment, isLive, isAuthenticated }: Stre
                 >
                   {isEnrolling ? "Enrolling..." : "Enroll Now"}
                 </Button>
-                <div className="flex items-center gap-2 text-gray-700">
-                  <Coins className="w-5 h-5 text-amber-500" />
-                  <span className="font-semibold">{stream.price_in_tokens} tokens</span>
-                </div>
+                <span className="font-semibold text-green-600">Free</span>
               </>
             )}
 

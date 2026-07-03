@@ -2,14 +2,26 @@
 
 import { LiveStreamSession, StreamIngest } from "@/types/streaming";
 import { BrowserBroadcast } from "@/components/instructor/browser-broadcast";
+import { CopyLinkButton } from "@/components/instructor/copy-link-button";
 import { ReactionDisplay } from "@/components/instructor/reaction-display";
 import { LiveViewerCount } from "@/components/stream/live-viewer-count";
 import { CommentList } from "@/components/stream/comment-list";
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Calendar, Clock, Coins, Users, Copy, Check, ChevronDown, ChevronUp, Video } from "lucide-react";
+import { Calendar, Clock, Users, Copy, Check, ChevronDown, ChevronUp, Video } from "lucide-react";
 
 interface BroadcastManagementViewProps {
   stream: LiveStreamSession;
@@ -24,6 +36,7 @@ export function BroadcastManagementView({
   const [streamStatus, setStreamStatus] = useState(stream.status);
   const [copied, setCopied] = useState(false);
   const [showRTMPS, setShowRTMPS] = useState(false);
+  const [actionError, setActionError] = useState<string | null>(null);
   const router = useRouter();
 
   // Detect if this is a reconnection scenario
@@ -44,31 +57,44 @@ export function BroadcastManagementView({
   }, [streamStatus]);
 
   const handleMarkLive = async (isWebRTC = false) => {
-    const body = isWebRTC ? { method: 'webrtc' } : {};
-    const response = await fetch(`/api/instructor/streams/${stream.id}/start`, {
-      method: "POST",
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(body),
-    });
-
-    if (response.ok) {
-      setStreamStatus("live");
-      router.refresh();
+    setActionError(null);
+    try {
+      const body = isWebRTC ? { method: "webrtc" } : {};
+      const response = await fetch(`/api/instructor/streams/${stream.id}/start`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      if (response.ok) {
+        setStreamStatus("live");
+        router.refresh();
+      } else {
+        const b = await response.json().catch(() => ({}));
+        setActionError(b.error || "Could not start the stream. Please try again.");
+      }
+    } catch {
+      setActionError("Could not start the stream. Please try again.");
     }
   };
 
+  // The confirmation lives in the AlertDialog around the End Stream button; the
+  // BrowserBroadcast "Stop Broadcast" control also calls this (stopping is itself
+  // the deliberate action, so no second prompt there).
   const handleEndStream = async () => {
-    if (!confirm("Are you sure you want to end this stream?")) return;
-
-    const response = await fetch(`/api/instructor/streams/${stream.id}/end`, {
-      method: "POST",
-    });
-
-    if (response.ok) {
-      setStreamStatus("ended");
-      router.refresh();
+    setActionError(null);
+    try {
+      const response = await fetch(`/api/instructor/streams/${stream.id}/end`, {
+        method: "POST",
+      });
+      if (response.ok) {
+        setStreamStatus("ended");
+        router.refresh();
+      } else {
+        const b = await response.json().catch(() => ({}));
+        setActionError(b.error || "Could not end the stream. Please try again.");
+      }
+    } catch {
+      setActionError("Could not end the stream. Please try again.");
     }
   };
 
@@ -153,7 +179,12 @@ export function BroadcastManagementView({
 
           {/* Stream Info */}
           <div className="bg-white rounded-lg border p-6 space-y-4">
-            <h2 className="text-2xl font-semibold text-gray-900">Stream Details</h2>
+            <div className="flex items-center justify-between gap-3">
+              <h2 className="text-2xl font-semibold text-gray-900">Stream Details</h2>
+              {streamStatus !== "ended" && (
+                <CopyLinkButton path={`/streams/${stream.id}/watch`} />
+              )}
+            </div>
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div className="flex items-center gap-2">
                 <Calendar className="w-4 h-4 text-gray-400" />
@@ -164,10 +195,6 @@ export function BroadcastManagementView({
               <div className="flex items-center gap-2">
                 <Clock className="w-4 h-4 text-gray-400" />
                 <span>{formatDuration(stream.scheduled_duration_seconds)}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Coins className="w-4 h-4 text-amber-500" />
-                <span>{stream.price_in_tokens} tokens</span>
               </div>
               <div className="flex items-center gap-2">
                 <Users className="w-4 h-4 text-gray-400" />
@@ -294,14 +321,38 @@ export function BroadcastManagementView({
               )}
 
               {streamStatus === "live" && (
-                <Button
-                  onClick={handleEndStream}
-                  variant="destructive"
-                  className="w-full"
-                >
-                  End Stream
-                </Button>
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button variant="destructive" className="w-full">
+                      End Stream
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>End this stream?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        This stops the broadcast for everyone watching. The recording
+                        becomes available to enrolled students. You can&apos;t restart
+                        an ended stream.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Keep streaming</AlertDialogCancel>
+                      <AlertDialogAction
+                        onClick={(e) => {
+                          e.preventDefault();
+                          handleEndStream();
+                        }}
+                        className="bg-red-600 hover:bg-red-700"
+                      >
+                        End stream
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
               )}
+
+              {actionError && <Alert variant="error">{actionError}</Alert>}
             </div>
           </div>
 
@@ -321,12 +372,6 @@ export function BroadcastManagementView({
               <div>
                 <p className="text-sm text-gray-600">Total Enrollments</p>
                 <p className="text-2xl font-bold">{stream.total_enrollments}</p>
-              </div>
-              <div>
-                <p className="text-sm text-gray-600">Revenue (tokens)</p>
-                <p className="text-2xl font-bold text-amber-600">
-                  {stream.total_enrollments * stream.price_in_tokens}
-                </p>
               </div>
               {stream.max_viewers > 0 && (
                 <div>

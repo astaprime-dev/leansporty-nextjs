@@ -1,4 +1,4 @@
-import { BookOpen, User, Video, Coins, Share2, Calendar, CheckCircle, HelpCircle } from "lucide-react";
+import { BookOpen, User, Video, Wallet, Share2, Calendar, CheckCircle, HelpCircle } from "lucide-react";
 import { Alert } from "@/components/ui/alert";
 
 export default function InstructorHelpPage() {
@@ -13,7 +13,7 @@ export default function InstructorHelpPage() {
           Instructor Guide
         </h1>
         <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-          Everything you need to know about teaching on Lean Sporty, from setting up your profile to earning tokens
+          Everything you need to know about teaching on Lean Sporty, from setting up your profile to running your first live class
         </p>
       </div>
 
@@ -191,11 +191,13 @@ export default function InstructorHelpPage() {
                   <ul className="mt-2 space-y-1 text-sm text-gray-600 ml-4">
                     <li>• <strong>Title:</strong> Clear, descriptive name (e.g., "30-Min HIIT Dance Cardio")</li>
                     <li>• <strong>Description:</strong> What to expect, fitness level, equipment needed</li>
-                    <li>• <strong>Date & Time:</strong> When your class will start</li>
-                    <li>• <strong>Duration:</strong> How long the class will be (in minutes)</li>
-                    <li>• <strong>Price:</strong> Number of tokens required to join</li>
-                    <li>• <strong>Thumbnail:</strong> Optional image URL for your stream</li>
+                    <li>• <strong>Date & Time:</strong> When your class will start (shown in your local timezone)</li>
+                    <li>• <strong>Duration:</strong> How long the class will be, 15–180 minutes</li>
                   </ul>
+                  <p className="text-sm text-gray-600 mt-2 ml-4">
+                    Classes are free for students while we&apos;re in early access — paid
+                    classes are coming soon.
+                  </p>
                 </li>
                 <li>
                   <p className="font-semibold text-gray-900">Publish your stream</p>
@@ -326,7 +328,6 @@ export default function InstructorHelpPage() {
                   <li>Students can no longer join the live class</li>
                   <li>The recording becomes available automatically</li>
                   <li>Enrolled students can watch the replay for 7 days</li>
-                  <li>Your earnings are finalized based on total enrollments</li>
                 </ul>
               </Alert>
 
@@ -395,70 +396,45 @@ export default function InstructorHelpPage() {
           </div>
         </section>
 
-        {/* Earning Tokens */}
+        {/* Getting paid */}
         <section className="bg-white rounded-2xl border border-pink-100 p-8">
           <div className="flex items-start gap-4 mb-6">
             <div className="w-12 h-12 bg-gradient-to-br from-pink-500 to-rose-400 rounded-xl flex items-center justify-center flex-shrink-0">
-              <Coins className="w-6 h-6 text-white" strokeWidth={1.5} />
+              <Wallet className="w-6 h-6 text-white" strokeWidth={1.5} />
             </div>
             <div>
-              <h2 className="text-2xl font-semibold text-gray-900 mb-2">Earning Tokens</h2>
-              <p className="text-gray-600">How you get paid for teaching classes</p>
+              <h2 className="text-2xl font-semibold text-gray-900 mb-2">Getting paid</h2>
+              <p className="text-gray-600">How teaching on Lean Sporty will pay you</p>
             </div>
           </div>
 
           <div className="space-y-6">
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-3">How earning works</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-3">Free while we&apos;re in early access</h3>
               <p className="text-gray-700 mb-4">
-                You earn tokens when students enroll in your streams. Each stream has a token price that you set when creating it.
+                Right now your classes are free for students, so there&apos;s nothing to
+                price and nothing to withdraw yet. This is the early-access period — you
+                build your profile, your class library, and your audience.
               </p>
-
-              <div className="bg-gradient-to-br from-pink-50 to-rose-50 rounded-lg p-6 border border-pink-200 mb-4">
-                <p className="text-2xl font-bold text-gray-900 mb-2">Example:</p>
-                <div className="space-y-2 text-gray-700">
-                  <p>• You set your stream price at <strong>100 tokens</strong></p>
-                  <p>• <strong>15 students</strong> enroll in your class</p>
-                  <p className="text-xl font-semibold text-pink-600">= You earn 1,500 tokens 💰</p>
-                </div>
-              </div>
             </div>
 
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-3">Viewing your earnings</h3>
-              <p className="text-gray-700 mb-3">Track your earnings on your instructor dashboard:</p>
-              <ul className="space-y-2 ml-6 list-disc text-gray-700">
-                <li><strong>Total Tokens Earned:</strong> Shows your all-time earnings across all streams</li>
-                <li><strong>Per-Stream Stats:</strong> Each stream card shows individual enrollment count and token price</li>
-                <li><strong>Recent Enrollments:</strong> See who's joining your classes in real-time</li>
-              </ul>
+              <h3 className="text-lg font-semibold text-gray-900 mb-3">Paid classes are coming</h3>
+              <p className="text-gray-700 mb-3">
+                When paid classes launch, you&apos;ll set one price and{" "}
+                <strong>keep 85% of every sale</strong> (90% for founding instructors).
+                We handle checkout, global pricing, and payouts; your share is paid
+                straight to your bank via Stripe. You&apos;ll never be out of pocket —
+                you only ever earn on a sale.
+              </p>
             </div>
 
-            <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-3">Setting your prices</h3>
-              <p className="text-gray-700 mb-3">Consider these factors when pricing your streams:</p>
-              <ul className="space-y-2 ml-6 list-disc text-gray-700">
-                <li><strong>Duration:</strong> Longer classes typically command higher prices</li>
-                <li><strong>Difficulty Level:</strong> Advanced or specialized classes may be priced higher</li>
-                <li><strong>Your Experience:</strong> Build your reputation with reasonably priced classes first</li>
-                <li><strong>Market Rate:</strong> Check what other instructors charge for similar classes</li>
-              </ul>
-
-              <Alert variant="success" className="mt-4">
-                <p className="font-semibold mb-1">Recommended Starting Prices</p>
-                <ul className="text-sm space-y-1 ml-4">
-                  <li>• 30-minute class: 50-100 tokens</li>
-                  <li>• 45-minute class: 75-150 tokens</li>
-                  <li>• 60-minute class: 100-200 tokens</li>
-                </ul>
-              </Alert>
-            </div>
-
-            <Alert variant="warning">
-              <p className="font-semibold mb-1">Token Withdrawals</p>
+            <Alert variant="info">
+              <p className="font-semibold mb-1">What you can do today</p>
               <p className="text-sm">
-                The ability to withdraw tokens to real money is currently being implemented.
-                You'll be able to cash out your earnings soon! Check back for updates.
+                Every live class you run is recorded and grows the members&apos; library,
+                and every student meets your brand. That&apos;s the audience your future
+                paid classes sell to — so the work you do now compounds.
               </p>
             </Alert>
           </div>
@@ -516,7 +492,7 @@ export default function InstructorHelpPage() {
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-pink-500 mt-1">✓</span>
-                  <span>Use eye-catching thumbnail images</span>
+                  <span>Add a clear description so students know what to expect</span>
                 </li>
               </ul>
             </div>
@@ -583,16 +559,17 @@ export default function InstructorHelpPage() {
             <div>
               <h3 className="text-lg font-semibold text-gray-900 mb-2">Can I edit a stream after creating it?</h3>
               <p className="text-gray-700">
-                Not yet, but this feature is coming soon! For now, if you need to change details, you'll need to delete
-                the stream and create a new one. Make sure to double-check all details before publishing.
+                Yes. While a class is still scheduled, open "My Streams" and click "Edit" to change its title,
+                description, date/time, or duration. Once a class has gone live or ended, its details are locked.
               </p>
             </div>
 
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">What happens if I need to cancel a stream?</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">What happens if I need to cancel a class?</h3>
               <p className="text-gray-700">
-                Currently, you can delete scheduled streams from the "My Streams" page. Enrolled students should be notified
-                (notification system coming soon). Try to avoid cancellations when possible to maintain your reputation.
+                On the "My Streams" page, click "Cancel" on any scheduled class and confirm. The class is removed
+                from students' view and its broadcast setup is torn down. Cancelling isn't available once a class is
+                live or ended. Try to avoid cancellations when possible to maintain your reputation.
               </p>
             </div>
 

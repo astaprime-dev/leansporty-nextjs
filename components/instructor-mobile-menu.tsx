@@ -63,6 +63,14 @@ export function InstructorMobileMenu({
               </Link>
 
               <Link
+                href="/instructor/comments"
+                className="text-base font-medium text-gray-600 hover:text-pink-500 transition-colors py-2"
+                onClick={() => setIsOpen(false)}
+              >
+                Comments
+              </Link>
+
+              <Link
                 href="/instructor/profile"
                 className="text-base font-medium text-gray-600 hover:text-pink-500 transition-colors py-2"
                 onClick={() => setIsOpen(false)}

@@ -67,6 +67,12 @@ export default async function InstructorLayout({
                 Create Stream
               </Link>
               <Link
+                href="/instructor/comments"
+                className="text-sm font-medium text-gray-600 hover:text-pink-500 transition-colors"
+              >
+                Comments
+              </Link>
+              <Link
                 href="/instructor/profile"
                 className="text-sm font-medium text-gray-600 hover:text-pink-500 transition-colors"
               >
