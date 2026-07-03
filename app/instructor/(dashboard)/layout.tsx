@@ -73,6 +73,12 @@ export default async function InstructorLayout({
                 Comments
               </Link>
               <Link
+                href="/instructor/earnings"
+                className="text-sm font-medium text-gray-600 hover:text-pink-500 transition-colors"
+              >
+                Earnings
+              </Link>
+              <Link
                 href="/instructor/profile"
                 className="text-sm font-medium text-gray-600 hover:text-pink-500 transition-colors"
               >

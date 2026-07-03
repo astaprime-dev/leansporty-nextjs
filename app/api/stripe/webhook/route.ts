@@ -11,6 +11,28 @@ import { renderPurchaseConfirmationEmail } from "@/lib/email-templates";
 
 export const runtime = "nodejs";
 
+/** Platform fee is at least this per sale (the "€1.50 floor" from BUSINESS_MODEL). */
+const MIN_PLATFORM_FEE_CENTS = 150;
+
+/**
+ * Split a charged amount into the platform fee and the instructor's share.
+ * Platform fee = max((100 - split)% of gross, €1.50 floor), never more than the sale
+ * itself. instructor_share = gross - platform_fee (≥ 0).
+ */
+function computeSplit(
+  grossCents: number,
+  splitPct: number
+): { platformFeeCents: number; instructorShareCents: number } {
+  const platformPct = Math.max(0, 100 - splitPct);
+  let platformFee = Math.round((grossCents * platformPct) / 100);
+  platformFee = Math.max(platformFee, MIN_PLATFORM_FEE_CENTS);
+  platformFee = Math.min(platformFee, grossCents); // never exceed the sale
+  return {
+    platformFeeCents: platformFee,
+    instructorShareCents: grossCents - platformFee,
+  };
+}
+
 /**
  * POST /api/stripe/webhook
  *
@@ -61,7 +83,7 @@ export async function POST(req: NextRequest) {
       // the entitlements FK and make Stripe retry forever).
       const { data: ourProduct } = await db
         .from("products")
-        .select("id, title")
+        .select("id, title, instructor_id, split_pct")
         .eq("id", productId)
         .maybeSingle();
       if (!ourProduct) {
@@ -89,16 +111,17 @@ export async function POST(req: NextRequest) {
         `Entitlement granted: user=${userId} product=${productId} session=${s.id}`
       );
 
-      // If this product backs a paid live class, add the buyer to that class's
-      // roster (stream_enrollments). Users can't self-insert paid-class rosters
-      // (RLS), so this service-role write is the only way a buyer lands on the
-      // roster. Idempotent via the unique(stream_id,user_id) constraint.
+      // If this product backs a paid live class: add the buyer to the class roster
+      // and record the instructor's payout. Users can't self-insert paid-class
+      // rosters (RLS), so this service-role write is the only path. Both are
+      // idempotent (roster unique(stream_id,user_id); payout unique(stripe_session_id)).
       try {
         const { data: paidStream } = await db
           .from("live_stream_sessions")
           .select("id")
           .eq("product_id", productId)
           .maybeSingle();
+
         if (paidStream) {
           await db
             .from("stream_enrollments")
@@ -107,8 +130,40 @@ export async function POST(req: NextRequest) {
               { onConflict: "stream_id,user_id" }
             );
         }
+
+        // Payout ledger: what the instructor is owed on this sale.
+        if (ourProduct.instructor_id) {
+          const gross = s.amount_total ?? 0;
+          const splitPct = ourProduct.split_pct ?? 85;
+          const { platformFeeCents, instructorShareCents } = computeSplit(
+            gross,
+            splitPct
+          );
+          const { error: payoutErr } = await db.from("instructor_payouts").upsert(
+            {
+              instructor_id: ourProduct.instructor_id,
+              product_id: ourProduct.id,
+              stream_id: paidStream?.id ?? null,
+              user_id: userId,
+              stripe_session_id: s.id,
+              gross_cents: gross,
+              currency: s.currency ?? "eur",
+              split_pct: splitPct,
+              platform_fee_cents: platformFeeCents,
+              instructor_share_cents: instructorShareCents,
+              status: "pending",
+            },
+            { onConflict: "stripe_session_id" }
+          );
+          if (payoutErr) {
+            console.error(
+              `Payout ledger write FAILED for session ${s.id}:`,
+              payoutErr
+            );
+          }
+        }
       } catch (e) {
-        console.error("Roster row insert failed (buyer still entitled):", e);
+        console.error("Paid-class post-processing failed (buyer still entitled):", e);
       }
 
       // They bought (possibly via a recovery link / new session) → stop any open
@@ -247,6 +302,17 @@ export async function POST(req: NextRequest) {
         } catch (e) {
           console.error("Roster row cleanup on refund failed:", e);
         }
+      }
+
+      // Reverse the payout for this sale so a refunded class isn't paid out. (If it
+      // was already paid to the instructor, ops reconciles manually — rare.)
+      try {
+        await db
+          .from("instructor_payouts")
+          .delete()
+          .eq("stripe_session_id", sessionId);
+      } catch (e) {
+        console.error("Payout reversal on refund failed:", e);
       }
       break;
     }
