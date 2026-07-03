@@ -322,7 +322,7 @@ export default async function ProfilePage({
             <h2 className="text-2xl font-semibold mb-4 text-gray-900 px-2 sm:px-0">
               Upcoming Streams
             </h2>
-            <div className="grid gap-4 sm:gap-6">
+            <div className="grid gap-4 sm:gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {upcomingStreams.map((stream) => (
                 <StreamCard
                   key={stream.id}

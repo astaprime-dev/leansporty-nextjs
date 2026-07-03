@@ -163,7 +163,7 @@ export function ActivityView({
               </Button>
             </Link>
           </div>
-          <div className="grid gap-4">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {featuredStreams.map((stream) => (
               <StreamCard
                 key={stream.id}
@@ -190,7 +190,7 @@ export function ActivityView({
               </p>
             </div>
           </div>
-          <div className="grid gap-4">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {pastStreams.map((stream) => (
               <StreamCard
                 key={stream.id}
