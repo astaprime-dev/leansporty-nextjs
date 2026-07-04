@@ -40,10 +40,13 @@ Multi-currency / regional pricing is deferred (plan E2.8) — keep EUR-only for 
 
 ## 4. Products — nothing to prepopulate
 
-Do **not** create products in the dashboard. The app creates them via the API:
-- The **21-Day Challenge** product needs its `stripe_price_id` set once (seed).
-- **Paid live classes** are created on the fly — one shared "Lean Sporty live class"
-  Stripe Product with a pool of Prices reused by amount (see `stripe_class_prices`).
+Do **not** create products or prices in the dashboard, and none need seeding:
+Checkout defines every price **inline** (`price_data` from the `products` row's
+`price_cents`/`currency`), attached to a Stripe Product whose id **is our product
+slug** — auto-created on first sale in each mode, name kept in sync. No Stripe ids
+are stored in the DB, so the same catalog sells correctly in test mode, live mode,
+and any Stripe account, and the Stripe Products list stays bounded by catalog size
+(one per class/challenge per mode), never by sales volume.
 
 ## 5. API keys
 
@@ -112,9 +115,8 @@ code is proven; you're just re-pointing it at the Lean Sporty account.)
 1. All migrations applied to prod Supabase ✅ (done 2026-07-03).
 2. Switch env to **live** keys + the **live** webhook endpoint (Vercel).
 3. Branding + Adaptive-Pricing-off + VAT configured (steps 2, 3, 8).
-4. Seed the **21-Day Challenge** `stripe_price_id` (create the €49 Price in the live
-   account, put its id in the product row).
-5. Do one **real** low-value purchase (and refund it) end-to-end before announcing.
+4. Do one **real** low-value purchase (and refund it) end-to-end before announcing.
+   (No price seeding needed — prices are inline, see step 4 above.)
 
 > Note: paid **live classes** gate on the roster/entitlement at the page level, not
 > signed Cloudflare URLs — so the `ALLOW_UNSIGNED_PLAYBACK` / Cloudflare signing-key

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
 import { createLiveInput } from "@/lib/cloudflare-stream";
-import { provisionStreamProduct } from "@/lib/stream-products";
+import { provisionStreamProduct, SUPPORTED_CURRENCIES } from "@/lib/stream-products";
 
 export const runtime = "nodejs";
 
@@ -53,6 +53,12 @@ export async function POST(request: NextRequest) {
       typeof data.currency === "string" && data.currency.trim()
         ? data.currency.trim().toLowerCase()
         : "eur";
+    if (!SUPPORTED_CURRENCIES.has(currency)) {
+      return NextResponse.json(
+        { error: "Only EUR pricing is supported." },
+        { status: 400 }
+      );
+    }
 
     const thumbnailUrl =
       typeof data.thumbnailUrl === "string" && data.thumbnailUrl.trim().length <= 500

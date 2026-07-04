@@ -4,13 +4,19 @@
 
 export type ProductKind = "course" | "challenge" | "membership" | "single";
 
-export interface ChallengeConfig {
+/** Shape of products.config (free-form jsonb) across all product kinds. */
+export interface ProductConfig {
   program_length_days?: number;
   drip_enabled?: boolean;
   workout_count?: number;
   /** Access duration in months; entitlement expires_at = grant + this. Omit/0 = lifetime. */
   access_months?: number;
+  /** Membership products only (Phase 2): Checkout recurring interval. Default "month". */
+  billing_interval?: "month" | "year";
 }
+
+/** @deprecated Renamed — config is shared by every product kind, not just challenges. */
+export type ChallengeConfig = ProductConfig;
 
 export interface Product {
   id: string;
@@ -21,9 +27,8 @@ export interface Product {
   cover_image_url: string | null;
   price_cents: number;
   currency: string;
-  stripe_price_id: string | null;
   is_active: boolean;
-  config: ChallengeConfig;
+  config: ProductConfig;
   created_at: string;
 }
 

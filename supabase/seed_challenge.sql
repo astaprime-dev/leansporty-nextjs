@@ -15,25 +15,31 @@ set cloudflare_uid = substring("videoUrl" from 'cloudflarestream\.com/([a-f0-9]{
 where cloudflare_uid is null
   and "videoUrl" ~ 'cloudflarestream\.com/[a-f0-9]{32}';
 
--- (2) Upsert the product. Add the Stripe Price id when you wire checkout
---     (leave null for now to test preview + comped playback without Stripe).
+-- (2) Upsert the product. No Stripe Price id is stored anywhere — Checkout
+--     defines the price inline from price_cents/currency (works in any mode).
+--     Seeded INACTIVE so a fresh environment can't sell before the Stripe
+--     webhook is wired (a sale without the webhook = charged but no access).
+--     Activate explicitly when Stripe is live:
+--       update public.products set is_active = true
+--       where slug = '21-day-dance-challenge';
+--     Re-running the seed does NOT touch is_active on an existing row.
 insert into public.products
-  (slug, kind, title, subtitle, price_cents, currency, stripe_price_id, is_active, config)
+  (slug, kind, title, subtitle, price_cents, currency, is_active, config)
 values
   ('21-day-dance-challenge', 'challenge',
    '21-Day Dance Challenge',
    'Three weeks. Fifteen feel-good sessions. Zero equipment.',
    4900, 'eur',
-   null,                         -- TODO: Stripe Price id (e.g. price_...) when wiring checkout
-   true,
+   false,
    -- workout_count = 15 (full program); days not yet uploaded show as "coming soon"
    '{"program_length_days":21,"drip_enabled":false,"workout_count":15,"access_months":12}'::jsonb)
 on conflict (slug) do update set
   title       = excluded.title,
   subtitle    = excluded.subtitle,
   price_cents = excluded.price_cents,
-  config      = excluded.config,
-  is_active   = excluded.is_active;
+  config      = excluded.config;
+  -- is_active deliberately NOT updated: re-seeding must never deactivate a
+  -- selling product nor activate one that isn't wired up yet.
 
 -- (3) Upsert the 14 items. content_id is resolved by joining workouts on the
 --     backfilled cloudflare_uid, so no workout ids to copy by hand.

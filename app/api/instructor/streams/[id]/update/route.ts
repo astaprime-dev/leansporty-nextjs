@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import {
   provisionStreamProduct,
   deactivateStreamProduct,
+  SUPPORTED_CURRENCIES,
 } from "@/lib/stream-products";
 
 export const runtime = "nodejs";
@@ -80,6 +81,12 @@ export async function PATCH(
       typeof body?.currency === "string" && body.currency.trim()
         ? body.currency.trim().toLowerCase()
         : "eur";
+    if (!SUPPORTED_CURRENCIES.has(currency)) {
+      return NextResponse.json(
+        { error: "Only EUR pricing is supported." },
+        { status: 400 }
+      );
+    }
     const thumbnailUrl =
       typeof body?.thumbnailUrl === "string" && body.thumbnailUrl.trim().length <= 500
         ? body.thumbnailUrl.trim() || null
