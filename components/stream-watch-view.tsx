@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { LiveStreamSession, StreamEnrollment } from "@/types/streaming";
 import { CloudflareStreamPlayer } from "@/components/CloudflareStreamPlayer";
 import { WHEPPlayer } from "@/components/whep-player";
 import { ReactionButtons } from "@/components/stream/reaction-buttons";
 import { LiveViewerCount } from "@/components/stream/live-viewer-count";
 import { Badge } from "@/components/ui/badge";
+import { LiveDot } from "@/components/ui/live-dot";
 import { Alert } from "@/components/ui/alert";
 import { Calendar, Users, Clock } from "lucide-react";
 import { useWatchSession } from "@/hooks/use-watch-session";
@@ -17,6 +18,8 @@ interface StreamWatchViewProps {
   stream: LiveStreamSession;
   enrollment: StreamEnrollment;
   isLive: boolean;
+  /** Scheduled class whose whole window elapsed without going live (server-computed). */
+  scheduledClassMissed?: boolean;
   isInstructor?: boolean;
   instructorId?: string;
 }
@@ -25,11 +28,25 @@ export function StreamWatchView({
   stream,
   enrollment,
   isLive,
+  scheduledClassMissed = false,
   isInstructor = false,
   instructorId,
 }: StreamWatchViewProps) {
   // Track playing state for attendance tracking
   const [isPlaying, setIsPlaying] = useState(false);
+
+  // Local-time start label, formatted only after mount: the server renders in
+  // UTC/server locale, so formatting during SSR both hydration-mismatches and
+  // shows the wrong wall-clock time until JS loads.
+  const [startsAtLabel, setStartsAtLabel] = useState<string | null>(null);
+  useEffect(() => {
+    setStartsAtLabel(
+      new Date(stream.scheduled_start_time).toLocaleString(undefined, {
+        dateStyle: "medium",
+        timeStyle: "short",
+      })
+    );
+  }, [stream.scheduled_start_time]);
 
   // Track watch session for attendance (only tracks live sessions for commenting)
   useWatchSession({
@@ -64,10 +81,6 @@ export function StreamWatchView({
 
   if (!isLive && !recordingPlaybackId) {
     const scheduled = stream.status === "scheduled";
-    const startsAt = new Date(stream.scheduled_start_time).toLocaleString(undefined, {
-      dateStyle: "medium",
-      timeStyle: "short",
-    });
     return (
       <div className="flex-1 w-full flex items-center justify-center p-8">
         <div className="text-center max-w-md">
@@ -75,12 +88,20 @@ export function StreamWatchView({
             You&apos;re enrolled in this class.
           </Alert>
           <p className="text-xl text-gray-900 mb-2">
-            {scheduled ? "Your class hasn't started yet" : "Recording not available"}
+            {!scheduled
+              ? "Recording not available"
+              : scheduledClassMissed
+                ? "This class didn't take place as scheduled"
+                : "Your class hasn't started yet"}
           </p>
           <p className="text-sm text-gray-500">
-            {scheduled
-              ? `It begins ${startsAt}. Come back then to join live — you're all set.`
-              : "The recording isn't available at this time."}
+            {!scheduled
+              ? "The recording isn't available at this time."
+              : scheduledClassMissed
+                ? "The scheduled time passed without the class going live. If a recording becomes available it will appear here — or reach out to your instructor."
+                : startsAtLabel
+                  ? `It begins ${startsAtLabel}. Come back then to join live — you're all set.`
+                  : "Come back at the scheduled start time to join live — you're all set."}
           </p>
         </div>
       </div>
@@ -167,10 +188,7 @@ export function StreamWatchView({
             {/* Live badge */}
             {isLive && (
               <Badge className="bg-red-500 text-white px-4 py-2 text-base flex items-center gap-2">
-                <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-white"></span>
-                </span>
+                <LiveDot className="text-white" />
                 LIVE
               </Badge>
             )}

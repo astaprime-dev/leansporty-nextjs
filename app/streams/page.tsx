@@ -17,14 +17,9 @@ export default async function StreamsPage({
     data: { user },
   } = await supabase.auth.getUser();
 
-  // Fetch user enrollments first
+  // Fetch user enrollments (to badge cards) and the shared catalog
   const enrollments = await getUserEnrollments();
-
-  // Extract enrolled stream IDs
-  const enrolledStreamIds = enrollments.map(e => e.stream_id);
-
-  // Fetch streams with enrollment context
-  const streams = await getStreams({ enrolledStreamIds });
+  const streams = await getStreams();
 
   return (
     <StreamsView

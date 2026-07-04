@@ -7,6 +7,7 @@ import { redirect } from "next/navigation";
 import { WorkoutHistoryItem, Workout } from "@/types/database";
 import { LiveStreamSession, StreamEnrollment } from "@/types/streaming";
 import { recordLead } from "@/lib/leads";
+import { isMissedScheduledClass } from "@/lib/stream-time";
 
 // Commented out - no longer needed with Apple OAuth
 // Keeping for reference in case of migration needs
@@ -392,16 +393,15 @@ export const getWorkouts = async (): Promise<Workout[]> => {
 // ============================================
 
 /**
- * Get live and upcoming streams with enrollment-aware filtering
+ * Get live and scheduled streams for the catalog.
  *
- * Business logic:
- * - Not authenticated: show only future scheduled streams
- * - Authenticated but not enrolled: show only future scheduled streams
- * - Enrolled users: show future scheduled + their past enrolled scheduled streams
- * - Instructor profile pages (when instructorId provided): show ALL instructor's scheduled streams
+ * Every 'scheduled' class is visible to everyone — soonest-upcoming first,
+ * already-passed ones sorted last (they stay listed until the instructor
+ * cancels; purchase/enroll of missed classes is blocked separately, see
+ * lib/stream-time.ts). When instructorId is provided, results are limited
+ * to that instructor.
  */
 export const getStreams = async (options?: {
-  enrolledStreamIds?: string[];
   instructorId?: string;
 }): Promise<{
   liveStreams: LiveStreamSession[];
@@ -680,6 +680,13 @@ export const enrollInStream = async (
   // error. (S2)
   if (stream.product_id) {
     return { success: false, error: 'This class requires purchase.' };
+  }
+
+  // A scheduled class whose whole window elapsed without going live will never
+  // happen — don't let people enroll in it (it stays in the catalog until the
+  // instructor cancels it).
+  if (isMissedScheduledClass(stream)) {
+    return { success: false, error: "This class's scheduled time has passed." };
   }
 
   // Check if already enrolled

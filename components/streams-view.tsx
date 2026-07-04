@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { OAuthSignInModal } from "@/components/oauth-signin-modal";
 import { EmptyState } from "@/components/empty-state";
 import { Alert } from "@/components/ui/alert";
+import { LiveDot } from "@/components/ui/live-dot";
 
 interface StreamsViewProps {
   liveStreams: LiveStreamSession[];
@@ -65,10 +66,7 @@ export function StreamsView({
       {liveStreams.length > 0 && (
         <div>
           <h2 className="text-2xl font-semibold text-gray-900 mb-4 flex items-center gap-3">
-            <span className="relative flex h-3 w-3">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
-            </span>
+            <LiveDot size="xl" className="text-red-500" />
             <span>LIVE NOW</span>
           </h2>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">

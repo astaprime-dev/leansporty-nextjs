@@ -129,15 +129,12 @@ export default async function ProfilePage({
   // Check if current user is authenticated
   const { data: { user } } = await supabase.auth.getUser();
 
-  // Fetch user enrollments to show past scheduled streams if enrolled
+  // Fetch user enrollments to badge the visitor's enrolled classes
   const enrollments = await getUserEnrollments();
-  const enrolledStreamIds = enrollments.map(e => e.stream_id);
 
-  // Fetch streams using shared business logic
-  // If instructor profile: shows ALL their scheduled/live streams
-  // Otherwise: shows future scheduled + enrolled past scheduled
+  // Instructor profile: show ALL their live/scheduled streams
   const streams = isInstructor
-    ? await getStreams({ enrolledStreamIds, instructorId: instructor.id })
+    ? await getStreams({ instructorId: instructor.id })
     : { liveStreams: [], upcomingStreams: [] };
 
   const upcomingStreams = [...streams.liveStreams, ...streams.upcomingStreams];

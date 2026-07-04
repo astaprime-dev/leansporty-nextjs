@@ -2,6 +2,7 @@ import { checkStreamEnrollment, getStreamById } from "@/app/actions";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import { StreamWatchView } from "@/components/stream-watch-view";
+import { isMissedScheduledClass } from "@/lib/stream-time";
 import { FinalizingAccess } from "@/components/challenge/cta";
 import { getStreamRecordings } from "@/lib/cloudflare-stream";
 
@@ -117,6 +118,7 @@ export default async function StreamWatchPage({
       stream={stream}
       enrollment={enrollment}
       isLive={stream.status === "live"}
+      scheduledClassMissed={isMissedScheduledClass(stream)}
       isInstructor={!!instructor}
       instructorId={instructor?.id}
     />

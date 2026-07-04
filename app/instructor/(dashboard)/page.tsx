@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
+import { LiveDot } from "@/components/ui/live-dot";
 import { EmptyState } from "@/components/empty-state";
 import { createClient } from "@/utils/supabase/server";
 import { LiveStreamSession } from "@/types/streaming";
@@ -155,50 +156,43 @@ export default async function InstructorDashboard() {
 
       {/* Statistics Grid */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-        <div className="bg-white rounded-2xl border border-pink-100 p-6 shadow-sm">
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-pink-100 text-pink-600">
-              <Calendar className="w-5 h-5" />
+        {[
+          {
+            label: "Scheduled",
+            value: stats.scheduled,
+            icon: <Calendar className="w-5 h-5" />,
+          },
+          {
+            label: "Live now",
+            value: stats.live,
+            icon: <LiveDot size="lg" pulse={stats.live > 0} className="text-red-500" />,
+            iconBg: "bg-red-100",
+          },
+          {
+            label: "Enrollments",
+            value: stats.totalEnrollments,
+            icon: <Users className="w-5 h-5" />,
+          },
+          {
+            label: "Completed",
+            value: stats.ended,
+            icon: <CheckCircle2 className="w-5 h-5" />,
+          },
+        ].map((t) => (
+          <div key={t.label} className="bg-white rounded-2xl border border-pink-100 p-6 shadow-sm">
+            <div className="flex items-center justify-between mb-3">
+              <div
+                className={`flex h-10 w-10 items-center justify-center rounded-full ${
+                  t.iconBg ?? "bg-pink-100 text-pink-600"
+                }`}
+              >
+                {t.icon}
+              </div>
+              <span className="text-3xl font-semibold text-gray-900">{t.value}</span>
             </div>
-            <span className="text-3xl font-semibold text-gray-900">{stats.scheduled}</span>
+            <h3 className="text-sm font-semibold text-gray-600">{t.label}</h3>
           </div>
-          <h3 className="text-sm font-semibold text-gray-600">Scheduled</h3>
-        </div>
-
-        <div className="bg-white rounded-2xl border border-pink-100 p-6 shadow-sm">
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-red-100">
-              <span className="relative flex h-2.5 w-2.5">
-                {stats.live > 0 && (
-                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-400 opacity-75"></span>
-                )}
-                <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-red-500"></span>
-              </span>
-            </div>
-            <span className="text-3xl font-semibold text-gray-900">{stats.live}</span>
-          </div>
-          <h3 className="text-sm font-semibold text-gray-600">Live now</h3>
-        </div>
-
-        <div className="bg-white rounded-2xl border border-pink-100 p-6 shadow-sm">
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-pink-100 text-pink-600">
-              <Users className="w-5 h-5" />
-            </div>
-            <span className="text-3xl font-semibold text-gray-900">{stats.totalEnrollments}</span>
-          </div>
-          <h3 className="text-sm font-semibold text-gray-600">Enrollments</h3>
-        </div>
-
-        <div className="bg-white rounded-2xl border border-pink-100 p-6 shadow-sm">
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-pink-100 text-pink-600">
-              <CheckCircle2 className="w-5 h-5" />
-            </div>
-            <span className="text-3xl font-semibold text-gray-900">{stats.ended}</span>
-          </div>
-          <h3 className="text-sm font-semibold text-gray-600">Completed</h3>
-        </div>
+        ))}
       </div>
 
       {/* Two Column Layout */}

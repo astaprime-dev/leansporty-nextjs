@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
 import { getStripe, stripeAutomaticTax } from "@/lib/stripe";
+import { isMissedScheduledClass } from "@/lib/stream-time";
 
 export const runtime = "nodejs";
 
@@ -52,6 +53,25 @@ export async function POST(req: NextRequest) {
   if (!product.stripe_price_id) {
     console.error(`Product ${productSlug} has no stripe_price_id`);
     return NextResponse.json({ error: "product not purchasable" }, { status: 409 });
+  }
+
+  // Paid live class that never happened: a scheduled session whose whole window
+  // elapsed without going live stays in the catalog until cancelled, but selling
+  // it would charge for a class that will never air. Non-class products have no
+  // linked sessions, so this is a no-op for them.
+  const { data: linkedStreams } = await supabase
+    .from("live_stream_sessions")
+    .select("status, scheduled_start_time, scheduled_duration_seconds")
+    .eq("product_id", product.id);
+  if (
+    linkedStreams &&
+    linkedStreams.length > 0 &&
+    linkedStreams.every((s) => isMissedScheduledClass(s))
+  ) {
+    return NextResponse.json(
+      { error: "This class's scheduled time has passed." },
+      { status: 410 }
+    );
   }
 
   // Already owned? (RLS limits this read to the caller's own rows.) Short-circuit

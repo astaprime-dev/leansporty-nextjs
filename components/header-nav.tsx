@@ -1,23 +1,12 @@
-import { createClient } from "@/utils/supabase/server";
+import { User } from "@supabase/supabase-js";
 import { NavLink } from "@/components/nav-link";
 
-export default async function HeaderNav() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+interface HeaderNavProps {
+  user: User | null;
+  isInstructor: boolean;
+}
 
-  // Check if user is an instructor
-  let isInstructor = false;
-  if (user) {
-    const { data: instructorProfile } = await supabase
-      .from("instructors")
-      .select("id")
-      .eq("user_id", user.id)
-      .single();
-    isInstructor = !!instructorProfile;
-  }
-
+export default function HeaderNav({ user, isInstructor }: HeaderNavProps) {
   return (
     <div className="hidden md:flex items-center gap-3 lg:gap-6">
       {user ? (

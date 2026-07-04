@@ -8,8 +8,10 @@ import Link from "next/link";
 import { Calendar, Clock, Users, Download, Video, Check } from "lucide-react";
 import { enrollInStream } from "@/app/actions";
 import { downloadICS } from "@/lib/ics-generator";
+import { isMissedScheduledClass } from "@/lib/stream-time";
 import { OAuthSignInModal } from "@/components/oauth-signin-modal";
-import { useState } from "react";
+import { LiveDot } from "@/components/ui/live-dot";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 interface StreamCardProps {
@@ -24,6 +26,13 @@ export function StreamCard({ stream, enrollment, isLive, isAuthenticated }: Stre
   const [isBuying, setIsBuying] = useState(false);
   const [enrollError, setEnrollError] = useState<string | null>(null);
   const router = useRouter();
+
+  // Computed after mount (client clock) so SSR and hydration agree; the checkout
+  // route and enrollInStream enforce the same rule server-side.
+  const [isMissed, setIsMissed] = useState(false);
+  useEffect(() => {
+    setIsMissed(isMissedScheduledClass(stream));
+  }, [stream]);
 
   const isPaid = !!stream.product && stream.product.price_cents > 0;
   const priceLabel = isPaid
@@ -55,7 +64,11 @@ export function StreamCard({ stream, enrollment, isLive, isAuthenticated }: Stre
         window.location.href = data.url;
         return;
       }
-      setEnrollError("We couldn't start checkout. Please try again.");
+      setEnrollError(
+        res.status === 410
+          ? "This class's scheduled time has passed."
+          : "We couldn't start checkout. Please try again."
+      );
     } catch {
       setEnrollError("We couldn't start checkout. Please try again.");
     } finally {
@@ -129,10 +142,7 @@ export function StreamCard({ stream, enrollment, isLive, isAuthenticated }: Stre
             variant="live"
             className="absolute left-3 top-3 gap-1.5 rounded-full px-3 py-1 text-xs shadow-sm"
           >
-            <span className="relative flex h-1.5 w-1.5">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-white opacity-75"></span>
-              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-white"></span>
-            </span>
+            <LiveDot size="sm" className="text-white" />
             LIVE
           </Badge>
         )}
@@ -207,6 +217,10 @@ export function StreamCard({ stream, enrollment, isLive, isAuthenticated }: Stre
                 {isLive ? "Watch live" : "View class"}
               </Link>
             </Button>
+          ) : isMissed ? (
+            <Button disabled variant="outline" className="flex-1">
+              Class time has passed
+            </Button>
           ) : !isAuthenticated ? (
             <OAuthSignInModal>
               <Button variant="brand" className="flex-1">
@@ -233,7 +247,7 @@ export function StreamCard({ stream, enrollment, isLive, isAuthenticated }: Stre
             </Button>
           )}
 
-          {!isLive && (
+          {!isLive && !isMissed && (
             <Button
               variant="outline"
               size="sm"

@@ -2,7 +2,7 @@ import DeployButton from "@/components/deploy-button";
 import { EnvVarWarning } from "@/components/env-var-warning";
 import HeaderAuth from "@/components/header-auth";
 import HeaderNav from "@/components/header-nav";
-import MobileMenuWrapper from "@/components/mobile-menu-wrapper";
+import { MobileMenu } from "@/components/mobile-menu";
 import { Button } from "@/components/ui/button";
 import { hasEnvVars } from "@/utils/supabase/check-env-vars";
 import { createClient } from "@/utils/supabase/server";
@@ -69,8 +69,8 @@ export default async function RootLayout({
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
-  // Instructors are creators, not app-download targets — hide the consumer
-  // "Download App" CTA for them.
+  // Single instructor check for the whole header (CTA, nav links, mobile menu) —
+  // resolved once here and passed down as props instead of each child re-querying.
   let isInstructor = false;
   if (user) {
     const { data: instr } = await supabase
@@ -105,7 +105,7 @@ export default async function RootLayout({
                   {/* Navigation Links */}
                   <div className="flex items-center gap-2 md:gap-4 lg:gap-8">
                     {/* Authenticated user navigation */}
-                    <HeaderNav />
+                    <HeaderNav user={user} isInstructor={isInstructor} />
 
                     {/* Auth Buttons */}
                     <HeaderAuth />
@@ -132,7 +132,7 @@ export default async function RootLayout({
                     ) : null}
 
                     {/* Mobile Menu */}
-                    <MobileMenuWrapper />
+                    <MobileMenu user={user} isInstructor={isInstructor} />
                   </div>
                 </div>
               </nav>

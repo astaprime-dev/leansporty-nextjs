@@ -43,12 +43,12 @@ export default async function ActivityPage() {
     ...programSessions,
   ];
 
-  // Get enrolled stream IDs
+  // Get enrolled stream IDs (getPastStreams shows only enrolled past classes)
   const enrolledStreamIds = enrollments.map(e => e.stream_id);
 
   // Fetch upcoming and past streams in parallel
   const [streams, pastStreams] = await Promise.all([
-    getStreams({ enrolledStreamIds }),
+    getStreams(),
     getPastStreams({ enrolledStreamIds }),
   ]);
 
