@@ -46,9 +46,14 @@ export interface Product {
 export interface ChallengeWorkout {
   id: string;
   title: string | null;
+  /** Comma-separated dance styles ("Hip-hop, Afro House") — render as tags. */
   subtitle: string | null;
   durationInSeconds: number | null;
   thumbnailUrl: string | null;
+  /** Optional richer fields (selected on the watch page; other surfaces omit them). */
+  description?: string | null;
+  calories?: number | null;
+  moves?: number | null;
 }
 
 export interface ProductItem {

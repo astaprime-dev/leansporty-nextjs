@@ -7,6 +7,9 @@ import Image from "next/image";
 import {
   ArrowLeft,
   Check,
+  Clock,
+  Flame,
+  Footprints,
   Lock,
   Play,
   Sparkles,
@@ -149,6 +152,12 @@ export function WatchView({
   const doneCount = items.filter((it) => completed.has(it.content_id)).length;
   const pct = items.length > 0 ? Math.round((doneCount / items.length) * 100) : 0;
 
+  // `subtitle` holds comma-separated dance styles → render as tags.
+  const styleTags = (current?.workout?.subtitle ?? "")
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean);
+
   return (
     <div className="mx-auto max-w-7xl px-4 pb-16">
       <div className="py-3">
@@ -232,12 +241,42 @@ export function WatchView({
               </Badge>
             )}
           </div>
-          <p className="mt-1 text-sm text-gray-500">
-            Lesson {currentIndex + 1} of {items.length}
-            {current?.workout?.durationInSeconds
-              ? ` · ${formatDuration(current.workout.durationInSeconds)}`
-              : ""}
-          </p>
+          {/* Structured lesson facts: duration / calories / moves + style tags */}
+          <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-gray-500">
+            <span>
+              Lesson {currentIndex + 1} of {items.length}
+            </span>
+            {!!current?.workout?.durationInSeconds && (
+              <span className="flex items-center gap-1">
+                <Clock className="h-4 w-4 text-pink-400" />
+                {formatDuration(current.workout.durationInSeconds)}
+              </span>
+            )}
+            {!!current?.workout?.calories && (
+              <span className="flex items-center gap-1">
+                <Flame className="h-4 w-4 text-pink-400" />~
+                {current.workout.calories} kcal
+              </span>
+            )}
+            {!!current?.workout?.moves && (
+              <span className="flex items-center gap-1">
+                <Footprints className="h-4 w-4 text-pink-400" />
+                {current.workout.moves} moves
+              </span>
+            )}
+          </div>
+          {styleTags.length > 0 && (
+            <div className="mt-2 flex flex-wrap gap-1.5">
+              {styleTags.map((tag) => (
+                <span
+                  key={tag}
+                  className="rounded-full bg-pink-50 px-2.5 py-0.5 text-xs font-medium text-pink-600 ring-1 ring-pink-100"
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+          )}
 
           {!owned && !isOwnerInstructor && (
             <div className="mt-4 rounded-2xl border border-pink-100 bg-gradient-to-br from-pink-50 to-rose-50 p-4">
@@ -298,6 +337,17 @@ export function WatchView({
                   Mark as not done
                 </button>
               )}
+            </div>
+          )}
+
+          {current?.workout?.description && (
+            <div className="mt-6 rounded-2xl border border-pink-100 bg-white p-4">
+              <h2 className="text-sm font-semibold uppercase tracking-wide text-gray-400">
+                About this lesson
+              </h2>
+              <p className="mt-2 whitespace-pre-line text-sm leading-relaxed text-gray-700">
+                {current.workout.description}
+              </p>
             </div>
           )}
 
