@@ -11,6 +11,7 @@ import {
   Store,
   TrendingUp,
   Users,
+  Video,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -19,7 +20,7 @@ import { TeachApplyForm } from "@/components/teach/apply-form";
 export const metadata: Metadata = {
   title: "Teach on Lean Sporty — keep 85% of every sale",
   description:
-    "Live-stream your dance & fitness classes, sell seats worldwide, and get paid automatically. No tech setup, no monthly fee — you teach, we run everything else.",
+    "Live-stream your dance & fitness classes, sell your own on-demand programs, and get paid automatically. No tech setup, no monthly fee — you teach, we run everything else.",
 };
 
 /**
@@ -36,14 +37,14 @@ const PLATFORM_FEATURES = [
     body: "One click and you're streaming in broadcast quality. Prefer OBS? That works too. No software to learn, no setup calls.",
   },
   {
-    icon: Store,
-    title: "Your storefront, built for you",
-    body: "Every class gets a clean sales page with your profile, sign-ups, reminders, and checkout. You never touch a website builder.",
+    icon: Film,
+    title: "Sell programs, not just classes",
+    body: "Upload your videos, arrange them into a program — a simple list or a day-by-day plan — set one price, and publish it on your profile. Programs sell around the clock, even while you sleep.",
   },
   {
-    icon: Globe,
-    title: "Fair pricing, worldwide",
-    body: "You set one price. Students in Germany, Poland, or Brazil each see a fair local price — so far more of them can afford to join you.",
+    icon: Store,
+    title: "Your storefront, built for you",
+    body: "Every class and program gets a clean sales page with your profile, a free preview lesson, checkout, and student reviews — plus private per-lesson feedback only you see. No website builder, ever.",
   },
   {
     icon: Banknote,
@@ -51,9 +52,9 @@ const PLATFORM_FEATURES = [
     body: "Payments are collected for you and your share is paid straight to your bank on a regular schedule. No invoices, no chasing.",
   },
   {
-    icon: Film,
+    icon: Video,
     title: "Every class is recorded",
-    body: "Your live classes are saved automatically in full quality — your work keeps introducing you to new students after the stream ends.",
+    body: "Your live classes are saved automatically in full quality — and you can reuse any recording as a lesson in your paid programs.",
   },
   {
     icon: LifeBuoy,
@@ -66,7 +67,7 @@ const DIY_LIST = [
   "A streaming service subscription",
   "A payment provider and checkout setup",
   "A website with a booking page",
-  "Currency conversion and country pricing",
+  "A course platform for your video programs",
   "Sending invoices and chasing payments",
   "Refunds and customer-support emails",
   "Hosting and protecting your recordings",
@@ -80,13 +81,13 @@ const STEPS = [
   },
   {
     n: "2",
-    title: "Schedule a class, set one price",
-    body: "Pick the date, the time, and one price in one currency. We handle everything else, including fair local pricing worldwide.",
+    title: "Create a class or a program",
+    body: "Schedule a live class, or upload videos and arrange them into a program. Set your price — we handle checkout, access, and receipts.",
   },
   {
     n: "3",
     title: "Teach",
-    body: "Go live from your browser or OBS. Only people who paid can watch — access is our job.",
+    body: "Go live from your browser or OBS. Programs sell on their own from your profile. Only people who paid can watch — access is our job.",
   },
   {
     n: "4",
@@ -99,12 +100,12 @@ const OPPORTUNITIES = [
   {
     icon: Globe,
     title: "Teach beyond your city",
-    body: "Your in-person class holds 20 people. Online, with fair local pricing, your audience is anyone, anywhere — without you leaving your living room.",
+    body: "Your in-person class holds 20 people. Online, your audience is anyone, anywhere — without you leaving your living room.",
   },
   {
     icon: TrendingUp,
     title: "Your classes compound",
-    body: "Recordings join the members' library, where members keep discovering you long after the live class — and keep booking your next one.",
+    body: "Every recording can become a lesson in a paid program — so one night of teaching keeps earning long after the live class ends.",
   },
   {
     icon: Users,
@@ -124,7 +125,7 @@ const FAQ = [
   },
   {
     q: "Different countries and currencies — do I have to figure that out?",
-    a: "No. You set one price; we handle all local pricing and conversion. Your percentage applies to whatever was actually paid. (On very small local prices we apply a small minimum fee of about €1.50 so card fees don't eat the sale — you still always earn.)",
+    a: "No. You set one price in euros, and students anywhere pay by card — their bank handles any conversion. Your percentage applies to every sale. (On very small prices we apply a small minimum fee of about €1.50 so card fees don't eat the sale — you still always earn.)",
   },
   {
     q: "Does my share ever change?",
@@ -132,7 +133,7 @@ const FAQ = [
   },
   {
     q: "Why do you keep the recordings?",
-    a: "It's the heart of the deal — and why we charge 15% instead of the 30–50% others take. Your recordings grow the members' library, the library grows the audience, and that audience keeps finding you and booking your future classes.",
+    a: "It's the heart of the deal — and why we charge 15% instead of the 30–50% others take. Your recordings grow the members' library, the library grows the audience, and that audience keeps finding you. And you can bundle those same recordings into your own paid programs and sell them from your profile.",
   },
   {
     q: "What about taxes?",
@@ -158,7 +159,7 @@ export default function TeachPage() {
             . We run everything else.
           </h1>
           <p className="mx-auto mt-4 max-w-2xl text-lg text-muted-foreground">
-            Live-stream your classes, sell seats all over the world, and get
+            Live-stream your classes, sell your own on-demand programs, and get
             paid automatically — while you keep{" "}
             <strong className="font-semibold text-gray-900">
               85% of every sale
@@ -286,18 +287,15 @@ export default function TeachPage() {
             The deal, in real numbers
           </h2>
           <p className="mx-auto mt-2 max-w-xl text-center text-muted-foreground">
-            You run a 60-minute live class and set the price at €49. Students
-            join from different countries, each paying a fair local price — and
-            you keep 85% of every sale.
+            You teach a live class at €15 a seat, and your 4-week program sells
+            for €49 on your profile — you keep 85% of every sale.
           </p>
           <div className="mt-8 overflow-hidden rounded-2xl border border-pink-100 bg-white shadow-sm">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-pink-100 bg-pink-50/60 text-left">
-                  <th className="p-4 font-semibold text-gray-900">Student</th>
-                  <th className="p-4 font-semibold text-gray-900">
-                    Their fair local price
-                  </th>
+                  <th className="p-4 font-semibold text-gray-900">What you sell</th>
+                  <th className="p-4 font-semibold text-gray-900">Price</th>
                   <th className="p-4 font-semibold text-gray-900">
                     Your 85%
                   </th>
@@ -305,12 +303,12 @@ export default function TeachPage() {
               </thead>
               <tbody className="divide-y divide-pink-50">
                 {[
-                  ["Anna, Germany", "€59", "€50.15"],
-                  ["Marta, Poland", "€39", "€33.15"],
-                  ["Lucia, Brazil", "€25", "€21.25"],
-                ].map(([who, paid, share]) => (
-                  <tr key={who}>
-                    <td className="p-4 text-gray-700">{who}</td>
+                  ["A seat in your live class", "€15", "€12.75"],
+                  ["Your 4-week program", "€49", "€41.65"],
+                  ["The same program, as a featured instructor (90%)", "€49", "€44.10"],
+                ].map(([what, paid, share]) => (
+                  <tr key={what}>
+                    <td className="p-4 text-gray-700">{what}</td>
                     <td className="p-4 text-gray-700">{paid}</td>
                     <td className="p-4 font-semibold text-gray-900">{share}</td>
                   </tr>
@@ -318,17 +316,17 @@ export default function TeachPage() {
               </tbody>
             </table>
             <div className="border-t border-pink-100 bg-pink-50/40 p-4 text-center text-sm text-gray-700">
-              30 students at an average of ~€45 ≈{" "}
+              30 seats at €15 plus 10 program sales at €49 ≈{" "}
               <strong className="font-semibold text-gray-900">
-                €1,350 collected → ~€1,148 to your bank
+                €940 collected → ~€799 to your bank
               </strong>{" "}
-              — automatically, for one class you taught once.
+              — and the program keeps selling after class night.
             </div>
           </div>
           <p className="mt-4 text-center text-xs text-muted-foreground">
-            Every sale puts money in your pocket — there is no country where
-            you lose. On very small local prices a small minimum fee (~€1.50)
-            applies so card fees don&apos;t eat the sale.
+            Every sale puts money in your pocket. On very small prices a small
+            minimum fee (~€1.50 per sale) applies so card fees don&apos;t eat
+            the sale — you still always earn.
           </p>
         </div>
       </section>
