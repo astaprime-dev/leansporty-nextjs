@@ -42,3 +42,37 @@ export async function setWorkoutComplete(
   );
   return { success: true };
 }
+
+/**
+ * Save the playback position for resume ("continue from 12:34"). Called
+ * periodically from the watch page; deliberately does NOT revalidate any
+ * path (it must never re-render the page mid-workout). Upsert only touches
+ * last_position_seconds — completed_at is left alone.
+ */
+export async function savePlaybackPosition(
+  workoutId: string,
+  seconds: number
+): Promise<{ success: boolean }> {
+  if (!Number.isFinite(seconds) || seconds < 0) return { success: false };
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { success: false };
+
+  const { error } = await supabase.from("workout_progress").upsert(
+    {
+      user_id: user.id,
+      workout_id: workoutId,
+      last_position_seconds: Math.floor(seconds),
+      updated_at: new Date().toISOString(),
+    },
+    { onConflict: "user_id,workout_id" }
+  );
+  if (error) {
+    console.error("savePlaybackPosition failed:", error);
+    return { success: false };
+  }
+  return { success: true };
+}

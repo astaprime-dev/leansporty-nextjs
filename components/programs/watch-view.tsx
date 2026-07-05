@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef, useState, useTransition } from "react";
+import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
@@ -19,7 +19,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { StarRating } from "@/components/ui/star-rating";
 import { cn } from "@/lib/utils";
 import { SecureStreamPlayer } from "@/components/SecureStreamPlayer";
-import { setWorkoutComplete } from "@/app/challenge/actions";
+import { savePlaybackPosition, setWorkoutComplete } from "@/app/challenge/actions";
 import { submitLessonFeedback, submitProgramReview } from "@/app/programs/actions";
 import { formatDuration } from "@/lib/challenge";
 import type { ProductItem } from "@/types/commerce";
@@ -52,6 +52,7 @@ export function WatchView({
   completedContentIds,
   myReview,
   myFeedback,
+  resumeSeconds = 0,
 }: {
   slug: string;
   productId: string;
@@ -64,6 +65,8 @@ export function WatchView({
   completedContentIds: string[];
   myReview: { rating: number; comment_text: string | null } | null;
   myFeedback: WatchLessonFeedback;
+  /** Saved playback position to resume from (0 = start fresh). */
+  resumeSeconds?: number;
 }) {
   const router = useRouter();
   const programPath = `/programs/${slug}`;
@@ -97,6 +100,47 @@ export function WatchView({
     });
   }
 
+  // ---- Resume position ("Start over" re-keys the player) ----
+  const [startAt, setStartAt] = useState(resumeSeconds);
+
+  // ---- Periodic position saves (owned only; every ~15s of playback) ----
+  const lastSavedRef = useRef(0);
+  function handleTimeUpdate(seconds: number) {
+    if (!owned || seconds < 5) return;
+    if (Math.abs(seconds - lastSavedRef.current) >= 15) {
+      lastSavedRef.current = seconds;
+      void savePlaybackPosition(currentContentId, seconds);
+    }
+  }
+
+  // ---- Video finished: auto-complete + "Up next" countdown ----
+  const [endedState, setEndedState] = useState<"none" | "countdown" | "done">("none");
+  const [countdown, setCountdown] = useState(5);
+  function handleEnded() {
+    if (owned && !isCompleted) {
+      void setWorkoutComplete(currentContentId, true, watchPath(currentContentId));
+    }
+    if (owned) void savePlaybackPosition(currentContentId, 0);
+    if (nextPlayable && (owned || isOwnerInstructor)) {
+      setCountdown(5);
+      setEndedState("countdown");
+    } else {
+      setEndedState("done");
+      router.refresh();
+    }
+  }
+
+  useEffect(() => {
+    if (endedState !== "countdown") return;
+    if (countdown <= 0) {
+      router.push(watchPath(nextPlayable!.content_id));
+      return;
+    }
+    const t = setTimeout(() => setCountdown((c) => c - 1), 1000);
+    return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [endedState, countdown]);
+
   const doneCount = items.filter((it) => completed.has(it.content_id)).length;
   const pct = items.length > 0 ? Math.round((doneCount / items.length) * 100) : 0;
 
@@ -117,8 +161,59 @@ export function WatchView({
         <div className="lg:col-span-2">
           {/* Sticky on mobile so the video survives scrolling; static on desktop. */}
           <div className="sticky top-0 z-30 -mx-4 bg-black sm:mx-0 sm:rounded-2xl sm:overflow-hidden lg:static">
-            <SecureStreamPlayer contentId={currentContentId} paywallHref={programPath} />
+            <div className="relative">
+              <SecureStreamPlayer
+                key={`${currentContentId}:${startAt}`}
+                contentId={currentContentId}
+                paywallHref={programPath}
+                startTime={startAt}
+                onEnded={handleEnded}
+                onTimeUpdate={handleTimeUpdate}
+              />
+              {endedState === "countdown" && nextPlayable && (
+                <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-3 bg-black/80 p-6 text-center">
+                  <p className="text-sm text-white/70">Up next</p>
+                  <p className="max-w-md text-lg font-semibold text-white">
+                    {nextPlayable.item_label ||
+                      nextPlayable.workout?.title ||
+                      "Next lesson"}
+                  </p>
+                  <div className="mt-2 flex items-center gap-3">
+                    <Button
+                      variant="brand"
+                      onClick={() => router.push(watchPath(nextPlayable.content_id))}
+                    >
+                      <Play className="mr-2 h-4 w-4" />
+                      Play now ({countdown})
+                    </Button>
+                    <Button
+                      variant="outline"
+                      className="border-white/30 bg-transparent text-white hover:bg-white/10"
+                      onClick={() => {
+                        setEndedState("done");
+                        router.refresh();
+                      }}
+                    >
+                      Stay here
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
+
+          {startAt > 0 && endedState === "none" && (
+            <p className="mt-2 text-sm text-gray-500">
+              Resuming from {formatDuration(startAt)} ·{" "}
+              <button
+                type="button"
+                className="text-pink-500 hover:text-pink-600 transition-colors"
+                onClick={() => setStartAt(0)}
+              >
+                Start over
+              </button>
+            </p>
+          )}
 
           <div className="mt-4 flex flex-wrap items-center gap-3">
             <h1 className="text-xl sm:text-2xl font-semibold text-gray-900">
