@@ -230,8 +230,9 @@ export function WatchView({
             </p>
           )}
 
-          {/* Title left, primary action right (stacks on mobile) */}
-          <div className="mt-4 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+          {/* Title left, primary action right — button centers against the
+              whole header block (deliberate, no cap-height alignment games) */}
+          <div className="mt-4 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div className="min-w-0">
               <div className="flex flex-wrap items-center gap-3">
                 <h1 className="text-xl sm:text-2xl font-semibold text-gray-900">
@@ -284,12 +285,13 @@ export function WatchView({
             </div>
 
             {(owned || isOwnerInstructor) && (
-              <div className="flex shrink-0 flex-col gap-1.5 sm:mt-0.5 sm:items-end">
+              <div className="flex shrink-0 flex-col gap-1.5 sm:items-end">
                 <Button
                   variant="brand"
+                  size="lg"
                   onClick={completeAndContinue}
                   disabled={isPending}
-                  className="w-full px-6 sm:w-auto"
+                  className="w-full sm:w-auto"
                 >
                   {isPending
                     ? "Saving…"
