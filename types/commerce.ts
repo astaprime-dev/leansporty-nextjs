@@ -6,6 +6,8 @@ export type ProductKind = "course" | "challenge" | "membership" | "single";
 
 /** Shape of products.config (free-form jsonb) across all product kinds. */
 export interface ProductConfig {
+  /** Instructor programs (kind='course'): lesson layout. Absent = "list". */
+  structure?: "list" | "days";
   program_length_days?: number;
   drip_enabled?: boolean;
   workout_count?: number;
@@ -24,10 +26,14 @@ export interface Product {
   kind: ProductKind;
   title: string;
   subtitle: string | null;
+  /** Long-form sales copy (instructor programs). */
+  description: string | null;
   cover_image_url: string | null;
   price_cents: number;
   currency: string;
   is_active: boolean;
+  /** Founder kill-switch — hidden from sale everywhere while true. */
+  admin_disabled: boolean;
   config: ProductConfig;
   created_at: string;
 }

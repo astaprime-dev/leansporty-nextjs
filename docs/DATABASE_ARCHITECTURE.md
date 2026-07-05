@@ -427,6 +427,16 @@ The live-streaming tables predate this doc; the July 2026 Studio work (see
 - **`stream_watch_sessions`** — instructors read their own classes' sessions for watch-time analytics (`20260706000000`).
 - **Function hygiene** (`20260707000000`): `get_playable_uid` + trivial timestamp/validation triggers pinned to `search_path = ''`. Left unpinned (SECURITY INVOKER, table refs, lower risk): `check_reaction_rate_limit`, `aggregate_stream_reactions`, `set_migration_schedule`.
 
+## Instructor Programs (`20260711000000_instructor_programs.sql`)
+
+Self-serve on-demand video products (`kind='course'`, UI name "Program") — spec in
+`INSTRUCTOR_PROGRAMS_PLAN.md` (workspace root).
+
+- **`products`** additions: `admin_disabled` (founder kill-switch: checkout rejects, public pages hide, publish API refuses while set), `published_at`, `terms_accepted_at` (rights-warranty timestamp), `description` (long-form sales copy).
+- **`workouts`** additions (additive only, iOS-shared table): `visibility ∈ {public, program}` (`program` = uploaded program lesson; nothing filters on it yet — it exists so the iOS rewrite can exclude paid lessons) and `instructor_id → instructors` (attribution; also set by the migrate cron on new recordings). **Cross-client note (iOS):** `program` rows appear in the iOS catalog list but are unplayable there (playback-token route 403s non-entitled users; videos are created with `requireSignedURLs`). Accepted trade-off pending the iOS rewrite.
+- **`program_uploads`** — staging for direct Cloudflare Stream uploads (tus). One row per attempt (`cloudflare_uid` unique, `status ∈ uploading/processing/ready/error`, `duration_seconds` = basis of the storage cap, `workout_id` set on promotion). The `workouts` row is only created when Cloudflare reports ready, so half-uploads never touch the shared catalog. RLS: instructor reads own; writes service-role only.
+- **`get_playable_uid`** — recreated with a third OR branch: the owning instructor (via `workouts.instructor_id`) can play their own lessons without an entitlement. Signature/grants unchanged (iOS unaffected).
+
 ### Not attributed to instructors (platform-level, no `instructor_id`)
 `workout_progress`, `checkout_recovery`, `email_opt_outs`, `leads` — commerce/lifecycle tables tied to `auth.users`, not instructors. **Not yet built:** `cohorts` (multi-week programs), Stripe Connect tables — deferred (see plan).
 

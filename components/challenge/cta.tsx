@@ -7,11 +7,11 @@ import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
 import { OAuthSignInModal } from "@/components/oauth-signin-modal";
 
-async function createCheckout(productSlug: string) {
+async function createCheckout(productSlug: string, returnPath?: string) {
   const res = await fetch("/api/checkout/session", {
     method: "POST",
     headers: { "content-type": "application/json" },
-    body: JSON.stringify({ productSlug }),
+    body: JSON.stringify({ productSlug, ...(returnPath ? { returnPath } : {}) }),
   });
   return (await res.json().catch(() => ({}))) as {
     url?: string;
@@ -28,6 +28,9 @@ interface CheckoutButtonProps {
   label: string;
   ownedLabel?: string;
   className?: string;
+  /** Where checkout returns after payment + where "owned" links (default: challenge flow → /my-program). */
+  returnPath?: string;
+  ownedHref?: string;
 }
 
 /**
@@ -44,6 +47,8 @@ export function CheckoutButton({
   label,
   ownedLabel = "Go to your program",
   className,
+  returnPath,
+  ownedHref = "/my-program",
 }: CheckoutButtonProps) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -53,9 +58,9 @@ export function CheckoutButton({
     setLoading(true);
     setError("");
     try {
-      const data = await createCheckout(productSlug);
+      const data = await createCheckout(productSlug, returnPath);
       if (data.alreadyOwned) {
-        router.push("/my-program");
+        router.push(ownedHref);
         return;
       }
       if (data.url) {
@@ -72,7 +77,7 @@ export function CheckoutButton({
 
   if (owned) {
     return (
-      <Button className={className} onClick={() => router.push("/my-program")}>
+      <Button className={className} onClick={() => router.push(ownedHref)}>
         {ownedLabel}
       </Button>
     );

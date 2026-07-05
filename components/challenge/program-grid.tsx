@@ -21,6 +21,10 @@ import type { ProgramDay } from "@/types/commerce";
 interface ProgramGridProps {
   days: ProgramDay[];
   priceLabel: string;
+  /** Sales page for locked content; the challenge default, or /programs/[slug]. */
+  paywallHref?: string;
+  /** Path passed to setWorkoutComplete for revalidation (defaults to /my-program). */
+  revalidatePath?: string;
 }
 
 interface OpenState {
@@ -29,7 +33,12 @@ interface OpenState {
   completed: boolean;
 }
 
-export function ProgramGrid({ days, priceLabel }: ProgramGridProps) {
+export function ProgramGrid({
+  days,
+  priceLabel,
+  paywallHref = "/challenge",
+  revalidatePath = "/my-program",
+}: ProgramGridProps) {
   const router = useRouter();
   const [open, setOpen] = useState<OpenState | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -39,7 +48,7 @@ export function ProgramGrid({ days, priceLabel }: ProgramGridProps) {
   function openDay(day: ProgramDay) {
     if (!day.item?.workout) return;
     if (day.state === "locked") {
-      router.push("/challenge");
+      router.push(paywallHref);
       return;
     }
     if (day.state === "locked-until" || day.state === "rest") return;
@@ -57,7 +66,7 @@ export function ProgramGrid({ days, priceLabel }: ProgramGridProps) {
     if (!open) return;
     const next = !open.completed;
     startTransition(async () => {
-      await setWorkoutComplete(open.contentId, next);
+      await setWorkoutComplete(open.contentId, next, revalidatePath);
       setOpen(null);
       router.refresh();
     });
@@ -100,7 +109,7 @@ export function ProgramGrid({ days, priceLabel }: ProgramGridProps) {
             <div className="flex flex-col gap-4">
               <SecureStreamPlayer
                 contentId={open.contentId}
-                paywallHref="/challenge"
+                paywallHref={paywallHref}
               />
               <Button
                 variant={open.completed ? "brandOutline" : "brand"}
@@ -126,6 +135,9 @@ function DayCard({
   priceLabel: string;
   onOpen: () => void;
 }) {
+  // Signed-only videos (instructor program uploads) 404 their auto-thumbnail;
+  // fall back to the sparkle placeholder instead of a broken image.
+  const [thumbFailed, setThumbFailed] = useState(false);
   const { item, state } = day;
   const workout = item?.workout ?? null;
   const duration = formatDuration(workout?.durationInSeconds);
@@ -172,7 +184,7 @@ function DayCard({
     >
       {/* thumbnail */}
       <div className="absolute inset-0 bg-gradient-to-br from-pink-50 to-rose-50">
-        {workout?.thumbnailUrl ? (
+        {workout?.thumbnailUrl && !thumbFailed ? (
           <Image
             src={workout.thumbnailUrl}
             alt={workout.title ?? `Day ${day.dayNumber}`}
@@ -183,6 +195,7 @@ function DayCard({
               (state === "locked" || state === "locked-until") &&
                 "opacity-40 grayscale"
             )}
+            onError={() => setThumbFailed(true)}
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center">

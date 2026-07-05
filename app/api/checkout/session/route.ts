@@ -45,10 +45,10 @@ export async function POST(req: NextRequest) {
 
   const { data: product } = await supabase
     .from("products")
-    .select("id, title, kind, price_cents, currency, is_active, config")
+    .select("id, title, kind, price_cents, currency, is_active, admin_disabled, config")
     .eq("slug", productSlug)
     .single();
-  if (!product || !product.is_active) {
+  if (!product || !product.is_active || product.admin_disabled) {
     return NextResponse.json({ error: "not found" }, { status: 404 });
   }
   // 50 = Stripe's EUR per-charge minimum (also enforced at class save; this

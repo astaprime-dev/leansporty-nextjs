@@ -37,6 +37,22 @@ export default async function MyProgramPage({
 
   const data = await getChallengeData();
 
+  // Instructor programs the user owns (kind='course') — linked below so this
+  // page stays the single "my training" entry point.
+  const { data: ownedProgramEnts } = await supabase
+    .from("entitlements")
+    .select("product_id")
+    .eq("user_id", user.id)
+    .or(`expires_at.is.null,expires_at.gt.${new Date().toISOString()}`);
+  const ownedProductIds = (ownedProgramEnts ?? []).map((e) => e.product_id);
+  const { data: ownedPrograms } = ownedProductIds.length
+    ? await supabase
+        .from("products")
+        .select("id, slug, title, subtitle, cover_image_url")
+        .eq("kind", "course")
+        .in("id", ownedProductIds)
+    : { data: null };
+
   if (!data) {
     return (
       <div className="mx-auto max-w-2xl px-4 py-20">
@@ -130,6 +146,44 @@ export default async function MyProgramPage({
       </header>
 
       <ProgramGrid days={days} priceLabel={priceLabel} />
+
+      {ownedPrograms && ownedPrograms.length > 0 && (
+        <section className="mt-12">
+          <h2 className="mb-4 font-display text-2xl font-light text-gray-900">
+            Your programs
+          </h2>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {ownedPrograms.map((p) => (
+              <Link
+                key={p.id}
+                href={`/programs/${p.slug}`}
+                className="group overflow-hidden rounded-2xl border border-pink-100 bg-white transition-all hover:border-pink-300 hover:shadow-md"
+              >
+                <div className="relative aspect-video bg-gradient-to-br from-pink-50 to-rose-50">
+                  {p.cover_image_url && (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={p.cover_image_url}
+                      alt={p.title}
+                      className="h-full w-full object-cover"
+                    />
+                  )}
+                </div>
+                <div className="p-4">
+                  <h3 className="font-semibold text-gray-900 transition-colors group-hover:text-pink-500">
+                    {p.title}
+                  </h3>
+                  {p.subtitle && (
+                    <p className="mt-1 text-sm text-gray-600 line-clamp-2">
+                      {p.subtitle}
+                    </p>
+                  )}
+                </div>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
     </div>
   );
 }

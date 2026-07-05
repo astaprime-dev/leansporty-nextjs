@@ -7,6 +7,7 @@ import { StreamCard } from "@/components/stream-card";
 import { EmptyState } from "@/components/empty-state";
 import { Badge } from "@/components/ui/badge";
 import GalleryDisplay from "@/components/instructor/gallery-display";
+import { formatPrice } from "@/lib/challenge";
 import { Metadata } from "next";
 
 interface ProfilePageProps {
@@ -199,6 +200,18 @@ export default async function ProfilePage({
         .order("display_order", { ascending: true })
     : { data: null, error: null };
 
+  // Instructor programs on sale (kind='course', published, not admin-disabled).
+  const { data: instructorPrograms } = isInstructor
+    ? await supabase
+        .from("products")
+        .select("id, slug, title, subtitle, cover_image_url, price_cents, currency")
+        .eq("kind", "course")
+        .eq("instructor_id", instructor.id)
+        .eq("is_active", true)
+        .eq("admin_disabled", false)
+        .order("created_at", { ascending: false })
+    : { data: null };
+
   // Log gallery errors but don't block page render
   if (galleryError) {
     console.error('Error fetching gallery items:', galleryError);
@@ -313,11 +326,53 @@ export default async function ProfilePage({
           </div>
         )}
 
+        {/* Programs (Instructors only) */}
+        {isInstructor && instructorPrograms && instructorPrograms.length > 0 && (
+          <div className="mb-6 sm:mb-8">
+            <h2 className="text-2xl font-semibold mb-4 text-gray-900 px-2 sm:px-0">
+              Programs
+            </h2>
+            <div className="grid gap-4 sm:gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {instructorPrograms.map((program) => (
+                <Link
+                  key={program.id}
+                  href={`/programs/${program.slug}`}
+                  className="group overflow-hidden rounded-2xl border border-pink-100 bg-white transition-all hover:border-pink-300 hover:shadow-md"
+                >
+                  <div className="relative aspect-video bg-gradient-to-br from-pink-50 to-rose-50">
+                    {program.cover_image_url && (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={program.cover_image_url}
+                        alt={program.title}
+                        className="h-full w-full object-cover"
+                      />
+                    )}
+                  </div>
+                  <div className="p-4">
+                    <h3 className="font-semibold text-gray-900 transition-colors group-hover:text-pink-500">
+                      {program.title}
+                    </h3>
+                    {program.subtitle && (
+                      <p className="mt-1 text-sm text-gray-600 line-clamp-2">
+                        {program.subtitle}
+                      </p>
+                    )}
+                    <p className="mt-2 text-sm font-medium text-pink-600">
+                      {formatPrice(program.price_cents, program.currency)}
+                    </p>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* Upcoming Streams (Instructors only) */}
         {isInstructor && upcomingStreams && upcomingStreams.length > 0 && (
           <div className="mb-6 sm:mb-8">
             <h2 className="text-2xl font-semibold mb-4 text-gray-900 px-2 sm:px-0">
-              Upcoming Streams
+              Upcoming Classes
             </h2>
             <div className="grid gap-4 sm:gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {upcomingStreams.map((stream) => (
@@ -336,7 +391,7 @@ export default async function ProfilePage({
         {/* No Upcoming Streams Message (Instructors only) */}
         {isInstructor && (!upcomingStreams || upcomingStreams.length === 0) && (
           <EmptyState
-            title="No upcoming streams scheduled at the moment."
+            title="No upcoming classes scheduled at the moment."
             description="Check back soon!"
             className="mb-6 sm:mb-8"
           />

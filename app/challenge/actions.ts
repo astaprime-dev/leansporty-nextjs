@@ -10,7 +10,9 @@ import { revalidatePath } from "next/cache";
  */
 export async function setWorkoutComplete(
   workoutId: string,
-  completed: boolean
+  completed: boolean,
+  /** Page to revalidate — the challenge default, or a program page. */
+  revalidate: string = "/my-program"
 ): Promise<{ success: boolean; error?: string }> {
   const supabase = await createClient();
   const {
@@ -33,6 +35,10 @@ export async function setWorkoutComplete(
     return { success: false, error: "could not save progress" };
   }
 
-  revalidatePath("/my-program");
+  revalidatePath(
+    revalidate.startsWith("/") && !revalidate.startsWith("//")
+      ? revalidate
+      : "/my-program"
+  );
   return { success: true };
 }

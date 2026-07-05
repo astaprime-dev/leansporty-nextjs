@@ -31,7 +31,7 @@ export async function GET(request: NextRequest) {
   const { data: streams, error } = await db
     .from("live_stream_sessions")
     .select(
-      "id, title, description, scheduled_duration_seconds, thumbnail_url, cloudflare_stream_id, recording_expires_at"
+      "id, title, description, scheduled_duration_seconds, thumbnail_url, cloudflare_stream_id, recording_expires_at, instructor_id"
     )
     .eq("status", "ended")
     .is("migrated_to_workout_id", null)
@@ -89,6 +89,7 @@ export async function GET(request: NextRequest) {
           videoUrl: hls,
           cloudflare_uid: uid,
           featured: false,
+          instructor_id: s.instructor_id ?? null,
         })
         .select("id")
         .single();

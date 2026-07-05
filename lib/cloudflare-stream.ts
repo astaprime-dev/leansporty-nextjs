@@ -1,6 +1,7 @@
 // Cloudflare Stream API Service
 // Handles live streaming with WebRTC (browser-based) and video playback
 
+import { createPrivateKey } from 'crypto';
 import { SignJWT, importPKCS8 } from 'jose';
 import {
   CloudflareAPIResponse,
@@ -215,6 +216,75 @@ export function getIframeEmbedURL(
 }
 
 /**
+ * Origins allowed to play our videos (mirrors scripts/cloudflare-stream-setup.mjs).
+ */
+const ALLOWED_ORIGINS = ['leansporty.com', '*.leansporty.com', 'localhost:3000'];
+
+/**
+ * Mint a one-time tus upload URL for a direct creator upload (instructor
+ * program lessons). The browser then uploads straight to Cloudflare with
+ * tus-js-client — the file never passes through our servers.
+ *
+ * Security/cost properties are locked in AT CREATION and cannot be changed by
+ * the uploader:
+ * - `requiresignedurls`: the video only ever plays via signStreamToken().
+ * - `maxdurationseconds`: Cloudflare rejects longer videos (the one cap an
+ *   instructor can't game client-side).
+ * - `allowedorigins`: domain lock, same set as the setup script.
+ *
+ * Uses raw fetch, not callCloudflareAPI: the response body is empty — the
+ * upload URL comes back in the `Location` header and the video UID in
+ * `stream-media-id`.
+ */
+export async function createDirectUploadTus(opts: {
+  uploadLengthBytes: number;
+  maxDurationSeconds: number;
+  creator: string; // instructor id, stored on the video for attribution
+  name: string;
+}): Promise<{ uploadUrl: string; uid: string }> {
+  const accountId = process.env.CLOUDFLARE_ACCOUNT_ID;
+  const apiToken = process.env.CLOUDFLARE_API_TOKEN;
+  if (!accountId || !apiToken) {
+    throw new Error('Missing Cloudflare credentials in environment variables');
+  }
+
+  // Upload-Metadata values are base64-encoded per the tus spec; a key with no
+  // value (requiresignedurls) means boolean true.
+  const b64 = (s: string) => Buffer.from(s, 'utf-8').toString('base64');
+  const uploadMetadata = [
+    `name ${b64(opts.name)}`,
+    'requiresignedurls',
+    `maxdurationseconds ${b64(String(opts.maxDurationSeconds))}`,
+    `allowedorigins ${b64(ALLOWED_ORIGINS.join(','))}`,
+  ].join(',');
+
+  const response = await fetch(
+    `${CLOUDFLARE_API_BASE}/accounts/${accountId}/stream?direct_user=true`,
+    {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${apiToken}`,
+        'Tus-Resumable': '1.0.0',
+        'Upload-Length': String(opts.uploadLengthBytes),
+        'Upload-Creator': opts.creator,
+        'Upload-Metadata': uploadMetadata,
+      },
+    }
+  );
+
+  const uploadUrl = response.headers.get('location');
+  const uid = response.headers.get('stream-media-id');
+  if (!response.ok || !uploadUrl || !uid) {
+    const body = await response.text().catch(() => '');
+    throw new Error(
+      `Cloudflare direct upload creation failed (${response.status}): ${body.slice(0, 300)}`
+    );
+  }
+
+  return { uploadUrl, uid };
+}
+
+/**
  * Mint a short-lived, signed playback token for a Cloudflare Stream UID.
  *
  * The video MUST have `requireSignedURLs = true` set on Cloudflare for this to
@@ -234,7 +304,12 @@ export async function signStreamToken(
   }
 
   const pem = Buffer.from(pemB64, 'base64').toString('utf-8'); // CF returns the PEM base64-encoded
-  const privateKey = await importPKCS8(pem, 'RS256');
+  // Cloudflare issues PKCS#1 ("BEGIN RSA PRIVATE KEY"); jose's importPKCS8
+  // only takes PKCS#8. Node's createPrivateKey accepts both, and jose accepts
+  // the resulting KeyObject (this lib is server-only, nodejs runtime).
+  const privateKey = pem.includes('BEGIN RSA PRIVATE KEY')
+    ? createPrivateKey(pem)
+    : await importPKCS8(pem, 'RS256');
 
   const ttl = opts.ttlSeconds ?? 60 * 60 * 4; // 4h comfortably outlives any single session
   const now = Math.floor(Date.now() / 1000);
