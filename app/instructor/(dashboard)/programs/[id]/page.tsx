@@ -50,7 +50,7 @@ export default async function ManageProgramPage({
   const { data: rawItems } = await supabase
     .from("product_items")
     .select(
-      "content_id, position, day_number, is_preview, item_label, workout:workouts(id, title, durationInSeconds, thumbnailUrl)"
+      "content_id, position, day_number, is_preview, item_label, workout:workouts(id, title, durationInSeconds, thumbnailUrl, subtitle, calories, description)"
     )
     .eq("product_id", product.id)
     .order("position", { ascending: true });
@@ -66,6 +66,9 @@ export default async function ManageProgramPage({
       title: w?.title ?? null,
       durationInSeconds: w?.durationInSeconds ?? null,
       thumbnailUrl: w?.thumbnailUrl ?? null,
+      styles: w?.subtitle ?? null,
+      calories: w?.calories ?? null,
+      description: w?.description ?? null,
     };
   });
 

@@ -54,6 +54,18 @@ export default async function ProgramPage({
     items.reduce((acc, it) => acc + (it.workout?.durationInSeconds ?? 0), 0) / 60
   );
 
+  // Aggregate distinct dance styles across lessons for the header pills.
+  const programStyles = Array.from(
+    new Set(
+      items.flatMap((it) =>
+        (it.workout?.subtitle ?? "")
+          .split(",")
+          .map((s) => s.trim())
+          .filter(Boolean)
+      )
+    )
+  ).slice(0, 8);
+
   let gridDays = null;
   let done = 0;
   let total = items.length;
@@ -167,6 +179,19 @@ export default async function ProgramPage({
             </span>
           )}
         </div>
+
+        {programStyles.length > 0 && (
+          <div className="mt-3 flex flex-wrap gap-1.5">
+            {programStyles.map((tag) => (
+              <span
+                key={tag}
+                className="rounded-full bg-pink-50 px-2.5 py-0.5 text-xs font-medium text-pink-600 ring-1 ring-pink-100"
+              >
+                {tag}
+              </span>
+            ))}
+          </div>
+        )}
 
         {owned ? (
           <div className="mt-6">

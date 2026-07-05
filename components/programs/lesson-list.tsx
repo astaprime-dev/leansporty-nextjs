@@ -170,6 +170,23 @@ export function LessonList({
                   ? `Unlock for ${priceLabel}`
                   : formatDuration(workout?.durationInSeconds) || "Follow-along session"}
               </p>
+              {!!workout?.subtitle && (
+                <span className="mt-1 flex flex-wrap gap-1">
+                  {workout.subtitle
+                    .split(",")
+                    .map((s) => s.trim())
+                    .filter(Boolean)
+                    .slice(0, 4)
+                    .map((tag) => (
+                      <span
+                        key={tag}
+                        className="rounded-full bg-pink-50 px-2 py-0.5 text-[10px] font-medium text-pink-600 ring-1 ring-pink-100"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                </span>
+              )}
             </div>
 
             <div className="shrink-0">

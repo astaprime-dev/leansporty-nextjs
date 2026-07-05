@@ -10,6 +10,7 @@ import {
   Film,
   Loader2,
   Pencil,
+  SlidersHorizontal,
   Trash2,
   X,
 } from "lucide-react";
@@ -33,6 +34,10 @@ export type ManagedLesson = {
   title: string | null;
   durationInSeconds: number | null;
   thumbnailUrl: string | null;
+  /** Comma-separated dance styles (workouts.subtitle). */
+  styles: string | null;
+  calories: number | null;
+  description: string | null;
 };
 
 export type ManagedProgram = {
@@ -464,6 +469,12 @@ function LessonsCard({
   const [recordings, setRecordings] = useState<Recording[] | null>(null);
   const [renaming, setRenaming] = useState<{ contentId: string; value: string } | null>(null);
   const [uploadingThumbFor, setUploadingThumbFor] = useState<string | null>(null);
+  const [details, setDetails] = useState<{
+    contentId: string;
+    styles: string;
+    calories: string;
+    description: string;
+  } | null>(null);
 
   // Optimistic view of the lessons: mutations update it immediately, and the
   // server truth replaces it when router.refresh() delivers new props.
@@ -535,6 +546,41 @@ function LessonsCard({
     void run("remove", () => api(`${base}/lessons`, "DELETE", { contentId }));
   }
 
+  function openDetails(l: ManagedLesson) {
+    setDetails({
+      contentId: l.contentId,
+      styles: l.styles ?? "",
+      calories: l.calories != null ? String(l.calories) : "",
+      description: l.description ?? "",
+    });
+  }
+
+  function saveDetails() {
+    if (!details) return;
+    const calories =
+      details.calories.trim() === "" ? null : Number(details.calories);
+    setView((prev) =>
+      prev.map((l) =>
+        l.contentId === details.contentId
+          ? {
+              ...l,
+              styles: details.styles.trim() || null,
+              calories,
+              description: details.description.trim() || null,
+            }
+          : l
+      )
+    );
+    const payload = {
+      contentId: details.contentId,
+      styles: details.styles,
+      calories,
+      description: details.description,
+    };
+    setDetails(null);
+    void run("details", () => api(`${base}/lessons/details`, "POST", payload));
+  }
+
   async function uploadLessonThumb(contentId: string, file: File) {
     setUploadingThumbFor(contentId);
     try {
@@ -602,8 +648,9 @@ function LessonsCard({
           {view.map((l, i) => (
             <li
               key={l.contentId}
-              className="flex flex-wrap items-center gap-3 rounded-xl border border-pink-100 px-4 py-3"
+              className="rounded-xl border border-pink-100 px-4 py-3"
             >
+              <div className="flex flex-wrap items-center gap-3">
               <div className="group/thumb relative h-14 w-24 shrink-0 overflow-hidden rounded-lg bg-gradient-to-br from-pink-50 to-rose-50">
                 <label
                   className="absolute inset-0 cursor-pointer"
@@ -698,9 +745,11 @@ function LessonsCard({
                     <Pencil className="h-3 w-3 shrink-0 text-gray-300 group-hover:text-pink-400" />
                   </button>
                 )}
-                <p className="text-sm text-gray-500">
+                <p className="truncate text-sm text-gray-500">
                   {formatDuration(l.durationInSeconds)}
                   {l.isPreview && " · Free preview"}
+                  {l.calories != null && ` · ~${l.calories} kcal`}
+                  {l.styles && ` · ${l.styles}`}
                 </p>
               </div>
               {program.structure === "days" && (
@@ -720,6 +769,24 @@ function LessonsCard({
                 </label>
               )}
               <div className="flex items-center gap-1">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  title="Edit details (styles, calories, description)"
+                  onClick={() =>
+                    details?.contentId === l.contentId
+                      ? setDetails(null)
+                      : openDetails(l)
+                  }
+                  className={
+                    details?.contentId === l.contentId
+                      ? "text-pink-500"
+                      : "text-gray-400"
+                  }
+                >
+                  <SlidersHorizontal className="h-4 w-4" />
+                </Button>
                 <Button
                   type="button"
                   variant="ghost"
@@ -765,6 +832,81 @@ function LessonsCard({
                   <Trash2 className="h-4 w-4" />
                 </Button>
               </div>
+              </div>
+
+              {/* Inline details editor: styles / calories / description */}
+              {details?.contentId === l.contentId && (
+                <div className="mt-3 space-y-3 border-t border-pink-50 pt-3">
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    <div className="space-y-1">
+                      <Label htmlFor={`styles-${l.contentId}`}>
+                        Dance styles
+                      </Label>
+                      <Input
+                        id={`styles-${l.contentId}`}
+                        value={details.styles}
+                        maxLength={255}
+                        placeholder="e.g. Hip-hop, Afro House"
+                        onChange={(e) =>
+                          setDetails({ ...details, styles: e.target.value })
+                        }
+                      />
+                      <p className="text-xs text-gray-400">
+                        Separate with commas — shown as tags on the lesson page.
+                      </p>
+                    </div>
+                    <div className="space-y-1">
+                      <Label htmlFor={`kcal-${l.contentId}`}>
+                        Calories (estimate)
+                      </Label>
+                      <Input
+                        id={`kcal-${l.contentId}`}
+                        type="number"
+                        min={0}
+                        max={5000}
+                        value={details.calories}
+                        placeholder="e.g. 150"
+                        onChange={(e) =>
+                          setDetails({ ...details, calories: e.target.value })
+                        }
+                        className="max-w-32"
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-1">
+                    <Label htmlFor={`desc-${l.contentId}`}>Description</Label>
+                    <Textarea
+                      id={`desc-${l.contentId}`}
+                      value={details.description}
+                      rows={3}
+                      maxLength={2000}
+                      placeholder="What happens in this lesson, and how will it feel?"
+                      onChange={(e) =>
+                        setDetails({ ...details, description: e.target.value })
+                      }
+                    />
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Button
+                      type="button"
+                      variant="brand"
+                      size="sm"
+                      onClick={saveDetails}
+                      disabled={busyAction !== null}
+                    >
+                      Save details
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setDetails(null)}
+                    >
+                      Cancel
+                    </Button>
+                  </div>
+                </div>
+              )}
             </li>
           ))}
         </ul>
