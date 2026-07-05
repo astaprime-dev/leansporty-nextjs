@@ -1,6 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import type { Metadata } from "next";
+import { createClient } from "@/utils/supabase/server";
 import { Clock, Film, Play, Star } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -19,6 +21,50 @@ import {
 import type { ProductConfig } from "@/types/commerce";
 
 export const dynamic = "force-dynamic";
+
+/**
+ * Social metadata for shared program links — instructors share these on
+ * Instagram/WhatsApp, so the preview card (cover, title, subtitle) IS the ad.
+ */
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const supabase = await createClient();
+  const { data: p } = await supabase
+    .from("products")
+    .select("title, subtitle, description, cover_image_url, is_active, admin_disabled")
+    .eq("slug", slug)
+    .eq("kind", "course")
+    .maybeSingle();
+
+  if (!p || !p.is_active || p.admin_disabled) {
+    return { title: "Program · Lean Sporty" };
+  }
+
+  const description =
+    p.subtitle ??
+    (p.description ? p.description.slice(0, 160) : null) ??
+    "A follow-along dance program on Lean Sporty.";
+
+  return {
+    title: `${p.title} · Lean Sporty`,
+    description,
+    openGraph: {
+      title: p.title,
+      description,
+      type: "website",
+      ...(p.cover_image_url ? { images: [{ url: p.cover_image_url }] } : {}),
+    },
+    twitter: {
+      card: p.cover_image_url ? "summary_large_image" : "summary",
+      title: p.title,
+      description,
+    },
+  };
+}
 
 /**
  * Public program page — one route, two states:

@@ -6,6 +6,11 @@ import { WatchView, type WatchLessonFeedback } from "@/components/programs/watch
 
 export const dynamic = "force-dynamic";
 
+// Gated, thin content — the sales page is the canonical, indexable page.
+export const metadata = {
+  robots: { index: false, follow: false },
+};
+
 /**
  * The watch experience for one lesson: player + playlist rail. Deep-linkable
  * (post-purchase email, "Continue" buttons). Access rule per lesson: buyers

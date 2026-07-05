@@ -4,6 +4,7 @@ import { Clock, Film, Plus, TrendingUp, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/empty-state";
+import { CopyLinkButton } from "@/components/instructor/copy-link-button";
 import { createClient } from "@/utils/supabase/server";
 import { formatPrice } from "@/lib/challenge";
 import type { ProductConfig } from "@/types/commerce";
@@ -213,15 +214,22 @@ export default async function InstructorProgramsPage() {
                       </Button>
                     </Link>
                     {p.is_active && !p.admin_disabled && (
-                      <Link
-                        href={`/programs/${p.slug}`}
-                        target="_blank"
-                        className="flex-1 sm:flex-initial"
-                      >
-                        <Button variant="ghost" size="sm" className="w-full">
-                          View Page
-                        </Button>
-                      </Link>
+                      <>
+                        <CopyLinkButton
+                          path={`/programs/${p.slug}`}
+                          label="Copy link"
+                          className="flex-1 sm:flex-initial"
+                        />
+                        <Link
+                          href={`/programs/${p.slug}`}
+                          target="_blank"
+                          className="flex-1 sm:flex-initial"
+                        >
+                          <Button variant="ghost" size="sm" className="w-full">
+                            View Page
+                          </Button>
+                        </Link>
+                      </>
                     )}
                   </div>
                 </div>
