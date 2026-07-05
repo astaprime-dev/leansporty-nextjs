@@ -6,32 +6,42 @@ interface HeaderNavProps {
   isInstructor: boolean;
 }
 
+/**
+ * Desktop top-nav. Active underline uses the same geometry as the Studio
+ * sub-nav (components/instructor-nav.tsx): py-3 hit area, bar just past its
+ * bottom edge — so both bars show the line at the same distance below the
+ * text.
+ */
+const LINK = "relative py-3 -my-3 text-sm font-light";
+const ACTIVE =
+  "text-gray-900 after:absolute after:inset-x-0 after:-bottom-[1px] after:h-0.5 after:rounded-full after:bg-gradient-to-r after:from-pink-500 after:to-rose-400";
+
 export default function HeaderNav({ user, isInstructor }: HeaderNavProps) {
   return (
     <div className="hidden md:flex items-center gap-3 lg:gap-6">
       {user ? (
         <>
-          {/* Signed in → lead with the buyer's program */}
-          <NavLink href="/my-program" className="text-sm font-light">
-            My Program
+          {/* Signed in → lead with the buyer's training */}
+          <NavLink href="/my-program" className={LINK} activeClassName={ACTIVE}>
+            My Training
           </NavLink>
-          <NavLink href="/activity" className="text-sm font-light">
+          <NavLink href="/activity" className={LINK} activeClassName={ACTIVE}>
             Activity
           </NavLink>
-          <NavLink href="/streams" className="text-sm font-light">
-            Streams
+          <NavLink href="/streams" className={LINK} activeClassName={ACTIVE}>
+            Classes
           </NavLink>
         </>
       ) : (
         <>
           {/* Anonymous → lead with the offer */}
-          <NavLink href="/challenge" className="text-sm font-light">
+          <NavLink href="/challenge" className={LINK} activeClassName={ACTIVE}>
             Challenge
           </NavLink>
-          <NavLink href="/streams" className="text-sm font-light">
-            Streams
+          <NavLink href="/streams" className={LINK} activeClassName={ACTIVE}>
+            Classes
           </NavLink>
-          <NavLink href="/teach" className="text-sm font-light">
+          <NavLink href="/teach" className={LINK} activeClassName={ACTIVE}>
             Teach
           </NavLink>
         </>
@@ -41,7 +51,8 @@ export default function HeaderNav({ user, isInstructor }: HeaderNavProps) {
       {isInstructor && (
         <NavLink
           href="/instructor"
-          className="text-sm font-light whitespace-nowrap"
+          className={`${LINK} whitespace-nowrap`}
+          activeClassName={ACTIVE}
         >
           Instructor Studio
         </NavLink>

@@ -55,22 +55,22 @@ export default async function InstructorCommentsPage() {
   const visibleComments = comments?.filter(c => !c.is_hidden).length || 0;
 
   return (
-    <div className="flex-1 w-full flex flex-col gap-6 px-4 py-8 max-w-6xl mx-auto">
+    <div className="flex-1 w-full flex flex-col gap-6 px-4 py-8 max-w-7xl mx-auto">
       <div>
-        <h1 className="text-3xl sm:text-4xl font-display font-light text-gray-900 mb-2">Comment Management</h1>
+        <h1 className="text-3xl sm:text-4xl font-display font-light text-gray-900 mb-2">Reviews</h1>
         <p className="text-gray-600">
-          View and manage comments on your streams
+          What your students say about your classes
         </p>
       </div>
 
       {/* Stats */}
       <div className="grid grid-cols-2 gap-4">
         <div className="bg-white border rounded-lg p-4">
-          <p className="text-sm text-gray-600">Total Comments</p>
+          <p className="text-sm text-gray-600">Total Reviews</p>
           <p className="text-2xl font-bold">{totalComments}</p>
         </div>
         <div className="bg-white border rounded-lg p-4">
-          <p className="text-sm text-gray-600">Visible Comments</p>
+          <p className="text-sm text-gray-600">Visible Reviews</p>
           <p className="text-2xl font-bold">{visibleComments}</p>
         </div>
       </div>
@@ -78,7 +78,7 @@ export default async function InstructorCommentsPage() {
       {/* Comments List */}
       <div className="space-y-4">
         {!comments || comments.length === 0 ? (
-          <EmptyState title="No comments yet" />
+          <EmptyState title="No reviews yet" />
         ) : (
           comments.map((comment) => (
             <div

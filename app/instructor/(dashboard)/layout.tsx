@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/utils/supabase/server";
 import { InstructorMobileMenu } from "@/components/instructor-mobile-menu";
+import { InstructorNav } from "@/components/instructor-nav";
 
 export default async function InstructorLayout({
   children,
@@ -40,57 +41,14 @@ export default async function InstructorLayout({
     <div className="min-h-screen bg-pink-50/20">
       {/* Instructor Header */}
       <header className="bg-white/90 border-b border-pink-100 sticky top-0 z-40 backdrop-blur-sm">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-8">
             <Link href="/instructor">
-              <h1 className="text-xl font-display font-light text-gray-900">
+              <h1 className="text-lg font-display font-light text-gray-900">
                 Instructor Studio
               </h1>
             </Link>
-            <nav className="hidden md:flex items-center gap-4">
-              <Link
-                href="/instructor"
-                className="text-sm font-light text-gray-600 hover:text-pink-500 transition-colors"
-              >
-                Dashboard
-              </Link>
-              <Link
-                href="/instructor/streams"
-                className="text-sm font-light text-gray-600 hover:text-pink-500 transition-colors"
-              >
-                My Streams
-              </Link>
-              <Link
-                href="/instructor/streams/create"
-                className="text-sm font-light text-gray-600 hover:text-pink-500 transition-colors"
-              >
-                Create Stream
-              </Link>
-              <Link
-                href="/instructor/comments"
-                className="text-sm font-light text-gray-600 hover:text-pink-500 transition-colors"
-              >
-                Comments
-              </Link>
-              <Link
-                href="/instructor/earnings"
-                className="text-sm font-light text-gray-600 hover:text-pink-500 transition-colors"
-              >
-                Earnings
-              </Link>
-              <Link
-                href="/instructor/profile"
-                className="text-sm font-light text-gray-600 hover:text-pink-500 transition-colors"
-              >
-                My Profile
-              </Link>
-              <Link
-                href="/instructor/help"
-                className="text-sm font-light text-gray-600 hover:text-pink-500 transition-colors"
-              >
-                Help
-              </Link>
-            </nav>
+            <InstructorNav />
           </div>
 
           <div className="flex items-center gap-4">

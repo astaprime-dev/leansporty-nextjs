@@ -200,7 +200,7 @@ export default async function InstructorDashboard() {
         {/* Upcoming Streams */}
         <div>
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-2xl font-semibold text-gray-900">Upcoming Streams</h2>
+            <h2 className="text-2xl font-semibold text-gray-900">Upcoming Classes</h2>
             <Link href="/instructor/streams">
               <Button variant="ghost" size="sm">
                 View All →
@@ -210,7 +210,7 @@ export default async function InstructorDashboard() {
 
           {upcomingList.length === 0 ? (
             <EmptyState
-              title="No upcoming streams"
+              title="No upcoming classes"
               action={
                 <Link href="/instructor/streams/create">
                   <Button variant="brand" size="sm">

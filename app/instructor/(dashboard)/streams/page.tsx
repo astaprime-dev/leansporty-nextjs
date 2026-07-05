@@ -42,24 +42,24 @@ export default async function InstructorStreamsPage() {
     <div className="max-w-7xl mx-auto px-4 py-8">
       <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4 mb-8">
         <div>
-          <h1 className="text-3xl sm:text-4xl font-display font-light text-gray-900">My Streams</h1>
-          <p className="text-gray-600 mt-1">Manage your live streaming sessions</p>
+          <h1 className="text-3xl sm:text-4xl font-display font-light text-gray-900">Classes</h1>
+          <p className="text-gray-600 mt-1">Schedule and manage your live classes</p>
         </div>
         <Link href="/instructor/streams/create" className="shrink-0">
           <Button variant="brand" className="w-full sm:w-auto">
             <Plus className="w-4 h-4 mr-2" />
-            Create Stream
+            Schedule a Class
           </Button>
         </Link>
       </div>
 
       {streamsList.length === 0 ? (
         <EmptyState
-          title="No streams created yet"
+          title="No classes yet"
           action={
             <Link href="/instructor/streams/create">
               <Button variant="brand">
-                Create Your First Stream
+                Schedule Your First Class
               </Button>
             </Link>
           }

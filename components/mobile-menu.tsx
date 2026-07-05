@@ -52,13 +52,13 @@ export function MobileMenu({ user, isInstructor }: MobileMenuProps) {
                 <>
                   {/* Signed in → lead with the program */}
                   <NavLink href="/my-program" onClick={close} className="text-base font-light py-2">
-                    My Program
+                    My Training
                   </NavLink>
                   <NavLink href="/activity" onClick={close} className="text-base font-light py-2">
                     Activity
                   </NavLink>
                   <NavLink href="/streams" onClick={close} className="text-base font-light py-2">
-                    Streams
+                    Classes
                   </NavLink>
                 </>
               ) : (
@@ -67,7 +67,7 @@ export function MobileMenu({ user, isInstructor }: MobileMenuProps) {
                     Challenge
                   </NavLink>
                   <NavLink href="/streams" onClick={close} className="text-base font-light py-2">
-                    Streams
+                    Classes
                   </NavLink>
                   <NavLink href="/teach" onClick={close} className="text-base font-light py-2">
                     Teach

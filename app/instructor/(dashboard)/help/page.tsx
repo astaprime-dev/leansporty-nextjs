@@ -42,7 +42,7 @@ export default function InstructorHelpPage() {
           </div>
           <div className="flex items-start gap-3">
             <div className="w-6 h-6 rounded-full bg-pink-500 text-white flex items-center justify-center text-sm font-bold flex-shrink-0">5</div>
-            <p className="text-gray-700">Schedule your first live stream</p>
+            <p className="text-gray-700">Schedule your first live class</p>
           </div>
         </div>
       </section>
@@ -116,7 +116,7 @@ export default function InstructorHelpPage() {
                   <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
                   <div>
                     <p className="font-semibold text-gray-900">Display Name (Required)</p>
-                    <p className="text-gray-600 text-sm">Your name as students will see it. This appears on all your streams.</p>
+                    <p className="text-gray-600 text-sm">Your name as students will see it. This appears on all your classes.</p>
                   </div>
                 </li>
                 <li className="flex items-start gap-3">
@@ -166,28 +166,28 @@ export default function InstructorHelpPage() {
           </div>
         </section>
 
-        {/* Creating & Managing Streams */}
+        {/* Creating & Managing Classes */}
         <section className="bg-white rounded-2xl border border-pink-100 p-8">
           <div className="flex items-start gap-4 mb-6">
             <div className="w-12 h-12 bg-gradient-to-br from-pink-500 to-rose-400 rounded-xl flex items-center justify-center flex-shrink-0">
               <Video className="w-6 h-6 text-white" strokeWidth={1.5} />
             </div>
             <div>
-              <h2 className="text-2xl font-semibold text-gray-900 mb-2">Creating & Managing Streams</h2>
+              <h2 className="text-2xl font-semibold text-gray-900 mb-2">Creating & Managing Classes</h2>
               <p className="text-gray-600">Schedule and run your live fitness classes</p>
             </div>
           </div>
 
           <div className="space-y-6">
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-3">How to create a stream</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-3">How to schedule a class</h3>
               <ol className="space-y-3 ml-6 list-decimal text-gray-700">
                 <li>
-                  <p className="font-semibold text-gray-900">Navigate to "Create Stream"</p>
-                  <p className="text-sm text-gray-600">Click the "Create Stream" button on your dashboard or in the navigation.</p>
+                  <p className="font-semibold text-gray-900">Open "Classes"</p>
+                  <p className="text-sm text-gray-600">Go to "Classes" in the navigation and click the "Schedule a Class" button. You can also start from your dashboard.</p>
                 </li>
                 <li>
-                  <p className="font-semibold text-gray-900">Fill in stream details</p>
+                  <p className="font-semibold text-gray-900">Fill in class details</p>
                   <ul className="mt-2 space-y-1 text-sm text-gray-600 ml-4">
                     <li>• <strong>Title:</strong> Clear, descriptive name (e.g., "30-Min HIIT Dance Cardio")</li>
                     <li>• <strong>Description:</strong> What to expect, fitness level, equipment needed</li>
@@ -200,14 +200,14 @@ export default function InstructorHelpPage() {
                   </p>
                 </li>
                 <li>
-                  <p className="font-semibold text-gray-900">Publish your stream</p>
-                  <p className="text-sm text-gray-600">Your stream appears immediately on the public streams page and your profile.</p>
+                  <p className="font-semibold text-gray-900">Click "Schedule Class"</p>
+                  <p className="text-sm text-gray-600">Your class appears immediately on the public Live Streams page and your profile.</p>
                 </li>
               </ol>
             </div>
 
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-3">Stream status explained</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-3">Class status explained</h3>
               <div className="grid md:grid-cols-3 gap-4">
                 <Alert variant="info" hideIcon>
                   <div className="flex items-center gap-2 mb-2">
@@ -215,7 +215,7 @@ export default function InstructorHelpPage() {
                     <p className="font-semibold">Scheduled</p>
                   </div>
                   <p className="text-sm">
-                    Your stream is published and students can enroll. Appears in "Upcoming Streams".
+                    Your class is published and students can enroll. Appears in "Upcoming Classes".
                   </p>
                 </Alert>
                 <Alert variant="error" hideIcon>
@@ -224,7 +224,7 @@ export default function InstructorHelpPage() {
                     <p className="font-semibold">Live</p>
                   </div>
                   <p className="text-sm">
-                    Your stream is currently broadcasting. Appears in "LIVE NOW" section with special styling.
+                    Your class is currently broadcasting. Appears in "LIVE NOW" section with special styling.
                   </p>
                 </Alert>
                 <Alert variant="info" hideIcon>
@@ -233,7 +233,7 @@ export default function InstructorHelpPage() {
                     <p className="font-semibold">Ended</p>
                   </div>
                   <p className="text-sm">
-                    Stream finished. Shows in your "Past Classes" and recording becomes available.
+                    Class finished. Shows in your "Past Classes" and recording becomes available.
                   </p>
                 </Alert>
               </div>
@@ -251,7 +251,7 @@ export default function InstructorHelpPage() {
                 <ol className="space-y-3 ml-6 list-decimal text-gray-700">
                   <li>
                     <p className="font-semibold text-gray-900">Open your broadcast page</p>
-                    <p className="text-sm text-gray-600">Go to "My Streams" and click "Manage →" on your scheduled stream</p>
+                    <p className="text-sm text-gray-600">Go to "Classes" and click "Manage →" on your scheduled class</p>
                   </li>
                   <li>
                     <p className="font-semibold text-gray-900">Click "Start Broadcast"</p>
@@ -263,11 +263,11 @@ export default function InstructorHelpPage() {
                   </li>
                   <li>
                     <p className="font-semibold text-gray-900">That's it! You're live</p>
-                    <p className="text-sm text-gray-600">Your stream automatically becomes visible to students. Start teaching!</p>
+                    <p className="text-sm text-gray-600">Your class automatically becomes visible to students. Start teaching!</p>
                   </li>
                   <li>
                     <p className="font-semibold text-gray-900">When you're done</p>
-                    <p className="text-sm text-gray-600">Click "Stop Broadcast" then confirm "End Stream"</p>
+                    <p className="text-sm text-gray-600">Click "Stop Broadcast" — your class ends and the recording is saved</p>
                   </li>
                 </ol>
               </div>
@@ -277,9 +277,9 @@ export default function InstructorHelpPage() {
                 <ul className="text-sm space-y-1 list-disc ml-4">
                   <li>Your camera and microphone turn on (you'll see yourself on screen)</li>
                   <li>The system connects you to the streaming servers</li>
-                  <li>Your stream automatically switches from "Scheduled" to "LIVE"</li>
+                  <li>Your class automatically switches from "Scheduled" to "LIVE"</li>
                   <li>Students who enrolled can now watch your class</li>
-                  <li>Your stream appears in the "LIVE NOW" section on the homepage</li>
+                  <li>Your class appears in the "LIVE NOW" section on the Live Streams page</li>
                 </ul>
               </Alert>
 
@@ -295,36 +295,32 @@ export default function InstructorHelpPage() {
             <div>
               <h3 className="text-lg font-semibold text-gray-900 mb-3">Ending your class</h3>
               <p className="text-gray-700 mb-4">
-                When you're finished teaching, ending your stream is just as simple as starting it.
+                When you're finished teaching, ending your class is just as simple as starting it.
               </p>
 
               <div className="bg-gradient-to-br from-rose-50 to-pink-50 rounded-lg p-6 border border-rose-200 mb-6">
-                <p className="font-bold text-gray-900 mb-4 text-lg">How to end your stream:</p>
+                <p className="font-bold text-gray-900 mb-4 text-lg">How to end your class:</p>
                 <ol className="space-y-3 ml-6 list-decimal text-gray-700">
                   <li>
                     <p className="font-semibold text-gray-900">Click "Stop Broadcast"</p>
-                    <p className="text-sm text-gray-600">Your camera and microphone turn off immediately</p>
+                    <p className="text-sm text-gray-600">Your camera and microphone turn off and your class ends — no extra popup</p>
                   </li>
                   <li>
-                    <p className="font-semibold text-gray-900">Confirm you want to end</p>
-                    <p className="text-sm text-gray-600">A popup asks "Are you sure you want to end this stream?"</p>
-                  </li>
-                  <li>
-                    <p className="font-semibold text-gray-900">Click "OK" to confirm</p>
-                    <p className="text-sm text-gray-600">Your stream is now marked as ended</p>
+                    <p className="font-semibold text-gray-900">Or click "End Stream" in the sidebar</p>
+                    <p className="text-sm text-gray-600">A popup asks "End this stream?" — click "End stream" to confirm</p>
                   </li>
                   <li>
                     <p className="font-semibold text-gray-900">That's it!</p>
-                    <p className="text-sm text-gray-600">The recording becomes available to students automatically</p>
+                    <p className="text-sm text-gray-600">Your class is now marked as ended and the recording becomes available to students automatically</p>
                   </li>
                 </ol>
               </div>
 
               <Alert variant="info" className="mb-4">
-                <p className="font-semibold mb-1">What happens when you end your stream?</p>
+                <p className="font-semibold mb-1">What happens when you end your class?</p>
                 <ul className="text-sm space-y-1 list-disc ml-4">
                   <li>Your camera and microphone turn off</li>
-                  <li>The stream status changes from "LIVE" to "ENDED"</li>
+                  <li>The class status changes from "LIVE" to "ENDED"</li>
                   <li>Students can no longer join the live class</li>
                   <li>The recording becomes available automatically</li>
                   <li>Enrolled students can watch the replay for 7 days</li>
@@ -334,7 +330,7 @@ export default function InstructorHelpPage() {
               <Alert variant="warning">
                 <p className="font-semibold mb-1">Important: Recording Availability</p>
                 <p className="text-sm">
-                  Your class is automatically recorded while you broadcast. After you end the stream,
+                  Your class is automatically recorded while you broadcast. After you end the class,
                   the recording is available to enrolled students for <strong>7 days</strong>. After that,
                   it's automatically deleted. This gives students time to re-watch the class while keeping
                   your content exclusive!
@@ -353,7 +349,7 @@ export default function InstructorHelpPage() {
                   <p className="font-semibold mb-2">Reconnecting After Connection Loss</p>
                   <p className="text-sm mb-3">
                     If your connection drops during class (battery dies, browser crashes, network issues, or accidental refresh),
-                    you can easily reconnect without ending your stream:
+                    you can easily reconnect without ending your class:
                   </p>
                   <ol className="text-sm space-y-2 ml-6 list-decimal">
                     <li>Open the broadcast page again (same device or different device)</li>
@@ -370,17 +366,17 @@ export default function InstructorHelpPage() {
                 <Alert variant="warning">
                   <p className="font-semibold mb-1">Browser Warning Protection</p>
                   <p className="text-sm">
-                    When your stream is live, if you try to close the tab or refresh the page, your browser will warn you:
+                    When your class is live, if you try to close the tab or refresh the page, your browser will warn you:
                     "Your stream is still live. Are you sure you want to leave?" This helps prevent accidental disconnections.
                   </p>
                 </Alert>
 
                 <Alert variant="warning">
-                  <p className="font-semibold mb-1">Cannot Restart Ended Streams</p>
+                  <p className="font-semibold mb-1">Cannot Restart Ended Classes</p>
                   <p className="text-sm">
-                    Once you've ended a stream (by clicking "Stop Broadcast" and confirming), you cannot restart it.
+                    Once you've ended a class (by clicking "Stop Broadcast"), you cannot restart it.
                     This is intentional - each class should be a separate session with its own recording and analytics.
-                    To teach again, simply create a new stream.
+                    To teach again, simply schedule a new class.
                   </p>
                 </Alert>
               </div>
@@ -476,7 +472,7 @@ export default function InstructorHelpPage() {
             </div>
 
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-3">Stream Creation Tips</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-3">Class Creation Tips</h3>
               <ul className="space-y-2 text-gray-700">
                 <li className="flex items-start gap-2">
                   <span className="text-pink-500 mt-1">✓</span>
@@ -502,7 +498,7 @@ export default function InstructorHelpPage() {
               <ul className="space-y-2 text-gray-700">
                 <li className="flex items-start gap-2">
                   <span className="text-pink-500 mt-1">✓</span>
-                  <span>Post streams at least 1 week in advance</span>
+                  <span>Post classes at least 1 week in advance</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-pink-500 mt-1">✓</span>
@@ -557,9 +553,9 @@ export default function InstructorHelpPage() {
 
           <div className="space-y-6">
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">Can I edit a stream after creating it?</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Can I edit a class after creating it?</h3>
               <p className="text-gray-700">
-                Yes. While a class is still scheduled, open "My Streams" and click "Edit" to change its title,
+                Yes. While a class is still scheduled, open "Classes" and click "Edit" to change its title,
                 description, date/time, or duration. Once a class has gone live or ended, its details are locked.
               </p>
             </div>
@@ -567,7 +563,7 @@ export default function InstructorHelpPage() {
             <div>
               <h3 className="text-lg font-semibold text-gray-900 mb-2">What happens if I need to cancel a class?</h3>
               <p className="text-gray-700">
-                On the "My Streams" page, click "Cancel" on any scheduled class and confirm. The class is removed
+                On the "Classes" page, click "Cancel" on any scheduled class and confirm. The class is removed
                 from students' view and its broadcast setup is torn down. Cancelling isn't available once a class is
                 live or ended. Try to avoid cancellations when possible to maintain your reputation.
               </p>
@@ -577,17 +573,16 @@ export default function InstructorHelpPage() {
               <h3 className="text-lg font-semibold text-gray-900 mb-2">How do students find my classes?</h3>
               <p className="text-gray-700 mb-2">Students can discover your classes through:</p>
               <ul className="ml-6 list-disc text-gray-700 space-y-1">
-                <li>The public Streams page (shows all upcoming and live classes)</li>
+                <li>The public Live Streams page (shows all upcoming and live classes)</li>
                 <li>Your public instructor profile (@yourname)</li>
                 <li>Direct links you share on social media</li>
-                <li>The app's home page featuring live and upcoming classes</li>
               </ul>
             </div>
 
             <div>
               <h3 className="text-lg font-semibold text-gray-900 mb-2">Can I teach multiple classes at once?</h3>
               <p className="text-gray-700">
-                You can schedule as many streams as you want, but you can only broadcast one at a time.
+                You can schedule as many classes as you want, but you can only broadcast one at a time.
                 Make sure your class times don't overlap!
               </p>
             </div>
@@ -612,7 +607,7 @@ export default function InstructorHelpPage() {
             <div>
               <h3 className="text-lg font-semibold text-gray-900 mb-2">Will my classes be recorded?</h3>
               <p className="text-gray-700">
-                Yes! Classes are automatically recorded and become available to enrolled students after the stream ends.
+                Yes! Classes are automatically recorded and become available to enrolled students after the class ends.
                 This adds value to your classes as students can revisit the workout.
               </p>
             </div>
@@ -620,7 +615,7 @@ export default function InstructorHelpPage() {
             <div>
               <h3 className="text-lg font-semibold text-gray-900 mb-2">How do I update my profile?</h3>
               <p className="text-gray-700">
-                Click "My Profile" in the instructor navigation (top of page), or go directly to the profile page
+                Click "Profile" in the instructor navigation (top of page), or go directly to the profile page
                 from your dashboard. Changes are saved immediately and update your public profile.
               </p>
             </div>

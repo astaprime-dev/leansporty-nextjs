@@ -1,7 +1,6 @@
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import { Wallet, Clock, CheckCircle2, CalendarDays } from "lucide-react";
-import { Alert } from "@/components/ui/alert";
 import { EmptyState } from "@/components/empty-state";
 
 function fmt(cents: number, currency = "eur") {
@@ -90,18 +89,15 @@ export default async function InstructorEarningsPage() {
   ];
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-8">
-      <div className="mb-6">
+    <div className="max-w-7xl mx-auto px-4 py-8">
+      <div className="mb-8">
         <h1 className="text-3xl sm:text-4xl font-display font-light text-gray-900">Earnings</h1>
-        <p className="text-gray-600 mt-1">Your share of every paid class, and what&apos;s owed to you.</p>
-      </div>
-
-      <Alert variant="info" className="mb-8">
-        <p className="text-sm">
-          You keep your agreed share of every sale (85%, or 90% as a featured instructor).
-          Pending amounts are paid to your bank on a regular schedule.
+        <p className="text-gray-600 mt-1">Your share of every sale, and what&apos;s owed to you.</p>
+        <p className="text-sm text-gray-400 mt-1">
+          You keep your agreed share of every sale (85%, or 90% as a featured
+          instructor). Pending amounts are paid to your bank on a regular schedule.
         </p>
-      </Alert>
+      </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         {tiles.map((t) => (

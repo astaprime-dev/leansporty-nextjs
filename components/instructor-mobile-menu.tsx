@@ -2,8 +2,14 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { X, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import {
+  INSTRUCTOR_NAV_LINKS,
+  isInstructorNavActive,
+} from "@/components/instructor-nav";
 
 interface InstructorMobileMenuProps {
   instructorSlug: string | null;
@@ -13,6 +19,7 @@ export function InstructorMobileMenu({
   instructorSlug,
 }: InstructorMobileMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const pathname = usePathname();
 
   return (
     <>
@@ -37,62 +44,24 @@ export function InstructorMobileMenu({
           {/* Menu Panel */}
           <div className="fixed top-[73px] right-0 left-0 bg-white border-b border-pink-100 shadow-lg z-[60] md:hidden">
             <div className="flex flex-col p-4 space-y-3">
-              {/* Navigation Links */}
-              <Link
-                href="/instructor"
-                className="text-base font-light text-gray-600 hover:text-pink-500 transition-colors py-2"
-                onClick={() => setIsOpen(false)}
-              >
-                Dashboard
-              </Link>
-
-              <Link
-                href="/instructor/streams"
-                className="text-base font-light text-gray-600 hover:text-pink-500 transition-colors py-2"
-                onClick={() => setIsOpen(false)}
-              >
-                My Streams
-              </Link>
-
-              <Link
-                href="/instructor/streams/create"
-                className="text-base font-light text-gray-600 hover:text-pink-500 transition-colors py-2"
-                onClick={() => setIsOpen(false)}
-              >
-                Create Stream
-              </Link>
-
-              <Link
-                href="/instructor/comments"
-                className="text-base font-light text-gray-600 hover:text-pink-500 transition-colors py-2"
-                onClick={() => setIsOpen(false)}
-              >
-                Comments
-              </Link>
-
-              <Link
-                href="/instructor/earnings"
-                className="text-base font-light text-gray-600 hover:text-pink-500 transition-colors py-2"
-                onClick={() => setIsOpen(false)}
-              >
-                Earnings
-              </Link>
-
-              <Link
-                href="/instructor/profile"
-                className="text-base font-light text-gray-600 hover:text-pink-500 transition-colors py-2"
-                onClick={() => setIsOpen(false)}
-              >
-                My Profile
-              </Link>
-
-              <Link
-                href="/instructor/help"
-                className="text-base font-light text-gray-600 hover:text-pink-500 transition-colors py-2"
-                onClick={() => setIsOpen(false)}
-              >
-                Help
-              </Link>
+              {INSTRUCTOR_NAV_LINKS.map((link) => {
+                const active = isInstructorNavActive(pathname, link);
+                return (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    className={cn(
+                      "text-base font-light transition-colors py-2",
+                      active
+                        ? "text-pink-500 font-normal border-l-2 border-pink-500 pl-3 -ml-1"
+                        : "text-gray-600 hover:text-pink-500"
+                    )}
+                    onClick={() => setIsOpen(false)}
+                  >
+                    {link.label}
+                  </Link>
+                );
+              })}
 
               {/* View Public Profile - only show if slug exists */}
               {instructorSlug && (
@@ -103,11 +72,7 @@ export function InstructorMobileMenu({
                     target="_blank"
                     onClick={() => setIsOpen(false)}
                   >
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="w-full"
-                    >
+                    <Button variant="outline" size="sm" className="w-full">
                       View Public Profile
                     </Button>
                   </Link>

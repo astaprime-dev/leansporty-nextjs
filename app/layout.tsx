@@ -94,7 +94,7 @@ export default async function RootLayout({
             <div className="flex-1 w-full flex flex-col">
               {/* Elegant Header */}
               <nav className="relative w-full bg-white/80 backdrop-blur-md border-b border-pink-100/50 shadow-sm z-50">
-                <div className="w-full max-w-7xl mx-auto px-4 md:px-6 h-16 md:h-20 flex justify-between items-center">
+                <div className="w-full max-w-7xl mx-auto px-4 h-16 md:h-20 flex justify-between items-center">
                   {/* Logo/Brand */}
                   <Link href={"/"} className="group flex items-center gap-2 md:gap-3">
                     <span className="font-display text-2xl md:text-3xl font-normal tracking-tight text-gray-900 group-hover:text-pink-500 transition-colors duration-300">
@@ -168,9 +168,9 @@ export default async function RootLayout({
                     {/* Footer nav */}
                     <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm font-light text-gray-600">
                       <Link href="/challenge" className="hover:text-pink-500 transition-colors">Challenge</Link>
-                      <Link href="/streams" className="hover:text-pink-500 transition-colors">Streams</Link>
+                      <Link href="/streams" className="hover:text-pink-500 transition-colors">Classes</Link>
                       {user && (
-                        <Link href="/my-program" className="hover:text-pink-500 transition-colors">My Program</Link>
+                        <Link href="/my-program" className="hover:text-pink-500 transition-colors">My Training</Link>
                       )}
                       {/* Instructor entry points: /teach recruits new instructors;
                           /instructor is the Studio login (signed-out users are routed

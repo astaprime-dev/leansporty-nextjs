@@ -54,7 +54,7 @@ export function StreamsView({
       <div className="flex justify-between items-start flex-wrap gap-4">
         <div>
           <h1 className="text-3xl sm:text-4xl font-display font-light text-gray-900 mb-2">
-            Live Streams
+            Live Classes
           </h1>
           <p className="text-muted-foreground">
             Join live dance workouts with expert instructors
@@ -85,11 +85,11 @@ export function StreamsView({
 
       {/* Upcoming Streams Section */}
       <div>
-        <h2 className="text-2xl font-semibold text-gray-900 mb-4">Upcoming Streams</h2>
+        <h2 className="text-2xl font-semibold text-gray-900 mb-4">Upcoming Classes</h2>
         {upcomingStreams.length === 0 ? (
           <EmptyState
-            title="No upcoming streams scheduled yet."
-            description="Check back soon for new live sessions!"
+            title="No upcoming classes scheduled yet."
+            description="Check back soon for new live classes!"
           />
         ) : (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">

@@ -144,12 +144,12 @@ export function StreamForm({ initialData, streamId, mode }: StreamFormProps) {
   return (
     <div className="max-w-3xl mx-auto px-4 py-8">
       <h1 className="text-3xl sm:text-4xl font-display font-light text-gray-900 mb-2">
-        {mode === "create" ? "Create Live Stream" : "Edit Stream"}
+        {mode === "create" ? "Schedule a Class" : "Edit Class"}
       </h1>
       <p className="text-gray-600 mb-8">
         {mode === "create"
-          ? "Schedule a new live streaming session"
-          : "Update stream details and schedule"}
+          ? "Set up a new live class for your students"
+          : "Update the class details and schedule"}
       </p>
 
       <form
@@ -320,7 +320,7 @@ export function StreamForm({ initialData, streamId, mode }: StreamFormProps) {
           >
             {isLoading
               ? (mode === "create" ? "Creating..." : "Saving...")
-              : (mode === "create" ? "Create Stream" : "Save Changes")}
+              : (mode === "create" ? "Schedule Class" : "Save Changes")}
           </Button>
           <Button
             type="button"
