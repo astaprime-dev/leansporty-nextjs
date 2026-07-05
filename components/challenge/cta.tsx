@@ -6,6 +6,7 @@ import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
 import { OAuthSignInModal } from "@/components/oauth-signin-modal";
+import { trackEvent } from "@/lib/analytics";
 
 async function createCheckout(productSlug: string, returnPath?: string) {
   const res = await fetch("/api/checkout/session", {
@@ -57,6 +58,7 @@ export function CheckoutButton({
   async function startCheckout() {
     setLoading(true);
     setError("");
+    trackEvent("checkout_start", { product: productSlug });
     try {
       const data = await createCheckout(productSlug, returnPath);
       if (data.alreadyOwned) {
@@ -64,6 +66,7 @@ export function CheckoutButton({
         return;
       }
       if (data.url) {
+        trackEvent("checkout_redirect", { product: productSlug });
         window.location.href = data.url;
         return;
       }
@@ -199,6 +202,7 @@ export function FinalizingAccess({ slug }: { slug: string }) {
         const data = await res.json().catch(() => ({}));
         if (data.owned) {
           if (!cancelled) {
+            trackEvent("purchase_confirmed", { product: slug });
             setStillWaiting(false);
             router.refresh();
           }

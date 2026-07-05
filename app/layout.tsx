@@ -6,6 +6,7 @@ import { createClient } from "@/utils/supabase/server";
 import { Geist, Playfair_Display } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import Link from "next/link";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 
 // Canonical site URL for absolute metadata (OG images etc). VERCEL_URL is the
@@ -206,6 +207,7 @@ export default async function RootLayout({
             </div>
           </main>
         </ThemeProvider>
+        <Analytics />
       </body>
     </html>
   );

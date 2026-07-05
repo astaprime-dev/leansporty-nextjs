@@ -24,6 +24,7 @@ import { cn } from "@/lib/utils";
 import { SecureStreamPlayer } from "@/components/SecureStreamPlayer";
 import { CheckoutButton } from "@/components/challenge/cta";
 import { savePlaybackPosition, setWorkoutComplete } from "@/app/challenge/actions";
+import { trackEvent } from "@/lib/analytics";
 import { submitLessonFeedback, submitProgramReview } from "@/app/programs/actions";
 import { formatDuration } from "@/lib/challenge";
 import type { ProductItem } from "@/types/commerce";
@@ -110,6 +111,15 @@ export function WatchView({
 
   // ---- Resume position ("Start over" re-keys the player) ----
   const [startAt, setStartAt] = useState(resumeSeconds);
+
+  // Funnel: distinguishes buyers training vs prospects sampling the preview
+  // (pageviews alone can't tell them apart).
+  useEffect(() => {
+    trackEvent("watch_view", {
+      program: slug,
+      owned: owned ? "yes" : "no",
+    });
+  }, [slug, currentContentId, owned]);
 
   // ---- Periodic position saves (owned only; every ~15s of playback) ----
   const lastSavedRef = useRef(0);
