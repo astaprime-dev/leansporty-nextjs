@@ -11,9 +11,14 @@ import { ThemeProvider } from "next-themes";
 import Link from "next/link";
 import "./globals.css";
 
-const defaultUrl = process.env.VERCEL_URL
-  ? `https://${process.env.VERCEL_URL}`
-  : "http://localhost:3000";
+// Canonical site URL for absolute metadata (OG images etc). VERCEL_URL is the
+// per-deployment domain (leansporty-nextjs-xyz.vercel.app) — never use it as
+// the public base; it changes every deploy and may sit behind deployment auth.
+const defaultUrl =
+  process.env.NEXT_PUBLIC_SITE_URL ??
+  (process.env.VERCEL_URL
+    ? `https://${process.env.VERCEL_URL}`
+    : "http://localhost:3000");
 
 export const metadata = {
   metadataBase: new URL(defaultUrl),
