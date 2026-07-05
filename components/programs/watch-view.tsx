@@ -19,6 +19,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { StarRating } from "@/components/ui/star-rating";
 import { cn } from "@/lib/utils";
 import { SecureStreamPlayer } from "@/components/SecureStreamPlayer";
+import { CheckoutButton } from "@/components/challenge/cta";
 import { savePlaybackPosition, setWorkoutComplete } from "@/app/challenge/actions";
 import { submitLessonFeedback, submitProgramReview } from "@/app/programs/actions";
 import { formatDuration } from "@/lib/challenge";
@@ -49,6 +50,8 @@ export function WatchView({
   currentContentId,
   owned,
   isOwnerInstructor,
+  isAuthenticated,
+  priceLabel,
   completedContentIds,
   myReview,
   myFeedback,
@@ -62,6 +65,8 @@ export function WatchView({
   currentContentId: string;
   owned: boolean;
   isOwnerInstructor: boolean;
+  isAuthenticated: boolean;
+  priceLabel: string;
   completedContentIds: string[];
   myReview: { rating: number; comment_text: string | null } | null;
   myFeedback: WatchLessonFeedback;
@@ -233,6 +238,27 @@ export function WatchView({
               ? ` · ${formatDuration(current.workout.durationInSeconds)}`
               : ""}
           </p>
+
+          {!owned && !isOwnerInstructor && (
+            <div className="mt-4 rounded-2xl border border-pink-100 bg-gradient-to-br from-pink-50 to-rose-50 p-4">
+              <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center">
+                <CheckoutButton
+                  productSlug={slug}
+                  isAuthenticated={isAuthenticated}
+                  owned={false}
+                  next={watchPath(currentContentId)}
+                  returnPath={watchPath(currentContentId)}
+                  ownedHref={watchPath(currentContentId)}
+                  label={`Unlock all ${items.length} lessons — ${priceLabel}`}
+                  className="h-12 rounded-full bg-gradient-to-r from-pink-500 to-rose-400 px-8 text-base font-semibold text-white hover:from-pink-600 hover:to-rose-500"
+                />
+                <p className="text-sm text-gray-600">
+                  This lesson is free. One payment · 1 year of access · not a
+                  subscription.
+                </p>
+              </div>
+            </div>
+          )}
 
           {(owned || isOwnerInstructor) && (
             <div className="mt-4 flex flex-wrap items-center gap-3">

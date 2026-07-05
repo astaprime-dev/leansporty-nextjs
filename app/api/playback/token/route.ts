@@ -7,6 +7,7 @@ import {
   getSignedPlaybackURLs,
   getStreamPlaybackURL,
 } from '@/lib/cloudflare-stream';
+import { getServiceRoleClient } from '@/lib/stripe';
 
 // RS256 signing requires the Node.js runtime (not Edge).
 export const runtime = 'nodejs';
@@ -38,7 +39,11 @@ function rateLimited(userId: string): boolean {
  * after the entitlement gate (`get_playable_uid`) confirms the caller may watch.
  * Web sends Supabase cookies; iOS sends `Authorization: Bearer <access token>`.
  *
- *  401 → not signed in
+ * Anonymous callers are served FREE-PREVIEW lessons only (the watch page acts
+ * as the sales demo — Day 1 plays for everyone, the rest paywalls), rate
+ * limited by IP.
+ *
+ *  401 → not signed in AND not free-preview content
  *  403 → signed in but not entitled (the signal to render the paywall)
  *  200 → { hls, dash, iframe, watermark, expiresAt }
  */
@@ -74,25 +79,60 @@ export async function POST(req: NextRequest) {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) {
-    return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
-  }
 
-  if (rateLimited(user.id)) {
-    return NextResponse.json({ error: 'rate limited' }, { status: 429 });
-  }
+  let uid: string | null = null;
+  let watermark: string;
 
-  // Entitlement check + UID fetch in one RLS-aware call (auth.uid() = this user).
-  const { data: uid, error } = await supabase.rpc('get_playable_uid', {
-    p_content_id: contentId,
-  });
-  if (error) {
-    console.error('get_playable_uid failed:', error);
-    return NextResponse.json({ error: 'lookup failed' }, { status: 500 });
-  }
-  if (!uid) {
-    // Not entitled and not a free preview → paywall.
-    return NextResponse.json({ error: 'forbidden' }, { status: 403 });
+  if (user) {
+    if (rateLimited(user.id)) {
+      return NextResponse.json({ error: 'rate limited' }, { status: 429 });
+    }
+
+    // Entitlement check + UID fetch in one RLS-aware call (auth.uid() = this user).
+    const { data, error } = await supabase.rpc('get_playable_uid', {
+      p_content_id: contentId,
+    });
+    if (error) {
+      console.error('get_playable_uid failed:', error);
+      return NextResponse.json({ error: 'lookup failed' }, { status: 500 });
+    }
+    if (!data) {
+      // Not entitled and not a free preview → paywall.
+      return NextResponse.json({ error: 'forbidden' }, { status: 403 });
+    }
+    uid = data as string;
+    watermark = user.email ?? '';
+  } else {
+    // Anonymous: free-preview lessons of live products only. get_playable_uid
+    // is granted to authenticated users, so this path checks via service role.
+    const ip =
+      (req.headers.get('x-forwarded-for') ?? 'anon').split(',')[0].trim() || 'anon';
+    if (rateLimited(`ip:${ip}`)) {
+      return NextResponse.json({ error: 'rate limited' }, { status: 429 });
+    }
+
+    const db = getServiceRoleClient();
+    const { data: rows } = await db
+      .from('product_items')
+      .select(
+        'is_preview, product:products(is_active, admin_disabled), workout:workouts(cloudflare_uid)'
+      )
+      .eq('content_id', contentId)
+      .eq('is_preview', true);
+    const previewRow = (rows ?? []).find((r) => {
+      const p = Array.isArray(r.product) ? r.product[0] : r.product;
+      return p?.is_active && !p?.admin_disabled;
+    });
+    const workout = previewRow
+      ? Array.isArray(previewRow.workout)
+        ? previewRow.workout[0]
+        : previewRow.workout
+      : null;
+    if (!workout?.cloudflare_uid) {
+      return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
+    }
+    uid = workout.cloudflare_uid;
+    watermark = 'Free preview';
   }
 
   // The entitlement gate above has already passed. Now produce a playback URL.
@@ -113,7 +153,7 @@ export async function POST(req: NextRequest) {
       );
       return NextResponse.json({
         ...getStreamPlaybackURL(uid as string),
-        watermark: user.email,
+        watermark,
         expiresAt: Date.now() + 4 * 60 * 60 * 1000,
         insecure: true,
       });
@@ -127,7 +167,7 @@ export async function POST(req: NextRequest) {
   const token = await signStreamToken(uid as string);
   return NextResponse.json({
     ...getSignedPlaybackURLs(token),
-    watermark: user.email,
+    watermark,
     expiresAt: Date.now() + 4 * 60 * 60 * 1000,
   });
 }

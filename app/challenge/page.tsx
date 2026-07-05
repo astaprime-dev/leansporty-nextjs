@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import {
   Check,
   Lock,
@@ -12,10 +13,10 @@ import {
 import { getChallengeData } from "@/app/challenge/data";
 import {
   CheckoutButton,
-  PreviewButton,
   ChallengeAutoCheckout,
 } from "@/components/challenge/cta";
 import { Alert } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { LeadCaptureForm } from "@/components/lead-capture-form";
 import { PublicStreamEmbed } from "@/components/public-stream-embed";
@@ -123,6 +124,13 @@ export default async function ChallengePage({
   // Always present the full 15-session structure (marketing view = not owned):
   // real items where uploaded, "coming soon" placeholders for the rest.
   const items = mergeCanonicalItems(data?.items ?? [], product?.id);
+
+  // "Try Day 1 free" deep-links into the watch page (plays for everyone —
+  // the playlist rail + unlock CTA there do the selling).
+  const previewItem = (data?.items ?? []).find((it) => it.is_preview);
+  const tryDayHref = previewItem
+    ? `/programs/${CHALLENGE_SLUG}/watch/${previewItem.content_id}`
+    : "/challenge";
   const days = buildProgramDays(totalDays, items, {
     owned: false,
     completedContentIds: new Set(),
@@ -177,11 +185,9 @@ export default async function ChallengePage({
               className="h-12 bg-gradient-to-r from-pink-500 to-rose-400 px-8 text-base font-semibold text-white hover:from-pink-600 hover:to-rose-500"
             />
             {!owned && (
-              <PreviewButton
-                isAuthenticated={isAuthenticated}
-                label="Try Day 1 free"
-                className="h-12 px-8 text-base"
-              />
+              <Button asChild variant="outline" className="h-12 px-8 text-base">
+                <Link href={tryDayHref}>Try Day 1 free</Link>
+              </Button>
             )}
           </div>
           <p className="mt-3 text-sm text-muted-foreground">

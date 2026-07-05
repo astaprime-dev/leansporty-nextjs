@@ -1,5 +1,6 @@
 import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
+import { formatPrice } from "@/lib/challenge";
 import { getProgramData } from "../../data";
 import { WatchView, type WatchLessonFeedback } from "@/components/programs/watch-view";
 
@@ -26,8 +27,11 @@ export default async function WatchPage({
   const item = data.items.find((it) => it.content_id === lessonId);
   if (!item) notFound();
 
-  const playable =
-    data.owned || data.isOwnerInstructor || (item.is_preview && data.isAuthenticated);
+  // Preview lessons play for EVERYONE (including anonymous) — the watch page
+  // doubles as the sales demo: Day 1 plays, the rail shows the locked rest,
+  // and the unlock CTA sits under the player. The token route enforces the
+  // same rule server-side.
+  const playable = data.owned || data.isOwnerInstructor || item.is_preview;
   if (!playable) {
     redirect(`/programs/${slug}`);
   }
@@ -77,6 +81,8 @@ export default async function WatchPage({
       currentContentId={lessonId}
       owned={data.owned}
       isOwnerInstructor={data.isOwnerInstructor}
+      isAuthenticated={data.isAuthenticated}
+      priceLabel={formatPrice(data.product.price_cents, data.product.currency)}
       completedContentIds={data.completedContentIds}
       myReview={data.myReview}
       myFeedback={myFeedback}

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Sparkles, Zap, Music, Clock, TrendingUp, Home, Video, Users, Star, Calendar } from "lucide-react";
-import { CheckoutButton, PreviewButton } from "@/components/challenge/cta";
+import { CheckoutButton } from "@/components/challenge/cta";
 import { PublicStreamEmbed } from "@/components/public-stream-embed";
 import { CHALLENGE_SLUG, CHALLENGE_TRAILER_UID } from "@/lib/challenge";
 
@@ -9,10 +9,13 @@ export default function Header({
   isAuthenticated,
   owned,
   priceLabel,
+  tryDayHref,
 }: {
   isAuthenticated: boolean;
   owned: boolean;
   priceLabel: string;
+  /** Deep link to Day 1 on the watch page (plays for everyone). */
+  tryDayHref: string;
 }) {
   return (
     <div className="relative w-full overflow-hidden">
@@ -50,11 +53,9 @@ export default function Header({
               className="h-12 rounded-full bg-gradient-to-r from-pink-500 to-rose-400 px-8 text-base font-semibold text-white hover:from-pink-600 hover:to-rose-500"
             />
             {!owned && (
-              <PreviewButton
-                isAuthenticated={isAuthenticated}
-                label="Try Day 1 free"
-                className="h-12 rounded-full px-8 text-base"
-              />
+              <Button asChild variant="brandOutline" size="pill">
+                <Link href={tryDayHref}>Try Day 1 free</Link>
+              </Button>
             )}
           </div>
           <p className="mt-3 text-sm text-gray-400 font-light">

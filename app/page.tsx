@@ -13,6 +13,7 @@ export default async function Home() {
 
   let owned = false;
   let priceCents = DEFAULT_PRICE_CENTS;
+  let tryDayHref = "/challenge";
   const { data: product } = await supabase
     .from("products")
     .select("id, price_cents")
@@ -21,6 +22,20 @@ export default async function Home() {
     .maybeSingle();
   if (product) {
     priceCents = product.price_cents;
+
+    // "Try Day 1 free" deep-links into the watch page (plays for everyone;
+    // the rail + unlock CTA do the selling there).
+    const { data: preview } = await supabase
+      .from("product_items")
+      .select("content_id")
+      .eq("product_id", product.id)
+      .eq("is_preview", true)
+      .limit(1)
+      .maybeSingle();
+    if (preview) {
+      tryDayHref = `/programs/${CHALLENGE_SLUG}/watch/${preview.content_id}`;
+    }
+
     if (user) {
       const { data: ent } = await supabase
         .from("entitlements")
@@ -39,6 +54,7 @@ export default async function Home() {
         isAuthenticated={!!user}
         owned={owned}
         priceLabel={formatPrice(priceCents)}
+        tryDayHref={tryDayHref}
       />
       <section className="border-t border-pink-100/70 bg-pink-50/40 py-16">
         <div className="mx-auto max-w-3xl px-4">
