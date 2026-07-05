@@ -16,7 +16,7 @@ export default function TermsOfServicePage() {
             Terms of Service
           </h1>
           <p className="text-gray-600">
-            Last updated: June 28, 2026
+            Last updated: July 6, 2026
           </p>
         </div>
 
@@ -75,7 +75,8 @@ export default function TermsOfServicePage() {
             <section className="mb-8">
               <h2 className="text-2xl font-semibold text-gray-900 mb-4">3. Account Registration</h2>
               <p className="text-gray-700 leading-relaxed">
-                To access certain features, you may need to create an account using Apple or Google OAuth. You are
+                To access certain features, you may need to create an account using Apple or Google sign-in, or an
+                email sign-in link. You are
                 responsible for maintaining the security of your account credentials and for all activities that occur
                 under your account. Please notify us immediately at{" "}
                 <a href="mailto:team@leansporty.com" className="text-pink-600 hover:text-pink-700 font-medium">
@@ -89,10 +90,12 @@ export default function TermsOfServicePage() {
             <section className="mb-8">
               <h2 className="text-2xl font-semibold text-gray-900 mb-4">4. Intellectual Property Rights</h2>
               <p className="text-gray-700 leading-relaxed">
-                All content on Lean Sporty, including workout videos, class materials, graphics, logos, software, and
-                text, is owned by Astaprime Sp. z o.o. or our licensors and is protected by copyright, trademark, and
-                other intellectual property laws. You may not copy, modify, distribute, or create derivative works
-                without our express written permission.
+                Content on Lean Sporty, including workout videos, class materials, graphics, logos, software, and
+                text, is owned by Astaprime Sp. z o.o., by the instructors who created it, or by our licensors, and is
+                protected by copyright, trademark, and other intellectual property laws. Purchasing access to content
+                gives you a personal, non-transferable right to watch it through the Service for the applicable access
+                period — not ownership of the content. You may not copy, download, modify, distribute, or create
+                derivative works without express written permission.
               </p>
               <p className="text-gray-700 leading-relaxed mt-4">
                 Any content you upload or share through the Service (such as workout stats or profile information)
@@ -101,17 +104,29 @@ export default function TermsOfServicePage() {
               </p>
             </section>
 
-            {/* 5. Payment and Tokens */}
+            {/* 5. Payments, Purchases and Access */}
             <section className="mb-8">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-4">5. Payment and Tokens</h2>
+              <h2 className="text-2xl font-semibold text-gray-900 mb-4">5. Payments, Purchases and Access</h2>
               <p className="text-gray-700 leading-relaxed">
-                Lean Sporty uses a token-based system for enrolling in live classes and accessing premium content. By
-                purchasing tokens, you agree to pay all applicable fees. Tokens are non-refundable except as required
-                by law. We reserve the right to change our pricing structure with 30 days' notice to users.
+                Paid content on Lean Sporty (such as live class seats, the 21-Day Challenge, and instructor programs)
+                is sold as one-time purchases in euros, processed securely by our payment provider (Stripe). Astaprime
+                Sp. z o.o. is the seller of record for all purchases, including content created by independent
+                instructors. We do not store your complete payment card information on our servers.
               </p>
               <p className="text-gray-700 leading-relaxed mt-4">
-                All payments are processed securely through third-party payment processors. We do not store your
-                complete payment card information on our servers.
+                A purchase grants access for the period stated on the sales page (for example, 12 months for
+                programs). Prices may change at any time; changes never affect purchases you have already made.
+              </p>
+              <p className="text-gray-700 leading-relaxed mt-4">
+                <strong>Right of withdrawal:</strong> because paid content is digital and access is provided
+                immediately after purchase, by completing a purchase you expressly consent to immediate performance
+                and acknowledge that you thereby lose the statutory 14-day right of withdrawal once access has been
+                delivered, to the extent permitted by EU consumer law. If something went wrong with your purchase,
+                contact us — we handle refund requests case by case and always honor applicable consumer law.
+              </p>
+              <p className="text-gray-700 leading-relaxed mt-4">
+                The Lean Sporty iOS app additionally uses an in-app credit ("token") system for certain features.
+                Tokens are not money, cannot be redeemed for cash, and are non-refundable except as required by law.
               </p>
             </section>
 
@@ -157,9 +172,65 @@ export default function TermsOfServicePage() {
               </p>
             </section>
 
-            {/* 9. Warranty Disclaimer */}
+            {/* 9. Instructors and Paid Content */}
             <section className="mb-8">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-4">9. Warranty Disclaimer</h2>
+              <h2 className="text-2xl font-semibold text-gray-900 mb-4">9. Instructors and Paid Content</h2>
+              <p className="text-gray-700 leading-relaxed">
+                Independent instructors can offer live classes and on-demand programs for sale through Lean Sporty.
+                Instructors are independent contractors, not employees or agents of Astaprime Sp. z o.o. If you teach
+                on Lean Sporty, the following applies in addition to the rest of these Terms:
+              </p>
+              <ul className="list-disc list-inside text-gray-700 leading-relaxed space-y-2 ml-4 mt-4">
+                <li>
+                  <strong>Your content stays yours.</strong> You retain ownership of the content you upload. You grant
+                  Astaprime Sp. z o.o. a worldwide license to host, encode, stream, display, and market your content
+                  through the Service for as long as it is offered there, including showing free preview lessons to
+                  prospective buyers and retaining access for customers who purchased it.
+                </li>
+                <li>
+                  <strong>Class recordings.</strong> Live classes are recorded automatically. By teaching on Lean
+                  Sporty you agree that recordings of your classes may be kept and included in the Lean Sporty content
+                  library, as described at onboarding. You may also reuse your own recordings in your paid programs.
+                </li>
+                <li>
+                  <strong>You warrant your rights.</strong> You confirm that you own or have licensed all rights to
+                  the content you upload or stream — including the music in it — and that it does not infringe anyone
+                  else&apos;s rights. You are responsible for claims arising from your content.
+                </li>
+                <li>
+                  <strong>Revenue share and payouts.</strong> You receive the revenue share presented to you at
+                  onboarding and shown in your earnings dashboard, calculated on each completed sale (a small minimum
+                  platform fee per sale may apply). Payouts are made to your bank account on a regular schedule. You
+                  are responsible for your own taxes and social contributions.
+                </li>
+                <li>
+                  <strong>Refunds and disputes.</strong> Astaprime Sp. z o.o. is the seller of record and decides
+                  refunds in line with law and our policies. Refunded or disputed sales are deducted from amounts
+                  owed to you.
+                </li>
+                <li>
+                  <strong>Removal.</strong> We may unpublish or remove content that we reasonably believe violates
+                  these Terms, the law, or third-party rights, and may suspend instructor accounts for serious or
+                  repeated violations.
+                </li>
+              </ul>
+            </section>
+
+            {/* 10. Reviews and Feedback */}
+            <section className="mb-8">
+              <h2 className="text-2xl font-semibold text-gray-900 mb-4">10. Reviews and Feedback</h2>
+              <p className="text-gray-700 leading-relaxed">
+                Customers can rate and review purchased content and send private feedback to instructors. Reviews must
+                reflect your genuine experience and must not contain unlawful, abusive, or off-topic material. Public
+                reviews are shown only from verified purchasers. By submitting a review or feedback you grant us a
+                license to display it within the Service. We may hide reviews that violate these rules; we do not
+                edit review content.
+              </p>
+            </section>
+
+            {/* 11. Warranty Disclaimer */}
+            <section className="mb-8">
+              <h2 className="text-2xl font-semibold text-gray-900 mb-4">11. Warranty Disclaimer</h2>
               <p className="text-gray-700 leading-relaxed">
                 THE SERVICE IS PROVIDED "AS IS" AND "AS AVAILABLE" WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR
                 IMPLIED, INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE,
@@ -167,9 +238,9 @@ export default function TermsOfServicePage() {
               </p>
             </section>
 
-            {/* 10. Limitation of Liability */}
+            {/* 12. Limitation of Liability */}
             <section className="mb-8">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-4">10. Limitation of Liability</h2>
+              <h2 className="text-2xl font-semibold text-gray-900 mb-4">12. Limitation of Liability</h2>
               <p className="text-gray-700 leading-relaxed">
                 TO THE MAXIMUM EXTENT PERMITTED BY LAW, ASTAPRIME SP. Z O.O. SHALL NOT BE LIABLE FOR ANY INDIRECT,
                 INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES, OR ANY LOSS OF PROFITS OR REVENUES, WHETHER
@@ -178,9 +249,9 @@ export default function TermsOfServicePage() {
               </p>
             </section>
 
-            {/* 11. Indemnification */}
+            {/* 13. Indemnification */}
             <section className="mb-8">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-4">11. Indemnification</h2>
+              <h2 className="text-2xl font-semibold text-gray-900 mb-4">13. Indemnification</h2>
               <p className="text-gray-700 leading-relaxed">
                 You agree to indemnify and hold harmless Astaprime Sp. z o.o., its officers, directors, employees, and
                 agents from any claims, damages, losses, liabilities, and expenses (including legal fees) arising from
@@ -189,9 +260,9 @@ export default function TermsOfServicePage() {
               </p>
             </section>
 
-            {/* 12. Termination */}
+            {/* 14. Termination */}
             <section className="mb-8">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-4">12. Termination</h2>
+              <h2 className="text-2xl font-semibold text-gray-900 mb-4">14. Termination</h2>
               <p className="text-gray-700 leading-relaxed">
                 We may suspend or terminate your access to the Service at any time, with or without cause, with or
                 without notice. You may also terminate your account at any time by contacting us. Upon termination,
@@ -200,9 +271,9 @@ export default function TermsOfServicePage() {
               </p>
             </section>
 
-            {/* 13. Changes to Terms */}
+            {/* 15. Changes to Terms */}
             <section className="mb-8">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-4">13. Changes to Terms</h2>
+              <h2 className="text-2xl font-semibold text-gray-900 mb-4">15. Changes to Terms</h2>
               <p className="text-gray-700 leading-relaxed">
                 We reserve the right to modify these Terms at any time. If we make material changes, we will provide at
                 least 30 days' notice by email or through a notice on our Service. Your continued use of the Service
@@ -210,9 +281,9 @@ export default function TermsOfServicePage() {
               </p>
             </section>
 
-            {/* 14. Governing Law */}
+            {/* 16. Governing Law */}
             <section className="mb-8">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-4">14. Governing Law</h2>
+              <h2 className="text-2xl font-semibold text-gray-900 mb-4">16. Governing Law</h2>
               <p className="text-gray-700 leading-relaxed">
                 These Terms shall be governed by and construed in accordance with the laws of Poland, without regard to
                 its conflict of law provisions. Any disputes shall be subject to the exclusive jurisdiction of the
@@ -220,9 +291,9 @@ export default function TermsOfServicePage() {
               </p>
             </section>
 
-            {/* 15. Dispute Resolution */}
+            {/* 17. Dispute Resolution */}
             <section className="mb-8">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-4">15. Dispute Resolution</h2>
+              <h2 className="text-2xl font-semibold text-gray-900 mb-4">17. Dispute Resolution</h2>
               <p className="text-gray-700 leading-relaxed">
                 If you have any concerns or disputes, please contact us first at{" "}
                 <a href="mailto:team@leansporty.com" className="text-pink-600 hover:text-pink-700 font-medium">
@@ -232,9 +303,9 @@ export default function TermsOfServicePage() {
               </p>
             </section>
 
-            {/* 16. Severability */}
+            {/* 18. Severability */}
             <section className="mb-8">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-4">16. Severability</h2>
+              <h2 className="text-2xl font-semibold text-gray-900 mb-4">18. Severability</h2>
               <p className="text-gray-700 leading-relaxed">
                 If any provision of these Terms is found to be unenforceable or invalid, that provision will be limited
                 or eliminated to the minimum extent necessary, and the remaining provisions will remain in full force
@@ -242,9 +313,9 @@ export default function TermsOfServicePage() {
               </p>
             </section>
 
-            {/* 17. Entire Agreement */}
+            {/* 19. Entire Agreement */}
             <section className="mb-8">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-4">17. Entire Agreement</h2>
+              <h2 className="text-2xl font-semibold text-gray-900 mb-4">19. Entire Agreement</h2>
               <p className="text-gray-700 leading-relaxed">
                 These Terms, together with our Privacy Policy and any other policies referenced herein, constitute the
                 entire agreement between you and Astaprime Sp. z o.o. regarding the use of the Service and supersede
@@ -252,9 +323,9 @@ export default function TermsOfServicePage() {
               </p>
             </section>
 
-            {/* 18. Contact Us */}
+            {/* 20. Contact Us */}
             <section className="mb-8">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-4">18. Contact Us</h2>
+              <h2 className="text-2xl font-semibold text-gray-900 mb-4">20. Contact Us</h2>
               <p className="text-gray-700 leading-relaxed">
                 If you have any questions, concerns, or feedback about these Terms of Service, please contact us:
               </p>
@@ -281,9 +352,9 @@ export default function TermsOfServicePage() {
               </div>
             </section>
 
-            {/* 19. Acknowledgment */}
+            {/* 21. Acknowledgment */}
             <section className="mb-8">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-4">19. Acknowledgment</h2>
+              <h2 className="text-2xl font-semibold text-gray-900 mb-4">21. Acknowledgment</h2>
               <p className="text-gray-700 leading-relaxed">
                 BY USING LEANSPORTY, YOU ACKNOWLEDGE THAT YOU HAVE READ THESE TERMS OF SERVICE, UNDERSTAND THEM, AND
                 AGREE TO BE BOUND BY THEM. IF YOU DO NOT AGREE TO THESE TERMS, PLEASE DO NOT USE OUR SERVICE.
