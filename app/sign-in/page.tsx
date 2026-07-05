@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
 import { AuthForm } from "@/components/auth-form";
+import { Alert } from "@/components/ui/alert";
 
 export const metadata = {
   title: "Sign in · Lean Sporty",
@@ -18,11 +19,18 @@ export const metadata = {
 export default async function SignInPage({
   searchParams,
 }: {
-  searchParams: Promise<{ redirect?: string; next?: string }>;
+  searchParams: Promise<{ redirect?: string; next?: string; error?: string }>;
 }) {
   const sp = await searchParams;
   const raw = sp.redirect ?? sp.next;
   const next = typeof raw === "string" && raw.startsWith("/") ? raw : undefined;
+  // Human-readable auth errors only (e.g. expired magic link from /auth/confirm).
+  const error =
+    typeof sp.error === "string" && sp.error !== "invalid_link"
+      ? sp.error.slice(0, 200)
+      : sp.error === "invalid_link"
+        ? "That sign-in link didn't work — request a new one below."
+        : undefined;
 
   const supabase = await createClient();
   const {
@@ -43,6 +51,11 @@ export default async function SignInPage({
             Sign in or create your account to access your program and track your
             progress.
           </p>
+          {error && (
+            <Alert variant="warning" className="mt-4">
+              {error}
+            </Alert>
+          )}
           <div className="mt-6">
             <AuthForm next={next} />
           </div>
