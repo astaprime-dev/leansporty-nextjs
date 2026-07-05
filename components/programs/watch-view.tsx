@@ -230,53 +230,95 @@ export function WatchView({
             </p>
           )}
 
-          <div className="mt-4 flex flex-wrap items-center gap-3">
-            <h1 className="text-xl sm:text-2xl font-semibold text-gray-900">
-              {current?.item_label || current?.workout?.title || "Lesson"}
-            </h1>
-            {isCompleted && (
-              <Badge variant="free" className="shrink-0">
-                <Check className="mr-1 h-3.5 w-3.5" />
-                Done
-              </Badge>
-            )}
-          </div>
-          {/* Structured lesson facts: duration / calories / moves + style tags */}
-          <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-gray-500">
-            <span>
-              Lesson {currentIndex + 1} of {items.length}
-            </span>
-            {!!current?.workout?.durationInSeconds && (
-              <span className="flex items-center gap-1">
-                <Clock className="h-4 w-4 text-pink-400" />
-                {formatDuration(current.workout.durationInSeconds)}
-              </span>
-            )}
-            {!!current?.workout?.calories && (
-              <span className="flex items-center gap-1">
-                <Flame className="h-4 w-4 text-pink-400" />~
-                {current.workout.calories} kcal
-              </span>
-            )}
-            {!!current?.workout?.moves && (
-              <span className="flex items-center gap-1">
-                <Footprints className="h-4 w-4 text-pink-400" />
-                {current.workout.moves} moves
-              </span>
-            )}
-          </div>
-          {styleTags.length > 0 && (
-            <div className="mt-2 flex flex-wrap gap-1.5">
-              {styleTags.map((tag) => (
-                <span
-                  key={tag}
-                  className="rounded-full bg-pink-50 px-2.5 py-0.5 text-xs font-medium text-pink-600 ring-1 ring-pink-100"
-                >
-                  {tag}
+          {/* Title left, primary action right (stacks on mobile) */}
+          <div className="mt-4 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div className="min-w-0">
+              <div className="flex flex-wrap items-center gap-3">
+                <h1 className="text-xl sm:text-2xl font-semibold text-gray-900">
+                  {current?.item_label || current?.workout?.title || "Lesson"}
+                </h1>
+                {isCompleted && (
+                  <Badge variant="free" className="shrink-0">
+                    <Check className="mr-1 h-3.5 w-3.5" />
+                    Done
+                  </Badge>
+                )}
+              </div>
+              {/* One meta line: facts + style tags flow together */}
+              <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-gray-500">
+                <span>
+                  Lesson {currentIndex + 1} of {items.length}
                 </span>
-              ))}
+                {!!current?.workout?.durationInSeconds && (
+                  <span className="flex items-center gap-1">
+                    <Clock className="h-4 w-4 text-pink-400" />
+                    {formatDuration(current.workout.durationInSeconds)}
+                  </span>
+                )}
+                {!!current?.workout?.calories && (
+                  <span className="flex items-center gap-1">
+                    <Flame className="h-4 w-4 text-pink-400" />~
+                    {current.workout.calories} kcal
+                  </span>
+                )}
+                {!!current?.workout?.moves && (
+                  <span className="flex items-center gap-1">
+                    <Footprints className="h-4 w-4 text-pink-400" />
+                    {current.workout.moves} moves
+                  </span>
+                )}
+                {styleTags.map((tag) => (
+                  <span
+                    key={tag}
+                    className="rounded-full bg-pink-50 px-2.5 py-0.5 text-xs font-medium text-pink-600 ring-1 ring-pink-100"
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
             </div>
-          )}
+
+            {(owned || isOwnerInstructor) && (
+              <div className="flex shrink-0 flex-col gap-1.5 sm:items-end">
+                <Button
+                  variant="brand"
+                  size="lg"
+                  onClick={completeAndContinue}
+                  disabled={isPending}
+                  className="w-full sm:w-auto"
+                >
+                  {isPending
+                    ? "Saving…"
+                    : isCompleted
+                      ? nextPlayable
+                        ? "Play next lesson"
+                        : "Watch again anytime"
+                      : nextPlayable
+                        ? "Mark complete & continue"
+                        : "Mark complete"}
+                </Button>
+                {isCompleted && (
+                  <button
+                    type="button"
+                    className="text-sm text-gray-400 hover:text-gray-600 transition-colors"
+                    onClick={() =>
+                      startTransition(async () => {
+                        await setWorkoutComplete(
+                          currentContentId,
+                          false,
+                          watchPath(currentContentId)
+                        );
+                        router.refresh();
+                      })
+                    }
+                    disabled={isPending}
+                  >
+                    Mark as not done
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
 
           {!owned && !isOwnerInstructor && (
             <div className="mt-4 rounded-2xl border border-pink-100 bg-gradient-to-br from-pink-50 to-rose-50 p-4">
@@ -299,56 +341,10 @@ export function WatchView({
             </div>
           )}
 
-          {(owned || isOwnerInstructor) && (
-            <div className="mt-4 flex flex-wrap items-center gap-3">
-              <Button
-                variant="brand"
-                size="lg"
-                onClick={completeAndContinue}
-                disabled={isPending}
-                className="min-w-56"
-              >
-                {isPending
-                  ? "Saving…"
-                  : isCompleted
-                    ? nextPlayable
-                      ? "Play next lesson"
-                      : "Watch again anytime"
-                    : nextPlayable
-                      ? "Mark complete & continue"
-                      : "Mark complete"}
-              </Button>
-              {isCompleted && (
-                <button
-                  type="button"
-                  className="text-sm text-gray-400 hover:text-gray-600 transition-colors"
-                  onClick={() =>
-                    startTransition(async () => {
-                      await setWorkoutComplete(
-                        currentContentId,
-                        false,
-                        watchPath(currentContentId)
-                      );
-                      router.refresh();
-                    })
-                  }
-                  disabled={isPending}
-                >
-                  Mark as not done
-                </button>
-              )}
-            </div>
-          )}
-
           {current?.workout?.description && (
-            <div className="mt-6 rounded-2xl border border-pink-100 bg-white p-4">
-              <h2 className="text-sm font-semibold uppercase tracking-wide text-gray-400">
-                About this lesson
-              </h2>
-              <p className="mt-2 whitespace-pre-line text-sm leading-relaxed text-gray-700">
-                {current.workout.description}
-              </p>
-            </div>
+            <p className="mt-5 max-w-2xl whitespace-pre-line text-[15px] leading-relaxed text-gray-600">
+              {current.workout.description}
+            </p>
           )}
 
           {owned && current && (
@@ -358,15 +354,6 @@ export function WatchView({
               contentId={currentContentId}
               instructorName={instructorName}
               initial={myFeedback}
-              revalidate={watchPath(currentContentId)}
-            />
-          )}
-
-          {owned && (
-            <ProgramReview
-              productId={productId}
-              programTitle={programTitle}
-              initial={myReview}
               revalidate={watchPath(currentContentId)}
             />
           )}
@@ -468,6 +455,16 @@ export function WatchView({
                 );
               })}
             </ol>
+
+            {/* Program-level rating lives with the program-level column */}
+            {owned && (
+              <ProgramReview
+                productId={productId}
+                programTitle={programTitle}
+                initial={myReview}
+                revalidate={watchPath(currentContentId)}
+              />
+            )}
           </div>
         </aside>
       </div>
@@ -519,7 +516,7 @@ function LessonFeedback({
   }
 
   return (
-    <div className="mt-6 rounded-2xl border border-pink-100 bg-white p-4">
+    <div className="mt-6 border-t border-pink-100 pt-4">
       <div className="flex flex-wrap items-center gap-3">
         <p className="text-sm text-gray-700">
           How was this lesson?{" "}
@@ -635,12 +632,9 @@ function ProgramReview({
   }
 
   return (
-    <div className="mt-4 rounded-2xl border border-pink-100 bg-white p-4">
-      <div className="flex flex-wrap items-center gap-3">
-        <p className="text-sm text-gray-700">
-          Rate <span className="font-medium">{programTitle}</span>
-          <span className="text-gray-400"> (shown on the program page)</span>
-        </p>
+    <div className="mt-4 border-t border-pink-100 pt-4">
+      <p className="text-sm text-gray-700">Rate this program</p>
+      <div className="mt-2 flex flex-wrap items-center gap-3">
         <StarRating
           value={rating}
           onChange={(v) => {
@@ -660,16 +654,16 @@ function ProgramReview({
         )}
         {saved && <span className="text-sm text-green-600">Saved.</span>}
       </div>
+      <p className="mt-1 text-xs text-gray-400">Shown on the program page.</p>
 
       {rating > 0 && expanded && (
-        <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:items-start">
+        <div className="mt-3 flex flex-col gap-2">
           <Textarea
             value={comment}
             onChange={(e) => setComment(e.target.value)}
             placeholder="What did you like? What results did you notice?"
             rows={3}
             maxLength={2000}
-            className="flex-1"
           />
           <Button
             type="button"
@@ -680,6 +674,7 @@ function ProgramReview({
               save(rating, comment);
               setExpanded(false);
             }}
+            className="self-start"
           >
             Save
           </Button>
