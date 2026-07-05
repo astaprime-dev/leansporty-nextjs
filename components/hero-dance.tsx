@@ -1,8 +1,19 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Sparkles, Zap, Music, Clock, TrendingUp, Home, Video, Users, Star, Calendar } from "lucide-react";
+import { CheckoutButton, PreviewButton } from "@/components/challenge/cta";
+import { PublicStreamEmbed } from "@/components/public-stream-embed";
+import { CHALLENGE_SLUG, CHALLENGE_TRAILER_UID } from "@/lib/challenge";
 
-export default function Header() {
+export default function Header({
+  isAuthenticated,
+  owned,
+  priceLabel,
+}: {
+  isAuthenticated: boolean;
+  owned: boolean;
+  priceLabel: string;
+}) {
   return (
     <div className="relative w-full overflow-hidden">
       {/* Soft editorial background — one faint warm glow, no clutter */}
@@ -27,31 +38,49 @@ export default function Header() {
             again. Beginner-friendly, and Day 1 is free to try.
           </p>
 
-          {/* Primary CTAs → the web offer */}
+          {/* Primary CTAs — act directly (checkout / Day 1); the /challenge
+              landing stays one click away for people who want the full pitch. */}
           <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <Button asChild variant="brand" size="pill">
-              <Link href="/challenge">Start the 21-Day Challenge — €49</Link>
-            </Button>
-            <Button asChild variant="brandOutline" size="pill">
-              <Link href="/challenge">Try Day 1 free</Link>
-            </Button>
+            <CheckoutButton
+              productSlug={CHALLENGE_SLUG}
+              isAuthenticated={isAuthenticated}
+              owned={owned}
+              next="/challenge?intent=checkout"
+              label={`Start the 21-Day Challenge — ${priceLabel}`}
+              className="h-12 rounded-full bg-gradient-to-r from-pink-500 to-rose-400 px-8 text-base font-semibold text-white hover:from-pink-600 hover:to-rose-500"
+            />
+            {!owned && (
+              <PreviewButton
+                isAuthenticated={isAuthenticated}
+                label="Try Day 1 free"
+                className="h-12 rounded-full px-8 text-base"
+              />
+            )}
           </div>
           <p className="mt-3 text-sm text-gray-400 font-light">
-            €49 once · 15 sessions + rest days · 1 year of access · free Day 1
+            {priceLabel} once · 15 sessions + rest days · 1 year of access · free Day 1
+          </p>
+          <p className="mt-2 text-sm">
+            <Link
+              href="/challenge"
+              className="text-pink-500 hover:text-pink-600 transition-colors"
+            >
+              See what&apos;s inside the challenge →
+            </Link>
           </p>
         </div>
 
-        {/* Video Section — the hero media */}
+        {/* Video Section — Day 1 itself, self-hosted (no YouTube exits) */}
         <div className="w-full max-w-5xl px-6">
           <div className="relative aspect-video overflow-hidden rounded-2xl border border-pink-100 shadow-lg">
-            <iframe
-              src="https://www.youtube.com/embed/PWauX9QceBY?rel=0&modestbranding=1&autoplay=1&mute=1&loop=1&playlist=PWauX9QceBY&controls=1"
-              title="Lean Sporty Dance Workout"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-              className="absolute inset-0 h-full w-full border-0"
-            ></iframe>
+            <PublicStreamEmbed
+              uid={CHALLENGE_TRAILER_UID}
+              title="Day 1 of the 21-Day Dance Challenge"
+            />
           </div>
+          <p className="mt-3 text-center text-sm text-gray-400 font-light">
+            You&apos;re watching Day 1 — the real first session of the challenge.
+          </p>
         </div>
 
         {/* Secondary: iOS app (watch on the go — purchases happen on web) */}
@@ -196,16 +225,20 @@ export default function Header() {
             No stress. Just sweat, rhythm, and results.
           </p>
 
-          {/* Primary CTA → the web offer */}
-          <Link
-            href="/challenge"
-            className="inline-flex h-14 items-center justify-center rounded-full bg-white px-10 text-lg font-semibold text-pink-600 shadow-lg transition-all duration-300 hover:scale-105"
-          >
-            Start the 21-Day Challenge — €49
-          </Link>
+          {/* Primary CTA — acts directly, same as the hero */}
+          <div className="flex justify-center">
+            <CheckoutButton
+              productSlug={CHALLENGE_SLUG}
+              isAuthenticated={isAuthenticated}
+              owned={owned}
+              next="/challenge?intent=checkout"
+              label={`Start the 21-Day Challenge — ${priceLabel}`}
+              className="h-14 rounded-full bg-white px-10 text-lg font-semibold text-pink-600 shadow-lg transition-all duration-300 hover:scale-105 hover:bg-white"
+            />
+          </div>
 
           <p className="text-base lg:text-lg mt-6 font-light opacity-90">
-            €49 once · free Day 1 · 1 year of access
+            {priceLabel} once · free Day 1 · 1 year of access
           </p>
 
           {/* Secondary: iOS */}

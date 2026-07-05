@@ -18,8 +18,10 @@ import {
 import { Alert } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { LeadCaptureForm } from "@/components/lead-capture-form";
+import { PublicStreamEmbed } from "@/components/public-stream-embed";
 import {
   CHALLENGE_SLUG,
+  CHALLENGE_TRAILER_UID,
   DEFAULT_PRICE_CENTS,
   DEFAULT_PROGRAM_LENGTH_DAYS,
   DEFAULT_WORKOUT_COUNT,
@@ -154,16 +156,16 @@ export default async function ChallengePage({
             {subtitle}
           </p>
 
-          {/* Trailer — public marketing video (not one of the signed sessions) */}
+          {/* Trailer — Day 1 itself, self-hosted (no YouTube branding/exits) */}
           <div className="relative mx-auto mt-8 aspect-video max-w-2xl overflow-hidden rounded-2xl border border-pink-100 shadow-sm">
-            <iframe
-              src="https://www.youtube.com/embed/PWauX9QceBY?rel=0&modestbranding=1&autoplay=1&mute=1&loop=1&playlist=PWauX9QceBY&controls=1"
-              title="21-Day Dance Challenge preview"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-              className="absolute inset-0 h-full w-full border-0"
+            <PublicStreamEmbed
+              uid={CHALLENGE_TRAILER_UID}
+              title="Day 1 of the 21-Day Dance Challenge"
             />
           </div>
+          <p className="mt-2 text-sm text-muted-foreground">
+            You&apos;re watching Day 1 — the real first session.
+          </p>
 
           <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <CheckoutButton

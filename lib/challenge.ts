@@ -10,6 +10,13 @@ import type {
 } from "@/types/commerce";
 
 export const CHALLENGE_SLUG = "21-day-dance-challenge";
+/**
+ * Day 1's PUBLIC Cloudflare UID — the hero/trailer video on the homepage and
+ * challenge page ("watch the real first session"). Public by design: Day 1 is
+ * the free taste. If catalog videos ever get requireSignedURLs, upload a
+ * dedicated public trailer and point this at it.
+ */
+export const CHALLENGE_TRAILER_UID = "5f8fe5b3fc6136b494904cea9a04bf61";
 export const DEFAULT_PROGRAM_LENGTH_DAYS = 21;
 export const DEFAULT_PRICE_CENTS = 4900;
 export const DEFAULT_WORKOUT_COUNT = 15;
