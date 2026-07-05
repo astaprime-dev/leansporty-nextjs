@@ -284,13 +284,12 @@ export function WatchView({
             </div>
 
             {(owned || isOwnerInstructor) && (
-              <div className="flex shrink-0 flex-col gap-1.5 sm:mt-1 sm:items-end">
+              <div className="flex shrink-0 flex-col gap-1.5 sm:mt-0.5 sm:items-end">
                 <Button
                   variant="brand"
-                  size="lg"
                   onClick={completeAndContinue}
                   disabled={isPending}
-                  className="w-full sm:w-auto"
+                  className="w-full px-6 sm:w-auto"
                 >
                   {isPending
                     ? "Saving…"
