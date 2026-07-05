@@ -1,10 +1,7 @@
-import DeployButton from "@/components/deploy-button";
-import { EnvVarWarning } from "@/components/env-var-warning";
 import HeaderAuth from "@/components/header-auth";
 import HeaderNav from "@/components/header-nav";
 import { MobileMenu } from "@/components/mobile-menu";
 import { Button } from "@/components/ui/button";
-import { hasEnvVars } from "@/utils/supabase/check-env-vars";
 import { createClient } from "@/utils/supabase/server";
 import { Geist, Playfair_Display } from "next/font/google";
 import { ThemeProvider } from "next-themes";
