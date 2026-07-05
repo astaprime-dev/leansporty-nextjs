@@ -244,8 +244,8 @@ export function WatchView({
                   </Badge>
                 )}
               </div>
-              {/* One meta line: facts + style tags flow together */}
-              <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-gray-500">
+              {/* Facts line */}
+              <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-gray-500">
                 <span>
                   Lesson {currentIndex + 1} of {items.length}
                 </span>
@@ -267,19 +267,24 @@ export function WatchView({
                     {current.workout.moves} moves
                   </span>
                 )}
-                {styleTags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="rounded-full bg-pink-50 px-2.5 py-0.5 text-xs font-medium text-pink-600 ring-1 ring-pink-100"
-                  >
-                    {tag}
-                  </span>
-                ))}
               </div>
+              {/* Style tags on their own row */}
+              {styleTags.length > 0 && (
+                <div className="mt-2.5 flex flex-wrap gap-1.5">
+                  {styleTags.map((tag) => (
+                    <span
+                      key={tag}
+                      className="rounded-full bg-pink-50 px-2.5 py-0.5 text-xs font-medium text-pink-600 ring-1 ring-pink-100"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              )}
             </div>
 
             {(owned || isOwnerInstructor) && (
-              <div className="flex shrink-0 flex-col gap-1.5 sm:items-end">
+              <div className="flex shrink-0 flex-col gap-1.5 sm:mt-1 sm:items-end">
                 <Button
                   variant="brand"
                   size="lg"
