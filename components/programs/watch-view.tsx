@@ -167,6 +167,7 @@ export function WatchView({
                 contentId={currentContentId}
                 paywallHref={programPath}
                 startTime={startAt}
+                autoplay
                 onEnded={handleEnded}
                 onTimeUpdate={handleTimeUpdate}
               />

@@ -19,6 +19,9 @@ interface SecureStreamPlayerProps {
   paywallHref?: string;
   /** Resume playback from this many seconds in (0/undefined = from the start). */
   startTime?: number;
+  /** Request autoplay (watch page — arrival is always a deliberate click).
+   *  Browsers may still require a tap on a cold deep-link; that's their call. */
+  autoplay?: boolean;
   /** Fires when the video finishes. Requires the Stream SDK (loaded lazily). */
   onEnded?: () => void;
   /** Fires on playback progress (throttled by the SDK's timeupdate cadence). */
@@ -66,6 +69,7 @@ export function SecureStreamPlayer({
   renderPaywall,
   paywallHref = "/",
   startTime,
+  autoplay = false,
   onEnded,
   onTimeUpdate,
 }: SecureStreamPlayerProps) {
@@ -98,7 +102,8 @@ export function SecureStreamPlayer({
       if (!off) {
         const resume =
           startTime && startTime > 0 ? `&startTime=${Math.floor(startTime)}s` : "";
-        setSrc(`${iframe}?controls=true${resume}`);
+        const auto = autoplay ? "&autoplay=true" : "";
+        setSrc(`${iframe}?controls=true${resume}${auto}`);
         setMark(watermark ?? "");
       }
     })();
