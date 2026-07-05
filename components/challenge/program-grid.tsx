@@ -25,6 +25,9 @@ interface ProgramGridProps {
   paywallHref?: string;
   /** Path passed to setWorkoutComplete for revalidation (defaults to /my-program). */
   revalidatePath?: string;
+  /** When set, playable days NAVIGATE to `${watchBasePath}/${contentId}`
+   *  (the watch page) instead of opening the in-page modal. */
+  watchBasePath?: string;
 }
 
 interface OpenState {
@@ -38,6 +41,7 @@ export function ProgramGrid({
   priceLabel,
   paywallHref = "/challenge",
   revalidatePath = "/my-program",
+  watchBasePath,
 }: ProgramGridProps) {
   const router = useRouter();
   const [open, setOpen] = useState<OpenState | null>(null);
@@ -52,6 +56,10 @@ export function ProgramGrid({
       return;
     }
     if (day.state === "locked-until" || day.state === "rest") return;
+    if (watchBasePath) {
+      router.push(`${watchBasePath}/${day.item.content_id}`);
+      return;
+    }
     setOpen({
       contentId: day.item.content_id,
       title:

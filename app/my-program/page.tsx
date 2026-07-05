@@ -45,11 +45,14 @@ export default async function MyProgramPage({
     .eq("user_id", user.id)
     .or(`expires_at.is.null,expires_at.gt.${new Date().toISOString()}`);
   const ownedProductIds = (ownedProgramEnts ?? []).map((e) => e.product_id);
+  // The challenge itself is a kind='course' product too (house instructor) —
+  // exclude it here since this whole page IS the challenge view.
   const { data: ownedPrograms } = ownedProductIds.length
     ? await supabase
         .from("products")
         .select("id, slug, title, subtitle, cover_image_url")
         .eq("kind", "course")
+        .neq("slug", CHALLENGE_SLUG)
         .in("id", ownedProductIds)
     : { data: null };
 
@@ -145,7 +148,13 @@ export default async function MyProgramPage({
         )}
       </header>
 
-      <ProgramGrid days={days} priceLabel={priceLabel} />
+      {/* The challenge is a program owned by the house instructor; owned users
+          watch lessons on the shared watch page (playlist, feedback, reviews). */}
+      <ProgramGrid
+        days={days}
+        priceLabel={priceLabel}
+        {...(owned ? { watchBasePath: `/programs/${CHALLENGE_SLUG}/watch` } : {})}
+      />
 
       {ownedPrograms && ownedPrograms.length > 0 && (
         <section className="mt-12">

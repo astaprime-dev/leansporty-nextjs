@@ -1,0 +1,518 @@
+"use client";
+
+import { useMemo, useRef, useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import Image from "next/image";
+import {
+  ArrowLeft,
+  Check,
+  Lock,
+  Play,
+  Sparkles,
+  ThumbsDown,
+  ThumbsUp,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Textarea } from "@/components/ui/textarea";
+import { StarRating } from "@/components/ui/star-rating";
+import { cn } from "@/lib/utils";
+import { SecureStreamPlayer } from "@/components/SecureStreamPlayer";
+import { setWorkoutComplete } from "@/app/challenge/actions";
+import { submitLessonFeedback, submitProgramReview } from "@/app/programs/actions";
+import { formatDuration } from "@/lib/challenge";
+import type { ProductItem } from "@/types/commerce";
+
+export type WatchLessonFeedback = {
+  sentiment: "up" | "down";
+  comment_text: string | null;
+} | null;
+
+/**
+ * The watch experience: player + playlist rail.
+ * - Mobile: the player sticks to the top of the viewport so the video never
+ *   scrolls away mid-workout; everything below is one-thumb reachable.
+ * - Desktop: player left (2/3), playlist right with progress; the current
+ *   lesson is highlighted, locked lessons tease the rest of the program.
+ * - One primary action: "Mark complete & continue" (progress + next lesson
+ *   in a single tap).
+ * - Feedback where motivation peaks: private thumbs to the instructor per
+ *   lesson, public star review for the program.
+ */
+export function WatchView({
+  slug,
+  productId,
+  programTitle,
+  instructorName,
+  items,
+  currentContentId,
+  owned,
+  isOwnerInstructor,
+  completedContentIds,
+  myReview,
+  myFeedback,
+}: {
+  slug: string;
+  productId: string;
+  programTitle: string;
+  instructorName: string | null;
+  items: ProductItem[];
+  currentContentId: string;
+  owned: boolean;
+  isOwnerInstructor: boolean;
+  completedContentIds: string[];
+  myReview: { rating: number; comment_text: string | null } | null;
+  myFeedback: WatchLessonFeedback;
+}) {
+  const router = useRouter();
+  const programPath = `/programs/${slug}`;
+  const watchPath = (contentId: string) => `${programPath}/watch/${contentId}`;
+
+  const completed = useMemo(() => new Set(completedContentIds), [completedContentIds]);
+  const currentIndex = items.findIndex((it) => it.content_id === currentContentId);
+  const current = items[currentIndex];
+  const isCompleted = completed.has(currentContentId);
+
+  const nextPlayable = useMemo(() => {
+    for (let i = currentIndex + 1; i < items.length; i++) {
+      const it = items[i];
+      if (it.workout && (owned || isOwnerInstructor || it.is_preview)) return it;
+    }
+    return null;
+  }, [items, currentIndex, owned, isOwnerInstructor]);
+
+  const [isPending, startTransition] = useTransition();
+
+  function completeAndContinue() {
+    startTransition(async () => {
+      if (!isCompleted) {
+        await setWorkoutComplete(currentContentId, true, watchPath(currentContentId));
+      }
+      if (nextPlayable) {
+        router.push(watchPath(nextPlayable.content_id));
+      } else {
+        router.refresh();
+      }
+    });
+  }
+
+  const doneCount = items.filter((it) => completed.has(it.content_id)).length;
+  const pct = items.length > 0 ? Math.round((doneCount / items.length) * 100) : 0;
+
+  return (
+    <div className="mx-auto max-w-7xl px-4 pb-16">
+      <div className="py-3">
+        <Link
+          href={programPath}
+          className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-pink-500 transition-colors"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          {programTitle}
+        </Link>
+      </div>
+
+      <div className="grid items-start gap-8 lg:grid-cols-3">
+        {/* Player column */}
+        <div className="lg:col-span-2">
+          {/* Sticky on mobile so the video survives scrolling; static on desktop. */}
+          <div className="sticky top-0 z-30 -mx-4 bg-black sm:mx-0 sm:rounded-2xl sm:overflow-hidden lg:static">
+            <SecureStreamPlayer contentId={currentContentId} paywallHref={programPath} />
+          </div>
+
+          <div className="mt-4 flex flex-wrap items-center gap-3">
+            <h1 className="text-xl sm:text-2xl font-semibold text-gray-900">
+              {current?.item_label || current?.workout?.title || "Lesson"}
+            </h1>
+            {isCompleted && (
+              <Badge variant="free" className="shrink-0">
+                <Check className="mr-1 h-3.5 w-3.5" />
+                Done
+              </Badge>
+            )}
+          </div>
+          <p className="mt-1 text-sm text-gray-500">
+            Lesson {currentIndex + 1} of {items.length}
+            {current?.workout?.durationInSeconds
+              ? ` · ${formatDuration(current.workout.durationInSeconds)}`
+              : ""}
+          </p>
+
+          {(owned || isOwnerInstructor) && (
+            <div className="mt-4 flex flex-wrap items-center gap-3">
+              <Button
+                variant="brand"
+                size="lg"
+                onClick={completeAndContinue}
+                disabled={isPending}
+                className="min-w-56"
+              >
+                {isPending
+                  ? "Saving…"
+                  : isCompleted
+                    ? nextPlayable
+                      ? "Play next lesson"
+                      : "Watch again anytime"
+                    : nextPlayable
+                      ? "Mark complete & continue"
+                      : "Mark complete"}
+              </Button>
+              {isCompleted && (
+                <button
+                  type="button"
+                  className="text-sm text-gray-400 hover:text-gray-600 transition-colors"
+                  onClick={() =>
+                    startTransition(async () => {
+                      await setWorkoutComplete(
+                        currentContentId,
+                        false,
+                        watchPath(currentContentId)
+                      );
+                      router.refresh();
+                    })
+                  }
+                  disabled={isPending}
+                >
+                  Mark as not done
+                </button>
+              )}
+            </div>
+          )}
+
+          {owned && current && (
+            <LessonFeedback
+              key={currentContentId}
+              productId={productId}
+              contentId={currentContentId}
+              instructorName={instructorName}
+              initial={myFeedback}
+              revalidate={watchPath(currentContentId)}
+            />
+          )}
+
+          {owned && (
+            <ProgramReview
+              productId={productId}
+              programTitle={programTitle}
+              initial={myReview}
+              revalidate={watchPath(currentContentId)}
+            />
+          )}
+        </div>
+
+        {/* Playlist rail */}
+        <aside className="lg:col-span-1">
+          <div className="rounded-2xl border border-pink-100 bg-white p-4">
+            <div className="mb-1 flex items-center justify-between">
+              <h2 className="font-semibold text-gray-900">In this program</h2>
+              <span className="text-sm text-gray-500">
+                {doneCount}/{items.length}
+              </span>
+            </div>
+            <div className="mb-4 h-1.5 w-full overflow-hidden rounded-full bg-pink-100">
+              <div
+                className="h-full rounded-full bg-gradient-to-r from-pink-500 to-rose-400 transition-all"
+                style={{ width: `${pct}%` }}
+              />
+            </div>
+
+            <ol className="space-y-1">
+              {items.map((it, i) => {
+                const isCurrent = it.content_id === currentContentId;
+                const done = completed.has(it.content_id);
+                const playable =
+                  !!it.workout && (owned || isOwnerInstructor || it.is_preview);
+
+                const inner = (
+                  <>
+                    <span className="w-5 shrink-0 text-center text-xs text-gray-400">
+                      {isCurrent ? (
+                        <Play className="mx-auto h-3.5 w-3.5 text-pink-500" />
+                      ) : (
+                        i + 1
+                      )}
+                    </span>
+                    <span className="relative h-12 w-20 shrink-0 overflow-hidden rounded-md bg-gradient-to-br from-pink-50 to-rose-50">
+                      {it.workout?.thumbnailUrl ? (
+                        <Image
+                          src={it.workout.thumbnailUrl}
+                          alt=""
+                          fill
+                          sizes="80px"
+                          className={cn("object-cover", !playable && "opacity-40 grayscale")}
+                        />
+                      ) : (
+                        <span className="flex h-full w-full items-center justify-center">
+                          <Sparkles className="h-3.5 w-3.5 text-pink-300" />
+                        </span>
+                      )}
+                    </span>
+                    <span className="min-w-0 flex-1">
+                      <span
+                        className={cn(
+                          "block truncate text-sm",
+                          isCurrent ? "font-semibold text-gray-900" : "text-gray-700"
+                        )}
+                      >
+                        {it.item_label || it.workout?.title || `Lesson ${i + 1}`}
+                      </span>
+                      <span className="block text-xs text-gray-400">
+                        {formatDuration(it.workout?.durationInSeconds)}
+                      </span>
+                    </span>
+                    <span className="shrink-0">
+                      {done ? (
+                        <Check className="h-4 w-4 text-green-500" />
+                      ) : !playable ? (
+                        <Lock className="h-3.5 w-3.5 text-gray-300" />
+                      ) : null}
+                    </span>
+                  </>
+                );
+
+                const rowClass = cn(
+                  "flex w-full items-center gap-3 rounded-xl px-2 py-2 text-left transition-colors",
+                  isCurrent
+                    ? "bg-pink-50 ring-1 ring-pink-200"
+                    : "hover:bg-pink-50/60"
+                );
+
+                return (
+                  <li key={it.content_id}>
+                    {playable ? (
+                      <Link href={watchPath(it.content_id)} className={rowClass}>
+                        {inner}
+                      </Link>
+                    ) : (
+                      <Link
+                        href={programPath}
+                        className={cn(rowClass, "opacity-70")}
+                        title="Unlock the full program"
+                      >
+                        {inner}
+                      </Link>
+                    )}
+                  </li>
+                );
+              })}
+            </ol>
+          </div>
+        </aside>
+      </div>
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* Private per-lesson feedback to the instructor                       */
+/* ------------------------------------------------------------------ */
+
+function LessonFeedback({
+  productId,
+  contentId,
+  instructorName,
+  initial,
+  revalidate,
+}: {
+  productId: string;
+  contentId: string;
+  instructorName: string | null;
+  initial: WatchLessonFeedback;
+  revalidate: string;
+}) {
+  const [sentiment, setSentiment] = useState<"up" | "down" | null>(
+    initial?.sentiment ?? null
+  );
+  const [note, setNote] = useState(initial?.comment_text ?? "");
+  const [showNote, setShowNote] = useState(false);
+  const [saved, setSaved] = useState(false);
+  const [isPending, startTransition] = useTransition();
+  const savedTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  function save(nextSentiment: "up" | "down", nextNote: string) {
+    startTransition(async () => {
+      const res = await submitLessonFeedback(
+        productId,
+        contentId,
+        nextSentiment,
+        nextNote,
+        revalidate
+      );
+      if (res.success) {
+        setSaved(true);
+        if (savedTimer.current) clearTimeout(savedTimer.current);
+        savedTimer.current = setTimeout(() => setSaved(false), 2500);
+      }
+    });
+  }
+
+  return (
+    <div className="mt-6 rounded-2xl border border-pink-100 bg-white p-4">
+      <div className="flex flex-wrap items-center gap-3">
+        <p className="text-sm text-gray-700">
+          How was this lesson?{" "}
+          <span className="text-gray-400">
+            (only {instructorName ?? "your instructor"} sees this)
+          </span>
+        </p>
+        <div className="flex items-center gap-1">
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            disabled={isPending}
+            onClick={() => {
+              setSentiment("up");
+              save("up", note);
+            }}
+            className={cn(
+              sentiment === "up" ? "text-green-600 bg-green-50" : "text-gray-400"
+            )}
+            aria-label="Thumbs up"
+          >
+            <ThumbsUp className="h-4 w-4" />
+          </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            disabled={isPending}
+            onClick={() => {
+              setSentiment("down");
+              save("down", note);
+            }}
+            className={cn(
+              sentiment === "down" ? "text-red-500 bg-red-50" : "text-gray-400"
+            )}
+            aria-label="Thumbs down"
+          >
+            <ThumbsDown className="h-4 w-4" />
+          </Button>
+        </div>
+        {sentiment && !showNote && (
+          <button
+            type="button"
+            className="text-sm text-pink-500 hover:text-pink-600 transition-colors"
+            onClick={() => setShowNote(true)}
+          >
+            {note ? "Edit your note" : "Add a note"}
+          </button>
+        )}
+        {saved && <span className="text-sm text-green-600">Sent.</span>}
+      </div>
+
+      {sentiment && showNote && (
+        <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:items-start">
+          <Textarea
+            value={note}
+            onChange={(e) => setNote(e.target.value)}
+            placeholder="e.g. Loved the pace — the last combo was hard to follow."
+            rows={2}
+            maxLength={1000}
+            className="flex-1"
+          />
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            disabled={isPending}
+            onClick={() => {
+              save(sentiment, note);
+              setShowNote(false);
+            }}
+          >
+            Send
+          </Button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* Public program review                                               */
+/* ------------------------------------------------------------------ */
+
+function ProgramReview({
+  productId,
+  programTitle,
+  initial,
+  revalidate,
+}: {
+  productId: string;
+  programTitle: string;
+  initial: { rating: number; comment_text: string | null } | null;
+  revalidate: string;
+}) {
+  const [rating, setRating] = useState(initial?.rating ?? 0);
+  const [comment, setComment] = useState(initial?.comment_text ?? "");
+  const [expanded, setExpanded] = useState(false);
+  const [saved, setSaved] = useState(false);
+  const [isPending, startTransition] = useTransition();
+  const savedTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  function save(nextRating: number, nextComment: string) {
+    startTransition(async () => {
+      const res = await submitProgramReview(productId, nextRating, nextComment, revalidate);
+      if (res.success) {
+        setSaved(true);
+        if (savedTimer.current) clearTimeout(savedTimer.current);
+        savedTimer.current = setTimeout(() => setSaved(false), 2500);
+      }
+    });
+  }
+
+  return (
+    <div className="mt-4 rounded-2xl border border-pink-100 bg-white p-4">
+      <div className="flex flex-wrap items-center gap-3">
+        <p className="text-sm text-gray-700">
+          Rate <span className="font-medium">{programTitle}</span>
+          <span className="text-gray-400"> (shown on the program page)</span>
+        </p>
+        <StarRating
+          value={rating}
+          onChange={(v) => {
+            setRating(v);
+            save(v, comment);
+          }}
+          size="md"
+        />
+        {rating > 0 && !expanded && (
+          <button
+            type="button"
+            className="text-sm text-pink-500 hover:text-pink-600 transition-colors"
+            onClick={() => setExpanded(true)}
+          >
+            {comment ? "Edit your review" : "Write a review"}
+          </button>
+        )}
+        {saved && <span className="text-sm text-green-600">Saved.</span>}
+      </div>
+
+      {rating > 0 && expanded && (
+        <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:items-start">
+          <Textarea
+            value={comment}
+            onChange={(e) => setComment(e.target.value)}
+            placeholder="What did you like? What results did you notice?"
+            rows={3}
+            maxLength={2000}
+            className="flex-1"
+          />
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            disabled={isPending}
+            onClick={() => {
+              save(rating, comment);
+              setExpanded(false);
+            }}
+          >
+            Save
+          </Button>
+        </div>
+      )}
+    </div>
+  );
+}

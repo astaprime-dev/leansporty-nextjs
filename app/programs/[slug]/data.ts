@@ -15,9 +15,15 @@ export interface ProgramData {
   } | null;
   isAuthenticated: boolean;
   owned: boolean;
+  /** The signed-in user is the program's instructor (self-preview allowed). */
+  isOwnerInstructor: boolean;
   grantedAt: string | null;
   expiresAt: string | null;
   completedContentIds: string[];
+  /** Public social proof from program_reviews. */
+  reviewSummary: { average: number; count: number } | null;
+  /** The caller's own review, for prefilling the widget. */
+  myReview: { rating: number; comment_text: string | null } | null;
 }
 
 /**
@@ -41,9 +47,11 @@ export async function getProgramData(slug: string): Promise<ProgramData | null> 
   } = await supabase.auth.getUser();
 
   let owned = false;
+  let isOwnerInstructor = false;
   let grantedAt: string | null = null;
   let expiresAt: string | null = null;
   let completedContentIds: string[] = [];
+  let myReview: ProgramData["myReview"] = null;
 
   if (user) {
     const { data: ent } = await supabase
@@ -58,10 +66,22 @@ export async function getProgramData(slug: string): Promise<ProgramData | null> 
       grantedAt = ent.granted_at ?? null;
       expiresAt = ent.expires_at ?? null;
     }
+
+    if (product.instructor_id) {
+      const { data: ownInstructor } = await supabase
+        .from("instructors")
+        .select("id")
+        .eq("user_id", user.id)
+        .eq("id", product.instructor_id)
+        .maybeSingle();
+      isOwnerInstructor = !!ownInstructor;
+    }
   }
 
-  // Off-sale programs are visible only to their buyers.
-  if ((!product.is_active || product.admin_disabled) && !owned) return null;
+  // Off-sale programs are visible only to their buyers (and their instructor).
+  if ((!product.is_active || product.admin_disabled) && !owned && !isOwnerInstructor) {
+    return null;
+  }
 
   // product_items → workouts is a to-one FK to public.workouts, so the nested
   // select is safe (the instructors/user_profiles ambiguity doesn't apply).
@@ -90,6 +110,28 @@ export async function getProgramData(slug: string): Promise<ProgramData | null> 
       .select("workout_id, completed_at")
       .not("completed_at", "is", null);
     completedContentIds = (progress ?? []).map((p: any) => p.workout_id);
+
+    const { data: review } = await supabase
+      .from("program_reviews")
+      .select("rating, comment_text")
+      .eq("product_id", product.id)
+      .eq("user_id", user.id)
+      .maybeSingle();
+    myReview = review ?? null;
+  }
+
+  // Public rating summary (RLS: visible reviews only).
+  let reviewSummary: ProgramData["reviewSummary"] = null;
+  const { data: ratings } = await supabase
+    .from("program_reviews")
+    .select("rating")
+    .eq("product_id", product.id);
+  if (ratings && ratings.length > 0) {
+    const sum = ratings.reduce((acc: number, r: any) => acc + (r.rating ?? 0), 0);
+    reviewSummary = {
+      average: Math.round((sum / ratings.length) * 10) / 10,
+      count: ratings.length,
+    };
   }
 
   // Instructor byline: instructors (slug) + user_profiles (display) FK to
@@ -121,8 +163,11 @@ export async function getProgramData(slug: string): Promise<ProgramData | null> 
     instructor,
     isAuthenticated: !!user,
     owned,
+    isOwnerInstructor,
     grantedAt,
     expiresAt,
     completedContentIds,
+    reviewSummary,
+    myReview,
   };
 }

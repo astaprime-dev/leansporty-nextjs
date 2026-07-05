@@ -1,8 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Clock, Film } from "lucide-react";
+import { Clock, Film, Play, Star } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { getProgramData } from "./data";
 import { ProgramGrid } from "@/components/challenge/program-grid";
 import { LessonList } from "@/components/programs/lesson-list";
@@ -79,6 +80,15 @@ export default async function ProgramPage({
       })
     : null;
 
+  // "Continue" = first incomplete playable lesson (or the first lesson again).
+  const completedSet = new Set(data.completedContentIds);
+  const continueLesson = owned
+    ? items.find((it) => it.workout && !completedSet.has(it.content_id)) ??
+      items.find((it) => it.workout) ??
+      null
+    : null;
+  const watchBasePath = `${pagePath}/watch`;
+
   return (
     <div className="mx-auto max-w-5xl px-4 py-10">
       {purchased === "1" && !owned && <FinalizingAccess slug={slug} />}
@@ -146,6 +156,16 @@ export default async function ProgramPage({
               {totalMinutes} minutes total
             </span>
           )}
+          {data.reviewSummary && (
+            <span className="flex items-center gap-1">
+              <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+              {data.reviewSummary.average}{" "}
+              <span className="text-gray-400">
+                ({data.reviewSummary.count} review
+                {data.reviewSummary.count === 1 ? "" : "s"})
+              </span>
+            </span>
+          )}
         </div>
 
         {owned ? (
@@ -166,6 +186,17 @@ export default async function ProgramPage({
               <p className="mt-2 text-xs text-muted-foreground">
                 Access until {accessUntil}
               </p>
+            )}
+            {continueLesson && (
+              <Button asChild variant="brand" size="lg" className="mt-4">
+                <Link href={`${pagePath}/watch/${continueLesson.content_id}`}>
+                  <Play className="mr-2 h-4 w-4" />
+                  {done === 0 ? "Start the program" : "Continue"}
+                  {continueLesson.workout?.title || continueLesson.item_label
+                    ? ` — ${continueLesson.item_label || continueLesson.workout?.title}`
+                    : ""}
+                </Link>
+              </Button>
             )}
           </div>
         ) : (
@@ -201,6 +232,7 @@ export default async function ProgramPage({
           priceLabel={priceLabel}
           paywallHref={pagePath}
           revalidatePath={pagePath}
+          {...(owned ? { watchBasePath } : {})}
         />
       ) : (
         <LessonList
@@ -210,6 +242,7 @@ export default async function ProgramPage({
           priceLabel={priceLabel}
           paywallHref={pagePath}
           revalidatePath={pagePath}
+          {...(owned ? { watchBasePath } : {})}
         />
       )}
     </div>

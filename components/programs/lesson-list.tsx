@@ -66,6 +66,7 @@ export function LessonList({
   priceLabel,
   paywallHref,
   revalidatePath,
+  watchBasePath,
 }: {
   items: ProductItem[];
   owned: boolean;
@@ -73,6 +74,10 @@ export function LessonList({
   priceLabel: string;
   paywallHref: string;
   revalidatePath: string;
+  /** When set (owner view), playable lessons NAVIGATE to `${watchBasePath}/${contentId}`
+   *  instead of opening the modal. The sales page omits it so the free preview
+   *  plays in place, keeping the checkout CTA on screen. */
+  watchBasePath?: string;
 }) {
   const router = useRouter();
   const completed = new Set(completedContentIds);
@@ -88,6 +93,10 @@ export function LessonList({
     const playable = owned || item.is_preview;
     if (!playable) {
       router.push(paywallHref);
+      return;
+    }
+    if (watchBasePath) {
+      router.push(`${watchBasePath}/${item.content_id}`);
       return;
     }
     setOpen({
