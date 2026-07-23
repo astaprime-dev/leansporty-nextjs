@@ -22,9 +22,9 @@ const VIGNETTES = [
   {
     image: "/home-vignette-watch.jpg",
     alt: "A smartwatch on a woman's wrist showing workout activity and heart rate",
-    headline: "15 minutes. 150–200 calories.",
+    headline: "Up to 200 calories in 15 minutes.",
     message:
-      "Short doesn't mean easy. These sessions are properly intense — check your watch when you're done.",
+      "Short doesn't mean easy. These sessions are really intense — check your watch when you're done.",
   },
 ];
 

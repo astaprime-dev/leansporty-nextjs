@@ -37,7 +37,7 @@ const STEPS: Record<RecoveryStepKey, StepContent> = {
     body: [
       `Hi — it's ${FROM_NAME} from Lean Sporty. I noticed you started joining the 21-Day Dance Challenge but didn't quite finish.`,
       "No pressure at all. Your details are saved, so you can pick up right where you left off in one click.",
-      "It's a one-time €49 — lifetime access, not a subscription. Fifteen feel-good guided sessions plus rest days, all from home, no equipment.",
+      "It's a one-time €49 — a full year of access, not a subscription. Fifteen feel-good guided sessions plus rest days, all from home, no equipment.",
     ],
     cta: "Pick up where I left off",
   },
@@ -48,7 +48,7 @@ const STEPS: Record<RecoveryStepKey, StepContent> = {
     body: [
       `Still thinking it over? Totally fair. Here's what the 21-Day Dance Challenge is, plainly:`,
       "Short, joyful dance workouts you can do in your living room — built for women who'd rather move than grind. Three weeks of guided sessions with built-in rest days, so it's a rhythm you can actually keep.",
-      "You don't have to take my word for it: <strong>Day 1 is free</strong>. Try it, see how it feels, then decide. And if you do join, it's yours for life — €49 once, no recurring charge.",
+      "You don't have to take my word for it: <strong>Day 1 is free</strong>. Try it, see how it feels, then decide. And if you do join, it's €49 once for a full year of access — no recurring charge.",
     ],
     cta: "Try Day 1 free",
   },
@@ -59,7 +59,7 @@ const STEPS: Record<RecoveryStepKey, StepContent> = {
     body: [
       `This is the last email I'll send about this — promise. If the timing isn't right, that's completely okay.`,
       "But if a bit of daily movement that actually feels good is something you've been meaning to start, your spot is still saved and you're one click from Day 1.",
-      "€49 once, lifetime access, dance it out whenever suits you.",
+      "€49 once, a full year of access, dance it out whenever suits you.",
     ],
     cta: "Start the Challenge",
   },
