@@ -6,6 +6,7 @@ import { CheckoutButton } from "@/components/challenge/cta";
 import { PublicStreamEmbed } from "@/components/public-stream-embed";
 import HomeVignettes from "@/components/home-vignettes";
 import HomeInstructor from "@/components/home-instructor";
+import { MobileStickyCta } from "@/components/challenge/sticky-cta";
 import { CHALLENGE_SLUG, CHALLENGE_TRAILER_UID } from "@/lib/challenge";
 
 export default function Header({
@@ -31,7 +32,7 @@ export default function Header({
       </div>
 
       {/* Content Layer - Centered with max-width */}
-      <div className="relative z-10 flex flex-col items-center py-16 gap-20">
+      <div className="relative z-10 flex flex-col items-center py-16 gap-14">
 
         {/* Hero Section */}
         <div className="w-full max-w-4xl px-6 pt-8 text-center">
@@ -43,7 +44,10 @@ export default function Header({
           </p>
           {/* Primary CTAs — act directly (checkout / Day 1); the /challenge
               landing stays one click away for people who want the full pitch. */}
-          <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
+          <div
+            id="home-hero-cta"
+            className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row"
+          >
             <CheckoutButton
               productSlug={CHALLENGE_SLUG}
               isAuthenticated={isAuthenticated}
@@ -236,8 +240,7 @@ export default function Header({
         {/* Centered Content */}
         <div className="relative z-10 w-full max-w-3xl mx-auto px-6 text-center text-white">
           <h2 className="font-display text-4xl lg:text-5xl font-light mb-6 leading-tight drop-shadow-lg">
-            Join a Community of Women<br/>
-            <span className="font-medium">Moving with Joy</span>
+            Ready to Move with <span className="font-medium">Joy</span>?
           </h2>
           <p className="text-xl lg:text-2xl mb-10 font-light opacity-95 leading-relaxed">
             No stress. Just sweat, rhythm, and results.
@@ -285,6 +288,15 @@ export default function Header({
 
       {/* Bottom Spacing */}
       <div className="h-16 bg-gradient-to-b from-pink-50/20 to-transparent"></div>
+
+      {/* Mobile sticky buy bar — same pattern as /challenge */}
+      <MobileStickyCta
+        productSlug={CHALLENGE_SLUG}
+        isAuthenticated={isAuthenticated}
+        owned={owned}
+        priceLabel={priceLabel}
+        heroCtaId="home-hero-cta"
+      />
     </div>
   );
 }

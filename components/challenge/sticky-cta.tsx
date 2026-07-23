@@ -13,23 +13,26 @@ export function MobileStickyCta({
   isAuthenticated,
   owned,
   priceLabel,
+  heroCtaId = "challenge-hero-cta",
 }: {
   productSlug: string;
   isAuthenticated: boolean;
   owned: boolean;
   priceLabel: string;
+  /** id of the hero CTA row whose disappearance summons the bar. */
+  heroCtaId?: string;
 }) {
   const [show, setShow] = useState(false);
 
   useEffect(() => {
-    const hero = document.getElementById("challenge-hero-cta");
+    const hero = document.getElementById(heroCtaId);
     if (!hero) return;
     const obs = new IntersectionObserver(([entry]) => {
       setShow(!entry.isIntersecting && entry.boundingClientRect.top < 0);
     });
     obs.observe(hero);
     return () => obs.disconnect();
-  }, []);
+  }, [heroCtaId]);
 
   if (owned || !show) return null;
 

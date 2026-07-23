@@ -40,14 +40,14 @@ export default function HomeVignettes({
   tryDayHref: string;
 }) {
   return (
-    <section className="w-full px-6 py-16">
+    <section className="w-full px-6 py-10">
       <div className="w-full max-w-4xl mx-auto text-center mb-16">
         <h2 className="font-display text-4xl lg:text-5xl font-light mb-6 text-gray-900 tracking-tight">
           Sound like <span className="font-medium text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-rose-400">you</span>?
         </h2>
       </div>
 
-      <div className="w-full max-w-5xl mx-auto flex flex-col gap-16 lg:gap-24">
+      <div className="w-full max-w-5xl mx-auto flex flex-col gap-12 lg:gap-16">
         {VIGNETTES.map((v, idx) => (
           <div
             key={v.image}
@@ -77,7 +77,7 @@ export default function HomeVignettes({
       </div>
 
       {/* The payoff after the pain points */}
-      <p className="mt-16 lg:mt-24 text-center text-2xl lg:text-3xl text-gray-600 font-light leading-relaxed max-w-3xl mx-auto">
+      <p className="mt-12 lg:mt-16 text-center text-2xl lg:text-3xl text-gray-600 font-light leading-relaxed max-w-3xl mx-auto">
         Feel <span className="font-medium text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-rose-400">confident, strong, and energized</span> — right from your living room.
       </p>
 
