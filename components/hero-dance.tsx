@@ -1,8 +1,10 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Sparkles, Zap, Music, Clock, TrendingUp, Home, Video, Users, Star, Calendar } from "lucide-react";
+import { Sparkles, Zap, Music, Clock, TrendingUp, Home, Video, Users, Star, Calendar, Check } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { CheckoutButton } from "@/components/challenge/cta";
 import { PublicStreamEmbed } from "@/components/public-stream-embed";
+import HomeVignettes from "@/components/home-vignettes";
 import { CHALLENGE_SLUG, CHALLENGE_TRAILER_UID } from "@/lib/challenge";
 
 export default function Header({
@@ -33,14 +35,8 @@ export default function Header({
             Dance Your Way to <span className="font-medium text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-rose-400">Fitness</span>
           </h1>
           <p className="animate-fade-up text-2xl lg:text-3xl text-gray-600 mb-6 font-light leading-relaxed" style={{ animationDelay: "0.08s" }}>
-            Feel confident, strong, and energized — right from your living room.
+            On-demand dance workouts — at home, in a hotel room, wherever you are.
           </p>
-          <p className="text-lg lg:text-xl text-gray-500 max-w-3xl mx-auto leading-relaxed font-light">
-            A follow-along dance program you can start in your browser today —
-            short, fun, equipment-free sessions for women who want to enjoy moving
-            again. Beginner-friendly, and Day 1 is free to try.
-          </p>
-
           {/* Primary CTAs — act directly (checkout / Day 1); the /challenge
               landing stays one click away for people who want the full pitch. */}
           <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
@@ -82,25 +78,36 @@ export default function Header({
           <p className="mt-3 text-center text-sm text-gray-400 font-light">
             You&apos;re watching Day 1 — the real first session of the challenge.
           </p>
+          <p className="mt-8 text-lg lg:text-xl text-gray-600 max-w-3xl mx-auto text-center leading-relaxed font-light text-balance">
+            A follow-along dance program for women who want to enjoy moving again.
+          </p>
+          <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
+            {[
+              "Starts in your browser",
+              "Short, fun sessions",
+              "No equipment",
+              "Beginner-friendly",
+              "Day 1 free",
+            ].map((label) => (
+              <Badge
+                key={label}
+                variant="outline"
+                className="gap-1.5 border-pink-100 bg-white/80 px-4 py-1.5 text-sm font-normal text-gray-600"
+              >
+                <Check className="h-3.5 w-3.5 text-pink-500" strokeWidth={2.5} />
+                {label}
+              </Badge>
+            ))}
+          </div>
         </div>
 
-        {/* Secondary: iOS app (watch on the go — purchases happen on web) */}
-        <div className="w-full flex flex-col items-center gap-2">
-          <p className="text-sm text-gray-400 font-light tracking-wide">Prefer your phone? Also on iOS.</p>
-          <a
-            href="https://apps.apple.com/app/id6745218800"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-block opacity-80 transition-all duration-300 hover:opacity-100 hover:scale-105"
-          >
-            <img
-              src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/en-us?size=250x83"
-              alt="Download on the App Store"
-              className="h-11"
-            />
-          </a>
-        </div>
-
+        {/* See-yourself vignettes — emotional identification before the feature pitch */}
+        <HomeVignettes
+          isAuthenticated={isAuthenticated}
+          owned={owned}
+          priceLabel={priceLabel}
+          tryDayHref={tryDayHref}
+        />
 
         {/* Why Lean Sporty Section */}
         <section className="w-full px-6 py-16">
