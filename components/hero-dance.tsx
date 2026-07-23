@@ -40,7 +40,7 @@ export default function Header({
             Dance Your Way to <span className="font-medium text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-rose-400">Fitness</span>
           </h1>
           <p className="animate-fade-up text-2xl lg:text-3xl text-gray-600 mb-6 font-light leading-relaxed" style={{ animationDelay: "0.08s" }}>
-            Short 15-minute dance workouts led by a real choreographer — press
+            Short 15-minute dance workouts led by a pro choreographer — press
             play at home, in a hotel room, wherever you are.
           </p>
           {/* Primary CTAs — act directly (checkout / Day 1); the /challenge
