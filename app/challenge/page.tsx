@@ -242,6 +242,51 @@ export default async function ChallengePage({
       {/* The person guiding all 21 days */}
       <HomeInstructor photo="/instructor-portrait.jpg" aspectClass="aspect-[970/1600]" />
 
+      {/* Style range — show the "feminine to sporty" claim instead of telling it */}
+      <section className="mx-auto max-w-5xl px-4 py-14">
+        <h2 className="font-display text-center text-4xl font-light text-gray-900">
+          Sporty days.{" "}
+          <span className="bg-gradient-to-r from-pink-500 to-rose-400 bg-clip-text text-transparent">
+            Feminine
+          </span>{" "}
+          days.
+        </h2>
+        <p className="mx-auto mt-2 max-w-2xl text-center text-muted-foreground">
+          Her choreography moves between sneakers-on energy and feminine flow —
+          so no two sessions feel the same.
+        </p>
+        <div className="mx-auto mt-8 grid max-w-3xl gap-6 sm:grid-cols-2">
+          {[
+            {
+              src: "/challenge-sporty.jpg",
+              alt: "Anastasiia in sneakers, mid-move — the sporty side of the challenge",
+              label: "Sporty energy",
+            },
+            {
+              src: "/challenge-feminine.jpg",
+              alt: "Anastasiia in pink, striking a pose — the feminine side of the challenge",
+              label: "Feminine flow",
+            },
+          ].map((p) => (
+            <figure
+              key={p.src}
+              className="relative aspect-[2/3] overflow-hidden rounded-2xl border border-pink-100 shadow-sm"
+            >
+              <Image
+                src={p.src}
+                alt={p.alt}
+                fill
+                sizes="(min-width: 640px) 24rem, 100vw"
+                className="object-cover"
+              />
+              <figcaption className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent p-4 pt-10">
+                <span className="text-sm font-semibold text-white">{p.label}</span>
+              </figcaption>
+            </figure>
+          ))}
+        </div>
+      </section>
+
       {/* Curriculum */}
       <section className="bg-pink-50/50 py-14">
         <div className="mx-auto max-w-5xl px-4">
@@ -352,9 +397,19 @@ export default async function ChallengePage({
         </section>
       )}
 
-      {/* Pricing card */}
-      <section className="mx-auto max-w-md px-4 py-12">
-        <div className="rounded-2xl border-2 border-pink-200 bg-white p-8 text-center shadow-sm">
+      {/* Pricing card — paired with a joyful shot so the money moment stays human */}
+      <section className="mx-auto max-w-4xl px-4 py-12">
+        <div className="grid items-center gap-8 md:grid-cols-2">
+          <div className="relative hidden aspect-[2/3] overflow-hidden rounded-2xl border border-pink-100 shadow-sm md:block">
+            <Image
+              src="/challenge-joy.jpg"
+              alt="Anastasiia mid-jump, smiling"
+              fill
+              sizes="24rem"
+              className="object-cover"
+            />
+          </div>
+          <div className="rounded-2xl border-2 border-pink-200 bg-white p-8 text-center shadow-sm">
           <h2 className="font-display text-3xl font-light text-gray-900">{title}</h2>
           <p className="mt-1 text-sm text-muted-foreground">
             One-time purchase · 1 year of access
@@ -384,6 +439,7 @@ export default async function ChallengePage({
               className="h-12 w-full bg-gradient-to-r from-pink-500 to-rose-400 text-base font-semibold text-white hover:from-pink-600 hover:to-rose-500"
             />
           </div>
+        </div>
         </div>
       </section>
 
