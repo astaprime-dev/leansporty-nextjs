@@ -279,8 +279,10 @@ export default async function ChallengePage({
                 sizes="(min-width: 640px) 24rem, 100vw"
                 className="object-cover"
               />
-              <figcaption className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent p-4 pt-10">
-                <span className="text-sm font-semibold text-white">{p.label}</span>
+              <figcaption className="absolute bottom-3 left-3">
+                <span className="rounded-full bg-white/90 px-3.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm backdrop-blur-sm">
+                  {p.label}
+                </span>
               </figcaption>
             </figure>
           ))}
