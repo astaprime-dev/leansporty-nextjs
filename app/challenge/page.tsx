@@ -15,6 +15,7 @@ import {
   CheckoutButton,
   ChallengeAutoCheckout,
 } from "@/components/challenge/cta";
+import { MobileStickyCta } from "@/components/challenge/sticky-cta";
 import { Alert } from "@/components/ui/alert";
 import HomeInstructor from "@/components/home-instructor";
 import { Button } from "@/components/ui/button";
@@ -89,8 +90,16 @@ const FAQ = [
     a: "None at all. Every session is a beginner-friendly follow-along — you can pause, repeat, and go at your own pace.",
   },
   {
+    q: "How hard is it, really? I haven't exercised in years.",
+    a: "It's made for exactly that. You set the speed, pause whenever you like, and repeat any session — nobody is watching and there's nothing to keep up with. Day 1 is free, so you can feel it for yourself before paying anything.",
+  },
+  {
     q: "Is this a subscription?",
     a: "No — it's a one-time payment with no recurring charge. Your access runs for a full year.",
+  },
+  {
+    q: "What happens after I pay?",
+    a: "You get access right away — the whole program unlocks and you can start Day 1 immediately, on your laptop, tablet, or phone.",
   },
   {
     q: "What if I miss a day?",
@@ -201,7 +210,10 @@ export default async function ChallengePage({
             You&apos;re watching Day 1 — the real first session.
           </p>
 
-          <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row md:mt-6">
+          <div
+            id="challenge-hero-cta"
+            className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row md:mt-6"
+          >
             <CheckoutButton
               productSlug={CHALLENGE_SLUG}
               isAuthenticated={isAuthenticated}
@@ -334,10 +346,9 @@ export default async function ChallengePage({
               }
               const isFree = day.state === "preview-free";
               const duration = formatDuration(day.item?.workout?.durationInSeconds);
-              return (
+              const cell = (
                 <div
-                  key={day.dayNumber}
-                  className="relative flex aspect-square flex-col justify-end overflow-hidden rounded-xl border border-pink-100 bg-white"
+                  className={`relative flex aspect-square flex-col justify-end overflow-hidden rounded-xl border border-pink-100 bg-white ${isFree ? "transition-shadow hover:shadow-md hover:ring-2 hover:ring-pink-300" : ""}`}
                 >
                   <div className="absolute inset-0 bg-gradient-to-br from-pink-50 to-rose-50">
                     {day.item?.workout?.thumbnailUrl ? (
@@ -376,9 +387,52 @@ export default async function ChallengePage({
                   </div>
                 </div>
               );
+              // The Free cell is the strongest click-magnet on the grid —
+              // make it actually open Day 1.
+              return isFree ? (
+                <Link key={day.dayNumber} href={tryDayHref}>
+                  {cell}
+                </Link>
+              ) : (
+                <div key={day.dayNumber}>{cell}</div>
+              );
             })}
           </div>
         </div>
+      </section>
+
+      {/* Outcomes — the emotional destination, kept modest (no guarantees) */}
+      <section className="mx-auto max-w-3xl px-4 py-14 text-center">
+        <h2 className="font-display text-4xl font-light text-gray-900">
+          Where you&apos;ll be by{" "}
+          <span className="bg-gradient-to-r from-pink-500 to-rose-400 bg-clip-text text-transparent">
+            Day 21
+          </span>
+        </h2>
+        <ul className="mx-auto mt-8 max-w-xl space-y-4 text-left">
+          {[
+            {
+              title: "A habit that stuck.",
+              body: "Fifteen sessions done at your own pace, rest days included — three weeks is long enough to make moving feel normal again.",
+            },
+            {
+              title: "More energy in your everyday.",
+              body: "Short, intense bursts of dancing add up faster than you'd think — up to 200 calories in a 15-minute session.",
+            },
+            {
+              title: "Proof you can dance — and enjoy it.",
+              body: "From your first careful follow-along to moving like it's second nature. That confidence stays.",
+            },
+          ].map((o) => (
+            <li key={o.title} className="flex items-start gap-3">
+              <Check className="mt-1 h-5 w-5 flex-shrink-0 text-pink-500" strokeWidth={2.5} />
+              <p className="text-gray-600">
+                <span className="font-semibold text-gray-900">{o.title}</span>{" "}
+                {o.body}
+              </p>
+            </li>
+          ))}
+        </ul>
       </section>
 
       {/* Social proof */}
@@ -426,6 +480,10 @@ export default async function ChallengePage({
           </p>
           <p className="mt-4 text-5xl font-bold text-gray-900">{priceLabel}</p>
           <p className="text-sm text-muted-foreground">not a subscription</p>
+          <p className="mt-1 text-xs text-muted-foreground">
+            ≈ {formatPrice(Math.round(priceCents / workoutCount / 10) * 10)} per
+            session — less than a single studio class
+          </p>
           <ul className="mt-6 space-y-2 text-left text-sm">
             {[
               `${workoutCount} guided sessions + rest days`,
@@ -476,6 +534,14 @@ export default async function ChallengePage({
           </div>
         </section>
       )}
+
+      {/* Mobile sticky buy bar — shows once the hero CTAs scroll away */}
+      <MobileStickyCta
+        productSlug={CHALLENGE_SLUG}
+        isAuthenticated={isAuthenticated}
+        owned={owned}
+        priceLabel={priceLabel}
+      />
 
       {/* Disclaimer / waiver */}
       <section className="mx-auto max-w-3xl px-4 pb-16">
