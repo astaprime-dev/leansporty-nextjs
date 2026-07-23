@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { CheckoutButton } from "@/components/challenge/cta";
 import { PublicStreamEmbed } from "@/components/public-stream-embed";
 import HomeVignettes from "@/components/home-vignettes";
+import HomeInstructor from "@/components/home-instructor";
 import { CHALLENGE_SLUG, CHALLENGE_TRAILER_UID } from "@/lib/challenge";
 
 export default function Header({
@@ -12,12 +13,15 @@ export default function Header({
   owned,
   priceLabel,
   tryDayHref,
+  showLiveClasses,
 }: {
   isAuthenticated: boolean;
   owned: boolean;
   priceLabel: string;
   /** Deep link to Day 1 on the watch page (plays for everyone). */
   tryDayHref: string;
+  /** Render the live-classes pitch only when real classes are scheduled. */
+  showLiveClasses: boolean;
 }) {
   return (
     <div className="relative w-full overflow-hidden">
@@ -101,6 +105,9 @@ export default function Header({
           </div>
         </div>
 
+        {/* You just watched her in Day 1 — now meet the human behind it */}
+        <HomeInstructor />
+
         {/* See-yourself vignettes — emotional identification before the feature pitch */}
         <HomeVignettes
           isAuthenticated={isAuthenticated}
@@ -143,7 +150,8 @@ export default function Header({
           </div>
         </section>
 
-        {/* Live Streaming Section */}
+        {/* Live Streaming Section — hidden until real classes are scheduled */}
+        {showLiveClasses && (
         <section className="w-full px-6 py-16">
           <div className="w-full max-w-6xl mx-auto">
             {/* Section Header */}
@@ -214,6 +222,7 @@ export default function Header({
             </div>
           </div>
         </section>
+        )}
 
 
       </div>
