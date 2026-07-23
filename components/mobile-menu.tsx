@@ -10,9 +10,11 @@ import { User } from "@supabase/supabase-js";
 interface MobileMenuProps {
   user: User | null;
   isInstructor: boolean;
+  /** Show the Classes link only when live classes actually exist. */
+  showClasses: boolean;
 }
 
-export function MobileMenu({ user, isInstructor }: MobileMenuProps) {
+export function MobileMenu({ user, isInstructor, showClasses }: MobileMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
   const close = () => setIsOpen(false);
 
@@ -57,18 +59,22 @@ export function MobileMenu({ user, isInstructor }: MobileMenuProps) {
                   <NavLink href="/activity" onClick={close} className="text-base font-light py-2">
                     Activity
                   </NavLink>
-                  <NavLink href="/streams" onClick={close} className="text-base font-light py-2">
-                    Classes
-                  </NavLink>
+                  {showClasses && (
+                    <NavLink href="/streams" onClick={close} className="text-base font-light py-2">
+                      Classes
+                    </NavLink>
+                  )}
                 </>
               ) : (
                 <>
                   <NavLink href="/challenge" onClick={close} className="text-base font-light py-2">
                     Challenge
                   </NavLink>
-                  <NavLink href="/streams" onClick={close} className="text-base font-light py-2">
-                    Classes
-                  </NavLink>
+                  {showClasses && (
+                    <NavLink href="/streams" onClick={close} className="text-base font-light py-2">
+                      Classes
+                    </NavLink>
+                  )}
                   <NavLink href="/teach" onClick={close} className="text-base font-light py-2">
                     Teach
                   </NavLink>

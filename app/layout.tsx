@@ -84,6 +84,14 @@ export default async function RootLayout({
     isInstructor = !!instr;
   }
 
+  // Hide "Classes" nav/footer links while nothing is live or scheduled —
+  // an empty listing is a dead end for visitors. Reappears automatically.
+  const { count: liveClassCount } = await supabase
+    .from("live_stream_sessions")
+    .select("id", { count: "exact", head: true })
+    .in("status", ["live", "scheduled"]);
+  const showClasses = !!liveClassCount;
+
   return (
     <html lang="en" className={`${geistSans.className} ${playfair.variable}`} suppressHydrationWarning>
       <body className="bg-background text-foreground">
@@ -108,7 +116,7 @@ export default async function RootLayout({
                   {/* Navigation Links */}
                   <div className="flex items-center gap-2 md:gap-4 lg:gap-8">
                     {/* Authenticated user navigation */}
-                    <HeaderNav user={user} isInstructor={isInstructor} />
+                    <HeaderNav user={user} isInstructor={isInstructor} showClasses={showClasses} />
 
                     {/* Auth Buttons */}
                     <HeaderAuth />
@@ -135,7 +143,7 @@ export default async function RootLayout({
                     ) : null}
 
                     {/* Mobile Menu */}
-                    <MobileMenu user={user} isInstructor={isInstructor} />
+                    <MobileMenu user={user} isInstructor={isInstructor} showClasses={showClasses} />
                   </div>
                 </div>
               </nav>
@@ -171,7 +179,9 @@ export default async function RootLayout({
                     {/* Footer nav */}
                     <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm font-light text-gray-600">
                       <Link href="/challenge" className="hover:text-pink-500 transition-colors">Challenge</Link>
-                      <Link href="/streams" className="hover:text-pink-500 transition-colors">Classes</Link>
+                      {showClasses && (
+                        <Link href="/streams" className="hover:text-pink-500 transition-colors">Classes</Link>
+                      )}
                       {user && (
                         <Link href="/my-program" className="hover:text-pink-500 transition-colors">My Training</Link>
                       )}

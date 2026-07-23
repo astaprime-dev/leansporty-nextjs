@@ -4,6 +4,8 @@ import { NavLink } from "@/components/nav-link";
 interface HeaderNavProps {
   user: User | null;
   isInstructor: boolean;
+  /** Show the Classes link only when live classes actually exist. */
+  showClasses: boolean;
 }
 
 /**
@@ -16,7 +18,7 @@ const LINK = "relative py-3 -my-3 text-sm font-light";
 const ACTIVE =
   "text-gray-900 after:absolute after:inset-x-0 after:-bottom-[1px] after:h-0.5 after:rounded-full after:bg-gradient-to-r after:from-pink-500 after:to-rose-400";
 
-export default function HeaderNav({ user, isInstructor }: HeaderNavProps) {
+export default function HeaderNav({ user, isInstructor, showClasses }: HeaderNavProps) {
   return (
     <div className="hidden md:flex items-center gap-3 lg:gap-6">
       {user ? (
@@ -28,9 +30,11 @@ export default function HeaderNav({ user, isInstructor }: HeaderNavProps) {
           <NavLink href="/activity" className={LINK} activeClassName={ACTIVE}>
             Activity
           </NavLink>
-          <NavLink href="/streams" className={LINK} activeClassName={ACTIVE}>
-            Classes
-          </NavLink>
+          {showClasses && (
+            <NavLink href="/streams" className={LINK} activeClassName={ACTIVE}>
+              Classes
+            </NavLink>
+          )}
         </>
       ) : (
         <>
@@ -38,9 +42,11 @@ export default function HeaderNav({ user, isInstructor }: HeaderNavProps) {
           <NavLink href="/challenge" className={LINK} activeClassName={ACTIVE}>
             Challenge
           </NavLink>
-          <NavLink href="/streams" className={LINK} activeClassName={ACTIVE}>
-            Classes
-          </NavLink>
+          {showClasses && (
+            <NavLink href="/streams" className={LINK} activeClassName={ACTIVE}>
+              Classes
+            </NavLink>
+          )}
           <NavLink href="/teach" className={LINK} activeClassName={ACTIVE}>
             Teach
           </NavLink>

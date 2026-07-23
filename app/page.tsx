@@ -14,6 +14,13 @@ export default async function Home() {
   let owned = false;
   let priceCents = DEFAULT_PRICE_CENTS;
   let tryDayHref = "/challenge";
+
+  // Only pitch live classes when there is actually something to join —
+  // an empty /streams page undermines the whole story.
+  const { count: liveClassCount } = await supabase
+    .from("live_stream_sessions")
+    .select("id", { count: "exact", head: true })
+    .in("status", ["live", "scheduled"]);
   const { data: product } = await supabase
     .from("products")
     .select("id, price_cents")
@@ -55,6 +62,7 @@ export default async function Home() {
         owned={owned}
         priceLabel={formatPrice(priceCents)}
         tryDayHref={tryDayHref}
+        showLiveClasses={!!liveClassCount}
       />
       <section className="border-t border-pink-100/70 bg-pink-50/40 py-16">
         <div className="mx-auto max-w-3xl px-4">

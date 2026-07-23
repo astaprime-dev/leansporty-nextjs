@@ -89,7 +89,12 @@ export function StreamsView({
         {upcomingStreams.length === 0 ? (
           <EmptyState
             title="No upcoming classes scheduled yet."
-            description="Check back soon for new live classes!"
+            description="In the meantime, you can start dancing today — Day 1 of the 21-Day Challenge is free."
+            action={
+              <Button asChild variant="brand" size="pill">
+                <a href="/challenge">Explore the 21-Day Challenge</a>
+              </Button>
+            }
           />
         ) : (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
