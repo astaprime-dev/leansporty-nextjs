@@ -16,7 +16,9 @@ const INSTRUCTOR: {
   bio: string[];
   facts: string[];
 } = {
-  name: "Anastasiia", // Ukrainian transliteration — matches her Instagram
+  // Her name appears in the bio text, not the big display heading — the
+  // double-i transliteration sets awkwardly in the large serif face.
+  name: null,
   photo: "/instructor-photo.jpg",
   bio: [
     "Dancing since childhood, Anastasiia is a choreographer with her own dance project — she performs on stage and organizes concerts with her own group.",
