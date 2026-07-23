@@ -36,6 +36,30 @@ import {
 
 export const dynamic = "force-dynamic";
 
+// The main sales URL — shared in bios, DMs, and ads. The card must sell the
+// product, not show the generic site logo.
+export const metadata = {
+  title: "21-Day Dance Challenge — dance yourself fit at home | Lean Sporty",
+  description:
+    "Short, feel-good dance workouts for women — no gym, no equipment, no experience needed. Day 1 is free to try. One payment, a full year of access.",
+  openGraph: {
+    title: "21-Day Dance Challenge — dance yourself fit at home",
+    description:
+      "Short, feel-good dance workouts for women — no equipment, beginner-friendly. Day 1 is free to try.",
+    images: [
+      {
+        url: "/og-challenge.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Anastasiia, the Lean Sporty instructor, dancing",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+  },
+};
+
 const BENEFITS = [
   {
     icon: Heart,
@@ -323,7 +347,7 @@ export default async function ChallengePage({
             {data.social.average.toFixed(1)} from {data.social.count} reviews
           </p>
           <p className="text-sm text-muted-foreground">
-            Loved by members across our live classes.
+            From women who took the challenge.
           </p>
         </section>
       )}

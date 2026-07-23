@@ -84,18 +84,16 @@ export async function getChallengeData(): Promise<ChallengeData | null> {
     completedContentIds = (progress ?? []).map((p: any) => p.workout_id);
   }
 
-  // Social proof: reuse existing visible review ratings (CHALLENGE §6.1.4).
+  // Social proof: real buyer reviews of THIS program (program_reviews), not
+  // stream comments. Shown only from 3 reviews up — a lone rating reads as
+  // fabricated rather than as proof.
   let social: { average: number; count: number } | null = null;
   const { data: ratings } = await supabase
-    .from("stream_comments")
-    .select("star_rating")
-    .eq("is_hidden", false)
-    .not("star_rating", "is", null);
-  if (ratings && ratings.length > 0) {
-    const sum = ratings.reduce(
-      (acc: number, r: any) => acc + (r.star_rating ?? 0),
-      0
-    );
+    .from("program_reviews")
+    .select("rating")
+    .eq("product_id", product.id);
+  if (ratings && ratings.length >= 3) {
+    const sum = ratings.reduce((acc: number, r: any) => acc + (r.rating ?? 0), 0);
     social = {
       average: Math.round((sum / ratings.length) * 10) / 10,
       count: ratings.length,
