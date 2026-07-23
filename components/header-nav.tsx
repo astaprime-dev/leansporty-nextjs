@@ -47,9 +47,8 @@ export default function HeaderNav({ user, isInstructor, showClasses }: HeaderNav
               Classes
             </NavLink>
           )}
-          <NavLink href="/teach" className={LINK} activeClassName={ACTIVE}>
-            Teach
-          </NavLink>
+          {/* /teach is reached via direct outreach links + the footer — keeping
+              it out of the buyer-facing nav keeps the funnel clean. */}
         </>
       )}
 

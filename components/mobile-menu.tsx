@@ -75,9 +75,6 @@ export function MobileMenu({ user, isInstructor, showClasses }: MobileMenuProps)
                       Classes
                     </NavLink>
                   )}
-                  <NavLink href="/teach" onClick={close} className="text-base font-light py-2">
-                    Teach
-                  </NavLink>
                 </>
               )}
 
