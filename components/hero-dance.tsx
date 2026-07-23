@@ -39,7 +39,7 @@ export default function Header({
             Dance Your Way to <span className="font-medium text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-rose-400">Fitness</span>
           </h1>
           <p className="animate-fade-up text-2xl lg:text-3xl text-gray-600 mb-6 font-light leading-relaxed" style={{ animationDelay: "0.08s" }}>
-            On-demand dance workouts — at home, in a hotel room, wherever you are.
+            Press play any time — dance workouts at home, in a hotel room, wherever you are.
           </p>
           {/* Primary CTAs — act directly (checkout / Day 1); the /challenge
               landing stays one click away for people who want the full pitch. */}
@@ -122,7 +122,7 @@ export default function Header({
             <h2 className="font-display text-4xl lg:text-5xl font-light mb-6 text-gray-900 tracking-tight">
               Why <span className="font-medium text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-rose-400">Lean Sporty</span>?
             </h2>
-            <p className="text-lg text-gray-500 font-light">Designed for your lifestyle, your goals, your journey.</p>
+            <p className="text-lg text-gray-500 font-light">Built for real life — busy days, small living rooms, zero experience.</p>
           </div>
 
           {/* Feature Cards Grid */}
@@ -130,10 +130,10 @@ export default function Header({
             {[
               { icon: Sparkles, title: "Easy-to-Follow Dance Routines", desc: "Fun moves that anyone can do, regardless of experience level." },
               { icon: Zap, title: "Cardio + Strength in Every Session", desc: "Burn calories and build strength with every beat." },
-              { icon: Music, title: "Uplifting Music & Motivation", desc: "Energizing playlists and a motivating instructor to keep you going." },
-              { icon: Clock, title: "Quick Workouts", desc: "Fit fitness into any schedule with short, effective sessions." },
-              { icon: TrendingUp, title: "Track Your Progress", desc: "Stay inspired by watching your fitness journey unfold." },
-              { icon: Home, title: "Train From Home", desc: "Cardio, aerobics, and weight loss dance workouts — all from your living room." }
+              { icon: Music, title: "Uplifting Music & Motivation", desc: "Energizing music and Anastasiia's big, judgement-free energy to keep you going." },
+              { icon: Clock, title: "Quick Workouts", desc: "10–17 minutes per session — easy to fit around work, kids, and life." },
+              { icon: TrendingUp, title: "Track Your Progress", desc: "Mark each session done and see how far you've come — small wins that keep you going." },
+              { icon: Home, title: "Train From Home", desc: "No gym, no commute, nobody watching — press play and dance in your living room." }
             ].map((feature, idx) => {
               const Icon = feature.icon;
               return (
