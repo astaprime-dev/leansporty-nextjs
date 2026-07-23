@@ -172,7 +172,7 @@ export default async function ChallengePage({
 
       {/* Hero */}
       <section className="bg-gradient-to-b from-pink-50 to-white">
-        <div className="mx-auto max-w-5xl px-4 py-14 text-center">
+        <div className="mx-auto max-w-5xl px-4 py-14 text-center md:py-9">
           {canceled && (
             <Alert variant="info" className="mx-auto mb-6 max-w-md text-left">
               No worries — your spot is still here whenever you're ready.
@@ -190,17 +190,18 @@ export default async function ChallengePage({
           </p>
 
           {/* Trailer — Day 1 itself, self-hosted (no YouTube branding/exits) */}
-          <div className="relative mx-auto mt-8 aspect-video max-w-2xl overflow-hidden rounded-2xl border border-pink-100 shadow-sm">
+          <div className="relative mx-auto mt-8 aspect-video max-w-2xl overflow-hidden rounded-2xl border border-pink-100 shadow-sm md:mt-5">
             <PublicStreamEmbed
               uid={CHALLENGE_TRAILER_UID}
               title="Day 1 of the 21-Day Dance Challenge"
+              startTimeSeconds={5}
             />
           </div>
           <p className="mt-2 text-sm text-muted-foreground">
             You&apos;re watching Day 1 — the real first session.
           </p>
 
-          <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+          <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row md:mt-6">
             <CheckoutButton
               productSlug={CHALLENGE_SLUG}
               isAuthenticated={isAuthenticated}
@@ -302,7 +303,7 @@ export default async function ChallengePage({
           <p className="mt-2 text-center text-muted-foreground">
             {workoutCount} guided sessions + rest days — Day 1 is free to try.
           </p>
-          <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-7">
+          <div className="mt-8 grid grid-cols-3 gap-2 sm:grid-cols-4 sm:gap-3 lg:grid-cols-7">
             {days.map((day) => {
               if (day.isRest) {
                 return (
@@ -406,12 +407,16 @@ export default async function ChallengePage({
 
       {/* Pricing — the card lives INSIDE the photo; she points right at it */}
       <section className="relative overflow-hidden">
+        {/* The photo only earns its place when there's room for her beside the
+            card — on mobile it degrades to blurry slivers, so use a soft
+            gradient there instead. */}
+        <div className="absolute inset-0 bg-gradient-to-b from-pink-50/60 to-rose-50/60 md:hidden" />
         <Image
           src="/challenge-pricing-bg.jpg"
           alt=""
           fill
           sizes="100vw"
-          className="object-cover object-[75%_center]"
+          className="hidden object-cover object-[75%_center] md:block"
         />
         <div className="relative mx-auto max-w-5xl px-4 py-16 md:py-24">
           <div className="max-w-md rounded-2xl border-2 border-pink-200 bg-white/95 p-8 text-center shadow-lg backdrop-blur-sm">

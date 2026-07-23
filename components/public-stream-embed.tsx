@@ -9,13 +9,17 @@ export function PublicStreamEmbed({
   uid,
   title,
   className = "",
+  startTimeSeconds,
 }: {
   uid: string;
   title: string;
   className?: string;
+  /** Skip past an in-video intro (e.g. a logo card) on first play. */
+  startTimeSeconds?: number;
 }) {
   const code = process.env.NEXT_PUBLIC_CLOUDFLARE_STREAM_CUSTOMER_CODE;
-  const src = `https://customer-${code}.cloudflarestream.com/${uid}/iframe?muted=true&autoplay=true&loop=true&controls=true&preload=metadata`;
+  const start = startTimeSeconds ? `&startTime=${startTimeSeconds}s` : "";
+  const src = `https://customer-${code}.cloudflarestream.com/${uid}/iframe?muted=true&autoplay=true&loop=true&controls=true&preload=metadata${start}`;
 
   return (
     <iframe

@@ -77,6 +77,7 @@ export default function Header({
             <PublicStreamEmbed
               uid={CHALLENGE_TRAILER_UID}
               title="Day 1 of the 21-Day Dance Challenge"
+              startTimeSeconds={5}
             />
           </div>
           <p className="mt-3 text-center text-sm text-gray-400 font-light">
