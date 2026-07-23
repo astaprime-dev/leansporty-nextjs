@@ -16,10 +16,10 @@ const INSTRUCTOR: {
   bio: string[];
   facts: string[];
 } = {
-  name: null, // e.g. "Anna" — shown big; null shows "Your instructor"
+  name: "Anastasiia", // Ukrainian transliteration — matches her Instagram
   photo: "/instructor-photo.jpg",
   bio: [
-    "Dancing since childhood, she is a choreographer with her own dance project — she performs on stage and organizes concerts with her own group.",
+    "Dancing since childhood, Anastasiia is a choreographer with her own dance project — she performs on stage and organizes concerts with her own group.",
     "And here is the part that matters for you: that group is everyday women, just like you. She has taught them for years — her choreography ranges from feminine styles to sporty, sneakers-on routines.",
     "In the 21-Day Challenge she leads every session herself. Simple steps, big energy, zero judgement.",
   ],
@@ -54,7 +54,7 @@ export default function HomeInstructor({
           {photo && (
             <Image
               src={photo}
-              alt="Your Lean Sporty instructor mid-session"
+              alt="Anastasiia, your Lean Sporty instructor"
               fill
               sizes="(min-width: 768px) 24rem, 100vw"
               className="object-cover"
