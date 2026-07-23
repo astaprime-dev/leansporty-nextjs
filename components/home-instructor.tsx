@@ -19,7 +19,7 @@ const INSTRUCTOR: {
   // Her name appears in the bio text, not the big display heading — the
   // double-i transliteration sets awkwardly in the large serif face.
   name: null,
-  photo: "/instructor-photo.jpg",
+  photo: "/instructor-pink.jpg",
   bio: [
     "Dancing since childhood, Anastasiia is a choreographer with her own dance project — she performs on stage and organizes concerts with her own group.",
     "And here is the part that matters for you: that group is everyday women, just like you. She has taught them for years — her choreography ranges from feminine styles to sporty, sneakers-on routines.",
@@ -40,7 +40,7 @@ function fallbackPhoto(): string | null {
 
 export default function HomeInstructor({
   photo: photoOverride,
-  aspectClass = "aspect-[1405/1600]",
+  aspectClass = "aspect-[4/5]",
 }: {
   /** Override the photo (e.g. the portrait crop on /challenge). */
   photo?: string;

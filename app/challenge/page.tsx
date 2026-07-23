@@ -399,19 +399,17 @@ export default async function ChallengePage({
         </section>
       )}
 
-      {/* Pricing card — paired with a joyful shot so the money moment stays human */}
-      <section className="mx-auto max-w-4xl px-4 py-12">
-        <div className="grid items-center gap-8 md:grid-cols-2">
-          <div className="relative hidden aspect-[2/3] overflow-hidden rounded-2xl border border-pink-100 shadow-sm md:block">
-            <Image
-              src="/challenge-joy.jpg"
-              alt="Anastasiia mid-jump, smiling"
-              fill
-              sizes="24rem"
-              className="object-cover"
-            />
-          </div>
-          <div className="rounded-2xl border-2 border-pink-200 bg-white p-8 text-center shadow-sm">
+      {/* Pricing — the card lives INSIDE the photo; she points right at it */}
+      <section className="relative overflow-hidden">
+        <Image
+          src="/challenge-pricing-bg.jpg"
+          alt=""
+          fill
+          sizes="100vw"
+          className="object-cover object-[75%_center]"
+        />
+        <div className="relative mx-auto max-w-5xl px-4 py-16 md:py-24">
+          <div className="max-w-md rounded-2xl border-2 border-pink-200 bg-white/95 p-8 text-center shadow-lg backdrop-blur-sm">
           <h2 className="font-display text-3xl font-light text-gray-900">{title}</h2>
           <p className="mt-1 text-sm text-muted-foreground">
             One-time purchase · 1 year of access
@@ -441,7 +439,7 @@ export default async function ChallengePage({
               className="h-12 w-full bg-gradient-to-r from-pink-500 to-rose-400 text-base font-semibold text-white hover:from-pink-600 hover:to-rose-500"
             />
           </div>
-        </div>
+          </div>
         </div>
       </section>
 
