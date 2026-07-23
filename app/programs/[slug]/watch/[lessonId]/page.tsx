@@ -1,6 +1,6 @@
 import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
-import { formatPrice } from "@/lib/challenge";
+import { CHALLENGE_SLUG, formatPrice, mergeCanonicalItems } from "@/lib/challenge";
 import { getProgramData } from "../../data";
 import { WatchView, type WatchLessonFeedback } from "@/components/programs/watch-view";
 
@@ -76,13 +76,23 @@ export default async function WatchPage({
     }
   }
 
+  // The challenge always presents its full canonical 3×5 structure — the rail
+  // tells the same 15-session story as the sales page, with not-yet-uploaded
+  // days shown as "coming soon" rather than silently missing.
+  const items =
+    slug === CHALLENGE_SLUG
+      ? mergeCanonicalItems(data.items, data.product.id).map((it) =>
+          it.workout ? it : { ...it, item_label: `Day ${it.day_number}` }
+        )
+      : data.items;
+
   return (
     <WatchView
       slug={slug}
       productId={data.product.id}
       programTitle={data.product.title}
       instructorName={data.instructor?.displayName ?? null}
-      items={data.items}
+      items={items}
       currentContentId={lessonId}
       owned={data.owned}
       isOwnerInstructor={data.isOwnerInstructor}

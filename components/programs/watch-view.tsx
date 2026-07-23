@@ -346,7 +346,7 @@ export function WatchView({
                   next={watchPath(currentContentId)}
                   returnPath={watchPath(currentContentId)}
                   ownedHref={watchPath(currentContentId)}
-                  label={`Unlock all ${items.length} lessons — ${priceLabel}`}
+                  label={`Unlock the full program — ${priceLabel}`}
                   className="h-12 rounded-full bg-gradient-to-r from-pink-500 to-rose-400 px-8 text-base font-semibold text-white hover:from-pink-600 hover:to-rose-500"
                 />
                 <p className="text-sm text-gray-600">
@@ -395,6 +395,7 @@ export function WatchView({
               {items.map((it, i) => {
                 const isCurrent = it.content_id === currentContentId;
                 const done = completed.has(it.content_id);
+                const comingSoon = it.content_id.startsWith("coming-soon-");
                 const playable =
                   !!it.workout && (owned || isOwnerInstructor || it.is_preview);
 
@@ -432,12 +433,16 @@ export function WatchView({
                         {it.item_label || it.workout?.title || `Lesson ${i + 1}`}
                       </span>
                       <span className="block text-xs text-gray-400">
-                        {formatDuration(it.workout?.durationInSeconds)}
+                        {comingSoon
+                          ? "Coming soon"
+                          : formatDuration(it.workout?.durationInSeconds)}
                       </span>
                     </span>
                     <span className="shrink-0">
                       {done ? (
                         <Check className="h-4 w-4 text-green-500" />
+                      ) : comingSoon ? (
+                        <Clock className="h-3.5 w-3.5 text-gray-300" />
                       ) : !playable ? (
                         <Lock className="h-3.5 w-3.5 text-gray-300" />
                       ) : null}
@@ -458,6 +463,8 @@ export function WatchView({
                       <Link href={watchPath(it.content_id)} className={rowClass}>
                         {inner}
                       </Link>
+                    ) : comingSoon ? (
+                      <div className={cn(rowClass, "opacity-60")}>{inner}</div>
                     ) : (
                       <Link
                         href={programPath}
