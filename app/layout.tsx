@@ -3,6 +3,7 @@ import HeaderNav from "@/components/header-nav";
 import { MobileMenu } from "@/components/mobile-menu";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/utils/supabase/server";
+import { CHALLENGE_SLUG } from "@/lib/challenge";
 import { Geist, Playfair_Display } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import Link from "next/link";
@@ -92,6 +93,27 @@ export default async function RootLayout({
     .in("status", ["live", "scheduled"]);
   const showClasses = !!liveClassCount;
 
+  // "Free Day 1" nav link deep-links into the watch page (plays for everyone).
+  let freeDayHref = "/challenge";
+  const { data: challengeProduct } = await supabase
+    .from("products")
+    .select("id")
+    .eq("slug", CHALLENGE_SLUG)
+    .eq("is_active", true)
+    .maybeSingle();
+  if (challengeProduct) {
+    const { data: preview } = await supabase
+      .from("product_items")
+      .select("content_id")
+      .eq("product_id", challengeProduct.id)
+      .eq("is_preview", true)
+      .limit(1)
+      .maybeSingle();
+    if (preview) {
+      freeDayHref = `/programs/${CHALLENGE_SLUG}/watch/${preview.content_id}`;
+    }
+  }
+
   return (
     <html lang="en" className={`${geistSans.className} ${playfair.variable}`} suppressHydrationWarning>
       <body className="bg-background text-foreground">
@@ -116,7 +138,7 @@ export default async function RootLayout({
                   {/* Navigation Links */}
                   <div className="flex items-center gap-2 md:gap-4 lg:gap-8">
                     {/* Authenticated user navigation */}
-                    <HeaderNav user={user} isInstructor={isInstructor} showClasses={showClasses} />
+                    <HeaderNav user={user} isInstructor={isInstructor} showClasses={showClasses} freeDayHref={freeDayHref} />
 
                     {/* Auth Buttons */}
                     <HeaderAuth />
@@ -143,7 +165,7 @@ export default async function RootLayout({
                     ) : null}
 
                     {/* Mobile Menu */}
-                    <MobileMenu user={user} isInstructor={isInstructor} showClasses={showClasses} />
+                    <MobileMenu user={user} isInstructor={isInstructor} showClasses={showClasses} freeDayHref={freeDayHref} />
                   </div>
                 </div>
               </nav>

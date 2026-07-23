@@ -12,9 +12,11 @@ interface MobileMenuProps {
   isInstructor: boolean;
   /** Show the Classes link only when live classes actually exist. */
   showClasses: boolean;
+  /** Deep link to the free Day 1 watch page (falls back to /challenge). */
+  freeDayHref: string;
 }
 
-export function MobileMenu({ user, isInstructor, showClasses }: MobileMenuProps) {
+export function MobileMenu({ user, isInstructor, showClasses, freeDayHref }: MobileMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
   const close = () => setIsOpen(false);
 
@@ -69,6 +71,9 @@ export function MobileMenu({ user, isInstructor, showClasses }: MobileMenuProps)
                 <>
                   <NavLink href="/challenge" onClick={close} className="text-base font-light py-2">
                     Challenge
+                  </NavLink>
+                  <NavLink href={freeDayHref} onClick={close} className="text-base font-light py-2">
+                    Free Day 1
                   </NavLink>
                   {showClasses && (
                     <NavLink href="/streams" onClick={close} className="text-base font-light py-2">

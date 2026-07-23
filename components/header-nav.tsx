@@ -6,6 +6,8 @@ interface HeaderNavProps {
   isInstructor: boolean;
   /** Show the Classes link only when live classes actually exist. */
   showClasses: boolean;
+  /** Deep link to the free Day 1 watch page (falls back to /challenge). */
+  freeDayHref: string;
 }
 
 /**
@@ -18,7 +20,7 @@ const LINK = "relative py-3 -my-3 text-sm font-light";
 const ACTIVE =
   "text-gray-900 after:absolute after:inset-x-0 after:-bottom-[1px] after:h-0.5 after:rounded-full after:bg-gradient-to-r after:from-pink-500 after:to-rose-400";
 
-export default function HeaderNav({ user, isInstructor, showClasses }: HeaderNavProps) {
+export default function HeaderNav({ user, isInstructor, showClasses, freeDayHref }: HeaderNavProps) {
   return (
     <div className="hidden md:flex items-center gap-3 lg:gap-6">
       {user ? (
@@ -41,6 +43,9 @@ export default function HeaderNav({ user, isInstructor, showClasses }: HeaderNav
           {/* Anonymous → lead with the offer */}
           <NavLink href="/challenge" className={LINK} activeClassName={ACTIVE}>
             Challenge
+          </NavLink>
+          <NavLink href={freeDayHref} className={LINK} activeClassName={ACTIVE}>
+            Free Day 1
           </NavLink>
           {showClasses && (
             <NavLink href="/streams" className={LINK} activeClassName={ACTIVE}>
