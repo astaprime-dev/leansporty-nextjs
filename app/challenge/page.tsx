@@ -16,6 +16,7 @@ import {
   ChallengeAutoCheckout,
 } from "@/components/challenge/cta";
 import { Alert } from "@/components/ui/alert";
+import HomeInstructor from "@/components/home-instructor";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { LeadCaptureForm } from "@/components/lead-capture-form";
@@ -213,6 +214,9 @@ export default async function ChallengePage({
           ))}
         </div>
       </section>
+
+      {/* The person guiding all 21 days */}
+      <HomeInstructor photo="/instructor-portrait.jpg" aspectClass="aspect-[970/1600]" />
 
       {/* Curriculum */}
       <section className="bg-pink-50/50 py-14">

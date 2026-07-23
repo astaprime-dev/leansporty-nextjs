@@ -36,13 +36,21 @@ function fallbackPhoto(): string | null {
   return `https://customer-${code}.cloudflarestream.com/${CHALLENGE_TRAILER_UID}/thumbnails/thumbnail.jpg?time=15s&height=1000`;
 }
 
-export default function HomeInstructor() {
-  const photo = INSTRUCTOR.photo ?? fallbackPhoto();
+export default function HomeInstructor({
+  photo: photoOverride,
+  aspectClass = "aspect-[1405/1600]",
+}: {
+  /** Override the photo (e.g. the portrait crop on /challenge). */
+  photo?: string;
+  /** Tailwind aspect class matching the photo's exact ratio. */
+  aspectClass?: string;
+} = {}) {
+  const photo = photoOverride ?? INSTRUCTOR.photo ?? fallbackPhoto();
 
   return (
     <section className="w-full px-6 py-16">
       <div className="mx-auto grid w-full max-w-5xl items-center gap-10 md:grid-cols-[2fr_3fr] md:gap-14">
-        <div className="relative aspect-[1405/1600] overflow-hidden rounded-2xl border border-pink-100 shadow-lg">
+        <div className={`relative ${aspectClass} overflow-hidden rounded-2xl border border-pink-100 shadow-lg`}>
           {photo && (
             <Image
               src={photo}
