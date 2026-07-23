@@ -210,7 +210,11 @@ export default async function ChallengePage({
               className="h-12 bg-gradient-to-r from-pink-500 to-rose-400 px-8 text-base font-semibold text-white hover:from-pink-600 hover:to-rose-500"
             />
             {!owned && (
-              <Button asChild variant="outline" className="h-12 px-8 text-base">
+              <Button
+                asChild
+                variant="brandOutline"
+                className="h-12 rounded-full px-8 text-base"
+              >
                 <Link href={tryDayHref}>Try Day 1 free</Link>
               </Button>
             )}
@@ -361,11 +365,12 @@ export default async function ChallengePage({
                     )}
                   </div>
                   <div className="relative z-10 bg-gradient-to-t from-black/70 to-transparent p-1.5 pt-4">
+                    <p className="truncate text-[10px] font-semibold text-white">
+                      {day.item?.workout?.title || "Session"}
+                    </p>
                     <p className="text-[9px] font-medium uppercase text-white/80">
                       Day {day.dayNumber}
-                    </p>
-                    <p className="text-[10px] font-semibold text-white">
-                      {duration ? `${duration} min` : "Session"}
+                      {duration ? ` · ${duration} min` : ""}
                     </p>
                   </div>
                 </div>
