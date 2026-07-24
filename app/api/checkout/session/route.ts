@@ -169,6 +169,10 @@ export async function POST(req: NextRequest) {
         ? {
             expires_at:
               Math.floor(Date.now() / 1000) + RECOVERY_EXPIRY_MINUTES * 60,
+            // One-time payments don't create a Customer by default ("guest
+            // customers") — create one so support lookups by email work and
+            // future membership subscriptions attach to the same record.
+            customer_creation: "always" as const,
           }
         : {}),
       ...(stripeAutomaticTax ? { automatic_tax: { enabled: true } } : {}),
