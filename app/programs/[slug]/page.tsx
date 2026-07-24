@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import type { Metadata } from "next";
 import { createClient } from "@/utils/supabase/server";
 import { Clock, Film, Play, Star } from "lucide-react";
@@ -11,6 +11,7 @@ import { ProgramGrid } from "@/components/challenge/program-grid";
 import { LessonList } from "@/components/programs/lesson-list";
 import { CheckoutButton, FinalizingAccess } from "@/components/challenge/cta";
 import {
+  CHALLENGE_SLUG,
   buildProgramDays,
   completedWorkoutDays,
   formatPrice,
@@ -83,6 +84,13 @@ export default async function ProgramPage({
 }) {
   const { slug } = await params;
   const { purchased } = await searchParams;
+
+  // The house challenge has a dedicated, much stronger sales page — this
+  // generic template is for self-serve instructor programs. Watch URLs under
+  // this slug are unaffected.
+  if (slug === CHALLENGE_SLUG) {
+    redirect(purchased ? `/challenge?purchased=${purchased}` : "/challenge");
+  }
 
   const data = await getProgramData(slug);
   if (!data) notFound();
