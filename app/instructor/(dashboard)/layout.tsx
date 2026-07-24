@@ -18,7 +18,7 @@ export default async function InstructorLayout({
 
   if (!user) {
     // Not logged in as regular user - redirect to main login with return URL
-    redirect("/?redirect=/instructor/activate");
+    redirect("/sign-in?redirect=/instructor");
   }
 
   // Check if instructor profile exists

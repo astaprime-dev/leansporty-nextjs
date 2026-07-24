@@ -8,7 +8,7 @@ export default async function AccountSettingsPage() {
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) {
-    return redirect("/");
+    return redirect("/sign-in?redirect=/settings");
   }
 
   // Get user profile if exists

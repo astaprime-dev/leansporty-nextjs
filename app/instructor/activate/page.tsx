@@ -10,7 +10,7 @@ export default async function InstructorActivatePage() {
 
   // NEW: Require authentication first
   if (!user) {
-    redirect("/?redirect=/instructor/activate");
+    redirect("/sign-in?redirect=/instructor/activate");
   }
 
   // Check if they already have instructor profile

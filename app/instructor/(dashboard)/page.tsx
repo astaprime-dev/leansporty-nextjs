@@ -15,7 +15,7 @@ export default async function InstructorDashboard() {
   // Check if user is authenticated
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) {
-    redirect("/?redirect=/instructor/activate");
+    redirect("/sign-in?redirect=/instructor");
   }
 
   // Check if instructor profile exists

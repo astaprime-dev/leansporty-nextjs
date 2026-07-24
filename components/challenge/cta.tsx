@@ -88,7 +88,11 @@ export function CheckoutButton({
 
   if (!isAuthenticated) {
     return (
-      <OAuthSignInModal next={next}>
+      <OAuthSignInModal
+        next={next}
+        title="One quick step before checkout"
+        description="Sign in or create your account — it's where your program will live. You'll go straight to payment after."
+      >
         <Button className={className}>{label}</Button>
       </OAuthSignInModal>
     );

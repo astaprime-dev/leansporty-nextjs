@@ -11,7 +11,7 @@ export default async function InstructorProfilePage() {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    redirect("/?redirect=/instructor/activate");
+    redirect("/sign-in?redirect=/instructor");
   }
 
   // Get instructor record (for slug, id, and timestamps)

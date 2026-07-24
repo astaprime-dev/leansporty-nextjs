@@ -13,10 +13,15 @@ import {
 export function OAuthSignInModal({
   children,
   next,
+  title = "Welcome to Lean Sporty",
+  description = "Sign in to access your workouts and track your progress",
 }: {
   children: React.ReactNode;
   /** Path to return to after auth (intent resume), e.g. a checkout flow. */
   next?: string;
+  /** Contextual copy — e.g. the checkout flow explains why an account first. */
+  title?: string;
+  description?: string;
 }) {
   return (
     <Dialog>
@@ -24,10 +29,10 @@ export function OAuthSignInModal({
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="text-2xl font-semibold text-center text-gray-900">
-            Welcome to Lean Sporty
+            {title}
           </DialogTitle>
           <DialogDescription className="text-center pt-2">
-            Sign in to access your workouts and track your progress
+            {description}
           </DialogDescription>
         </DialogHeader>
 
