@@ -158,6 +158,13 @@ export async function POST(req: NextRequest) {
       // Stripe page itself. A zero total needs no card and incurs no fees;
       // the webhook grants the entitlement exactly like a paid session.
       allow_promotion_codes: true,
+      // Required ToS checkbox — the EU withdrawal waiver lives in /terms §5,
+      // so ticking it is the buyer's express consent (Stripe records it),
+      // which is what makes the no-refunds policy hold up, not just the
+      // custom_text disclosure below. Requires the Terms of Service URL to
+      // be set in Stripe Dashboard → Settings → Business → Public details;
+      // without it every session creation fails.
+      consent_collection: { terms_of_service: "required" },
       metadata, // product_id, product_slug (+ expires_at for time-boxed grants)
       success_url: safeReturnPath
         ? `${origin}${safeReturnPath}${safeReturnPath.includes("?") ? "&" : "?"}purchased=1&sid={CHECKOUT_SESSION_ID}`
