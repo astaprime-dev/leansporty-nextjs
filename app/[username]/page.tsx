@@ -16,44 +16,50 @@ interface ProfilePageProps {
   }>;
 }
 
+/**
+ * This catch-all receives every unmatched path — including browser/bot
+ * requests for assets (apple-touch-icon-precomposed.png, favicon variants,
+ * robots probes). Anything with a file extension can't be a username: 404
+ * immediately instead of burning DB queries on it.
+ */
+function looksLikeAssetPath(slug: string): boolean {
+  return /\.[a-z0-9]{1,5}$/i.test(slug);
+}
+
 export async function generateMetadata({
   params,
 }: ProfilePageProps): Promise<Metadata> {
   try {
     const { username } = await params;
     const slug = username;
+    if (looksLikeAssetPath(slug)) {
+      return { title: "Profile | Lean Sporty" };
+    }
     const supabase = await createClient();
 
-    // Check if it's an instructor profile first
-    const { data: instructor, error: instructorError } = await supabase
+    // Check if it's an instructor profile first. maybeSingle: a miss is a
+    // normal 404 (bots, typos), not an error worth logging.
+    const { data: instructor } = await supabase
       .from("instructors")
       .select("id, user_id, slug")
       .eq("slug", slug)
-      .single();
+      .maybeSingle();
 
     // Get the user profile data
     let userProfile = null;
     if (instructor) {
-      const { data, error } = await supabase
+      const { data } = await supabase
         .from("user_profiles")
         .select("display_name, bio")
         .eq("user_id", instructor.user_id)
-        .single();
-
-      if (error) {
-        console.error("Error fetching instructor user profile:", error);
-      }
+        .maybeSingle();
       userProfile = data;
     } else {
-      const { data, error } = await supabase
+      const { data } = await supabase
         .from("user_profiles")
         .select("display_name, bio")
         .eq("username", slug)
-        .single();
-
-      if (error) {
-        console.error("Error fetching user profile:", error);
-      }
+        .maybeSingle();
       userProfile = data;
     }
 
@@ -86,6 +92,7 @@ export default async function ProfilePage({
   // Note: The @ prefix is stripped by the rewrite rule in next.config.ts
   // So username here is just the slug without @
   const slug = username;
+  if (looksLikeAssetPath(slug)) notFound();
 
   const supabase = await createClient();
 
@@ -94,7 +101,7 @@ export default async function ProfilePage({
     .from("instructors")
     .select("id, user_id, slug")
     .eq("slug", slug)
-    .single();
+    .maybeSingle();
 
   // Get the user profile data
   let userProfile = null;
@@ -104,7 +111,7 @@ export default async function ProfilePage({
       .from("user_profiles")
       .select("*")
       .eq("user_id", instructor.user_id)
-      .single();
+      .maybeSingle();
     userProfile = data;
   } else {
     // Regular user: get profile by username
@@ -112,7 +119,7 @@ export default async function ProfilePage({
       .from("user_profiles")
       .select("*")
       .eq("username", slug)
-      .single();
+      .maybeSingle();
     userProfile = data;
   }
 
