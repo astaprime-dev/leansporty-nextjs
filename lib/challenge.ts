@@ -16,7 +16,7 @@ export const CHALLENGE_SLUG = "21-day-dance-challenge";
  * the free taste. If catalog videos ever get requireSignedURLs, upload a
  * dedicated public trailer and point this at it.
  */
-export const CHALLENGE_TRAILER_UID = "5f8fe5b3fc6136b494904cea9a04bf61";
+export const CHALLENGE_TRAILER_UID = "d132dd561513f951dacdb562d363e23b";
 export const DEFAULT_PROGRAM_LENGTH_DAYS = 21;
 export const DEFAULT_PRICE_CENTS = 4900;
 export const DEFAULT_WORKOUT_COUNT = 15;
