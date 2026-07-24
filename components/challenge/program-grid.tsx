@@ -28,6 +28,9 @@ interface ProgramGridProps {
   /** When set, playable days NAVIGATE to `${watchBasePath}/${contentId}`
    *  (the watch page) instead of opening the in-page modal. */
   watchBasePath?: string;
+  /** Hide the grid's own Start/Continue pill (e.g. when the page renders a
+   *  dedicated today-card above). */
+  hideStartCta?: boolean;
 }
 
 interface OpenState {
@@ -42,6 +45,7 @@ export function ProgramGrid({
   paywallHref = "/challenge",
   revalidatePath = "/my-program",
   watchBasePath,
+  hideStartCta = false,
 }: ProgramGridProps) {
   const router = useRouter();
   const [open, setOpen] = useState<OpenState | null>(null);
@@ -82,7 +86,7 @@ export function ProgramGrid({
 
   return (
     <div className="flex flex-col gap-6">
-      {startCta?.item?.workout && (
+      {!hideStartCta && startCta?.item?.workout && (
         <Button
           variant="brand"
           className="self-start"

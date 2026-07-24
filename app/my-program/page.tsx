@@ -1,4 +1,6 @@
 import Link from "next/link";
+import Image from "next/image";
+import { Play } from "lucide-react";
 import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
 import { getChallengeData } from "@/app/challenge/data";
@@ -12,9 +14,11 @@ import {
   CHALLENGE_SLUG,
   buildProgramDays,
   completedWorkoutDays,
+  formatDuration,
   formatPrice,
   isDripEnabled,
   mergeCanonicalItems,
+  nextActionableDay,
   programLengthDays,
   totalWorkoutDays,
 } from "@/lib/challenge";
@@ -94,76 +98,165 @@ export default async function MyProgramPage({
   const done = completedWorkoutDays(days);
   const pct = total > 0 ? Math.round((done / total) * 100) : 0;
 
+  // Today's session: the first not-yet-completed playable day.
+  const nextDay = owned ? nextActionableDay(days) : null;
+  const nextWorkout = nextDay?.item?.workout ?? null;
+
+  // Anastasiia's nudge + the milestone line, keyed to progress (5-session weeks).
+  const nudge =
+    done === 0
+      ? "We start easy — see you at Day 1."
+      : done >= total
+        ? "You did the whole thing. I'm so proud of you."
+        : done < 5
+          ? "The first week builds the habit. Keep going."
+          : done < 10
+            ? "Week two — this is where it starts to feel natural."
+            : "Final week. Finish strong — I'm with you.";
+  const toWeek = 5 - (done % 5);
+  const weekNo = Math.floor(done / 5) + 1;
+  const milestone =
+    done >= total
+      ? "You finished the challenge — amazing work!"
+      : !nextWorkout && done > 0
+        ? "Every available session is done — the final sessions land soon."
+        : `${toWeek} session${toWeek === 1 ? "" : "s"} to finish Week ${weekNo}.`;
+
   return (
-    <div className="mx-auto max-w-5xl px-4 py-10">
-      {/* Post-checkout: poll for the async webhook grant so no paywall flashes. */}
-      {purchased === "1" && !owned && <FinalizingAccess slug={CHALLENGE_SLUG} />}
+    <div className="w-full">
+      {/* Warm hero band — same brand world as the sales pages. */}
+      <section className="bg-gradient-to-b from-pink-50 to-white">
+        <div className="mx-auto max-w-5xl px-4 pb-8 pt-10">
+          {/* Post-checkout: poll for the async webhook grant so no paywall flashes. */}
+          {purchased === "1" && !owned && <FinalizingAccess slug={CHALLENGE_SLUG} />}
 
-      {/* ...and once it lands, celebrate — she just bought, greet the moment. */}
-      {purchased === "1" && owned && (
-        <PurchaseCelebration
-          heading="You're in — welcome to the challenge"
-          message="Payment confirmed. Every session is yours for a full year — no rush, no pressure. Day 1 is right below whenever you're ready."
-          clearPath="/my-program"
-        />
-      )}
+          {/* ...and once it lands, celebrate — she just bought, greet the moment. */}
+          {purchased === "1" && owned && (
+            <PurchaseCelebration
+              heading="You're in — welcome to the challenge"
+              message="Payment confirmed. Every session is yours for a full year — no rush, no pressure. Day 1 is right below whenever you're ready."
+              clearPath="/my-program"
+            />
+          )}
 
-      <header className="mb-8">
-        <h1 className="font-display text-3xl sm:text-4xl font-light text-gray-900">{product.title}</h1>
-        {owned ? (
-          <div className="mt-4">
-            <div className="flex items-center justify-between text-sm text-muted-foreground">
-              <span>
-                {done} of {total} sessions complete
-              </span>
-              <span>{pct}%</span>
-            </div>
-            <div className="mt-1 h-2 w-full overflow-hidden rounded-full bg-pink-100">
-              <div
-                className="h-full rounded-full bg-gradient-to-r from-pink-500 to-rose-400 transition-all"
-                style={{ width: `${pct}%` }}
-              />
-            </div>
-            <p className="mt-3 text-sm text-muted-foreground">
-              {done === 0
-                ? "Ready when you are — start with Day 1."
-                : done >= total
-                  ? "You finished the challenge — amazing work!"
-                  : "Keep the momentum going — your next session is ready."}
-            </p>
-            {accessUntil && (
-              <p className="mt-1 text-xs text-muted-foreground">
-                Access until {accessUntil}
-              </p>
+          <header>
+            <h1 className="font-display text-3xl sm:text-4xl font-light text-gray-900">{product.title}</h1>
+            {owned ? (
+              <div className="mt-5">
+                <div className="flex items-center justify-between text-sm text-muted-foreground">
+                  <span>
+                    {done} of {total} sessions complete
+                  </span>
+                  <span>{pct}%</span>
+                </div>
+                {/* Week markers at 5 and 10 sessions — progress with milestones. */}
+                <div className="relative mt-1.5 h-2.5 w-full overflow-hidden rounded-full bg-pink-100">
+                  <div
+                    className="h-full rounded-full bg-gradient-to-r from-pink-500 to-rose-400 transition-all"
+                    style={{ width: `${pct}%` }}
+                  />
+                  <div className="absolute inset-y-0 left-1/3 w-px bg-white/80" />
+                  <div className="absolute inset-y-0 left-2/3 w-px bg-white/80" />
+                </div>
+                <p className="mt-3 text-sm text-gray-600">{milestone}</p>
+                {accessUntil && (
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    Access until {accessUntil}
+                  </p>
+                )}
+
+                {/* Anastasiia's nudge — a trainer who noticed, not a dashboard. */}
+                <div className="mt-5 flex items-center gap-3">
+                  <Image
+                    src="/instructor-pink.jpg"
+                    alt="Anastasiia"
+                    width={40}
+                    height={40}
+                    className="h-10 w-10 rounded-full object-cover object-[50%_20%]"
+                  />
+                  <p className="text-sm text-gray-600">
+                    {nudge} <span className="text-gray-400">— Anastasiia</span>
+                  </p>
+                </div>
+
+                {done >= total && total > 0 && (
+                  <Button asChild variant="brandOutline" className="mt-4">
+                    <Link href="/streams">
+                      What&apos;s next? Join a live class →
+                    </Link>
+                  </Button>
+                )}
+              </div>
+            ) : (
+              <Alert variant="info" className="mt-4">
+                <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
+                  <p>
+                    Day 1 is free to try. Unlock all sessions with a full year of access.
+                  </p>
+                  <Button asChild variant="brand">
+                    <Link href="/challenge">Unlock the full challenge — {priceLabel}</Link>
+                  </Button>
+                </div>
+              </Alert>
             )}
-            {done >= total && total > 0 && (
-              <Button asChild variant="brandOutline" className="mt-4">
-                <Link href="/streams">
-                  What&apos;s next? Join a live class →
-                </Link>
-              </Button>
-            )}
-          </div>
-        ) : (
-          <Alert variant="info" className="mt-4">
-            <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <p>
-                Day 1 is free to try. Unlock all sessions with a full year of access.
-              </p>
-              <Button asChild variant="brand">
-                <Link href="/challenge">Unlock the full challenge — {priceLabel}</Link>
-              </Button>
-            </div>
-          </Alert>
-        )}
-      </header>
+          </header>
 
+          {/* Today's session — the one unmistakable action. */}
+          {owned && nextDay && nextWorkout && (
+            <Link
+              href={`/programs/${CHALLENGE_SLUG}/watch/${nextDay.item!.content_id}`}
+              className="group mt-6 block overflow-hidden rounded-2xl border border-pink-100 bg-white shadow-sm transition-all hover:border-pink-300 hover:shadow-md"
+            >
+              <div className="flex flex-col sm:flex-row">
+                <div className="relative aspect-video shrink-0 sm:w-80">
+                  {nextWorkout.thumbnailUrl ? (
+                    <Image
+                      src={nextWorkout.thumbnailUrl}
+                      alt={nextWorkout.title ?? `Day ${nextDay.dayNumber}`}
+                      fill
+                      sizes="(min-width: 640px) 20rem, 100vw"
+                      className="object-cover"
+                    />
+                  ) : (
+                    <div className="h-full w-full bg-gradient-to-br from-pink-50 to-rose-50" />
+                  )}
+                  <span className="absolute inset-0 flex items-center justify-center">
+                    <span className="flex h-14 w-14 items-center justify-center rounded-full bg-white/90 shadow-md transition-transform group-hover:scale-110">
+                      <Play className="ml-0.5 h-6 w-6 text-pink-500" />
+                    </span>
+                  </span>
+                </div>
+                <div className="flex flex-1 flex-col justify-center gap-1.5 p-5 sm:p-6">
+                  <p className="text-xs font-semibold uppercase tracking-widest text-pink-500">
+                    {done === 0 ? "Start here" : "Up next"} · Day {nextDay.dayNumber}
+                  </p>
+                  <h2 className="font-display text-2xl font-light text-gray-900 sm:text-3xl">
+                    {nextWorkout.title}
+                  </h2>
+                  <p className="text-sm text-gray-500">
+                    {formatDuration(nextWorkout.durationInSeconds)} min
+                    {nextWorkout.calories ? ` · ~${nextWorkout.calories} kcal` : ""}
+                  </p>
+                  <span className="mt-3 inline-flex h-11 w-fit items-center rounded-full bg-gradient-to-r from-pink-500 to-rose-400 px-6 font-semibold text-white transition-colors group-hover:from-pink-600 group-hover:to-rose-500">
+                    <Play className="mr-2 h-4 w-4" />
+                    {done === 0
+                      ? `Start Day ${nextDay.dayNumber}`
+                      : `Continue — Day ${nextDay.dayNumber}`}
+                  </span>
+                </div>
+              </div>
+            </Link>
+          )}
+        </div>
+      </section>
+
+      <div className="mx-auto max-w-5xl px-4 py-8">
       {/* The challenge is a program owned by the house instructor; owned users
           watch lessons on the shared watch page (playlist, feedback, reviews). */}
       <ProgramGrid
         days={days}
         priceLabel={priceLabel}
-        {...(owned ? { watchBasePath: `/programs/${CHALLENGE_SLUG}/watch` } : {})}
+        {...(owned ? { watchBasePath: `/programs/${CHALLENGE_SLUG}/watch`, hideStartCta: true } : {})}
       />
 
       {ownedPrograms && ownedPrograms.length > 0 && (
@@ -203,6 +296,7 @@ export default async function MyProgramPage({
           </div>
         </section>
       )}
+      </div>
     </div>
   );
 }

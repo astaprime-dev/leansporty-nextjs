@@ -39,7 +39,7 @@ export async function getChallengeData(): Promise<ChallengeData | null> {
   const { data: rawItems } = await supabase
     .from("product_items")
     .select(
-      "product_id, content_id, position, day_number, is_preview, item_label, workout:workouts(id, title, subtitle, durationInSeconds, thumbnailUrl)"
+      "product_id, content_id, position, day_number, is_preview, item_label, workout:workouts(id, title, subtitle, durationInSeconds, thumbnailUrl, calories)"
     )
     .eq("product_id", product.id)
     .order("position", { ascending: true });
