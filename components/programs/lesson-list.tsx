@@ -165,9 +165,11 @@ export function LessonList({
               <p className="truncate font-medium text-gray-900">
                 {item.item_label || workout?.title || "Session"}
               </p>
+              {/* Never repeat the price per row — it reads as a per-lesson
+                  price. The page's single buy CTA carries the number. */}
               <p className="text-sm text-gray-500">
                 {locked
-                  ? `Unlock for ${priceLabel}`
+                  ? "Included in the full program"
                   : formatDuration(workout?.durationInSeconds) || "Follow-along session"}
               </p>
               {!!workout?.subtitle && (
