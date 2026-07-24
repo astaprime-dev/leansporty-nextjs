@@ -49,11 +49,22 @@ export async function sendContactMessage(
   }
 
   try {
+    // Formatting matters for deliverability of self-notifications: no raw
+    // email address in the subject, and no "From:" line in the body (a body
+    // claiming a different sender than the envelope reads as phishing).
     await sendEmail({
       to: inbox,
       replyTo: email,
-      subject: `Contact form: ${name || email}`,
-      html: `<p><strong>From:</strong> ${escapeHtml(name)} &lt;${escapeHtml(email)}&gt;</p><p style="white-space:pre-wrap">${escapeHtml(message)}</p>`,
+      subject: `New contact form message${name ? ` from ${name}` : ""}`,
+      html: `
+        <div style="font-family:sans-serif;max-width:560px">
+          <h2 style="font-size:16px">New message via the Lean Sporty contact form</h2>
+          <p style="white-space:pre-wrap;border-left:3px solid #ec4899;padding-left:12px">${escapeHtml(message)}</p>
+          <p style="color:#6b7280;font-size:13px">
+            Sent by ${escapeHtml(name || "a visitor")} (${escapeHtml(email)}).
+            Just hit reply — it goes straight to them.
+          </p>
+        </div>`,
     });
   } catch (err) {
     console.error("Contact form send failed:", err);
