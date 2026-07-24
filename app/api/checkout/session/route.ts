@@ -173,6 +173,9 @@ export async function POST(req: NextRequest) {
             // customers") — create one so support lookups by email work and
             // future membership subscriptions attach to the same record.
             customer_creation: "always" as const,
+            // Numbered Stripe invoice per sale — the accountant's source of
+            // truth. (Subscription-mode sessions invoice inherently.)
+            invoice_creation: { enabled: true },
           }
         : {}),
       ...(stripeAutomaticTax ? { automatic_tax: { enabled: true } } : {}),
