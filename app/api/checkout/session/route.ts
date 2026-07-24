@@ -154,6 +154,10 @@ export async function POST(req: NextRequest) {
       ],
       client_reference_id: user.id, // entitlement owner
       customer_email: user.email ?? undefined,
+      // Promo codes (e.g. 100%-off friends/reviewer comps): entered on the
+      // Stripe page itself. A zero total needs no card and incurs no fees;
+      // the webhook grants the entitlement exactly like a paid session.
+      allow_promotion_codes: true,
       metadata, // product_id, product_slug (+ expires_at for time-boxed grants)
       success_url: safeReturnPath
         ? `${origin}${safeReturnPath}${safeReturnPath.includes("?") ? "&" : "?"}purchased=1&sid={CHECKOUT_SESSION_ID}`
