@@ -102,6 +102,56 @@ export default async function MyProgramPage({
   const nextDay = owned ? nextActionableDay(days) : null;
   const nextWorkout = nextDay?.item?.workout ?? null;
 
+  // Resume-aware Today card: same thresholds as the watch page's resume logic —
+  // a session left mid-way says "Resume — X min left" instead of a generic
+  // Continue, proving the site remembered where she stopped.
+  let resumeMinutesLeft: number | null = null;
+  if (nextWorkout) {
+    const { data: prog } = await supabase
+      .from("workout_progress")
+      .select("last_position_seconds, completed_at")
+      .eq("user_id", user.id)
+      .eq("workout_id", nextWorkout.id)
+      .maybeSingle();
+    const pos = prog?.last_position_seconds ?? 0;
+    const dur = nextWorkout.durationInSeconds ?? 0;
+    if (!prog?.completed_at && pos >= 30 && dur > 0 && pos < dur - 20) {
+      resumeMinutesLeft = Math.max(1, Math.round((dur - pos) / 60));
+    }
+  }
+
+  // "This week" momentum line: completions since Monday (calendar week), valued
+  // with the program's own durations/calories. Only rendered once something
+  // actually happened this week — an empty line would read as a reproach.
+  let weekLine: string | null = null;
+  if (owned && done > 0) {
+    const monday = new Date();
+    monday.setUTCHours(0, 0, 0, 0);
+    monday.setUTCDate(monday.getUTCDate() - ((monday.getUTCDay() + 6) % 7));
+    const { data: weekRows } = await supabase
+      .from("workout_progress")
+      .select("workout_id")
+      .eq("user_id", user.id)
+      .gte("completed_at", monday.toISOString());
+    const workoutById = new Map(
+      days.flatMap((d) =>
+        d.item?.workout ? [[d.item.content_id, d.item.workout] as const] : []
+      )
+    );
+    const doneThisWeek = (weekRows ?? []).flatMap(
+      (r) => workoutById.get(r.workout_id) ?? []
+    );
+    if (doneThisWeek.length > 0) {
+      const mins = Math.round(
+        doneThisWeek.reduce((s, w) => s + (w.durationInSeconds ?? 0), 0) / 60
+      );
+      const kcal = doneThisWeek.reduce((s, w) => s + (w.calories ?? 0), 0);
+      weekLine = `This week: ${doneThisWeek.length} session${
+        doneThisWeek.length === 1 ? "" : "s"
+      } · ${mins} min${kcal ? ` · ~${kcal} kcal` : ""}`;
+    }
+  }
+
   // Review prompt: after Week 1 (5 sessions), if she hasn't reviewed yet.
   // Reviews feed the /challenge social-proof section (visible from 3 reviews).
   let showReviewPrompt = false;
@@ -177,6 +227,9 @@ export default async function MyProgramPage({
                   <div className="absolute inset-y-0 left-2/3 w-px bg-white/80" />
                 </div>
                 <p className="mt-3 text-sm text-gray-600">{milestone}</p>
+                {weekLine && (
+                  <p className="mt-1 text-sm text-gray-600">{weekLine}</p>
+                )}
                 {accessUntil && (
                   <p className="mt-1 text-xs text-muted-foreground">
                     Access until {accessUntil}
@@ -248,7 +301,12 @@ export default async function MyProgramPage({
                 </div>
                 <div className="flex flex-1 flex-col justify-center gap-1.5 p-5 sm:p-6">
                   <p className="text-xs font-semibold uppercase tracking-widest text-pink-500">
-                    {done === 0 ? "Start here" : "Up next"} · Day {nextDay.dayNumber}
+                    {resumeMinutesLeft
+                      ? "In progress"
+                      : done === 0
+                        ? "Start here"
+                        : "Up next"}{" "}
+                    · Day {nextDay.dayNumber}
                   </p>
                   <h2 className="font-display text-2xl font-light text-gray-900 sm:text-3xl">
                     {nextWorkout.title}
@@ -259,9 +317,11 @@ export default async function MyProgramPage({
                   </p>
                   <span className="mt-3 inline-flex h-11 w-fit items-center rounded-full bg-gradient-to-r from-pink-500 to-rose-400 px-6 font-semibold text-white transition-colors group-hover:from-pink-600 group-hover:to-rose-500">
                     <Play className="mr-2 h-4 w-4" />
-                    {done === 0
-                      ? `Start Day ${nextDay.dayNumber}`
-                      : `Continue — Day ${nextDay.dayNumber}`}
+                    {resumeMinutesLeft
+                      ? `Resume Day ${nextDay.dayNumber} — ${resumeMinutesLeft} min left`
+                      : done === 0
+                        ? `Start Day ${nextDay.dayNumber}`
+                        : `Continue — Day ${nextDay.dayNumber}`}
                   </span>
                 </div>
               </div>
