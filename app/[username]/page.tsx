@@ -39,27 +39,32 @@ export async function generateMetadata({
 
     // Check if it's an instructor profile first. maybeSingle: a miss is a
     // normal 404 (bots, typos), not an error worth logging.
-    const { data: instructor } = await supabase
+    const { data: instructor, error: instructorError } = await supabase
       .from("instructors")
       .select("id, user_id, slug")
       .eq("slug", slug)
       .maybeSingle();
+    // maybeSingle: a miss is data=null with NO error — anything in `error`
+    // is a real failure (DB, RLS, duplicates) and must stay loud.
+    if (instructorError) console.error("Instructor lookup failed:", instructorError);
 
     // Get the user profile data
     let userProfile = null;
     if (instructor) {
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from("user_profiles")
         .select("display_name, bio")
         .eq("user_id", instructor.user_id)
         .maybeSingle();
+      if (error) console.error("Instructor profile lookup failed:", error);
       userProfile = data;
     } else {
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from("user_profiles")
         .select("display_name, bio")
         .eq("username", slug)
         .maybeSingle();
+      if (error) console.error("User profile lookup failed:", error);
       userProfile = data;
     }
 
@@ -97,29 +102,32 @@ export default async function ProfilePage({
   const supabase = await createClient();
 
   // Check if it's an instructor profile first (by slug)
-  const { data: instructor } = await supabase
+  const { data: instructor, error: instructorError } = await supabase
     .from("instructors")
     .select("id, user_id, slug")
     .eq("slug", slug)
     .maybeSingle();
+  if (instructorError) console.error("Instructor lookup failed:", instructorError);
 
   // Get the user profile data
   let userProfile = null;
   if (instructor) {
     // Instructor: get profile data by user_id
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from("user_profiles")
       .select("*")
       .eq("user_id", instructor.user_id)
       .maybeSingle();
+    if (error) console.error("Instructor profile lookup failed:", error);
     userProfile = data;
   } else {
     // Regular user: get profile by username
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from("user_profiles")
       .select("*")
       .eq("username", slug)
       .maybeSingle();
+    if (error) console.error("User profile lookup failed:", error);
     userProfile = data;
   }
 
