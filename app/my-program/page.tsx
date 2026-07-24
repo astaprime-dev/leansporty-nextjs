@@ -102,7 +102,7 @@ export default async function MyProgramPage({
       {/* ...and once it lands, celebrate — she just bought, greet the moment. */}
       {purchased === "1" && owned && (
         <PurchaseCelebration
-          heading="You're in — welcome to the challenge! 🎉"
+          heading="You're in — welcome to the challenge"
           message="Payment confirmed. Every session is yours for a full year — no rush, no pressure. Day 1 is right below whenever you're ready."
           clearPath="/my-program"
         />
@@ -128,7 +128,7 @@ export default async function MyProgramPage({
               {done === 0
                 ? "Ready when you are — start with Day 1."
                 : done >= total
-                  ? "You finished the challenge — amazing work! 🎉"
+                  ? "You finished the challenge — amazing work!"
                   : "Keep the momentum going — your next session is ready."}
             </p>
             {accessUntil && (

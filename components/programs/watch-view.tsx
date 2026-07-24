@@ -186,7 +186,7 @@ export function WatchView({
 
       {justPurchased && (
         <PurchaseCelebration
-          heading="You're in — welcome! 🎉"
+          heading="You're in — welcome"
           message="Payment confirmed. The whole program is unlocked — enjoy every session."
           clearPath={watchPath(currentContentId)}
         />
