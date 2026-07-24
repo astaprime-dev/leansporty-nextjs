@@ -209,6 +209,9 @@ export function getIframeEmbedURL(
     loop: loop ? 'true' : 'false',
     controls: controls ? 'true' : 'false',
     preload: preload ? 'true' : 'false',
+    // Sub-pixel letterboxing paints white (invisible on studio footage),
+    // not the player's default black.
+    letterboxColor: '#ffffff',
   });
 
   const customerCode = process.env.NEXT_PUBLIC_CLOUDFLARE_STREAM_CUSTOMER_CODE;

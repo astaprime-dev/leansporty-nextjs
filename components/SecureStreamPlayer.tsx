@@ -103,7 +103,9 @@ export function SecureStreamPlayer({
         const resume =
           startTime && startTime > 0 ? `&startTime=${Math.floor(startTime)}s` : "";
         const auto = autoplay ? "&autoplay=true" : "";
-        setSrc(`${iframe}?controls=true${resume}${auto}`);
+        // letterboxColor: sub-pixel letterboxing (Safari at fractional sizes)
+        // paints white instead of the player's default black.
+        setSrc(`${iframe}?controls=true&letterboxColor=%23ffffff${resume}${auto}`);
         setMark(watermark ?? "");
       }
     })();

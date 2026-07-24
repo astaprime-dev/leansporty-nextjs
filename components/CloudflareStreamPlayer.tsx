@@ -51,6 +51,9 @@ export function CloudflareStreamPlayer({
       muted: muted ? "true" : "false",
       controls: controls ? "true" : "false",
       preload: "auto",
+      // Sub-pixel letterboxing paints white (invisible on studio footage),
+      // not the player's default black.
+      letterboxColor: "#ffffff",
     });
 
     if (poster) {
