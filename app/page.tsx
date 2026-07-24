@@ -24,6 +24,7 @@ export const metadata = {
 };
 import { LeadCaptureForm } from "@/components/lead-capture-form";
 import { createClient } from "@/utils/supabase/server";
+import { redirect } from "next/navigation";
 import { CHALLENGE_SLUG, DEFAULT_PRICE_CENTS, formatPrice } from "@/lib/challenge";
 
 export default async function Home() {
@@ -77,6 +78,10 @@ export default async function Home() {
       owned = !!ent;
     }
   }
+
+  // Buyers land straight in their training (the daily-habit ergonomic);
+  // signed-in prospects still get the full marketing page.
+  if (owned) redirect("/my-program");
 
   return (
     <div className="w-full">
