@@ -1,7 +1,31 @@
 "use client";
 
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { PartyPopper, X } from "lucide-react";
+
+/** Two soft confetti bursts in brand colors — celebratory, not carnival. */
+async function fireConfetti() {
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const confetti = (await import("canvas-confetti")).default;
+  const colors = ["#ec4899", "#fb7185", "#fda4af", "#ffffff"];
+  confetti({
+    particleCount: 70,
+    angle: 60,
+    spread: 60,
+    origin: { x: 0, y: 0.6 },
+    colors,
+    disableForReducedMotion: true,
+  });
+  confetti({
+    particleCount: 70,
+    angle: 120,
+    spread: 60,
+    origin: { x: 1, y: 0.6 },
+    colors,
+    disableForReducedMotion: true,
+  });
+}
 
 /**
  * The post-purchase moment: she just bought — greet it like the occasion it
@@ -20,6 +44,11 @@ export function PurchaseCelebration({
   clearPath: string;
 }) {
   const router = useRouter();
+
+  useEffect(() => {
+    void fireConfetti();
+  }, []);
+
   return (
     <div className="animate-fade-up relative mb-6 overflow-hidden rounded-2xl bg-gradient-to-r from-pink-500 to-rose-400 p-5 text-white shadow-lg sm:p-6">
       {/* soft glow accents */}
