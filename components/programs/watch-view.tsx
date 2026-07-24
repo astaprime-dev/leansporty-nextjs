@@ -439,7 +439,7 @@ export function WatchView({
                     <span className="w-5 shrink-0 text-center text-xs text-gray-400">
                       {isCurrent ? (
                         <Play className="mx-auto h-3.5 w-3.5 text-pink-500" />
-                      ) : (
+                      ) : comingSoon ? null : ( // "12 · Day 16" reads as two numberings
                         i + 1
                       )}
                     </span>
