@@ -20,11 +20,11 @@ const VIGNETTES = [
       "You don't need one. Come home, press play, dance it off. Done before dinner.",
   },
   {
-    image: "/home-vignette-watch.jpg",
-    alt: "A smartwatch on a woman's wrist showing workout activity and heart rate",
-    headline: "Up to 200 calories in 15 minutes.",
+    image: "/home-vignette-travel.jpg",
+    alt: "A woman with her suitcase in a hotel room high above the city",
+    headline: "Traveling again?",
     message:
-      "Short doesn't mean easy. These sessions are really intense — check your watch when you're done.",
+      "Your workout packs itself — it lives in your browser. A hotel room and 15 minutes are enough.",
   },
 ];
 

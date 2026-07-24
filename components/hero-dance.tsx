@@ -6,6 +6,7 @@ import { CheckoutButton } from "@/components/challenge/cta";
 import { PublicStreamEmbed } from "@/components/public-stream-embed";
 import HomeVignettes from "@/components/home-vignettes";
 import HomeInstructor from "@/components/home-instructor";
+import HomeIntensity from "@/components/home-intensity";
 import { MobileStickyCta } from "@/components/challenge/sticky-cta";
 import { CHALLENGE_SLUG, CHALLENGE_TRAILER_UID } from "@/lib/challenge";
 
@@ -121,6 +122,9 @@ export default function Header({
           priceLabel={priceLabel}
           tryDayHref={tryDayHref}
         />
+
+        {/* Intensity proof — a product fact, styled apart from the personas */}
+        <HomeIntensity />
 
         {/* Why Lean Sporty Section */}
         <section className="w-full px-6 py-16">
