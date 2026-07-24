@@ -19,7 +19,10 @@ export function PublicStreamEmbed({
 }) {
   const code = process.env.NEXT_PUBLIC_CLOUDFLARE_STREAM_CUSTOMER_CODE;
   const start = startTimeSeconds ? `&startTime=${startTimeSeconds}s` : "";
-  const src = `https://customer-${code}.cloudflarestream.com/${uid}/iframe?muted=true&autoplay=true&loop=true&controls=true&preload=metadata${start}`;
+  // White letterbox: any sub-pixel letterboxing (Safari at fractional zoom)
+  // paints white instead of the player's default black — invisible on the
+  // white-studio footage.
+  const src = `https://customer-${code}.cloudflarestream.com/${uid}/iframe?muted=true&autoplay=true&loop=true&controls=true&preload=metadata&letterboxColor=%23ffffff${start}`;
 
   return (
     <iframe
