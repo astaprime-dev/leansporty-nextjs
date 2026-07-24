@@ -10,6 +10,7 @@ import { getProgramData } from "./data";
 import { ProgramGrid } from "@/components/challenge/program-grid";
 import { LessonList } from "@/components/programs/lesson-list";
 import { CheckoutButton, FinalizingAccess } from "@/components/challenge/cta";
+import { MobileStickyCta } from "@/components/challenge/sticky-cta";
 import {
   CHALLENGE_SLUG,
   buildProgramDays,
@@ -285,7 +286,10 @@ export default async function ProgramPage({
                 {product.description}
               </p>
             )}
-            <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center">
+            <div
+              id="program-hero-cta"
+              className="flex flex-col items-start gap-3 sm:flex-row sm:items-center"
+            >
               <CheckoutButton
                 productSlug={product.slug}
                 isAuthenticated={data.isAuthenticated}
@@ -299,6 +303,9 @@ export default async function ProgramPage({
               <p className="text-sm text-gray-500">
                 One-time payment · 12 months of access
                 {items.some((it) => it.is_preview) && " · First look free below"}
+                {/* Never a per-row price; ONE price, anchored per lesson. */}
+                {items.length >= 3 &&
+                  ` · ≈ ${formatPrice(Math.round(product.price_cents / items.length / 10) * 10, product.currency)} per lesson`}
               </p>
             </div>
           </div>
@@ -322,6 +329,18 @@ export default async function ProgramPage({
           paywallHref={pagePath}
           revalidatePath={pagePath}
           {...(owned ? { watchBasePath } : {})}
+        />
+      )}
+
+      {/* Mobile sticky buy bar — same pattern as /challenge. */}
+      {!owned && (
+        <MobileStickyCta
+          productSlug={product.slug}
+          isAuthenticated={data.isAuthenticated}
+          owned={owned}
+          priceLabel={priceLabel}
+          heroCtaId="program-hero-cta"
+          label={`Get the program — ${priceLabel}`}
         />
       )}
     </div>

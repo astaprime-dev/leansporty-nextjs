@@ -234,6 +234,8 @@ export default async function MyProgramPage({
                       fill
                       sizes="(min-width: 640px) 20rem, 100vw"
                       className="object-cover"
+                      // Above the fold and usually the LCP — load eagerly.
+                      priority
                     />
                   ) : (
                     <div className="h-full w-full bg-gradient-to-br from-pink-50 to-rose-50" />

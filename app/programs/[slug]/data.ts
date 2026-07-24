@@ -126,7 +126,9 @@ export async function getProgramData(slug: string): Promise<ProgramData | null> 
     .from("program_reviews")
     .select("rating")
     .eq("product_id", product.id);
-  if (ratings && ratings.length > 0) {
+  // Shown from 3 reviews up — a lone rating reads as fabricated (same
+  // threshold as the challenge's social proof).
+  if (ratings && ratings.length >= 3) {
     const sum = ratings.reduce((acc: number, r: any) => acc + (r.rating ?? 0), 0);
     reviewSummary = {
       average: Math.round((sum / ratings.length) * 10) / 10,

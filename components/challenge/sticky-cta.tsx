@@ -14,6 +14,7 @@ export function MobileStickyCta({
   owned,
   priceLabel,
   heroCtaId = "challenge-hero-cta",
+  label,
 }: {
   productSlug: string;
   isAuthenticated: boolean;
@@ -21,6 +22,8 @@ export function MobileStickyCta({
   priceLabel: string;
   /** id of the hero CTA row whose disappearance summons the bar. */
   heroCtaId?: string;
+  /** Button label; defaults to the challenge wording. */
+  label?: string;
 }) {
   const [show, setShow] = useState(false);
 
@@ -43,7 +46,7 @@ export function MobileStickyCta({
         isAuthenticated={isAuthenticated}
         owned={owned}
         next="/challenge?intent=checkout"
-        label={`Start the Challenge — ${priceLabel}`}
+        label={label ?? `Start the Challenge — ${priceLabel}`}
         className="h-12 w-full rounded-full bg-gradient-to-r from-pink-500 to-rose-400 text-base font-semibold text-white hover:from-pink-600 hover:to-rose-500"
       />
     </div>
