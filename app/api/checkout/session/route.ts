@@ -176,6 +176,15 @@ export async function POST(req: NextRequest) {
             // Numbered Stripe invoice per sale — the accountant's source of
             // truth. (Subscription-mode sessions invoice inherently.)
             invoice_creation: { enabled: true },
+            // EU withdrawal-right waiver: digital access starts immediately;
+            // stating it at the point of payment is what makes the
+            // no-refunds policy stick for EU consumers.
+            custom_text: {
+              submit: {
+                message:
+                  "Digital access starts immediately after payment. By purchasing you agree to immediate delivery and acknowledge that the 14-day EU withdrawal right does not apply.",
+              },
+            },
           }
         : {}),
       ...(stripeAutomaticTax ? { automatic_tax: { enabled: true } } : {}),

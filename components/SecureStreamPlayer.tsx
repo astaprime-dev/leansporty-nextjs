@@ -178,6 +178,12 @@ export function SecureStreamPlayer({
         <Button asChild size="sm">
           <Link href={paywallHref}>Unlock to watch</Link>
         </Button>
+        {/* An OWNER can land here on a transient auth hiccup — don't let her
+            think she lost what she paid for. */}
+        <p className="max-w-xs px-4 text-xs text-muted-foreground">
+          Already unlocked it? Your access is safe — refresh this page or sign
+          in again.
+        </p>
       </div>
     );
   }

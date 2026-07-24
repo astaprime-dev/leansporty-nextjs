@@ -287,6 +287,13 @@ export default async function MyProgramPage({
       </section>
 
       <div className="mx-auto max-w-5xl px-4 py-8">
+      {/* Pre-empt the one legitimate complaint while week-3 uploads land. */}
+      {owned && days.some((d) => d.state === "coming-soon") && (
+        <p className="mb-4 text-sm text-muted-foreground">
+          The final sessions land automatically as they&apos;re released — all
+          part of your access, nothing extra to pay.
+        </p>
+      )}
       {/* The challenge is a program owned by the house instructor; owned users
           watch lessons on the shared watch page (playlist, feedback, reviews). */}
       <ProgramGrid

@@ -102,6 +102,10 @@ const FAQ = [
     a: "You get access right away — the whole program unlocks and you can start Day 1 immediately, on your laptop, tablet, or phone.",
   },
   {
+    q: "What if it's not for me?",
+    a: "That's exactly what the free Day 1 is for — a full, real session to try before you spend anything. Because your access is digital and starts immediately, purchases can't be refunded. And if anything ever goes wrong on our side, contact us — we'll make it right.",
+  },
+  {
     q: "What if I miss a day?",
     a: "There's no pressure and no deadline. Everything unlocks at once, so you can follow the 21-day rhythm or do it on your own schedule.",
   },
@@ -524,6 +528,16 @@ export default async function ChallengePage({
             </div>
           ))}
         </div>
+        <p className="mt-4 text-center text-sm text-muted-foreground">
+          Anything else?{" "}
+          <Link
+            href="/contact"
+            className="font-medium text-pink-600 transition-colors hover:text-pink-500"
+          >
+            Send us a message
+          </Link>{" "}
+          — we usually reply within a day.
+        </p>
       </section>
 
       {/* Lead capture — exit offer for non-buyers who aren't ready to checkout */}
