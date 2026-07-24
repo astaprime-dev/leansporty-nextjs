@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Play } from "lucide-react";
+import { Play, Star } from "lucide-react";
 import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
 import { getChallengeData } from "@/app/challenge/data";
@@ -101,6 +101,24 @@ export default async function MyProgramPage({
   // Today's session: the first not-yet-completed playable day.
   const nextDay = owned ? nextActionableDay(days) : null;
   const nextWorkout = nextDay?.item?.workout ?? null;
+
+  // Review prompt: after Week 1 (5 sessions), if she hasn't reviewed yet.
+  // Reviews feed the /challenge social-proof section (visible from 3 reviews).
+  let showReviewPrompt = false;
+  let reviewHref = "";
+  if (owned && done >= 5) {
+    const { data: myReview } = await supabase
+      .from("program_reviews")
+      .select("rating")
+      .eq("product_id", data.product.id)
+      .eq("user_id", user.id)
+      .maybeSingle();
+    const anyLesson = days.find((d) => d.item?.workout)?.item;
+    if (!myReview && anyLesson) {
+      showReviewPrompt = true;
+      reviewHref = `/programs/${CHALLENGE_SLUG}/watch/${anyLesson.content_id}#review`;
+    }
+  }
 
   // Anastasiia's nudge + the milestone line, keyed to progress (5-session weeks).
   const nudge =
@@ -246,6 +264,22 @@ export default async function MyProgramPage({
                 </div>
               </div>
             </Link>
+          )}
+
+          {/* Week-1 done + no review yet → the goodwill moment for social proof. */}
+          {showReviewPrompt && (
+            <div className="mt-6 flex flex-col items-start gap-3 rounded-2xl border border-pink-100 bg-white p-5 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex items-start gap-3">
+                <Star className="mt-0.5 h-5 w-5 shrink-0 fill-pink-400 text-pink-400" />
+                <p className="text-sm text-gray-600">
+                  A week of dancing done — enjoying it? A short review helps
+                  other women find the challenge.
+                </p>
+              </div>
+              <Button asChild variant="brandOutline" className="shrink-0">
+                <Link href={reviewHref}>Leave a review</Link>
+              </Button>
+            </div>
           )}
         </div>
       </section>

@@ -527,14 +527,17 @@ export function WatchView({
               })}
             </ol>
 
-            {/* Program-level rating lives with the program-level column */}
+            {/* Program-level rating lives with the program-level column.
+                id="review": deep-link target for the My Program prompt. */}
             {owned && (
-              <ProgramReview
-                productId={productId}
-                programTitle={programTitle}
-                initial={myReview}
-                revalidate={watchPath(currentContentId)}
-              />
+              <div id="review" className="scroll-mt-24">
+                <ProgramReview
+                  productId={productId}
+                  programTitle={programTitle}
+                  initial={myReview}
+                  revalidate={watchPath(currentContentId)}
+                />
+              </div>
             )}
           </div>
         </aside>

@@ -101,16 +101,29 @@ export function ProgramGrid({
         </Button>
       )}
 
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-        {days.map((day) => (
-          <DayCard
-            key={day.dayNumber}
-            day={day}
-            priceLabel={priceLabel}
-            onOpen={() => openDay(day)}
-          />
-        ))}
-      </div>
+      {/* Group by calendar week when the plan spans more than one — matches
+          the "N sessions to finish Week X" milestone language. */}
+      {Array.from(new Set(days.map((d) => d.week))).map((week, _, weeks) => (
+        <div key={week}>
+          {weeks.length > 1 && (
+            <p className="mb-2 text-xs font-semibold uppercase tracking-widest text-gray-400">
+              Week {week}
+            </p>
+          )}
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+            {days
+              .filter((d) => d.week === week)
+              .map((day) => (
+                <DayCard
+                  key={day.dayNumber}
+                  day={day}
+                  priceLabel={priceLabel}
+                  onOpen={() => openDay(day)}
+                />
+              ))}
+          </div>
+        </div>
+      ))}
 
       <Dialog open={!!open} onOpenChange={(o) => !o && setOpen(null)}>
         <DialogContent className="sm:max-w-2xl">
