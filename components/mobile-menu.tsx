@@ -46,7 +46,7 @@ export function MobileMenu({ user, isInstructor, showClasses, freeDayHref }: Mob
               {/* Anonymous primary CTA — drive to the web offer */}
               {!user && (
                 <Button asChild variant="brand" className="w-full gap-2">
-                  <Link href="/challenge" onClick={close}>
+                  <Link href="/challenge?intent=checkout" onClick={close}>
                     <span>Start the Challenge</span>
                   </Link>
                 </Button>

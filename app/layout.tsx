@@ -148,7 +148,10 @@ export default async function RootLayout({
                         Signed in → Download App (iOS = watch/retention surface). */}
                     {!user ? (
                       <Button asChild variant="brand" className="hidden sm:inline-flex gap-2 text-xs lg:text-sm lg:px-6">
-                        <Link href="/challenge">
+                        {/* intent=checkout: works from ANY page incl. /challenge
+                            itself (auth modal for anon, straight to Stripe when
+                            signed in) — a bare /challenge link is a no-op there. */}
+                        <Link href="/challenge?intent=checkout">
                           <span>Start the Challenge</span>
                         </Link>
                       </Button>

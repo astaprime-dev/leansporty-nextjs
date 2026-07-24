@@ -182,6 +182,20 @@ export function ChallengeAutoCheckout({
       else if (data.url) window.location.href = data.url;
     })();
   }, [active, productSlug, isAuthenticated, owned]);
+
+  // Anonymous arrivals with checkout intent (header/mobile CTAs link to
+  // /challenge?intent=checkout from anywhere): open the auth step right away —
+  // after sign-in the effect above resumes into Stripe.
+  if (active && !isAuthenticated) {
+    return (
+      <OAuthSignInModal
+        defaultOpen
+        next="/challenge?intent=checkout"
+        title="One quick step before checkout"
+        description="Sign in or create your account — it's where your program will live. You'll go straight to payment after."
+      />
+    );
+  }
   return null;
 }
 
