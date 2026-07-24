@@ -19,6 +19,11 @@ interface SecureStreamPlayerProps {
   paywallHref?: string;
   /** Resume playback from this many seconds in (0/undefined = from the start). */
   startTime?: number;
+  /**
+   * Lesson thumbnail shown while the token + iframe load, and passed to the
+   * Cloudflare player as its poster — no blank box before playback.
+   */
+  posterUrl?: string;
   /** Request autoplay (watch page — arrival is always a deliberate click).
    *  Browsers may still require a tap on a cold deep-link; that's their call. */
   autoplay?: boolean;
@@ -69,6 +74,7 @@ export function SecureStreamPlayer({
   renderPaywall,
   paywallHref = "/",
   startTime,
+  posterUrl,
   autoplay = false,
   onEnded,
   onTimeUpdate,
@@ -103,9 +109,14 @@ export function SecureStreamPlayer({
         const resume =
           startTime && startTime > 0 ? `&startTime=${Math.floor(startTime)}s` : "";
         const auto = autoplay ? "&autoplay=true" : "";
+        const poster = posterUrl
+          ? `&poster=${encodeURIComponent(posterUrl)}`
+          : "";
         // letterboxColor: sub-pixel letterboxing (Safari at fractional sizes)
         // paints white instead of the player's default black.
-        setSrc(`${iframe}?controls=true&letterboxColor=%23ffffff${resume}${auto}`);
+        setSrc(
+          `${iframe}?controls=true&letterboxColor=%23ffffff${poster}${resume}${auto}`
+        );
         setMark(watermark ?? "");
       }
     })();
@@ -173,7 +184,22 @@ export function SecureStreamPlayer({
 
   if (!src) {
     return (
-      <div className={cn("aspect-video w-full animate-pulse rounded-lg bg-muted", className)} />
+      <div
+        className={cn(
+          "relative aspect-video w-full overflow-hidden rounded-lg bg-muted",
+          !posterUrl && "animate-pulse",
+          className
+        )}
+      >
+        {posterUrl && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={posterUrl}
+            alt=""
+            className="absolute inset-0 h-full w-full object-cover"
+          />
+        )}
+      </div>
     );
   }
 

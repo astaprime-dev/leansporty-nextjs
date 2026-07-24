@@ -194,6 +194,7 @@ export function WatchView({
                 contentId={currentContentId}
                 paywallHref={programPath}
                 startTime={startAt}
+                posterUrl={current?.workout?.thumbnailUrl ?? undefined}
                 autoplay
                 onEnded={handleEnded}
                 onTimeUpdate={handleTimeUpdate}
