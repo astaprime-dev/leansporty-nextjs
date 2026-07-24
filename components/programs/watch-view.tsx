@@ -198,6 +198,38 @@ export function WatchView({
                 onEnded={handleEnded}
                 onTimeUpdate={handleTimeUpdate}
               />
+              {/* Non-owners who just finished the free lesson get the pitch at
+                  the emotional peak — not a silently paused player. */}
+              {endedState === "done" && !owned && !isOwnerInstructor && (
+                <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-3 bg-black/80 p-6 text-center">
+                  <p className="text-sm text-white/70">
+                    That was {current?.workout?.title || "the free lesson"} —
+                    the real thing.
+                  </p>
+                  <p className="max-w-md text-lg font-semibold text-white">
+                    Keep the feeling going — the rest of the program is waiting.
+                  </p>
+                  <div className="mt-2 flex flex-col items-center gap-3 sm:flex-row">
+                    <CheckoutButton
+                      productSlug={slug}
+                      isAuthenticated={isAuthenticated}
+                      owned={false}
+                      next={watchPath(currentContentId)}
+                      returnPath={watchPath(currentContentId)}
+                      ownedHref={watchPath(currentContentId)}
+                      label={`Unlock the full program — ${priceLabel}`}
+                      className="h-11 rounded-full bg-gradient-to-r from-pink-500 to-rose-400 px-6 font-semibold text-white hover:from-pink-600 hover:to-rose-500"
+                    />
+                    <Button
+                      variant="outline"
+                      className="border-white/30 bg-transparent text-white hover:bg-white/10"
+                      onClick={() => window.location.reload()}
+                    >
+                      Watch again
+                    </Button>
+                  </div>
+                </div>
+              )}
               {endedState === "countdown" && nextPlayable && (
                 <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-3 bg-black/80 p-6 text-center">
                   <p className="text-sm text-white/70">Up next</p>
