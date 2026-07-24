@@ -267,23 +267,6 @@ export default function Header({
             {priceLabel} once · free Day 1 · 1 year of access
           </p>
 
-          {/* Secondary: iOS */}
-          <div className="mt-6 flex flex-col items-center gap-2">
-            <p className="text-sm font-light opacity-80">Or watch on iOS</p>
-            <a
-              href="https://apps.apple.com/app/id6745218800"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-block opacity-90 transition-all duration-300 hover:scale-105"
-            >
-              <img
-                src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/white/en-us?size=250x83"
-                alt="Download on the App Store"
-                className="h-11 drop-shadow-lg"
-              />
-            </a>
-          </div>
-
           {/* Decorative bottom */}
           <div className="flex justify-center mt-8">
             <div className="w-24 h-px bg-white/30"></div>

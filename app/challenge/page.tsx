@@ -80,7 +80,7 @@ const BENEFITS = [
   {
     icon: InfinityIcon,
     title: "A full year of access",
-    body: "Buy once and get a full year — revisit any session whenever you like, on web and iOS.",
+    body: "Buy once and get a full year — revisit any session whenever you like, on any device.",
   },
 ];
 
@@ -107,7 +107,7 @@ const FAQ = [
   },
   {
     q: "Can I watch on my phone?",
-    a: "Yes — watch on the web today, and on our iOS app once you're signed in with the same account.",
+    a: "Yes — the site works beautifully in your phone's browser. Nothing to install: open leansporty.com, sign in, press play.",
   },
 ];
 
@@ -488,7 +488,7 @@ export default async function ChallengePage({
             {[
               `${workoutCount} guided sessions + rest days`,
               "A full year of access",
-              "Watch on web & iOS",
+              "Watch on laptop, tablet, or phone",
               "Beginner-friendly, no equipment",
             ].map((line) => (
               <li key={line} className="flex items-start gap-2">

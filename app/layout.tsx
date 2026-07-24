@@ -143,9 +143,9 @@ export default async function RootLayout({
                     {/* Auth Buttons */}
                     <HeaderAuth />
 
-                    {/* Primary CTA - Desktop only.
-                        Anonymous → drive to the web offer (the commerce surface).
-                        Signed in → Download App (iOS = watch/retention surface). */}
+                    {/* Primary CTA - Desktop only, anonymous → the web offer.
+                        (iOS app promotion removed while the app lags behind
+                        the web — signed-in users just get their nav.) */}
                     {!user ? (
                       <Button asChild variant="brand" className="hidden sm:inline-flex gap-2 text-xs lg:text-sm lg:px-6">
                         {/* intent=checkout: works from ANY page incl. /challenge
@@ -154,16 +154,6 @@ export default async function RootLayout({
                         <Link href="/challenge?intent=checkout">
                           <span>Start the Challenge</span>
                         </Link>
-                      </Button>
-                    ) : !isInstructor ? (
-                      <Button asChild variant="brand" className="hidden sm:inline-flex gap-2 text-xs lg:text-sm lg:px-6">
-                        <a
-                          href="https://apps.apple.com/app/id6745218800"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          <span>Download App</span>
-                        </a>
                       </Button>
                     ) : null}
 

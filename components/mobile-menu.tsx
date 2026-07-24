@@ -92,22 +92,7 @@ export function MobileMenu({ user, isInstructor, showClasses, freeDayHref }: Mob
                 </>
               )}
 
-              {/* Download App CTA — hidden for instructors (creators, not app users) */}
-              {!isInstructor && (
-                <>
-                  <div className="border-t border-pink-100 my-2" />
-                  <Button asChild variant="brand" className="w-full gap-2">
-                    <a
-                      href="https://apps.apple.com/app/id6745218800"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      onClick={close}
-                    >
-                      <span>Download App</span>
-                    </a>
-                  </Button>
-                </>
-              )}
+              {/* iOS app promotion removed while the app lags behind the web. */}
             </div>
           </div>
         </>
