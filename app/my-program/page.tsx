@@ -4,6 +4,7 @@ import { createClient } from "@/utils/supabase/server";
 import { getChallengeData } from "@/app/challenge/data";
 import { ProgramGrid } from "@/components/challenge/program-grid";
 import { FinalizingAccess } from "@/components/challenge/cta";
+import { PurchaseCelebration } from "@/components/purchase-celebration";
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
 import { EmptyState } from "@/components/empty-state";
@@ -97,6 +98,15 @@ export default async function MyProgramPage({
     <div className="mx-auto max-w-5xl px-4 py-10">
       {/* Post-checkout: poll for the async webhook grant so no paywall flashes. */}
       {purchased === "1" && !owned && <FinalizingAccess slug={CHALLENGE_SLUG} />}
+
+      {/* ...and once it lands, celebrate — she just bought, greet the moment. */}
+      {purchased === "1" && owned && (
+        <PurchaseCelebration
+          heading="You're in — welcome to the challenge! 🎉"
+          message="Payment confirmed. Every session is yours for a full year — no rush, no pressure. Day 1 is right below whenever you're ready."
+          clearPath="/my-program"
+        />
+      )}
 
       <header className="mb-8">
         <h1 className="font-display text-3xl sm:text-4xl font-light text-gray-900">{product.title}</h1>

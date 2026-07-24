@@ -21,10 +21,13 @@ export const metadata = {
  */
 export default async function WatchPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ slug: string; lessonId: string }>;
+  searchParams: Promise<{ purchased?: string }>;
 }) {
   const { slug, lessonId } = await params;
+  const { purchased } = await searchParams;
 
   const data = await getProgramData(slug);
   if (!data) notFound();
@@ -102,6 +105,7 @@ export default async function WatchPage({
       myReview={data.myReview}
       myFeedback={myFeedback}
       resumeSeconds={resumeSeconds}
+      justPurchased={purchased === "1" && data.owned}
     />
   );
 }

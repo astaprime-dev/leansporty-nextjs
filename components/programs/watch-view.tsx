@@ -22,6 +22,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { StarRating } from "@/components/ui/star-rating";
 import { cn } from "@/lib/utils";
 import { SecureStreamPlayer } from "@/components/SecureStreamPlayer";
+import { PurchaseCelebration } from "@/components/purchase-celebration";
 import { CheckoutButton } from "@/components/challenge/cta";
 import { savePlaybackPosition, setWorkoutComplete } from "@/app/challenge/actions";
 import { trackEvent } from "@/lib/analytics";
@@ -60,6 +61,7 @@ export function WatchView({
   myReview,
   myFeedback,
   resumeSeconds = 0,
+  justPurchased = false,
 }: {
   slug: string;
   productId: string;
@@ -76,6 +78,8 @@ export function WatchView({
   myFeedback: WatchLessonFeedback;
   /** Saved playback position to resume from (0 = start fresh). */
   resumeSeconds?: number;
+  /** Arrived from a successful checkout — celebrate before the player. */
+  justPurchased?: boolean;
 }) {
   const router = useRouter();
   const programPath = `/programs/${slug}`;
@@ -179,6 +183,14 @@ export function WatchView({
           {programTitle}
         </Link>
       </div>
+
+      {justPurchased && (
+        <PurchaseCelebration
+          heading="You're in — welcome! 🎉"
+          message="Payment confirmed. The whole program is unlocked — enjoy every session."
+          clearPath={watchPath(currentContentId)}
+        />
+      )}
 
       <div className="grid items-start gap-8 lg:grid-cols-3">
         {/* Player column */}
