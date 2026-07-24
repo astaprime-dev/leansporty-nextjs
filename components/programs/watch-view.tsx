@@ -184,7 +184,10 @@ export function WatchView({
         {/* Player column */}
         <div className="lg:col-span-2">
           {/* Sticky on mobile so the video survives scrolling; static on desktop. */}
-          <div className="sticky top-0 z-30 -mx-4 bg-black sm:mx-0 sm:rounded-2xl sm:overflow-hidden lg:static">
+          {/* bg-white, not bg-black: sub-pixel iframe rounding lets this
+              background peek through as a hairline at the player's edge —
+              white is invisible on the white-studio footage. */}
+          <div className="sticky top-0 z-30 -mx-4 bg-white sm:mx-0 sm:rounded-2xl sm:overflow-hidden lg:static">
             <div className="relative">
               <SecureStreamPlayer
                 key={`${currentContentId}:${startAt}`}
