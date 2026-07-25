@@ -60,18 +60,18 @@ export function GuideCta() {
       <div className="relative mx-auto max-w-5xl px-4 py-14 md:py-20">
         <div className="max-w-md rounded-2xl border-2 border-pink-200 bg-white/95 p-8 text-center shadow-lg backdrop-blur-sm">
           <span className="inline-flex items-center gap-2 rounded-full bg-pink-100 px-3 py-1 text-xs font-semibold text-pink-700">
-            <Sparkles className="h-3.5 w-3.5" /> Try it before you decide
+            <Sparkles className="h-3.5 w-3.5" /> First session free
           </span>
           <h2 className="font-display mt-4 text-balance text-3xl font-light text-gray-900">
-            Feel it for yourself — Day 1 is free
+            Check out the 21-Day Dance Challenge
           </h2>
           <p className="mt-3 font-light text-gray-600">
-            The first session of our 21-Day Dance Challenge is free to watch —
-            a full, real workout led by a professional choreographer. No
-            sign-up tricks: press play and see if it&apos;s for you.
+            Short, beginner-friendly dance workouts you follow along at home,
+            led by choreographer Anastasiia. The first session is free to
+            watch — no sign-up, just press play and see how it feels.
           </p>
           <Button asChild variant="brand" size="pill" className="mt-6">
-            <Link href="/challenge">Watch Day 1 free</Link>
+            <Link href="/challenge">See the Challenge</Link>
           </Button>
         </div>
       </div>
