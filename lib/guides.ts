@@ -12,6 +12,12 @@ export type GuideMeta = {
  */
 export const GUIDES: GuideMeta[] = [
   {
+    slug: "21-day-dance-challenge-results",
+    title: "What actually happens in a 21-day dance challenge",
+    blurb:
+      "The honest week-by-week timeline — what three weeks of short dance workouts changes, what it doesn't, and what habit science really says.",
+  },
+  {
     slug: "dance-workout-women-over-30",
     title: "Is dancing a good workout for women over 30?",
     blurb:
