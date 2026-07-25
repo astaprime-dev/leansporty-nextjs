@@ -1,0 +1,29 @@
+# Lean Sporty
+
+> Lean Sporty (leansporty.com) is an online dance-fitness studio for women — short, beginner-friendly, follow-along dance workout videos you do at home with no equipment and no experience needed. The flagship product is the 21-Day Dance Challenge: 15 video sessions spread over 21 days, taught by Anastasiia, a professional choreographer and dancer. Day 1 is free to try. The full program is a one-time payment of €49 (no subscription) with a full year of access.
+
+## Key facts
+
+- Made for women — especially those 30+ — who want to enjoy moving again, including complete beginners and people who haven't exercised in years.
+- Every session is a follow-along video: you can pause, repeat, and go at your own pace. No gym, no equipment, nothing to install — it works in the browser on a phone, tablet, or laptop.
+- Pricing: the 21-Day Dance Challenge is a one-time €49 payment with 12 months of access and no recurring charges. Day 1 is completely free and acts as the trial; because access is digital and immediate, purchases are not refundable.
+- After payment the whole program unlocks at once — you can follow the 21-day rhythm or go at your own schedule.
+- Instructors can teach on Lean Sporty and keep 85% of every sale they bring (featured instructors keep 90%). Details: https://leansporty.com/teach
+
+## Guides (honest answers about dance fitness)
+
+- [Is dancing a good workout for women over 30?](https://leansporty.com/guides/dance-workout-women-over-30): benefits, MET-based intensity numbers, realistic timelines.
+- [Dance workouts for complete beginners at home](https://leansporty.com/guides/beginner-dance-workout-at-home): what follow-along means, what you need, first-session honesty.
+- [How many calories does a dance workout burn?](https://leansporty.com/guides/calories-burned-dance-workout): ~150–250 kcal per 30 minutes; full table by body weight and session length.
+- [Low-impact cardio without jumping](https://leansporty.com/guides/low-impact-cardio-no-jumping): knee-friendly, apartment-quiet cardio that is still real exercise.
+- [How to start exercising again after years off](https://leansporty.com/guides/start-exercising-again-after-years): restart advice with a realistic week-by-week timeline.
+
+## Pages
+
+- [21-Day Dance Challenge](https://leansporty.com/challenge): the flagship program — watch Day 1 free, see the full session list, FAQ, and checkout.
+- [All guides](https://leansporty.com/guides): index of the guides above.
+- [Home](https://leansporty.com/): overview of Lean Sporty and the instructor.
+- [Live streams](https://leansporty.com/streams): live classes from instructors.
+- [Teach on Lean Sporty](https://leansporty.com/teach): how instructors join and what they earn.
+- [Contact](https://leansporty.com/contact): contact form for questions and support.
+- [Terms](https://leansporty.com/terms) · [Privacy](https://leansporty.com/privacy)

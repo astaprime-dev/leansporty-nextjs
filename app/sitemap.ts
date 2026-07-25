@@ -1,6 +1,7 @@
 import { MetadataRoute } from 'next'
 import { createClient } from '@supabase/supabase-js'
 import { CHALLENGE_SLUG } from '@/lib/challenge'
+import { GUIDES } from '@/lib/guides'
 
 // Refresh hourly so new instructors/programs appear without a redeploy.
 export const revalidate = 3600
@@ -15,6 +16,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${BASE}/challenge`, changeFrequency: 'weekly', priority: 1 },
     { url: `${BASE}/streams`, changeFrequency: 'daily', priority: 0.6 },
     { url: `${BASE}/teach`, changeFrequency: 'monthly', priority: 0.7 },
+    { url: `${BASE}/guides`, changeFrequency: 'weekly', priority: 0.6 },
+    ...GUIDES.map((g) => ({
+      url: `${BASE}/guides/${g.slug}`,
+      changeFrequency: 'monthly' as const,
+      priority: 0.7,
+    })),
     { url: `${BASE}/contact`, changeFrequency: 'yearly', priority: 0.3 },
     { url: `${BASE}/privacy`, changeFrequency: 'yearly', priority: 0.1 },
     { url: `${BASE}/terms`, changeFrequency: 'yearly', priority: 0.1 },

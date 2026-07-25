@@ -224,6 +224,7 @@ export default async function RootLayout({
                       {/* Instructor entry points: /teach recruits new instructors;
                           /instructor is the Studio login (signed-out users are routed
                           through sign-in, non-instructors on to activation). */}
+                      <Link href="/guides" className="hover:text-pink-500 transition-colors">Guides</Link>
                       <Link href="/contact" className="hover:text-pink-500 transition-colors">Contact us</Link>
                       <Link href="/teach" className="hover:text-pink-500 transition-colors">Teach with us</Link>
                       <Link href="/instructor" className="hover:text-pink-500 transition-colors">Instructor Studio</Link>
