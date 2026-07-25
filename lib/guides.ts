@@ -71,6 +71,24 @@ export const GUIDES: GuideMeta[] = [
     blurb:
       "The definitive frequency answer: a goal-by-goal table, the recovery logic behind it, and the truth about dancing daily.",
   },
+  {
+    slug: "apartment-dance-workout",
+    title: "Apartment dance workouts: quiet and small-space",
+    blurb:
+      "What your downstairs neighbor actually hears, the swaps that keep choreography quiet, and how much room you really need.",
+  },
+  {
+    slug: "dance-challenge-women-over-40",
+    title: "A dance challenge for women over 40 (and 50)",
+    blurb:
+      "What changes about training in this decade, why structure beats willpower for returners, and what dance honestly doesn't replace.",
+  },
+  {
+    slug: "do-youtube-dance-challenges-work",
+    title: "Do free YouTube dance challenges actually work?",
+    blurb:
+      "A fair answer: what free playlists genuinely offer, why finishing is the hard part, and when structure is worth paying for.",
+  },
 ];
 
 /** Launch date of the guides section; override per page when adding new ones. */
