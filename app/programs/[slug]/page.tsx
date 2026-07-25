@@ -43,7 +43,7 @@ export async function generateMetadata({
     .maybeSingle();
 
   if (!p || !p.is_active || p.admin_disabled) {
-    return { title: "Program · Lean Sporty" };
+    return { title: "Program", robots: { index: false, follow: false } };
   }
 
   const description =
@@ -52,8 +52,9 @@ export async function generateMetadata({
     "A follow-along dance program on Lean Sporty.";
 
   return {
-    title: `${p.title} · Lean Sporty`,
+    title: p.title,
     description,
+    alternates: { canonical: `/programs/${slug}` },
     openGraph: {
       title: p.title,
       description,

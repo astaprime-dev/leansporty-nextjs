@@ -1,7 +1,8 @@
 import { ContactForm } from "./contact-form";
 
 export const metadata = {
-  title: "Contact us · Lean Sporty",
+  title: "Contact us",
+  alternates: { canonical: "/contact" },
   description:
     "A question, a problem, or feedback about Lean Sporty — send us a message and we'll get back to you.",
 };

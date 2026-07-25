@@ -4,6 +4,13 @@ import { createClient } from "@/utils/supabase/server";
 
 export const dynamic = 'force-dynamic';
 
+export const metadata = {
+  title: "Live dance classes",
+  description:
+    "Live-streamed dance and fitness classes you can join from home — see what's on now and what's coming up.",
+  alternates: { canonical: "/streams" },
+};
+
 export default async function StreamsPage({
   searchParams,
 }: {

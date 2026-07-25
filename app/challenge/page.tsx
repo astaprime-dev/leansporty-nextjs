@@ -40,9 +40,10 @@ export const dynamic = "force-dynamic";
 // The main sales URL — shared in bios, DMs, and ads. The card must sell the
 // product, not show the generic site logo.
 export const metadata = {
-  title: "21-Day Dance Challenge — dance yourself fit at home | Lean Sporty",
+  title: "21-Day Dance Challenge — dance yourself fit at home",
   description:
     "Short, feel-good dance workouts for women — no gym, no equipment, no experience needed. Day 1 is free to try. One payment, a full year of access.",
+  alternates: { canonical: "/challenge" },
   openGraph: {
     title: "21-Day Dance Challenge — dance yourself fit at home",
     description:
@@ -52,12 +53,13 @@ export const metadata = {
         url: "/og-challenge.jpg",
         width: 1200,
         height: 630,
-        alt: "Anastasiia, the Lean Sporty instructor, dancing",
+        alt: "The Lean Sporty instructor dancing",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
+    images: ["/og-challenge.jpg"],
   },
 };
 
@@ -174,8 +176,44 @@ export default async function ChallengePage({
     completedContentIds: new Set(),
   });
 
+  // Product + FAQ rich-result schema for the sales page. Prices/copy come
+  // from our own DB and static FAQ — safe to serialize.
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Product",
+        name: title,
+        description: metadata.description,
+        image: "https://leansporty.com/og-challenge.jpg",
+        brand: { "@type": "Brand", name: "Lean Sporty" },
+        offers: {
+          "@type": "Offer",
+          price: (priceCents / 100).toFixed(2),
+          priceCurrency: (product?.currency ?? "eur").toUpperCase(),
+          availability: "https://schema.org/InStock",
+          url: "https://leansporty.com/challenge",
+        },
+      },
+      {
+        "@type": "FAQPage",
+        mainEntity: FAQ.map((f) => ({
+          "@type": "Question",
+          name: f.q,
+          acceptedAnswer: { "@type": "Answer", text: f.a },
+        })),
+      },
+    ],
+  };
+
   return (
     <div className="w-full">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c"),
+        }}
+      />
       <ChallengeAutoCheckout
         active={intent === "checkout"}
         productSlug={CHALLENGE_SLUG}

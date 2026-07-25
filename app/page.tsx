@@ -2,9 +2,12 @@ import HeroDance from "@/components/hero-dance";
 
 // The homepage share card must sell, not show the logo square.
 export const metadata = {
-  title: "Lean Sporty — dance yourself fit at home",
+  // `absolute`: the root template would append "| Lean Sporty" to a title
+  // that already leads with the brand.
+  title: { absolute: "Lean Sporty — dance yourself fit at home" },
   description:
     "Short, feel-good dance workouts for women — no gym, no equipment, no experience needed. Led by a real choreographer. Day 1 is free to try.",
+  alternates: { canonical: "/" },
   openGraph: {
     title: "Lean Sporty — dance yourself fit at home",
     description:
@@ -14,12 +17,13 @@ export const metadata = {
         url: "/og-home.jpg",
         width: 1200,
         height: 630,
-        alt: "Anastasiia, the Lean Sporty instructor, dancing",
+        alt: "The Lean Sporty instructor dancing",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
+    images: ["/og-home.jpg"],
   },
 };
 import { LeadCaptureForm } from "@/components/lead-capture-form";

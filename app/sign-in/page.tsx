@@ -4,7 +4,7 @@ import { AuthForm } from "@/components/auth-form";
 import { Alert } from "@/components/ui/alert";
 
 export const metadata = {
-  title: "Sign in · Lean Sporty",
+  title: "Sign in",
 };
 
 /**

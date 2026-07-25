@@ -33,7 +33,7 @@ export async function generateMetadata({
     const { username } = await params;
     const slug = username;
     if (looksLikeAssetPath(slug)) {
-      return { title: "Profile | Lean Sporty" };
+      return { title: "Profile", robots: { index: false, follow: false } };
     }
     const supabase = await createClient();
 
@@ -70,21 +70,32 @@ export async function generateMetadata({
 
     if (!userProfile) {
       return {
-        title: "Profile | Lean Sporty",
+        title: "Profile",
+        robots: { index: false, follow: false },
       };
     }
 
-    const title = `${userProfile.display_name}${instructor ? " - Instructor" : ""} | Lean Sporty`;
+    const title = `${userProfile.display_name}${instructor ? " - Instructor" : ""}`;
     const description = userProfile.bio || `View ${userProfile.display_name}'s profile on Lean Sporty`;
 
-    return {
-      title,
-      description,
-    };
+    // Instructor profiles are public landing pages worth indexing; plain user
+    // profiles are thin content — keep them out of the index until they're not.
+    return instructor
+      ? {
+          title,
+          description,
+          alternates: { canonical: `/${instructor.slug}` },
+        }
+      : {
+          title,
+          description,
+          robots: { index: false, follow: false },
+        };
   } catch (error) {
     console.error("Error generating metadata:", error);
     return {
-      title: "Profile | Lean Sporty",
+      title: "Profile",
+      robots: { index: false, follow: false },
     };
   }
 }

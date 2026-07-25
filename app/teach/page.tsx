@@ -18,9 +18,12 @@ import { Badge } from "@/components/ui/badge";
 import { TeachApplyForm } from "@/components/teach/apply-form";
 
 export const metadata: Metadata = {
-  title: "Teach on Lean Sporty — keep 85% of every sale",
+  // `absolute`: the title already carries the brand — the root template
+  // would double it.
+  title: { absolute: "Teach on Lean Sporty — keep 85% of every sale" },
   description:
     "Live-stream your dance & fitness classes, sell your own on-demand programs, and get paid automatically. No tech setup, no monthly fee — you teach, we run everything else.",
+  alternates: { canonical: "/teach" },
 };
 
 /**

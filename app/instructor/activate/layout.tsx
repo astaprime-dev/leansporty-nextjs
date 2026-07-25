@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Activate Instructor Status - Lean Sporty",
+  title: "Activate Instructor Status",
   robots: {
     index: false,
     follow: false,

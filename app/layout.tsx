@@ -21,8 +21,12 @@ const defaultUrl =
 
 export const metadata = {
   metadataBase: new URL(defaultUrl),
-  title: "Lean Sporty",
-  description: "New way to get fit and energized through dance",
+  title: {
+    default: "Lean Sporty — dance yourself fit at home",
+    template: "%s | Lean Sporty",
+  },
+  description:
+    "Short, feel-good dance workouts for women — no gym, no equipment, no experience needed. Led by a real choreographer. Day 1 is free to try.",
   manifest: '/site.webmanifest',
   icons: {
     icon: [
@@ -33,24 +37,35 @@ export const metadata = {
     apple: '/apple-touch-icon.png',
   },
   openGraph: {
-    title: "Lean Sporty",
-    description: "New way to get fit and energized through dance",
+    siteName: "Lean Sporty",
+    title: "Lean Sporty — dance yourself fit at home",
+    description:
+      "Short, feel-good dance workouts for women — no equipment, beginner-friendly. Day 1 is free to try.",
     images: [
       {
         url: '/logo1024.png',
         width: 1024,
         height: 1024,
-        alt: 'Lean Sporty Logo',
+        alt: 'Lean Sporty',
       },
     ],
     type: 'website',
   },
   twitter: {
     card: 'summary',
-    title: "Lean Sporty",
-    description: "New way to get fit and energized through dance",
-    images: ['/logo1024.png'],
   },
+};
+
+// Sitewide Organization schema for search engines. Static, first-party
+// content only — safe to serialize into a script tag.
+const organizationJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "Lean Sporty",
+  url: defaultUrl,
+  logo: `${defaultUrl}/logo1024.png`,
+  description:
+    "Short, feel-good dance workouts for women — at home, no equipment, beginner-friendly.",
 };
 
 const geistSans = Geist({
@@ -117,6 +132,12 @@ export default async function RootLayout({
   return (
     <html lang="en" className={`${geistSans.className} ${playfair.variable}`} suppressHydrationWarning>
       <body className="bg-background text-foreground">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(organizationJsonLd).replace(/</g, "\\u003c"),
+          }}
+        />
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
