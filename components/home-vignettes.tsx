@@ -90,6 +90,7 @@ export default function HomeVignettes({
           next="/challenge?intent=checkout"
           label={`Start the 21-Day Challenge — ${priceLabel}`}
           className="h-12 rounded-full bg-gradient-to-r from-pink-500 to-rose-400 px-8 text-base font-semibold text-white hover:from-pink-600 hover:to-rose-500"
+          source="homepage-vignettes"
         />
         {!owned && (
           <Button asChild variant="brandOutline" size="pill">

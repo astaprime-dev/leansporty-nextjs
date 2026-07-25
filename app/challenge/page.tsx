@@ -225,6 +225,7 @@ export default async function ChallengePage({
               next={`/challenge?intent=checkout`}
               label={`Start the Challenge — ${priceLabel}`}
               className="h-12 bg-gradient-to-r from-pink-500 to-rose-400 px-8 text-base font-semibold text-white hover:from-pink-600 hover:to-rose-500"
+              source="challenge-hero"
             />
             {!owned && (
               <Button
@@ -509,6 +510,7 @@ export default async function ChallengePage({
               next={`/challenge?intent=checkout`}
               label={`Start the Challenge — ${priceLabel}`}
               className="h-12 w-full bg-gradient-to-r from-pink-500 to-rose-400 text-base font-semibold text-white hover:from-pink-600 hover:to-rose-500"
+              source="challenge-pricing"
             />
           </div>
           </div>
@@ -555,6 +557,7 @@ export default async function ChallengePage({
         isAuthenticated={isAuthenticated}
         owned={owned}
         priceLabel={priceLabel}
+        source="challenge-sticky"
       />
 
       {/* Disclaimer / waiver */}

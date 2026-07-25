@@ -299,6 +299,7 @@ export default async function ProgramPage({
                 returnPath={pagePath}
                 ownedHref={pagePath}
                 className="bg-gradient-to-r from-pink-500 to-rose-400 text-white hover:opacity-90"
+                source="program-page"
               />
               <p className="text-sm text-gray-500">
                 One-time payment · 12 months of access
@@ -341,6 +342,7 @@ export default async function ProgramPage({
           priceLabel={priceLabel}
           heroCtaId="program-hero-cta"
           label={`Get the program — ${priceLabel}`}
+          source="program-sticky"
         />
       )}
     </div>

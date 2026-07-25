@@ -232,6 +232,7 @@ export function WatchView({
                       ownedHref={watchPath(currentContentId)}
                       label={`Unlock the full program — ${priceLabel}`}
                       className="h-11 rounded-full bg-gradient-to-r from-pink-500 to-rose-400 px-6 font-semibold text-white hover:from-pink-600 hover:to-rose-500"
+                      source="watch-ended-overlay"
                     />
                     <Button
                       variant="outline"
@@ -396,6 +397,7 @@ export function WatchView({
                   ownedHref={watchPath(currentContentId)}
                   label={`Unlock the full program — ${priceLabel}`}
                   className="h-12 rounded-full bg-gradient-to-r from-pink-500 to-rose-400 px-8 text-base font-semibold text-white hover:from-pink-600 hover:to-rose-500"
+                  source="watch-banner"
                 />
                 <p className="text-sm text-gray-600">
                   This lesson is free. One payment · 1 year of access · not a

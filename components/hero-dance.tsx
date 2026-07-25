@@ -57,6 +57,7 @@ export default function Header({
               next="/challenge?intent=checkout"
               label={`Start the 21-Day Challenge — ${priceLabel}`}
               className="h-12 rounded-full bg-gradient-to-r from-pink-500 to-rose-400 px-8 text-base font-semibold text-white hover:from-pink-600 hover:to-rose-500"
+              source="homepage-hero"
             />
             {!owned && (
               <Button asChild variant="brandOutline" size="pill">
@@ -260,6 +261,7 @@ export default function Header({
               next="/challenge?intent=checkout"
               label={`Start the 21-Day Challenge — ${priceLabel}`}
               className="h-14 rounded-full bg-white px-10 text-lg font-semibold text-pink-600 shadow-lg transition-all duration-300 hover:scale-105 hover:bg-white"
+              source="homepage-footer"
             />
           </div>
 
@@ -284,6 +286,7 @@ export default function Header({
         owned={owned}
         priceLabel={priceLabel}
         heroCtaId="home-hero-cta"
+        source="homepage-sticky"
       />
     </div>
   );

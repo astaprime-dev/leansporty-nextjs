@@ -32,6 +32,8 @@ interface CheckoutButtonProps {
   /** Where checkout returns after payment + where "owned" links (default: challenge flow → /my-program). */
   returnPath?: string;
   ownedHref?: string;
+  /** Which surface started the checkout (e.g. "homepage-hero", "challenge-pricing") — for funnel analytics. */
+  source: string;
 }
 
 /**
@@ -50,6 +52,7 @@ export function CheckoutButton({
   className,
   returnPath,
   ownedHref = "/my-program",
+  source,
 }: CheckoutButtonProps) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -58,7 +61,7 @@ export function CheckoutButton({
   async function startCheckout() {
     setLoading(true);
     setError("");
-    trackEvent("checkout_start", { product: productSlug });
+    trackEvent("checkout_start", { product: productSlug, source });
     try {
       const data = await createCheckout(productSlug, returnPath);
       if (data.alreadyOwned) {
@@ -66,7 +69,7 @@ export function CheckoutButton({
         return;
       }
       if (data.url) {
-        trackEvent("checkout_redirect", { product: productSlug });
+        trackEvent("checkout_redirect", { product: productSlug, source });
         window.location.href = data.url;
         return;
       }
@@ -177,9 +180,13 @@ export function ChallengeAutoCheckout({
       return;
     }
     (async () => {
+      trackEvent("checkout_start", { product: productSlug, source: "resume" });
       const data = await createCheckout(productSlug);
       if (data.alreadyOwned) window.location.href = "/my-program";
-      else if (data.url) window.location.href = data.url;
+      else if (data.url) {
+        trackEvent("checkout_redirect", { product: productSlug, source: "resume" });
+        window.location.href = data.url;
+      }
     })();
   }, [active, productSlug, isAuthenticated, owned]);
 
