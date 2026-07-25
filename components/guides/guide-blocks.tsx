@@ -51,7 +51,7 @@ export function GuideCta() {
     <section className="relative left-1/2 mt-14 w-screen -translate-x-1/2 overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-b from-pink-50/60 to-rose-50/60 md:hidden" />
       <Image
-        src="/guide-cta-anastasiia.jpg"
+        src="/guide-cta-anastasiia-2880.jpg"
         alt=""
         fill
         sizes="100vw"
@@ -63,7 +63,7 @@ export function GuideCta() {
             <Sparkles className="h-3.5 w-3.5" /> First session free
           </span>
           <h2 className="font-display mt-4 text-balance text-3xl font-light text-gray-900">
-            Check out the 21-Day Dance Challenge
+            Check out the 21&#8209;Day Dance Challenge
           </h2>
           <p className="mt-3 font-light text-gray-600">
             Short, beginner-friendly dance workouts you follow along at home,
