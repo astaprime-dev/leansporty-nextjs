@@ -24,6 +24,7 @@ export const metadata: Metadata = {
   description:
     "Live-stream your dance & fitness classes, sell your own on-demand programs, and get paid automatically. No tech setup, no monthly fee — you teach, we run everything else.",
   alternates: { canonical: "/teach" },
+  twitter: { card: "summary_large_image" },
 };
 
 /**
