@@ -47,6 +47,30 @@ export const GUIDES: GuideMeta[] = [
     blurb:
       "Why restarting feels so hard, what to expect week by week, and the mistakes that end most comebacks.",
   },
+  {
+    slug: "dance-workout-no-rhythm",
+    title: "Dance workouts for people who “can’t dance”",
+    blurb:
+      "Rhythm is a skill, not a birthright — what “no rhythm” really means, and how timing and coordination are trained at any age.",
+  },
+  {
+    slug: "zumba-vs-dance-fitness",
+    title: "Zumba vs dance fitness: what’s the difference?",
+    blurb:
+      "A fair comparison of the formats — and what to try if a Zumba class once felt too fast to follow.",
+  },
+  {
+    slug: "embarrassed-to-dance",
+    title: "Too embarrassed to dance — even alone at home?",
+    blurb:
+      "Feeling watched with nobody there is documented psychology, not a flaw — and format changes dissolve it, not pep talks.",
+  },
+  {
+    slug: "how-often-dance-workout",
+    title: "How often should you do dance workouts?",
+    blurb:
+      "The definitive frequency answer: a goal-by-goal table, the recovery logic behind it, and the truth about dancing daily.",
+  },
 ];
 
 /** Launch date of the guides section; override per page when adding new ones. */
