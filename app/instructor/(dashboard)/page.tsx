@@ -4,6 +4,7 @@ import { Alert } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { LiveDot } from "@/components/ui/live-dot";
 import { EmptyState } from "@/components/empty-state";
+import { GettingStarted } from "@/components/instructor/getting-started";
 import { createClient } from "@/utils/supabase/server";
 import { LiveStreamSession } from "@/types/streaming";
 import { Plus, Calendar, Users, CheckCircle2, BookOpen } from "lucide-react";
@@ -114,15 +115,43 @@ export default async function InstructorDashboard() {
      (profileCompletion.hasBio ? 1 : 0)) / 2 * 100
   );
 
+  // Programs count for the getting-started checklist (an instructor's first
+  // "creation" can be a program instead of a class). Max 3 rows — cheap read.
+  const { data: programRows } = await supabase
+    .from("products")
+    .select("id, is_active")
+    .eq("kind", "course")
+    .eq("instructor_id", instructorProfile.id);
+  const programCount = (programRows ?? []).length;
+  const hasPublishedProgram = (programRows ?? []).some((p) => p.is_active);
+
+  // Getting-started state, all derived from data (never stored).
+  const checklist = {
+    profileDone: profileCompletion.hasPhoto && profileCompletion.hasBio,
+    createdSomething: stats.total > 0 || programCount > 0,
+    taughtSomething: stats.live > 0 || stats.ended > 0 || hasPublishedProgram,
+  };
+  const showChecklist = !(
+    checklist.profileDone &&
+    checklist.createdSomething &&
+    checklist.taughtSomething
+  );
+  const isBrandNew = stats.total === 0 && programCount === 0;
+
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
       {/* Header */}
       <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-3xl sm:text-4xl font-display font-light text-gray-900 mb-2">
-            Welcome back, {userProfile?.display_name || 'Instructor'}
+            {isBrandNew ? "Welcome" : "Welcome back"},{" "}
+            {userProfile?.display_name || 'Instructor'}
           </h1>
-          <p className="text-gray-600">Here&apos;s what&apos;s happening with your classes</p>
+          <p className="text-gray-600">
+            {isBrandNew
+              ? "Let's get your page ready — three steps and you're live."
+              : <>Here&apos;s what&apos;s happening with your classes</>}
+          </p>
         </div>
         <Button asChild variant="brand" className="shrink-0 gap-2">
           <Link href="/instructor/streams/create">
@@ -132,8 +161,18 @@ export default async function InstructorDashboard() {
         </Button>
       </div>
 
+      {/* First-run checklist (covers profile completion while visible) */}
+      {showChecklist && (
+        <GettingStarted
+          profileDone={checklist.profileDone}
+          createdSomething={checklist.createdSomething}
+          taughtSomething={checklist.taughtSomething}
+          slug={instructorProfile.slug}
+        />
+      )}
+
       {/* Profile Completion Alert */}
-      {completionPercentage < 100 && (
+      {completionPercentage < 100 && !showChecklist && (
         <Alert variant="warning" className="mb-8">
           <div className="flex items-center justify-between">
             <div>

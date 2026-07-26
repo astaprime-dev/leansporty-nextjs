@@ -3,7 +3,12 @@ import { redirect } from "next/navigation";
 import { InstructorProfileForm } from "@/components/instructor/profile-form";
 import GalleryManager from "@/components/instructor/gallery-manager";
 
-export default async function InstructorProfilePage() {
+export default async function InstructorProfilePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ welcome?: string }>;
+}) {
+  const { welcome } = await searchParams;
   const supabase = await createClient();
 
   const {
@@ -44,17 +49,37 @@ export default async function InstructorProfilePage() {
       }
     : null;
 
+  const isWelcome = welcome === "1" && !!instructorProfile;
+
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
       <div className="mb-8">
-        <h1 className="text-3xl sm:text-4xl font-display font-light text-gray-900 mb-2">
-          {instructorProfile ? "Edit Your Profile" : "Create Your Instructor Profile"}
-        </h1>
-        <p className="text-gray-600">
-          {instructorProfile
-            ? "Update your public instructor profile information"
-            : "Set up your public profile to let students know more about you"}
-        </p>
+        {isWelcome ? (
+          <>
+            <h1 className="text-3xl sm:text-4xl font-display font-light text-gray-900 mb-2">
+              Welcome — set up your public page
+            </h1>
+            <p className="text-gray-600">
+              This is what your followers will see at{" "}
+              <span className="rounded bg-pink-50 px-1.5 py-0.5 font-mono text-sm text-pink-700">
+                leansporty.com/@{instructorProfile!.slug}
+              </span>
+              . Your address was auto-generated from your email — change the
+              username below to your name before you share anything.
+            </p>
+          </>
+        ) : (
+          <>
+            <h1 className="text-3xl sm:text-4xl font-display font-light text-gray-900 mb-2">
+              {instructorProfile ? "Edit Your Profile" : "Create Your Instructor Profile"}
+            </h1>
+            <p className="text-gray-600">
+              {instructorProfile
+                ? "Update your public instructor profile information"
+                : "Set up your public profile to let students know more about you"}
+            </p>
+          </>
+        )}
       </div>
 
       <InstructorProfileForm

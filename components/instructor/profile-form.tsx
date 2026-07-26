@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
@@ -21,6 +22,7 @@ export function InstructorProfileForm({
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const [saved, setSaved] = useState(false);
 
   const [formData, setFormData] = useState({
     display_name: initialData?.display_name || "",
@@ -49,6 +51,7 @@ export function InstructorProfileForm({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    setSaved(false);
     setIsLoading(true);
 
     try {
@@ -124,12 +127,22 @@ export function InstructorProfileForm({
         if (instructorError) throw instructorError;
       }
 
+      // Stay on the page with a visible confirmation — a hard redirect hid
+      // whether the save worked and dumped first-timers on the dashboard.
+      setSaved(true);
       router.refresh();
-      router.push("/instructor");
     } catch (err: any) {
       console.error("Profile save error:", err);
       if (err.code === "23505") {
-        setError("This username is already taken. Please choose another.");
+        // Only the username/slug uniqueness reads as "taken". A user_id
+        // conflict means the instructor row already exists (stale create
+        // branch) — a misleading "username taken" here caused a dead loop.
+        const detail = `${err.message ?? ""} ${err.details ?? ""}`;
+        setError(
+          /user_id/.test(detail)
+            ? "Your instructor profile already exists — reload this page and try again."
+            : "This username is already taken. Please choose another."
+        );
       } else {
         setError(err.message || "Failed to save profile. Please try again.");
       }
@@ -178,7 +191,8 @@ export function InstructorProfileForm({
           />
         </div>
         <p className="text-xs text-gray-500 mt-1">
-          Lowercase letters, numbers, and hyphens only
+          Lowercase letters, numbers, and hyphens only. Changing this later
+          breaks links you&apos;ve already shared.
         </p>
       </div>
 
@@ -247,6 +261,23 @@ export function InstructorProfileForm({
       {/* Error Message */}
       {error && (
         <Alert variant="error">{error}</Alert>
+      )}
+
+      {/* Saved confirmation — stays on the page */}
+      {saved && !error && (
+        <Alert variant="success">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <p className="font-semibold">Saved — your public page is live.</p>
+            <div className="flex gap-2">
+              <Button asChild size="sm" variant="brandOutline">
+                <Link href={`/@${formData.slug}`}>View your page</Link>
+              </Button>
+              <Button asChild size="sm" variant="outline">
+                <Link href="/instructor">Go to dashboard</Link>
+              </Button>
+            </div>
+          </div>
+        </Alert>
       )}
 
       {/* Submit Button */}
