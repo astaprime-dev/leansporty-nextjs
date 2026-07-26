@@ -462,7 +462,7 @@ export default function TeachPage() {
               dissolves into the band. Blend sits on the wrapper so multiply
               still hits the section background through the mask. */}
           <div
-            className="absolute inset-y-0 left-0 aspect-[2/3] opacity-50 mix-blend-multiply md:opacity-100"
+            className="absolute inset-y-0 left-0 aspect-[2/3] opacity-30 mix-blend-multiply md:opacity-100"
             style={{
               maskImage:
                 "linear-gradient(to right, black 65%, transparent 100%)",
