@@ -229,7 +229,9 @@ export default function TeachPage() {
               </p>
             </div>
 
-            <div className="relative hidden aspect-[3/4] overflow-hidden rounded-3xl bg-gradient-to-br from-pink-100 via-rose-50 to-pink-100 md:block">
+            {/* aspect matches the source photo (2:3), so nothing is cropped —
+                raised hand and shoes both stay in frame. */}
+            <div className="relative hidden aspect-[2/3] overflow-hidden rounded-3xl bg-gradient-to-br from-pink-100 via-rose-50 to-pink-100 md:block">
               <Image
                 src="/teach-hero-reach.jpg"
                 alt="Dance instructor mid-class, one arm raised"
