@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import {
   Banknote,
@@ -97,6 +98,25 @@ const STEPS = [
     n: "4",
     title: "Get paid monthly",
     body: "Every sale appears in your earnings dashboard the moment it happens, and we send your share to your bank once a month by bank transfer.",
+  },
+];
+
+/** Real Studio screenshots, captured in a live production walkthrough (1440px). */
+const PROOF_SHOTS = [
+  {
+    src: "/teach-shot-dashboard.jpg",
+    title: "Your Studio dashboard",
+    body: "A getting-started checklist walks you from empty page to first class.",
+  },
+  {
+    src: "/teach-shot-broadcast.jpg",
+    title: "Go live from your browser",
+    body: "Set up your camera, press Start Broadcast — that's the whole setup. OBS optional.",
+  },
+  {
+    src: "/teach-shot-profile.jpg",
+    title: "Your public page",
+    body: "leansporty.com/@your-name — your photo, classes, and programs in one link.",
   },
 ];
 
@@ -339,6 +359,37 @@ export default function TeachPage() {
         </div>
       </section>
 
+      {/* Product proof — real screenshots, not promises */}
+      <section className="mx-auto max-w-5xl px-4 py-14">
+        <h2 className="font-display text-center text-3xl font-light text-gray-900">
+          This is what you get
+        </h2>
+        <p className="mx-auto mt-2 max-w-2xl text-center text-muted-foreground">
+          Real screenshots — your Studio, your broadcast screen, and the public
+          page your followers see.
+        </p>
+        <div className="mt-8 grid gap-6 md:grid-cols-3">
+          {PROOF_SHOTS.map((s) => (
+            <figure
+              key={s.src}
+              className="overflow-hidden rounded-2xl border border-pink-100 bg-white shadow-sm"
+            >
+              <Image
+                src={s.src}
+                alt={s.title}
+                width={1200}
+                height={631}
+                className="w-full border-b border-pink-50"
+              />
+              <figcaption className="p-4">
+                <p className="font-semibold text-gray-900">{s.title}</p>
+                <p className="mt-1 text-sm text-muted-foreground">{s.body}</p>
+              </figcaption>
+            </figure>
+          ))}
+        </div>
+      </section>
+
       {/* Opportunities */}
       <section className="mx-auto max-w-5xl px-4 py-14">
         <h2 className="font-display text-center text-3xl font-light text-gray-900">
@@ -360,6 +411,30 @@ export default function TeachPage() {
         </div>
       </section>
 
+      {/* Who's behind this — small team, direct line */}
+      <section className="mx-auto max-w-3xl px-4 pt-12">
+        <div className="flex flex-col items-center gap-6 rounded-2xl border border-pink-100 bg-pink-50/40 p-6 text-center sm:flex-row sm:p-8 sm:text-left">
+          <Image
+            src="/teach-founder-team.jpg"
+            alt="Dance instructor smiling with arms crossed"
+            width={128}
+            height={170}
+            className="h-40 w-32 shrink-0 rounded-xl object-cover object-top"
+          />
+          <div>
+            <h3 className="text-lg font-semibold text-gray-900">
+              A tiny team you can actually reach
+            </h3>
+            <p className="mt-2 text-sm text-muted-foreground">
+              Lean Sporty is built hands-on. Join now and you talk directly to
+              the founder — the same person who reads your application, sends
+              your invite, and sets up the platform around how you teach. No
+              ticket queues, no support bots.
+            </p>
+          </div>
+        </div>
+      </section>
+
       {/* FAQ */}
       <section className="mx-auto max-w-3xl px-4 py-12">
         <h2 className="font-display text-center text-3xl font-light text-gray-900">
@@ -377,23 +452,36 @@ export default function TeachPage() {
 
       {/* Apply */}
       <section id="apply" className="border-y border-pink-100/70 bg-pink-50/40 py-14">
-        <div className="mx-auto max-w-2xl px-4">
-          <div className="text-center">
-            <Badge variant="brand" className="mb-4">
-              Featured instructors keep 90%
-            </Badge>
-            <h2 className="font-display text-3xl font-light text-gray-900">
-              Become a featured instructor
-            </h2>
-            <p className="mx-auto mt-3 max-w-xl text-sm text-muted-foreground">
-              We&apos;re featuring a small number of instructors to start: keep 90%
-              of every sale, work directly with the founder, and shape the platform
-              around how you actually teach. Tell us a little about yourself — it
-              takes a minute.
-            </p>
-          </div>
-          <div className="mt-8 rounded-2xl border border-pink-100 bg-white p-6 shadow-sm sm:p-8">
-            <TeachApplyForm />
+        <div className="mx-auto max-w-4xl px-4">
+          <div className="grid items-center gap-8 md:grid-cols-[2fr,3fr]">
+            <div className="relative hidden aspect-[3/4] overflow-hidden rounded-2xl md:block">
+              <Image
+                src="/teach-apply-pointing.jpg"
+                alt="Dance instructor pointing toward the application form"
+                fill
+                sizes="(max-width: 768px) 0px, 360px"
+                className="object-cover"
+              />
+            </div>
+            <div>
+              <div className="text-center md:text-left">
+                <Badge variant="brand" className="mb-4">
+                  Featured instructors keep 90%
+                </Badge>
+                <h2 className="font-display text-3xl font-light text-gray-900">
+                  Become a featured instructor
+                </h2>
+                <p className="mt-3 max-w-xl text-sm text-muted-foreground">
+                  We&apos;re featuring a small number of instructors to start: keep 90%
+                  of every sale, work directly with the founder, and shape the platform
+                  around how you actually teach. Tell us a little about yourself — it
+                  takes a minute.
+                </p>
+              </div>
+              <div className="mt-8 rounded-2xl border border-pink-100 bg-white p-6 shadow-sm sm:p-8">
+                <TeachApplyForm />
+              </div>
+            </div>
           </div>
         </div>
       </section>
