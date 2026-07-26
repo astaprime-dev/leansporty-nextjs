@@ -130,7 +130,12 @@ export function StreamForm({ initialData, streamId, mode }: StreamFormProps) {
         const id = mode === "create" ? result.streamId : streamId;
         // Land on the class detail page (share the link, go live when ready) rather
         // than dropping straight into the camera/broadcast screen (S1.3).
-        router.push(`/instructor/streams/${id}?created=${mode === "create" ? 1 : 0}`);
+        // result.warning = the API created the class but couldn't provision the
+        // Stripe price (class is silently free) — the detail page must say so.
+        const warn = result.warning ? "&warn=price" : "";
+        router.push(
+          `/instructor/streams/${id}?created=${mode === "create" ? 1 : 0}${warn}`
+        );
       } else {
         setError(result.error || `Failed to ${mode} the class.`);
       }

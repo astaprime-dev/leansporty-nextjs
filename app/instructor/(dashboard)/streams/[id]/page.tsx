@@ -25,11 +25,11 @@ export default async function StreamDetailPage({
   searchParams,
 }: {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ created?: string }>;
+  searchParams: Promise<{ created?: string; warn?: string }>;
 }) {
   const supabase = await createClient();
   const { id } = await params;
-  const { created } = await searchParams;
+  const { created, warn } = await searchParams;
 
   // Verify instructor access
   const {
@@ -186,6 +186,19 @@ export default async function StreamDetailPage({
           </div>
         </div>
 
+        {/* Stripe price provisioning failed on create — without this banner the
+            instructor believes the class is priced when it's free (the create
+            API returns the warning; the form forwards it as ?warn=price). */}
+        {warn === "price" && (
+          <Alert variant="warning" className="mb-4">
+            <p className="font-semibold">Your class is live, but the price didn&apos;t stick</p>
+            <p className="text-sm">
+              The class was created, but pricing couldn&apos;t be set up — right
+              now it&apos;s free to join. Open Edit and set the price again.
+            </p>
+          </Alert>
+        )}
+
         {/* Share — for classes that haven't ended */}
         {streamData.status !== "ended" && streamData.status !== "cancelled" && (
           <Alert variant={created ? "success" : "info"} className="mb-4">
@@ -199,7 +212,7 @@ export default async function StreamDetailPage({
                 </p>
               </div>
               <CopyLinkButton
-                path={`/streams/${id}/watch`}
+                path={`/streams/${id}`}
                 variant="brandOutline"
                 className="shrink-0"
               />

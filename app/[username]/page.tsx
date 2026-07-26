@@ -80,11 +80,24 @@ export async function generateMetadata({
 
     // Instructor profiles are public landing pages worth indexing; plain user
     // profiles are thin content — keep them out of the index until they're not.
+    // The instructor openGraph/twitter blocks deliberately omit `images` so the
+    // opengraph-image.tsx file convention attaches the generated card — without
+    // these blocks a shared profile renders the root logo square.
     return instructor
       ? {
           title,
           description,
           alternates: { canonical: `/${instructor.slug}` },
+          openGraph: {
+            title: userProfile.display_name ?? title,
+            description,
+            type: "profile",
+          },
+          twitter: {
+            card: "summary_large_image",
+            title: userProfile.display_name ?? title,
+            description,
+          },
         }
       : {
           title,

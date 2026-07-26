@@ -183,7 +183,7 @@ export function BroadcastManagementView({
             <div className="flex items-center justify-between gap-3">
               <h2 className="text-2xl font-semibold text-gray-900">Stream Details</h2>
               {streamStatus !== "ended" && (
-                <CopyLinkButton path={`/streams/${stream.id}/watch`} />
+                <CopyLinkButton path={`/streams/${stream.id}`} />
               )}
             </div>
             <div className="grid grid-cols-2 gap-4 text-sm">

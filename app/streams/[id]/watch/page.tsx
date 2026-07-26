@@ -23,8 +23,10 @@ export default async function StreamWatchPage({
   } = await supabase.auth.getUser();
 
   if (!user) {
-    // Not signed in — send to the classes list with a clear reason, not home.
-    redirect("/streams?notice=signin");
+    // Not signed in — land on this class's own public page, which carries the
+    // sign-in modal and the buy/enroll CTA (a shared link must never lose the
+    // class it pointed at).
+    redirect(`/streams/${streamId}`);
   }
 
   // Get stream details first — we need product_id to tell free from paid.
@@ -56,8 +58,8 @@ export default async function StreamWatchPage({
         );
       }
     }
-    // Not enrolled — explain the redirect instead of bouncing silently.
-    redirect("/streams?notice=enroll");
+    // Not enrolled — the class's public page shows the correct join CTA.
+    redirect(`/streams/${streamId}`);
   }
 
   // If stream is ended but recording is not available yet, try to fetch it from Cloudflare

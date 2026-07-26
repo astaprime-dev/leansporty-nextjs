@@ -106,7 +106,7 @@ export default async function InstructorStreamsPage() {
                 </div>
                 <div className="flex flex-wrap gap-2 shrink-0 sm:flex-col sm:items-stretch sm:w-40">
                   {stream.status !== "cancelled" && (
-                    <CopyLinkButton path={`/streams/${stream.id}/watch`} className="w-full" />
+                    <CopyLinkButton path={`/streams/${stream.id}`} className="w-full" />
                   )}
                   {stream.status === "scheduled" && (
                     <Link href={`/instructor/streams/${stream.id}/edit`} className="flex-1 sm:flex-initial">
