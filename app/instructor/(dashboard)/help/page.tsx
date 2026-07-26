@@ -193,11 +193,8 @@ export default function InstructorHelpPage() {
                     <li>• <strong>Description:</strong> What to expect, fitness level, equipment needed</li>
                     <li>• <strong>Date & Time:</strong> When your class will start (shown in your local timezone)</li>
                     <li>• <strong>Duration:</strong> How long the class will be, 15–180 minutes</li>
+                    <li>• <strong>Price:</strong> Pick a preset or a custom amount, or choose Free — you keep 85% of every sale (90% as a featured instructor)</li>
                   </ul>
-                  <p className="text-sm text-gray-600 mt-2 ml-4">
-                    Classes are free for students while we&apos;re in early access — paid
-                    classes are coming soon.
-                  </p>
                 </li>
                 <li>
                   <p className="font-semibold text-gray-900">Click "Schedule Class"</p>
@@ -251,7 +248,7 @@ export default function InstructorHelpPage() {
                 <ol className="space-y-3 ml-6 list-decimal text-gray-700">
                   <li>
                     <p className="font-semibold text-gray-900">Open your broadcast page</p>
-                    <p className="text-sm text-gray-600">Go to "Classes" and click "Manage →" on your scheduled class</p>
+                    <p className="text-sm text-gray-600">Go to "Classes" and click "Broadcast" on your scheduled class</p>
                   </li>
                   <li>
                     <p className="font-semibold text-gray-900">Click "Start Broadcast"</p>
@@ -311,7 +308,7 @@ export default function InstructorHelpPage() {
                   </li>
                   <li>
                     <p className="font-semibold text-gray-900">That's it!</p>
-                    <p className="text-sm text-gray-600">Your class is now marked as ended and the recording becomes available to students automatically</p>
+                    <p className="text-sm text-gray-600">Your class is now marked as ended and the recording is prepared automatically — usually ready within a few hours (up to a day)</p>
                   </li>
                 </ol>
               </div>
@@ -322,7 +319,7 @@ export default function InstructorHelpPage() {
                   <li>Your camera and microphone turn off</li>
                   <li>The class status changes from "LIVE" to "ENDED"</li>
                   <li>Students can no longer join the live class</li>
-                  <li>The recording becomes available automatically</li>
+                  <li>The recording is prepared automatically (usually ready within a few hours, up to a day)</li>
                   <li>Enrolled students can watch the replay for 7 days</li>
                 </ul>
               </Alert>
@@ -331,7 +328,8 @@ export default function InstructorHelpPage() {
                 <p className="font-semibold mb-1">Important: Recording Availability</p>
                 <p className="text-sm">
                   Your class is automatically recorded while you broadcast. After you end the class,
-                  the recording is available to enrolled students for <strong>7 days</strong>. After that,
+                  the recording is prepared automatically — usually ready within a few hours (up to
+                  a day) — and is then available to enrolled students for <strong>7 days</strong>. After that,
                   it's automatically deleted. This gives students time to re-watch the class while keeping
                   your content exclusive!
                 </p>
@@ -400,37 +398,38 @@ export default function InstructorHelpPage() {
             </div>
             <div>
               <h2 className="text-2xl font-semibold text-gray-900 mb-2">Getting paid</h2>
-              <p className="text-gray-600">How teaching on Lean Sporty will pay you</p>
+              <p className="text-gray-600">How teaching on Lean Sporty pays you</p>
             </div>
           </div>
 
           <div className="space-y-6">
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-3">Free while we&apos;re in early access</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-3">You set the price</h3>
               <p className="text-gray-700 mb-4">
-                Right now your classes are free for students, so there&apos;s nothing to
-                price and nothing to withdraw yet. This is the early-access period — you
-                build your profile, your class library, and your audience.
+                Paid classes and programs are live. When you schedule a class or
+                publish a program, you set one price in euros — or make a class free.
+                Students pay by card; we handle checkout, receipts, refunds, and
+                access.
               </p>
             </div>
 
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-3">Paid classes are coming</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-3">What you keep, and when it arrives</h3>
               <p className="text-gray-700 mb-3">
-                When paid classes launch, you&apos;ll set one price and{" "}
-                <strong>keep 85% of every sale</strong> (90% for featured instructors).
-                We handle checkout, global pricing, and payouts; your share is paid
-                straight to your bank via Stripe. You&apos;ll never be out of pocket —
-                you only ever earn on a sale.
+                You <strong>keep 85% of every sale</strong> (90% as a featured
+                instructor). Every sale shows up on your Earnings page the moment it
+                happens, and we send your share to your bank{" "}
+                <strong>once a month, by bank transfer</strong>. You&apos;re never out
+                of pocket — you only ever earn on a sale.
               </p>
             </div>
 
             <Alert variant="info">
-              <p className="font-semibold mb-1">What you can do today</p>
+              <p className="font-semibold mb-1">Recordings keep earning</p>
               <p className="text-sm">
-                Every live class you run is recorded and grows the members&apos; library,
-                and every student meets your brand. That&apos;s the audience your future
-                paid classes sell to — so the work you do now compounds.
+                Every live class you run is recorded automatically. Recordings grow
+                the members&apos; library — and you can reuse them as lessons in your
+                own paid programs, so one night of teaching keeps selling.
               </p>
             </Alert>
           </div>
@@ -607,7 +606,8 @@ export default function InstructorHelpPage() {
             <div>
               <h3 className="text-lg font-semibold text-gray-900 mb-2">Will my classes be recorded?</h3>
               <p className="text-gray-700">
-                Yes! Classes are automatically recorded and become available to enrolled students after the class ends.
+                Yes! Classes are recorded automatically. The recording is usually ready within a few
+                hours (up to a day) after class ends, and enrolled students can rewatch it for 7 days.
                 This adds value to your classes as students can revisit the workout.
               </p>
             </div>

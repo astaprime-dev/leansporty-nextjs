@@ -22,7 +22,7 @@ export const metadata: Metadata = {
   // would double it.
   title: { absolute: "Teach on Lean Sporty — keep 85% of every sale" },
   description:
-    "Live-stream your dance & fitness classes, sell your own on-demand programs, and get paid automatically. No tech setup, no monthly fee — you teach, we run everything else.",
+    "Live-stream your dance & fitness classes, sell your own on-demand programs, and get paid for every sale. No tech setup, no monthly fee — you teach, we run everything else.",
   alternates: { canonical: "/teach" },
   twitter: { card: "summary_large_image" },
 };
@@ -52,8 +52,8 @@ const PLATFORM_FEATURES = [
   },
   {
     icon: Banknote,
-    title: "Money arrives by itself",
-    body: "Payments are collected for you and your share is paid straight to your bank on a regular schedule. No invoices, no chasing.",
+    title: "Payments handled for you",
+    body: "Students pay by card; we collect the money, handle receipts and refunds, and send your share to your bank every month. No invoices, no chasing.",
   },
   {
     icon: Video,
@@ -81,7 +81,7 @@ const STEPS = [
   {
     n: "1",
     title: "Set up once — about 10 minutes",
-    body: "Create your profile and securely connect your bank account (handled by Stripe; we never see your bank details). You never do this again.",
+    body: "Create your profile — a photo, a few lines about you — and claim your page address (leansporty.com/@your-name). No bank forms, no paperwork.",
   },
   {
     n: "2",
@@ -95,8 +95,8 @@ const STEPS = [
   },
   {
     n: "4",
-    title: "Get paid automatically",
-    body: "Your share lands in your bank on a regular schedule, and your earnings dashboard shows every sale.",
+    title: "Get paid monthly",
+    body: "Every sale appears in your earnings dashboard the moment it happens, and we send your share to your bank once a month by bank transfer.",
   },
 ];
 
@@ -136,6 +136,10 @@ const FAQ = [
     a: "Your 85% (featured 90%) applies to students you bring — your classes, your Instagram, your community. When our own marketing brings you students you'd never have reached, we keep a larger share on those specific sales — bonus income on top, never a cut of what your audience pays you.",
   },
   {
+    q: "When do I actually get paid?",
+    a: "Once a month, by bank transfer, for everything you earned that month. You see every sale in your earnings dashboard the moment it happens — the monthly transfer is just when the money moves.",
+  },
+  {
     q: "Why do you keep the recordings?",
     a: "It's the heart of the deal — and why we charge 15% instead of the 30–50% others take. Your recordings grow the members' library, the library grows the audience, and that audience keeps finding you. And you can bundle those same recordings into your own paid programs and sell them from your profile.",
   },
@@ -164,7 +168,7 @@ export default function TeachPage() {
           </h1>
           <p className="mx-auto mt-4 max-w-2xl text-lg text-muted-foreground">
             Live-stream your classes, sell your own on-demand programs, and get
-            paid automatically — while you keep{" "}
+            paid monthly — while you keep{" "}
             <strong className="font-semibold text-gray-900">
               85% of every sale
             </strong>

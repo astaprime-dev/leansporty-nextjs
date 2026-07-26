@@ -95,7 +95,8 @@ export default async function InstructorEarningsPage() {
         <p className="text-gray-600 mt-1">Your share of every sale, and what&apos;s owed to you.</p>
         <p className="text-sm text-gray-400 mt-1">
           You keep your agreed share of every sale (85%, or 90% as a featured
-          instructor). Pending amounts are paid to your bank on a regular schedule.
+          instructor). Pending amounts are paid to your bank once a month by bank
+          transfer.
         </p>
       </div>
 

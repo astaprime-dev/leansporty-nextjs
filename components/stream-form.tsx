@@ -264,6 +264,11 @@ export function StreamForm({ initialData, streamId, mode }: StreamFormProps) {
           </div>
         </div>
 
+        <p className="text-xs text-gray-500">
+          Your class is recorded automatically — students who joined can rewatch
+          it for 7 days.
+        </p>
+
         <div className="space-y-1.5">
           <Label htmlFor="stream-price">Price</Label>
           <select
@@ -303,9 +308,9 @@ export function StreamForm({ initialData, streamId, mode }: StreamFormProps) {
             />
           )}
           <p className="text-xs text-gray-500">
-            Pick a price or set a custom amount — students pay to join and you keep 85%
-            (90% as a featured instructor), paid out via Stripe. Choose Free to open the
-            class to everyone.
+            Pick a price or set a custom amount — students pay to join, you keep 85%
+            (90% as a featured instructor), and we send your share monthly by bank
+            transfer. Choose Free to open the class to everyone.
           </p>
         </div>
 

@@ -155,22 +155,23 @@ export function BroadcastManagementView({
                 <div className="inline-flex items-center justify-center w-16 h-16 bg-gray-100 rounded-full mb-4">
                   <Check className="w-8 h-8 text-gray-600" />
                 </div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">Stream Has Ended</h3>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">Your class has ended</h3>
                 <p className="text-gray-600 mb-6">
-                  This class has finished. The recording is now available to enrolled students for 7 days.
+                  The recording is being prepared — it usually appears within a few
+                  hours (up to a day) and stays available to your students for 7 days.
                 </p>
                 <div className="flex gap-3 justify-center">
                   <Button
                     onClick={() => router.push("/instructor/streams")}
                     variant="outline"
                   >
-                    Back to Streams
+                    Back to Classes
                   </Button>
                   <Button
                     onClick={() => router.push("/instructor/streams/create")}
                     className="bg-gradient-to-r from-pink-500 to-rose-400"
                   >
-                    Create New Stream
+                    Schedule a New Class
                   </Button>
                 </div>
               </div>
@@ -212,7 +213,7 @@ export function BroadcastManagementView({
               >
                 <div className="flex items-center gap-2">
                   <Video className="w-5 h-5 text-blue-600" />
-                  <h3 className="font-semibold text-blue-900">Advanced: Stream with OBS (Recording Available)</h3>
+                  <h3 className="font-semibold text-blue-900">Advanced: stream with OBS instead</h3>
                 </div>
                 {showRTMPS ? (
                   <ChevronUp className="w-5 h-5 text-blue-600" />
@@ -224,8 +225,8 @@ export function BroadcastManagementView({
               {showRTMPS && (
                 <div className="space-y-4 pt-2">
                   <Alert variant="info">
-                    <p className="font-semibold mb-1">RTMPS streaming supports recording!</p>
-                    <p>Use OBS or similar software to stream. Your class will be automatically recorded and available to students for 7 days.</p>
+                    <p className="font-semibold mb-1">Prefer OBS?</p>
+                    <p>Browser and OBS streams are both recorded automatically. Use this only if you already know OBS — broadcasting from your browser above is the simplest way to go live.</p>
                   </Alert>
 
                   <div className="space-y-3">
