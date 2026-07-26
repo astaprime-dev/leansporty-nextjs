@@ -12,21 +12,36 @@ Supabase SQL editor — no admin UI (that's deferred in `INSTRUCTOR_STUDIO_PLAN.
 ## Issue a code (approving a `/teach` applicant)
 
 Applications land in `leads` with `source = 'teach-apply'` (name/social/about in
-`metadata`). To approve one, issue an invite:
+`metadata`) — and each one also emails the founder inbox. To approve one, issue an
+invite:
 
 ```sql
-insert into public.instructor_invites (code, email, note, expires_at)
+insert into public.instructor_invites (code, email, invited_name, note, expires_at)
 values (
-  'ls-anna-7c3f9a2b',                    -- share this with the instructor
+  'ls-anna-7c3f9a2b',                    -- high-entropy; becomes the /welcome link
   'anna@example.com',                    -- optional: intended recipient
+  'Anna',                                -- greets her by name on the invite page
   'Latin dance, ~8k IG — approved 2026-07-03',
   now() + interval '30 days'             -- optional expiry (null = never)
-);
+)
+returning 'https://leansporty.com/welcome/' || code as invite_link;
 ```
 
-Use a **high-entropy, unguessable** code (e.g. a name prefix + random hex). Send it to
-the instructor; they enter it at `/instructor/activate` (or via the "Instructor Studio"
-footer link → sign in → activate).
+Use a **high-entropy, unguessable** code (e.g. a name prefix + random hex). Send the
+instructor the **personal link** the insert returns —
+`https://leansporty.com/welcome/<code>`. It greets them by name, restates the featured
+deal, and activates in one click after sign-in (no code to copy/paste). The same code
+also still works manually at `/instructor/activate`.
+
+**Featured (90%) instructors:** the invite doesn't set the split. After they redeem,
+set it once:
+
+```sql
+update public.instructors i
+set split_pct = 90
+from public.instructor_invites v
+where v.code = 'ls-anna-7c3f9a2b' and i.user_id = v.used_by;
+```
 
 ## Check who redeemed what
 

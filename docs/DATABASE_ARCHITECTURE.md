@@ -422,7 +422,7 @@ The live-streaming tables predate this doc; the July 2026 Studio work (see
 - **`products`** additions (`20260704000000`/`20260705000000`): `instructor_id` (null = platform product like the challenge), `split_pct` (default 85). **`instructors.split_pct`** (nullable; founding instructors → 90) is copied onto new products at creation.
 - **`stripe_class_prices`** (`20260704010000`) — was a pool of reusable Stripe Prices for paid classes; **dropped** (`20260710000000`) when Checkout moved to inline `price_data` (stored Price ids are test/live-mode-bound and broke cross-environment).
 - **`instructor_payouts`** (`20260705000000`) — per-sale ledger (gross, platform_fee, instructor_share, split_pct, status, batch). Webhook-only writes; instructor reads own. Basis for manual monthly payouts (`docs/INSTRUCTOR_PAYOUTS.md`).
-- **`instructor_invites`** (`20260703030000`) — single-use activation codes (replaced the shared token). RLS-locked, service-role only.
+- **`instructor_invites`** (`20260703030000`) — single-use activation codes (replaced the shared token). RLS-locked, service-role only. `invited_name` (`20260726090000`) personalizes the `/welcome/<code>` invite page (rendered server-side only, for the exact code visited).
 - **`stream_reactions`** — `INSERT` re-gated to enrolled users + `user_id` defaults to `auth.uid()` (`20260703010000`).
 - **`stream_watch_sessions`** — instructors read their own classes' sessions for watch-time analytics (`20260706000000`).
 - **Function hygiene** (`20260707000000`): `get_playable_uid` + trivial timestamp/validation triggers pinned to `search_path = ''`. Left unpinned (SECURITY INVOKER, table refs, lower risk): `check_reaction_rate_limit`, `aggregate_stream_reactions`, `set_migration_schedule`.

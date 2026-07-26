@@ -199,8 +199,15 @@ export async function grantInstructorRole(userId: string) {
     );
 
     if (updateError) {
-      // Profile created but role not set - log warning but don't fail
-      console.error("Failed to add instructor role to app_metadata:", updateError);
+      // Instructor row exists but the JWT role could not be set. Don't throw —
+      // the invite code is already consumed, and the dashboard gate checks the
+      // instructors row, so the user is functional; only the role-based sign-in
+      // redirect degrades. Repair: POST /api/admin/instructor/grant { userId }
+      // (idempotent) — it takes the row-exists-but-no-role branch above.
+      console.error(
+        `grantInstructorRole: instructor row created for ${userId} but the app_metadata role update failed — repair via POST /api/admin/instructor/grant`,
+        updateError
+      );
     }
 
     return {

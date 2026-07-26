@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -31,9 +32,20 @@ export default function InstructorActivateForm() {
         await supabase.auth.refreshSession();
 
         // Now redirect with fresh token
-        router.push("/instructor/profile");
+        router.push("/instructor/profile?welcome=1");
       } else {
-        setError("Invalid activation code. Please try again.");
+        const body = await response.json().catch(() => ({}));
+        if (response.status === 429) {
+          setError("Too many attempts — please wait 10 minutes and try again.");
+        } else if (response.status === 401) {
+          setError(
+            body.error || "Invalid activation code. Please check it and try again."
+          );
+        } else {
+          setError(
+            "Something went wrong on our side — please try again, or email instructors@leansporty.com."
+          );
+        }
       }
     } catch (err) {
       setError("Activation failed. Please try again.");
@@ -84,8 +96,21 @@ export default function InstructorActivateForm() {
 
         <div className="mt-6 pt-6 border-t border-pink-100">
           <p className="text-xs text-gray-500 text-center">
-            This is a secure instructor-only area. If you don't have an activation
-            code, please contact the administrator.
+            Don&apos;t have a code?{" "}
+            <Link
+              href="/teach"
+              className="font-semibold text-pink-600 hover:text-pink-500"
+            >
+              Apply to teach
+            </Link>{" "}
+            or email{" "}
+            <a
+              href="mailto:instructors@leansporty.com"
+              className="font-semibold text-pink-600 hover:text-pink-500"
+            >
+              instructors@leansporty.com
+            </a>
+            .
           </p>
         </div>
       </div>
