@@ -56,8 +56,8 @@ already set, or past `expires_at`, is rejected.
 
 ## Retiring the legacy shared token
 
-The activation route still honors the old `INSTRUCTOR_ACCESS_TOKEN` **only while that
-env var is set** (a migration convenience — it logs a warning when used). Once you've
-issued invite codes to your instructors, **unset `INSTRUCTOR_ACCESS_TOKEN`** in Vercel
-+ `.env.local`. That deletes the last shared-secret path; from then on every
-activation is a single-use, attributable invite.
+**Retired 2026-07-27**: `INSTRUCTOR_ACCESS_TOKEN` was removed from Vercel,
+`.env.local`, and `.env.example`. The activation route's fallback branch only ran
+while that env var was set, so every activation now goes through a single-use,
+attributable invite code. (If the var is ever set again, the shared-secret path
+silently revives — don't.)
