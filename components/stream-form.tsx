@@ -111,7 +111,11 @@ export function StreamForm({ initialData, streamId, mode }: StreamFormProps) {
       const payload = {
         title: formData.title,
         description: formData.description,
-        scheduledStartTime: formData.scheduledStartTime,
+        // datetime-local gives a ZONELESS string ("2026-07-27T18:00"). Sent raw,
+        // Postgres stored it as UTC — every class landed 1-2h off the time the
+        // instructor picked. Convert in the browser (the only place that knows
+        // her timezone) to a real instant.
+        scheduledStartTime: new Date(formData.scheduledStartTime).toISOString(),
         durationMinutes: formData.durationMinutes,
         priceCents,
         currency: "eur",

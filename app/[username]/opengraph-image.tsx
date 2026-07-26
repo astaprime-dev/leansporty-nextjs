@@ -77,7 +77,10 @@ export default async function Image({
   params: Promise<{ username: string }>;
 }) {
   const { username } = await params;
-  const slug = decodeURIComponent(username);
+  // The /@slug rewrite only matches single segments, so a hand-built
+  // /@slug/opengraph-image URL reaches this route with the @ still attached —
+  // tolerate it. (Pages emit the canonical no-@ og:image URL themselves.)
+  const slug = decodeURIComponent(username).replace(/^@/, "");
   const profile = looksLikeAssetPath(slug) ? null : await loadProfile(slug);
 
   if (!profile) {
