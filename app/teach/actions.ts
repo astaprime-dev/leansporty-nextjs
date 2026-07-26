@@ -1,7 +1,13 @@
 "use server";
 
+import { after } from "next/server";
 import { createClient } from "@/utils/supabase/server";
 import { recordLead } from "@/lib/leads";
+import { sendEmail } from "@/lib/email";
+import {
+  renderTeachApplyFounderAlert,
+  renderTeachApplyReceivedEmail,
+} from "@/lib/email-templates";
 
 /**
  * Instructor application (the /teach recruiting funnel). Applications land in the
@@ -58,9 +64,55 @@ export const applyToTeachAction = async (
       : { status: "error", message: "Something went wrong. Please try again." };
   }
 
+  // Close the loop on both sides — best-effort and never blocks the response.
+  // after() keeps the serverless function alive for the sends; a plain void
+  // promise can be frozen once the action's response goes out.
+  after(() =>
+    sendTeachApplyEmails({
+      name,
+      email,
+      social: social || null,
+      about: about || null,
+    })
+  );
+
   return {
     status: "success",
     message:
       "Application received — we read every one personally and will get back to you within a few days.",
   };
 };
+
+async function sendTeachApplyEmails(app: {
+  name: string;
+  email: string;
+  social: string | null;
+  about: string | null;
+}): Promise<void> {
+  try {
+    const { subject, html } = renderTeachApplyReceivedEmail({ name: app.name });
+    await sendEmail({ to: app.email, subject, html });
+  } catch (err) {
+    console.error(
+      "teach-apply: applicant confirmation failed",
+      err instanceof Error ? err.message : String(err)
+    );
+  }
+
+  try {
+    const to = process.env.FOUNDER_NOTIFY_EMAIL ?? process.env.EMAIL_REPLY_TO;
+    if (!to) {
+      console.error(
+        "teach-apply: no FOUNDER_NOTIFY_EMAIL/EMAIL_REPLY_TO configured — application is only in the leads table"
+      );
+      return;
+    }
+    const { subject, html } = renderTeachApplyFounderAlert(app);
+    await sendEmail({ to, subject, html });
+  } catch (err) {
+    console.error(
+      "teach-apply: founder alert failed",
+      err instanceof Error ? err.message : String(err)
+    );
+  }
+}

@@ -81,6 +81,16 @@ export function unsubscribeUrl(email: string): string {
   return u.toString();
 }
 
+/** Escape user-provided text before interpolating it into HTML email bodies. */
+function escapeHtml(s: string): string {
+  return s
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
 function layout(opts: {
   preheader: string;
   heading: string;
@@ -90,6 +100,8 @@ function layout(opts: {
   /** Marketing emails pass this → footer shows an unsubscribe link. Omit for
    *  transactional emails (receipts/access), which must not carry one. */
   unsubUrl?: string;
+  /** First footer line for non-marketing emails without an order context. */
+  footerNote?: string;
 }): string {
   const paragraphs = opts.body
     .map(
@@ -102,7 +114,7 @@ function layout(opts: {
     ? `<p style="margin:0 0 6px;">You're receiving this because you started a purchase at Lean Sporty.</p>
               <p style="margin:0 0 6px;">${IMPRINT}</p>
               <p style="margin:0;"><a href="${opts.unsubUrl}" style="color:${MUTED};text-decoration:underline;">Unsubscribe from these emails</a></p>`
-    : `<p style="margin:0 0 6px;">This is a confirmation of your order at Lean Sporty.</p>
+    : `<p style="margin:0 0 6px;">${opts.footerNote ?? "This is a confirmation of your order at Lean Sporty."}</p>
               <p style="margin:0;">${IMPRINT}</p>`;
 
   return `<!doctype html>
@@ -261,4 +273,62 @@ export function renderLeadWelcomeEmail(ctx: {
     unsubUrl: unsubscribeUrl(ctx.email),
   });
   return { subject: "Welcome to Lean Sporty — your free Day 1 is ready", html };
+}
+
+/**
+ * One-time confirmation for an instructor application from /teach. Transactional
+ * (a direct reply to the applicant's own action) → no unsubscribe link and no
+ * opt-out suppression, mirroring the purchase confirmation.
+ */
+export function renderTeachApplyReceivedEmail(ctx: {
+  name: string;
+}): { subject: string; html: string } {
+  const body = [
+    `Hi ${escapeHtml(ctx.name)} — thanks for applying to teach on Lean Sporty.`,
+    "A real person reads every application — you'll hear back from the founder within a few days.",
+    "Meanwhile, the full deal is on the teaching page: what you keep from every sale, how payouts work, and everything we run for you.",
+  ];
+  const html = layout({
+    preheader:
+      "A real person reads every application — expect a reply within a few days.",
+    heading: "Application received",
+    body,
+    cta: "See how teaching works",
+    ctaUrl: `${siteUrl()}/teach`,
+    footerNote:
+      "You're receiving this one-time confirmation because you applied to teach at Lean Sporty.",
+  });
+  return { subject: "We got your application — Lean Sporty", html };
+}
+
+/**
+ * Founder alert for a new /teach application — sent to the internal notify inbox
+ * so applications never sit unseen in the leads table. Contains everything needed
+ * to approve without opening the database.
+ */
+export function renderTeachApplyFounderAlert(ctx: {
+  name: string;
+  email: string;
+  social: string | null;
+  about: string | null;
+}): { subject: string; html: string } {
+  const body = [
+    `<strong>Name:</strong> ${escapeHtml(ctx.name)}`,
+    `<strong>Email:</strong> ${escapeHtml(ctx.email)}`,
+    `<strong>Where they teach:</strong> ${escapeHtml(ctx.social ?? "—")}`,
+    `<strong>About:</strong> ${escapeHtml(ctx.about ?? "—")}`,
+    "Next step: mint an invite code and send them their personal /welcome link (see docs/INSTRUCTOR_INVITES.md).",
+  ];
+  const html = layout({
+    preheader: "A new instructor applied via /teach.",
+    heading: "New instructor application",
+    body,
+    cta: "Reply to applicant",
+    ctaUrl: `mailto:${ctx.email}`,
+    footerNote: "Internal notification from the /teach application form.",
+  });
+  return {
+    subject: `New instructor application: ${ctx.name.replace(/\s+/g, " ")}`,
+    html,
+  };
 }
