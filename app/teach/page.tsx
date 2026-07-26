@@ -478,40 +478,57 @@ export default function TeachPage() {
         </div>
       </section>
 
-      {/* Apply */}
-      <section id="apply" className="border-y border-pink-100/70 bg-pink-50/40 py-14">
-        <div className="mx-auto max-w-4xl px-4">
-          <div className="grid items-center gap-8 md:grid-cols-[2fr,3fr]">
-            {/* The card supplies a real pink backdrop and multiply tints the
-                photo's gray studio background into it — a deliberate brand
-                portrait instead of a gray box fighting the pink band. */}
-            <div className="relative hidden aspect-[3/4] overflow-hidden rounded-3xl bg-gradient-to-br from-pink-100 via-rose-50 to-pink-100 md:block">
-              <Image
-                src="/teach-apply-pointing.jpg"
-                alt="Dance instructor pointing toward the application form"
-                fill
-                sizes="(max-width: 768px) 0px, 360px"
-                className="object-cover mix-blend-multiply"
-              />
+      {/* Apply — the photo is the BLOCK's background (washed into the pink
+          band), with the form on top; on the left she fills the whitespace,
+          the content column sits right. */}
+      <section
+        id="apply"
+        className="relative overflow-hidden border-y border-pink-100/70 bg-pink-50/40 py-14"
+      >
+        <div className="absolute inset-0" aria-hidden>
+          {/* Height-matched wrapper (aspect keeps the full figure); the fade
+              mask is proportional to the PHOTO, so its right edge always
+              dissolves into the band. Blend sits on the wrapper so multiply
+              still hits the section background through the mask. */}
+          <div
+            className="absolute inset-y-0 left-0 aspect-[2/3] opacity-50 mix-blend-multiply md:opacity-100"
+            style={{
+              maskImage:
+                "linear-gradient(to right, black 65%, transparent 100%)",
+              WebkitMaskImage:
+                "linear-gradient(to right, black 65%, transparent 100%)",
+            }}
+          >
+            <Image
+              src="/teach-apply-band.jpg"
+              alt=""
+              fill
+              sizes="(max-width: 768px) 90vw, 45vw"
+              className="object-cover"
+            />
+          </div>
+          {/* Readability wash: light over her on the left, solid behind the copy/form. */}
+          <div className="absolute inset-0 bg-gradient-to-r from-pink-50/70 via-pink-50/80 to-pink-50/95 md:from-pink-50/15 md:via-pink-50/70 md:to-pink-50/95" />
+        </div>
+
+        <div className="relative mx-auto max-w-5xl px-4">
+          <div className="md:ml-auto md:max-w-xl">
+            <div className="text-center md:text-left">
+              <Badge variant="brand" className="mb-4">
+                Featured instructors keep 90%
+              </Badge>
+              <h2 className="font-display text-3xl font-light text-gray-900">
+                Become a featured instructor
+              </h2>
+              <p className="mt-3 max-w-xl text-sm text-muted-foreground">
+                We&apos;re featuring a small number of instructors to start: keep 90%
+                of every sale, work directly with the founder, and shape the platform
+                around how you actually teach. Tell us a little about yourself — it
+                takes a minute.
+              </p>
             </div>
-            <div>
-              <div className="text-center md:text-left">
-                <Badge variant="brand" className="mb-4">
-                  Featured instructors keep 90%
-                </Badge>
-                <h2 className="font-display text-3xl font-light text-gray-900">
-                  Become a featured instructor
-                </h2>
-                <p className="mt-3 max-w-xl text-sm text-muted-foreground">
-                  We&apos;re featuring a small number of instructors to start: keep 90%
-                  of every sale, work directly with the founder, and shape the platform
-                  around how you actually teach. Tell us a little about yourself — it
-                  takes a minute.
-                </p>
-              </div>
-              <div className="mt-8 rounded-2xl border border-pink-100 bg-white p-6 shadow-sm sm:p-8">
-                <TeachApplyForm />
-              </div>
+            <div className="mt-8 rounded-2xl border border-pink-100 bg-white p-6 shadow-sm sm:p-8">
+              <TeachApplyForm />
             </div>
           </div>
         </div>
