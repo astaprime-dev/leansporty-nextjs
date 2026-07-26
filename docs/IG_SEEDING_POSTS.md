@@ -176,5 +176,74 @@ Applying takes a minute and commits you to nothing → link in bio.
 
 - Log IMG_3498, 3266, 3163, 3355, 3526 in `photos/PHOTOS.md` (used → Instagram).
 - Follow every outreach target from the playbook list *before* sending Touch 1.
-- Stories are optional for day one; resharing Posts 3, 7, and 9 to stories on
-  outreach days keeps the account visibly alive.
+- On outreach days, run one story sequence from the section below ~1 hour
+  before sending DMs, so the story ring is lit when she checks the profile.
+
+---
+
+# Stories for outreach days
+
+Three sequences — rotate A → B → C so consecutive outreach days never look the
+same. Each frame: 1080×1920, max two short lines of text, **link sticker on
+every frame that mentions the deal** (label it, don't leave it as "Link").
+
+Mechanics:
+- "Reshare" = share the feed post to your story, scale it slightly smaller,
+  add the overlay line above it and the link sticker below it.
+- Text frames: blush background `#FDF2F8`, ink text, pink accent — same look
+  as the cards.
+- After running each sequence once, save its frames to a **Highlight named
+  "Teach with us"** (cover: the split card). That pins the pitch under the bio
+  permanently — a prospect who arrives on a quiet day still sees it.
+- One interactive sticker per sequence max — engagement helps reach, begging
+  for taps doesn't.
+
+## Sequence A — the deal (first outreach day)
+
+**A1 — reshare Post 3 (split card)**
+Overlay: "The whole deal, in one number."
+Link sticker: `leansporty.com/teach` → label **"How teaching works"**
+
+**A2 — poll (text frame)**
+Text: "You teach dance or fitness. Would you teach online?"
+Poll sticker: **"Already do"** / **"Thinking about it"**
+*(Everyone who taps is a warm lead — check the results list.)*
+
+**A3 — reshare Post 9 (the invitation photo)**
+Overlay: "Featuring our first instructors now — they keep 90%."
+Link sticker → label **"Apply — takes 1 minute"**
+
+## Sequence B — real numbers
+
+**B1 — reshare Post 7 (€44.10 card)**
+Overlay: "Your price. Your math."
+Link sticker → label **"Try the calculator"**
+
+**B2 — text frame**
+> €15 seat → **€12.75** to you
+> €49 program → **€44.10** to you (featured)
+> No monthly fee. Ever.
+Link sticker → label **"See every number"**
+
+**B3 — photo frame: IMG_3371** (vertical crop — don't crop the left edge,
+fingers are near it)
+Overlay: "You teach. We run everything else."
+Link sticker → label **"How it works"**
+
+## Sequence C — behind the platform
+
+**C1 — screenshot frame: `public/teach-shot-dashboard.jpg`** on blush
+background, slightly tilted
+Overlay: "This is your Studio. A checklist walks you to your first class."
+
+**C2 — screenshot frame: `public/teach-shot-profile.jpg`** on blush background
+Overlay: "Your page: leansporty.com/@your-name. We build it, you share it."
+Link sticker → label **"See a real example"** *(link /teach — it shows this
+screenshot with context)*
+
+**C3 — text frame**
+> Setup ≈ 10 minutes:
+> profile → price → go live.
+Question sticker: **"Ask us anything about teaching online"**
+*(Answers become tomorrow's story content — reply publicly, keep the ring
+alive without new assets.)*
