@@ -28,7 +28,7 @@ export const metadata: Metadata = {
 };
 
 const DEAL_POINTS = [
-  "Featured instructors keep 90% of every sale — live class seats and on-demand programs",
+  "Featured instructors keep 85% of every sale after VAT — live class seats and on-demand programs",
   "Your own page at leansporty.com/@your-name — sales pages, checkout, receipts, and reviews all run for you",
   "Go live from your browser, no software to learn — every class is recorded automatically",
   "Turn recordings and uploads into paid programs that sell while you sleep",

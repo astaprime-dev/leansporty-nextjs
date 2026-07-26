@@ -6,7 +6,7 @@ import { join } from "node:path";
 // the preview must state the deal, not show a logo square. Rendered at build
 // time; photo is the stock dancer (not Anastasiia — her photos stay on the
 // home/challenge cards).
-export const alt = "Teach on Lean Sporty — keep 85% of every sale";
+export const alt = "Teach on Lean Sporty — keep 80% of every sale after VAT";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -68,7 +68,7 @@ export default async function Image() {
               marginBottom: 28,
             }}
           >
-            Keep 85% of every sale
+            Keep 80% of every sale after VAT
           </div>
           <div style={{ fontSize: 26, color: "#4b5563", lineHeight: 1.4 }}>
             Live classes & your own programs. No monthly fee — you teach, we

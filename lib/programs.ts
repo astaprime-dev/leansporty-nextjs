@@ -1,4 +1,5 @@
 import { getServiceRoleClient } from "@/lib/stripe";
+import { PAID_PRICE_MIN_CENTS } from "@/lib/instructor-share";
 
 /**
  * V1 cost/abuse caps for instructor programs. Storage is billed to the
@@ -16,7 +17,7 @@ export const PROGRAM_CAPS = {
   maxStoredMinutesPerInstructor: 600,
 } as const;
 
-export const PROGRAM_PRICE_MIN_CENTS = 50;
+export const PROGRAM_PRICE_MIN_CENTS = PAID_PRICE_MIN_CENTS;
 export const PROGRAM_PRICE_MAX_CENTS = 50000;
 
 /**

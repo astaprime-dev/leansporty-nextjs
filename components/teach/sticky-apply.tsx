@@ -27,7 +27,7 @@ export function StickyApplyBar() {
   return (
     <div className="fixed inset-x-0 bottom-0 z-40 border-t border-pink-100 bg-white/95 p-3 backdrop-blur md:hidden">
       <Button asChild variant="brand" className="h-12 w-full text-base font-semibold">
-        <a href="#apply">Apply to teach — featured keep 90%</a>
+        <a href="#apply">Apply to teach — featured keep 85%</a>
       </Button>
     </div>
   );

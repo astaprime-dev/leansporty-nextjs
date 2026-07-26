@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
 import { createLiveInput } from "@/lib/cloudflare-stream";
 import { provisionStreamProduct, SUPPORTED_CURRENCIES } from "@/lib/stream-products";
+import { PAID_PRICE_MIN_CENTS } from "@/lib/instructor-share";
 
 export const runtime = "nodejs";
 
@@ -40,12 +41,16 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Validate price in minor units (S2): 0 = free, otherwise a whole number of cents
-    // ≥ 50 (Stripe's practical minimum). Currency defaults to eur.
+    // Validate price in minor units (S2): 0 = free, otherwise ≥ the paid minimum —
+    // the minimum (not a fee floor) is what keeps small sales viable. eur default.
     const priceCents = Number(data.priceCents ?? 0);
-    if (!Number.isInteger(priceCents) || priceCents < 0 || (priceCents > 0 && priceCents < 50)) {
+    if (
+      !Number.isInteger(priceCents) ||
+      priceCents < 0 ||
+      (priceCents > 0 && priceCents < PAID_PRICE_MIN_CENTS)
+    ) {
       return NextResponse.json(
-        { error: "Price must be 0 (free) or at least 50 cents." },
+        { error: "A paid class starts at €5 — or make it free." },
         { status: 400 }
       );
     }

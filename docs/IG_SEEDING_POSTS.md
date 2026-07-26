@@ -16,8 +16,8 @@ the site: background blush `#FDF2F8`, text ink `#111827`, accent pink `#EC4899`,
 big serif for headlines/numbers (Playfair Display or similar), lots of air.
 
 **Bio before posting** (from the playbook):
-> Teach dance & fitness online. Your page, your prices — you keep 85–90% of
-> every sale.
+> Teach dance & fitness online. Your page, your prices — you keep 80–85% of
+> every sale after VAT.
 > 🔗 leansporty.com/teach
 
 **Hashtags**: paste as the first comment, not in the caption. Core set:
@@ -38,7 +38,7 @@ actually search for; they matter more than these.
 Hi, we're Lean Sporty 👋
 
 A small platform where dance & fitness instructors teach live classes and sell
-their own video programs — and keep 85–90% of every sale.
+their own video programs — and keep 80–85% of every sale after VAT.
 
 We're opening our doors and featuring our first instructors right now.
 
@@ -62,15 +62,15 @@ You bring the part no platform can: the way you teach.
 ## Post 3 — The split (card)
 
 **Card text:**
-> You keep **85%** of every sale
-> *(featured instructors keep 90%)*
+> You keep **80%** of every sale after VAT
+> *(featured instructors keep 85%)*
 
 **Caption:**
-No monthly fee. No listing fee. No "premium plan".
+No monthly fee. No listing fee. No minimum fee. No "premium plan".
 
 You set the price for your live classes and your video programs. We run the
-website, payments, streaming, and support. You keep 85% of every sale — 90% as
-a featured instructor.
+website, payments, streaming, the sales tax, and support. You keep 80% of
+every sale after VAT — 85% as a featured instructor.
 
 And if something doesn't sell? You've spent your time, never your money.
 
@@ -98,7 +98,7 @@ classes, programs, checkout, reviews.
 **Slide 3:** 2 — Go live from your browser. No software. Every class records
 automatically.
 **Slide 4:** 3 — Turn your videos into paid programs students buy anytime.
-**Slide 5:** 4 — You keep **85–90%**. Paid monthly, straight to your bank.
+**Slide 5:** 4 — You keep **80–85%** after VAT. Paid monthly, straight to your bank.
 
 **Caption:**
 From "I want to teach online" to your first paid class — without building
@@ -125,17 +125,18 @@ Same you. Bigger room.
 
 **Card text:**
 > Your €49 program
-> → **€44.10 to you**
-> *(featured instructor, 90%)*
+> → **€33.86 to you**
+> *(featured instructor, 85% after VAT)*
 
 **Caption:**
 Real numbers, because you'd ask anyway:
 
-€49 program → €44.10 to you (featured, 90%)
-€15 class seat → €12.75 to you (standard, 85%)
+€49 program → €33.86 to you (featured, 85%)
+€15 class seat → €9.76 to you (standard, 80%)
 
-On very small prices a ~€1.50 minimum fee keeps card costs from eating the
-sale — you always earn on every sale.
+Your price includes VAT — we pay it to the tax office for you, then your share
+of the rest is yours, exactly. No minimum fees, no other deductions — you
+always earn on every sale. (Paid prices start at €5.)
 
 There's a calculator on our teaching page. Drag the sliders, use your own
 prices → link in bio.
@@ -162,8 +163,8 @@ You teach. We run everything else.
 **Caption:**
 We're featuring our FIRST instructors right now.
 
-Featured means: you keep 90% of every sale, you talk directly to the founder,
-and the platform gets shaped around how *you* teach.
+Featured means: you keep 85% of every sale after VAT, you talk directly to the
+founder, and the platform gets shaped around how *you* teach.
 
 If you teach dance or fitness and your students would follow you anywhere —
 this is the moment the door is wide open.
@@ -210,18 +211,18 @@ Poll sticker: **"Already do"** / **"Thinking about it"**
 *(Everyone who taps is a warm lead — check the results list.)*
 
 **A3 — reshare Post 9 (the invitation photo)**
-Overlay: "Featuring our first instructors now — they keep 90%."
+Overlay: "Featuring our first instructors now — they keep 85%."
 Link sticker → label **"Apply — takes 1 minute"**
 
 ## Sequence B — real numbers
 
-**B1 — reshare Post 7 (€44.10 card)**
+**B1 — reshare Post 7 (€33.86 card)**
 Overlay: "Your price. Your math."
 Link sticker → label **"Try the calculator"**
 
 **B2 — text frame**
-> €15 seat → **€12.75** to you
-> €49 program → **€44.10** to you (featured)
+> €15 seat → **€9.76** to you
+> €49 program → **€33.86** to you (featured)
 > No monthly fee. Ever.
 Link sticker → label **"See every number"**
 

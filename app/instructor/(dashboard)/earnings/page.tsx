@@ -94,9 +94,10 @@ export default async function InstructorEarningsPage() {
         <h1 className="text-3xl sm:text-4xl font-display font-light text-gray-900">Earnings</h1>
         <p className="text-gray-600 mt-1">Your share of every sale, and what&apos;s owed to you.</p>
         <p className="text-sm text-gray-400 mt-1">
-          You keep your agreed share of every sale (85%, or 90% as a featured
-          instructor). Pending amounts are paid to your bank once a month by bank
-          transfer.
+          You keep your agreed share (80%, or 85% as a featured instructor) of
+          every sale after VAT — we pay the VAT to the tax office for you.
+          Pending amounts are paid to your bank once a month by bank transfer;
+          balances under €20 simply roll into the next month.
         </p>
       </div>
 
@@ -125,7 +126,7 @@ export default async function InstructorEarningsPage() {
               <tr className="border-b border-pink-100 bg-pink-50/60 text-left">
                 <th className="p-4 font-semibold text-gray-900">Class</th>
                 <th className="p-4 font-semibold text-gray-900">Sales</th>
-                <th className="p-4 font-semibold text-gray-900">Gross</th>
+                <th className="p-4 font-semibold text-gray-900">Charged (incl. VAT)</th>
                 <th className="p-4 font-semibold text-gray-900">Your share</th>
                 <th className="p-4 font-semibold text-gray-900">Pending</th>
               </tr>

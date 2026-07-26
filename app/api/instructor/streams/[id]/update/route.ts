@@ -5,6 +5,7 @@ import {
   deactivateStreamProduct,
   SUPPORTED_CURRENCIES,
 } from "@/lib/stream-products";
+import { PAID_PRICE_MIN_CENTS } from "@/lib/instructor-share";
 
 export const runtime = "nodejs";
 
@@ -74,8 +75,12 @@ export async function PATCH(
       return NextResponse.json({ error: "Duration must be a whole number of minutes between 15 and 180." }, { status: 400 });
     }
     const priceCents = Number(body?.priceCents ?? 0);
-    if (!Number.isInteger(priceCents) || priceCents < 0 || (priceCents > 0 && priceCents < 50)) {
-      return NextResponse.json({ error: "Price must be 0 (free) or at least 50 cents." }, { status: 400 });
+    if (
+      !Number.isInteger(priceCents) ||
+      priceCents < 0 ||
+      (priceCents > 0 && priceCents < PAID_PRICE_MIN_CENTS)
+    ) {
+      return NextResponse.json({ error: "A paid class starts at €5 — or make it free." }, { status: 400 });
     }
     const currency =
       typeof body?.currency === "string" && body.currency.trim()

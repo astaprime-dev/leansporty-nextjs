@@ -1,22 +1,20 @@
 "use client";
 
 import { useState } from "react";
+import { instructorShare } from "@/lib/instructor-share";
 
 /**
  * Interactive "your numbers" calculator for /teach. Pure arithmetic on the
- * prices the instructor sets — the split minus the ~€1.50 minimum fee on
- * small prices, identical to the worked-example table above it. Deliberately
- * NOT an income projection: the fine print says so, the defaults mirror the
- * table's scale, and the standard 85% tier is the default (featured is a
- * conscious upgrade tap).
+ * prices the instructor sets — VAT comes off the (VAT-inclusive) price first,
+ * then the split — the same math the payout webhook runs (no fee floor; paid
+ * prices start at €5, which the seat slider minimum mirrors). Deliberately NOT an
+ * income projection: the fine print says so, the defaults mirror the table's
+ * scale, and the standard 80% tier is the default (featured is a conscious
+ * upgrade tap).
  */
 
-const FEE_FLOOR = 1.5;
-
-function share(price: number, split: number): number {
-  if (price <= 0) return 0;
-  return Math.max(price - Math.max(price * (1 - split), FEE_FLOOR), 0);
-}
+/** Same math as the payout webhook and the price-form previews. */
+const share = instructorShare;
 
 function fmtWhole(n: number): string {
   return new Intl.NumberFormat("en-IE", {
@@ -76,7 +74,7 @@ export function EarningsCalculator() {
   const [programPrice, setProgramPrice] = useState(49);
   const [programSales, setProgramSales] = useState(5);
 
-  const split = featured ? 0.9 : 0.85;
+  const split = featured ? 85 : 80;
   const seatShare = share(seatPrice, split);
   const programShare = share(programPrice, split);
   const monthly =
@@ -161,7 +159,7 @@ export function EarningsCalculator() {
                   : "bg-white/20 text-white hover:bg-white/30"
               }`}
             >
-              Standard 85%
+              Standard 80%
             </button>
             <button
               type="button"
@@ -172,7 +170,7 @@ export function EarningsCalculator() {
                   : "bg-white/20 text-white hover:bg-white/30"
               }`}
             >
-              Featured 90%
+              Featured 85%
             </button>
           </div>
 
@@ -185,16 +183,18 @@ export function EarningsCalculator() {
 
           <p className="text-sm text-pink-100">
             {fmtCents(seatShare)} per seat · {fmtCents(programShare)} per
-            program sale — paid monthly by bank transfer.
+            program sale — after VAT, paid monthly by bank transfer.
           </p>
         </div>
       </div>
 
       <p className="border-t border-pink-50 bg-pink-50/40 px-6 py-3 text-xs text-muted-foreground sm:px-8">
-        Simple arithmetic on prices you set: your share minus the ~€1.50
-        minimum fee on small prices, nothing hidden. It&apos;s math, not an
-        income promise — how many people show up is your superpower, not ours.
-        Earnings are before your own taxes.
+        Simple arithmetic on prices you set: VAT (~23%, included in your price)
+        goes to the tax office — we pay it for you — and your share of the rest
+        is yours, exactly. No minimum fee, no other deductions; paid prices
+        start at €5. It&apos;s math, not an income promise — how many people
+        show up is your superpower, not ours. Earnings are before your own
+        income tax.
       </p>
     </div>
   );

@@ -199,9 +199,10 @@ export default function TermsOfServicePage() {
                 </li>
                 <li>
                   <strong>Revenue share and payouts.</strong> You receive the revenue share presented to you at
-                  onboarding and shown in your earnings dashboard, calculated on each completed sale (a small minimum
-                  platform fee per sale may apply). Payouts are made to your bank account on a regular schedule. You
-                  are responsible for your own taxes and social contributions.
+                  onboarding and shown in your earnings dashboard, calculated on each completed sale net of VAT
+                  (which we collect and remit as seller of record). Payouts are made to your bank account on a
+                  regular schedule as described at onboarding. You are responsible for your own income taxes and
+                  social contributions.
                 </li>
                 <li>
                   <strong>Refunds and disputes.</strong> Astaprime Sp. z o.o. is the seller of record and decides

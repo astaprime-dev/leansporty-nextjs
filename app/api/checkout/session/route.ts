@@ -154,6 +154,10 @@ export async function POST(req: NextRequest) {
       ],
       client_reference_id: user.id, // entitlement owner
       customer_email: user.email ?? undefined,
+      // Buyer's billing country = our VAT place-of-supply evidence (one piece
+      // suffices below €100k/yr cross-border). The webhook reads it to back the
+      // right VAT rate out of the price (lib/vat-rates.ts).
+      billing_address_collection: "required",
       // Promo codes (e.g. 100%-off friends/reviewer comps): entered on the
       // Stripe page itself. A zero total needs no card and incurs no fees;
       // the webhook grants the entitlement exactly like a paid session.

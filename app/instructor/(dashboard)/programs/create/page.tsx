@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert } from "@/components/ui/alert";
+import { EarnPreview } from "@/components/instructor/earn-preview";
 
 /**
  * Create a DRAFT program: title, price, structure. Everything else (lessons,
@@ -97,16 +98,17 @@ export default function CreateProgramPage() {
           <Input
             id="price"
             type="number"
-            min="0.5"
+            min="5"
             max="500"
             step="0.01"
             value={price}
             onChange={(e) => setPrice(e.target.value)}
             required
           />
+          <EarnPreview priceEuros={price} />
           <p className="text-sm text-gray-500">
-            Between €0.50 and €500. You keep your usual share of every sale, same
-            as with paid classes.
+            Between €5 and €500. You keep your usual share of every sale after
+            VAT, same as with paid classes.
           </p>
         </div>
 

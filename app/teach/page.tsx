@@ -29,7 +29,7 @@ import { StickyApplyBar } from "@/components/teach/sticky-apply";
 export const metadata: Metadata = {
   // `absolute`: the title already carries the brand — the root template
   // would double it.
-  title: { absolute: "Teach on Lean Sporty — keep 85% of every sale" },
+  title: { absolute: "Teach on Lean Sporty — keep 80% of every sale after VAT" },
   description:
     "Live-stream your dance & fitness classes, sell your own on-demand programs, and get paid for every sale. No tech setup, no monthly fee — you teach, we run everything else.",
   alternates: { canonical: "/teach" },
@@ -62,7 +62,7 @@ const PLATFORM_FEATURES = [
   {
     icon: Banknote,
     title: "Payments handled for you",
-    body: "Students pay by card; we collect the money, handle receipts and refunds, and send your share to your bank every month. No invoices, no chasing.",
+    body: "Students pay by card; we collect the money, handle VAT, receipts, and refunds, and send your share to your bank every month. No invoices, no chasing.",
   },
   {
     icon: Video,
@@ -157,23 +157,23 @@ const FAQ = [
   },
   {
     q: "Different countries and currencies — do I have to figure that out?",
-    a: "No. You set one price in euros, and students anywhere pay by card — their bank handles any conversion. Your percentage applies to every sale. (On very small prices we apply a small minimum fee of about €1.50 so card fees don't eat the sale — you still always earn.)",
+    a: "No. You set one price in euros, and students anywhere pay by card — their bank handles any conversion. Your percentage applies to every sale, after VAT — no minimum fees, no other deductions. (Paid prices start at €5; anything below that, just make it free.)",
   },
   {
     q: "Does my share ever change?",
-    a: "Your 85% (featured 90%) applies to students you bring — your classes, your Instagram, your community. When our own marketing brings you students you'd never have reached, we keep a larger share on those specific sales — bonus income on top, never a cut of what your audience pays you.",
+    a: "Your 80% (featured 85%) applies to students you bring — your classes, your Instagram, your community. When our own marketing brings you students you'd never have reached, we keep a larger share on those specific sales — bonus income on top, never a cut of what your audience pays you.",
   },
   {
     q: "When do I actually get paid?",
-    a: "Once a month, by bank transfer, for everything you earned that month. You see every sale in your earnings dashboard the moment it happens — the monthly transfer is just when the money moves.",
+    a: "Once a month, by bank transfer, for everything you earned that month (balances under €20 roll into the next month). You see every sale in your earnings dashboard the moment it happens — the monthly transfer is just when the money moves.",
   },
   {
     q: "Why do you keep the recordings?",
-    a: "It's the heart of the deal — and why we charge 15% instead of the 30–50% others take. Your recordings grow the members' library, the library grows the audience, and that audience keeps finding you. And you can bundle those same recordings into your own paid programs and sell them from your profile.",
+    a: "It's the heart of the deal — and why we charge 20% instead of the 30–50% others take. Your recordings grow the members' library, the library grows the audience, and that audience keeps finding you. And you can bundle those same recordings into your own paid programs and sell them from your profile.",
   },
   {
     q: "What about taxes?",
-    a: "You're paid as an independent instructor, so your earnings are yours to report — you get the records you need. Your share is your share; nothing surprising is deducted.",
+    a: "Sales tax (VAT) is our job: your price includes it, and we pay it to the tax office — you never touch it. Your 80% applies to the price after VAT, and your earnings dashboard shows the exact numbers for every sale. Income tax on your earnings is yours to report, as an independent instructor — you get the records you need, and nothing else is ever deducted.",
   },
 ];
 
@@ -201,7 +201,7 @@ export default function TeachPage() {
                 Live-stream your classes, sell your own on-demand programs, and
                 get paid monthly — while you keep{" "}
                 <strong className="font-semibold text-gray-900">
-                  85% of every sale
+                  80% of every sale after VAT
                 </strong>
                 . No website to build, no payments to chase, no monthly fee.
               </p>
@@ -222,7 +222,7 @@ export default function TeachPage() {
                 </Button>
               </div>
               <p className="mt-3 text-sm text-muted-foreground">
-                Free to join · no listing fees · featured instructors keep 90%
+                Free to join · no listing fees · featured instructors keep 85%
               </p>
               <p className="mt-6 text-sm text-muted-foreground">
                 Already teach on Lean Sporty?{" "}
@@ -341,9 +341,9 @@ export default function TeachPage() {
             The deal, in real numbers
           </h2>
           <p className="mx-auto mt-2 max-w-xl text-center text-muted-foreground">
-            You keep <strong className="font-semibold text-gray-900">85% of
-            every sale</strong> — 90% as a featured instructor. Drag the
-            sliders and see what lands in your bank.
+            You keep <strong className="font-semibold text-gray-900">80% of
+            every sale after VAT</strong> — 85% as a featured instructor. Drag
+            the sliders and see what lands in your bank.
           </p>
 
           <EarningsCalculator />
@@ -486,14 +486,14 @@ export default function TeachPage() {
           <div className="md:ml-auto md:max-w-xl">
             <div className="text-center md:text-left">
               <Badge variant="brand" className="mb-4">
-                Featured instructors keep 90%
+                Featured instructors keep 85%
               </Badge>
               <h2 className="font-display text-3xl font-light text-gray-900">
                 Become a featured instructor
               </h2>
               <p className="mt-3 max-w-xl text-sm text-muted-foreground">
-                We&apos;re featuring a small number of instructors to start: keep 90%
-                of every sale, work directly with the founder, and shape the platform
+                We&apos;re featuring a small number of instructors to start: keep 85%
+                of every sale after VAT, work directly with the founder, and shape the platform
                 around how you actually teach. Tell us a little about yourself — it
                 takes a minute.
               </p>

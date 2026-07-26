@@ -42,11 +42,11 @@ message, seed the LeanSporty Instagram (one afternoon, not a campaign):
 
 1. ~9 posts so the grid looks alive. Use unused Anastasiia shots
    (`photos/PHOTOS.md` has the index — resize per its rules, never post an
-   original) + 2–3 simple brand cards with the deal numbers ("Keep 85% of every
-   sale", "€49 program → €44.10 to you") + 1 "how it works" carousel
+   original) + 2–3 simple brand cards with the deal numbers ("Keep 80% of every
+   sale after VAT", "€49 program → €33.86 to you") + 1 "how it works" carousel
    (teach → we run everything → paid monthly).
 2. Bio: *"Teach dance & fitness online. Your page, your prices — you keep
-   85–90% of every sale."* Link → `leansporty.com/teach`.
+   80–85% of every sale after VAT."* Link → `leansporty.com/teach`.
 3. Follow every target before messaging her; like/comment something genuine a
    day or two before the DM (a real comment, not "🔥").
 4. If the brand account still feels thin, DM from the founder's personal
@@ -64,21 +64,22 @@ proves you're not mass-DMing), `{invite_link}`.
 > Hi {name} — {specific_thing} is genuinely great. I run Lean Sporty, a small
 > platform where dance & fitness instructors teach paid live classes and sell
 > their own video programs from their own page. You set the prices and keep
-> 85–90% of every sale — we run the website, payments, streaming, and support.
+> 80–85% of every sale after VAT — we run the website, payments, streaming,
+> the sales tax, and support.
 > If you're curious: leansporty.com/teach. Happy to answer anything right here.
 
 **Touch 2 — the numbers (+3 days, only if no reply)**
 
 > Quick follow-up with real numbers, then I'll stop 🙂 A €49 program pays you
-> €44.10 as a featured instructor (90%). A €15 class seat pays €12.75. No
-> monthly fee, no listing fee — if nothing sells, you've spent time, never
-> money. And every live class is recorded automatically, so one evening of
+> €33.86 as a featured instructor (85% after VAT — we handle the VAT for you).
+> A €15 class seat pays €9.76. No monthly fee, no listing fee, no minimum fee —
+> if nothing sells, you've spent time, never money. And every live class is recorded automatically, so one evening of
 > teaching can become a program you sell forever. Would this fit how you teach?
 
 **Touch 3 — the personal invite (+4 more days)**
 
-> Last note from me, promise. I've saved you a featured spot — 90% of every
-> sale, something we only offer our first instructors. Here's your personal
+> Last note from me, promise. I've saved you a featured spot — 85% of every
+> sale after VAT, something we only offer our first instructors. Here's your personal
 > invite: {invite_link} — it opens your Studio and takes about 10 minutes to
 > set up your page. If now isn't the time, no problem at all — the door stays
 > open.
@@ -94,7 +95,7 @@ mint the invite (below) and send:
 > **Subject: You're in — your Lean Sporty instructor invite**
 >
 > Hi {name} — thanks for applying. I read it personally, and I'd love to have
-> you as a featured instructor: you keep 90% of every sale. Here's your
+> you as a featured instructor: you keep 85% of every sale after VAT. Here's your
 > personal invite: {invite_link}. It signs you in and opens your Studio —
 > about 10 minutes to set up your page and schedule your first class. Any
 > question, just reply — you're talking to the founder.
@@ -128,18 +129,21 @@ Use these in DMs; the page answers must never contradict them.
 |---|---|
 | "I already go live on Instagram for free" | Keep doing that — IG is your reach. Lean Sporty is where the *paid* version lives: your lives here are recorded automatically and can be resold as programs. Instagram pays you nothing per viewer. |
 | "I'm not technical / no time for setup" | There's nothing to set up. You go live from your browser, your page is built for you, and setup is about 10 minutes, once. |
-| "What's the catch? Why only 15%?" | The recordings. Your recorded classes join our members' library and grow the platform — that's why we can charge 15% instead of the 30–50% others take. (FAQ: "Why do you keep the recordings?") |
+| "What's the catch? Why only 20%?" | The recordings. Your recorded classes join our members' library and grow the platform — that's why we can charge 20% instead of the 30–50% others take. (FAQ: "Why do you keep the recordings?") |
 | "Could I end up losing money?" | No. No monthly fee, no listing fee — your share is a percentage of sales, so you're always positive. Worst case you've spent time. (FAQ #1) |
 | "I don't want to handle refunds/support" | You don't. Failed cards, refunds, "I can't log in" — our job. (FAQ #2) |
 | "My audience pays in złoty" | You set one price in euros; students pay by card anywhere and their bank converts. (FAQ #3) |
-| "When do I actually see the money?" | Every sale shows in your dashboard immediately; we pay your share once a month by bank transfer. (FAQ #7) |
-| "Why should I trust a new platform?" | Fair. That's why the first instructors are featured: 90%, direct line to the founder, and you shape the product. We need your classes more than a fee. |
+| "When do I actually see the money?" | Every sale shows in your dashboard immediately; we pay your share once a month by bank transfer (balances under €20 roll to the next month). (FAQ #7) |
+| "Why should I trust a new platform?" | Fair. That's why the first instructors are featured: 85%, direct line to the founder, and you shape the product. We need your classes more than a fee. |
 
 ## Claims discipline
 
-**Allowed** (all true in the product today): 85% standard / 90% featured split ·
-minimum fee ~€1.50 on tiny prices (you still always earn) · €15 seat → €12.75,
-€49 program → €41.65 (€44.10 featured) · no monthly fee, no listing fee ·
+**Allowed** (all true in the product today): 80% standard / 85% featured split,
+**always stated as "of every sale after VAT"** (we're the merchant of record and
+remit VAT; the split applies to the price net of VAT) · no minimum fee — paid
+prices simply start at €5 (below that, make it free) · €15 seat → €9.76, €49
+program → €31.87 (€33.86 featured) · paid monthly by bank transfer, balances
+under €20 roll over · no monthly fee, no listing fee ·
 automatic recording of live classes · watermarked, protected, non-downloadable
 playback · storefront/checkout/receipts/reviews run for you · **paid monthly by
 bank transfer** · ~10-minute profile setup.

@@ -193,7 +193,7 @@ export default function InstructorHelpPage() {
                     <li>• <strong>Description:</strong> What to expect, fitness level, equipment needed</li>
                     <li>• <strong>Date & Time:</strong> When your class will start (shown in your local timezone)</li>
                     <li>• <strong>Duration:</strong> How long the class will be, 15–180 minutes</li>
-                    <li>• <strong>Price:</strong> Pick a preset or a custom amount, or choose Free — you keep 85% of every sale (90% as a featured instructor)</li>
+                    <li>• <strong>Price:</strong> Pick a preset or a custom amount (paid classes start at €5), or choose Free — you keep 80% of every sale after VAT (85% as a featured instructor)</li>
                   </ul>
                 </li>
                 <li>
@@ -420,11 +420,13 @@ export default function InstructorHelpPage() {
             <div>
               <h3 className="text-lg font-semibold text-gray-900 mb-3">What you keep, and when it arrives</h3>
               <p className="text-gray-700 mb-3">
-                You <strong>keep 85% of every sale</strong> (90% as a featured
-                instructor). Every sale shows up on your Earnings page the moment it
-                happens, and we send your share to your bank{" "}
-                <strong>once a month, by bank transfer</strong>. You&apos;re never out
-                of pocket — you only ever earn on a sale.
+                You <strong>keep 80% of every sale after VAT</strong> (85% as a
+                featured instructor) — your price includes VAT, which we pay to the
+                tax office for you. Every sale shows up on your Earnings page the
+                moment it happens, and we send your share to your bank{" "}
+                <strong>once a month, by bank transfer</strong> (balances under €20
+                roll into the next month). You&apos;re never out of pocket — you only
+                ever earn on a sale.
               </p>
             </div>
 

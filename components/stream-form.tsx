@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Alert } from "@/components/ui/alert";
+import { EarnPreview } from "@/components/instructor/earn-preview";
 
 /** Local `datetime-local` min = now, formatted in the browser's own timezone.
  *  (toISOString() would give UTC and reject valid local times near the boundary.) */
@@ -43,6 +44,8 @@ interface StreamFormProps {
 }
 
 /** Suggested class prices in EUR ("" = Free). Instructors can also enter a custom amount. */
+// Paid prices start at €5 (PAID_PRICE_MIN_CENTS) — below the minimum a class
+// should simply be free.
 const PRESET_PRICES = ["", "5", "9", "12", "15", "19", "25", "39", "49"];
 
 export function StreamForm({ initialData, streamId, mode }: StreamFormProps) {
@@ -97,9 +100,9 @@ export function StreamForm({ initialData, streamId, mode }: StreamFormProps) {
     const eurosNum = parseFloat(formData.priceEuros);
     const priceCents =
       Number.isFinite(eurosNum) && eurosNum > 0 ? Math.round(eurosNum * 100) : 0;
-    if (priceCents > 0 && priceCents < 50) {
+    if (priceCents > 0 && priceCents < 500) {
       setIsLoading(false);
-      setError("A paid class must be at least €0.50, or leave the price empty for free.");
+      setError("A paid class starts at €5 — or choose Free.");
       return;
     }
 
@@ -305,7 +308,7 @@ export function StreamForm({ initialData, streamId, mode }: StreamFormProps) {
           {customPrice && (
             <Input
               type="number"
-              min={0.5}
+              min={5}
               step="0.01"
               inputMode="decimal"
               value={formData.priceEuros}
@@ -316,10 +319,12 @@ export function StreamForm({ initialData, streamId, mode }: StreamFormProps) {
               aria-label="Custom price in euros"
             />
           )}
+          <EarnPreview priceEuros={formData.priceEuros} />
           <p className="text-xs text-gray-500">
-            Pick a price or set a custom amount — students pay to join, you keep 85%
-            (90% as a featured instructor), and we send your share monthly by bank
-            transfer. Choose Free to open the class to everyone.
+            Pick a price or set a custom amount (paid classes start at €5) —
+            students pay to join, you keep 80% of the price after VAT (85% as a
+            featured instructor), and we send your share monthly by bank transfer.
+            Choose Free to open the class to everyone.
           </p>
         </div>
 

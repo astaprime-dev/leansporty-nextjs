@@ -22,6 +22,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Alert } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/empty-state";
+import { EarnPreview } from "@/components/instructor/earn-preview";
 import { ProgramUploader } from "@/components/instructor/program-uploader";
 import { ShareKit } from "@/components/instructor/share-kit";
 import { formatDuration, formatPrice } from "@/lib/challenge";
@@ -413,7 +414,7 @@ function DetailsCard({
             <Input
               id="p-price"
               type="number"
-              min="0.5"
+              min="5"
               max="500"
               step="0.01"
               value={price}
@@ -421,6 +422,7 @@ function DetailsCard({
               className="max-w-40"
               required
             />
+            <EarnPreview priceEuros={price} />
             {hasSales && (
               <p className="text-sm text-gray-500">Price changes only affect new sales.</p>
             )}

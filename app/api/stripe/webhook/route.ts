@@ -7,29 +7,39 @@ import {
   markCompletedFor,
 } from "@/lib/checkout-recovery";
 import { sendEmail } from "@/lib/email";
+import { vatRateForCountry } from "@/lib/vat-rates";
 import { renderPurchaseConfirmationEmail } from "@/lib/email-templates";
 
 export const runtime = "nodejs";
 
-/** Platform fee is at least this per sale (the "€1.50 floor" from BUSINESS_MODEL). */
-const MIN_PLATFORM_FEE_CENTS = 150;
+/**
+ * VAT portion of a charged amount. As merchant of record we owe VAT on the full
+ * charged amount, so the split must apply to the net. Trust Stripe's figure when
+ * automatic tax ran on the session; otherwise determine the rate from the buyer's
+ * billing country (lib/vat-rates.ts: EU → home rate until OSS, then destination
+ * rates; non-EU → 0) and back it out of the VAT-inclusive price.
+ */
+function vatPortion(s: Stripe.Checkout.Session, grossCents: number): number {
+  if (s.automatic_tax?.enabled) return s.total_details?.amount_tax ?? 0;
+  const pct = vatRateForCountry(s.customer_details?.address?.country);
+  return grossCents - Math.round(grossCents / (1 + pct / 100));
+}
 
 /**
- * Split a charged amount into the platform fee and the instructor's share.
- * Platform fee = max((100 - split)% of gross, €1.50 floor), never more than the sale
- * itself. instructor_share = gross - platform_fee (≥ 0).
+ * Split the net-of-VAT amount into the platform fee and the instructor's share.
+ * Pure percentage, no per-sale fee floor — the €5 minimum paid price
+ * (PAID_PRICE_MIN_CENTS) is what keeps the fixed per-sale costs covered, so the
+ * advertised "80% after VAT" (85% featured) holds exactly at every allowed price.
  */
 function computeSplit(
-  grossCents: number,
+  netCents: number,
   splitPct: number
 ): { platformFeeCents: number; instructorShareCents: number } {
   const platformPct = Math.max(0, 100 - splitPct);
-  let platformFee = Math.round((grossCents * platformPct) / 100);
-  platformFee = Math.max(platformFee, MIN_PLATFORM_FEE_CENTS);
-  platformFee = Math.min(platformFee, grossCents); // never exceed the sale
+  const platformFee = Math.round((netCents * platformPct) / 100);
   return {
     platformFeeCents: platformFee,
-    instructorShareCents: grossCents - platformFee,
+    instructorShareCents: netCents - platformFee,
   };
 }
 
@@ -131,12 +141,15 @@ export async function POST(req: NextRequest) {
             );
         }
 
-        // Payout ledger: what the instructor is owed on this sale.
+        // Payout ledger: what the instructor is owed on this sale. The split is
+        // applied to gross minus VAT — the VAT belongs to the tax office, not to
+        // either party. gross = vat + platform_fee + instructor_share.
         if (ourProduct.instructor_id) {
           const gross = s.amount_total ?? 0;
-          const splitPct = ourProduct.split_pct ?? 85;
+          const vat = vatPortion(s, gross);
+          const splitPct = ourProduct.split_pct ?? 80;
           const { platformFeeCents, instructorShareCents } = computeSplit(
-            gross,
+            gross - vat,
             splitPct
           );
           const { error: payoutErr } = await db.from("instructor_payouts").upsert(
@@ -147,6 +160,7 @@ export async function POST(req: NextRequest) {
               user_id: userId,
               stripe_session_id: s.id,
               gross_cents: gross,
+              vat_cents: vat,
               currency: s.currency ?? "eur",
               split_pct: splitPct,
               platform_fee_cents: platformFeeCents,
