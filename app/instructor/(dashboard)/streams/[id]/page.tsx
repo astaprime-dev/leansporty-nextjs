@@ -4,6 +4,7 @@ import { LiveStreamSession } from "@/types/streaming";
 import { StreamAnalytics } from "@/components/instructor/stream-analytics";
 import { CloudflareStreamPlayer } from "@/components/CloudflareStreamPlayer";
 import { CopyLinkButton } from "@/components/instructor/copy-link-button";
+import { ShareKit } from "@/components/instructor/share-kit";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Alert } from "@/components/ui/alert";
@@ -42,7 +43,7 @@ export default async function StreamDetailPage({
 
   const { data: instructorProfile } = await supabase
     .from("instructors")
-    .select("id")
+    .select("id, slug")
     .eq("user_id", user.id)
     .single();
 
@@ -217,6 +218,27 @@ export default async function StreamDetailPage({
                 className="shrink-0"
               />
             </div>
+            <details className="group/kit mt-3 border-t border-pink-100/60 pt-3">
+              <summary className="cursor-pointer list-none text-sm font-medium text-pink-700 transition-colors hover:text-pink-600">
+                <span className="group-open/kit:hidden">
+                  Need words? Open the share kit →
+                </span>
+                <span className="hidden group-open/kit:inline">
+                  Share kit — copy, paste, post
+                </span>
+              </summary>
+              <div className="mt-3">
+                <ShareKit
+                  slug={instructorProfile.slug}
+                  context={{
+                    kind: "class",
+                    title: streamData.title,
+                    path: `/streams/${id}`,
+                    dateISO: streamData.scheduled_start_time,
+                  }}
+                />
+              </div>
+            </details>
           </Alert>
         )}
 

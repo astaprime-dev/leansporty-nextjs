@@ -23,6 +23,7 @@ import { Alert } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/empty-state";
 import { ProgramUploader } from "@/components/instructor/program-uploader";
+import { ShareKit } from "@/components/instructor/share-kit";
 import { formatDuration, formatPrice } from "@/lib/challenge";
 
 export type ManagedLesson = {
@@ -1083,6 +1084,15 @@ function PublishCard({
       ) : (
         <div className="space-y-4">
           <p className="text-sm text-gray-600">Your program is live on your public profile.</p>
+          <div className="border-t border-pink-50 pt-4">
+            <ShareKit
+              context={{
+                kind: "program",
+                title: program.title,
+                path: `/programs/${program.slug}`,
+              }}
+            />
+          </div>
           <Button
             type="button"
             variant="outline"

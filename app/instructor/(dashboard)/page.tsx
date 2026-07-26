@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { LiveDot } from "@/components/ui/live-dot";
 import { EmptyState } from "@/components/empty-state";
 import { GettingStarted } from "@/components/instructor/getting-started";
+import { ShareKit } from "@/components/instructor/share-kit";
 import { createClient } from "@/utils/supabase/server";
 import { LiveStreamSession } from "@/types/streaming";
 import { Plus, Calendar, Users, CheckCircle2, BookOpen } from "lucide-react";
@@ -332,6 +333,24 @@ export default async function InstructorDashboard() {
           )}
         </div>
       </div>
+
+      {/* Share kit — the link + ready captions, always one click away */}
+      <details className="group/share mt-8 rounded-2xl border border-pink-100 bg-white p-6 shadow-sm">
+        <summary className="flex cursor-pointer list-none items-center justify-between gap-4">
+          <div>
+            <h3 className="text-lg font-semibold text-gray-900">Share your page</h3>
+            <p className="text-sm text-gray-600">
+              Your link and ready-to-post captions for Instagram &amp; WhatsApp.
+            </p>
+          </div>
+          <span className="shrink-0 text-pink-400 transition-transform group-open/share:rotate-90">
+            →
+          </span>
+        </summary>
+        <div className="mt-4 border-t border-pink-50 pt-4">
+          <ShareKit slug={instructorProfile.slug} />
+        </div>
+      </details>
 
       {/* Instructor guide — helpful pointer, below the day-to-day */}
       <Link href="/instructor/help" className="group mt-8 block">

@@ -2,6 +2,7 @@ import { createClient } from "@/utils/supabase/server";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 import { getStreams, getUserEnrollments } from "@/app/actions";
 import { StreamCard } from "@/components/stream-card";
 import { EmptyState } from "@/components/empty-state";
@@ -427,11 +428,30 @@ export default async function ProfilePage({
           </div>
         )}
 
-        {/* No Upcoming Streams Message (Instructors only) */}
+        {/* No Upcoming Streams Message (Instructors only) — a brand-new
+            instructor SHARES this page before her first class exists, so the
+            empty state must read as anticipation, not absence. */}
         {isInstructor && (!upcomingStreams || upcomingStreams.length === 0) && (
           <EmptyState
-            title="No upcoming classes scheduled at the moment."
-            description="Check back soon!"
+            title="First class coming soon"
+            description={
+              profile.instagram_handle
+                ? `Follow ${profile.display_name ?? "them"} on Instagram to hear the moment it's announced.`
+                : `${profile.display_name ?? "Your instructor"} is getting the first class ready.`
+            }
+            action={
+              profile.instagram_handle ? (
+                <a
+                  href={`https://instagram.com/${profile.instagram_handle}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Button variant="brandOutline" size="sm">
+                    Follow on Instagram
+                  </Button>
+                </a>
+              ) : undefined
+            }
             className="mb-6 sm:mb-8"
           />
         )}
