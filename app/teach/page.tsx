@@ -341,46 +341,9 @@ export default function TeachPage() {
             The deal, in real numbers
           </h2>
           <p className="mx-auto mt-2 max-w-xl text-center text-muted-foreground">
-            You teach a live class at €15 a seat, and your 4-week program sells
-            for €49 on your profile — you keep 85% of every sale.
-          </p>
-          <div className="mt-8 overflow-hidden rounded-2xl border border-pink-100 bg-white shadow-sm">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-pink-100 bg-pink-50/60 text-left">
-                  <th className="p-4 font-semibold text-gray-900">What you sell</th>
-                  <th className="p-4 font-semibold text-gray-900">Price</th>
-                  <th className="p-4 font-semibold text-gray-900">
-                    Your 85%
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-pink-50">
-                {[
-                  ["A seat in your live class", "€15", "€12.75"],
-                  ["Your 4-week program", "€49", "€41.65"],
-                  ["The same program, as a featured instructor (90%)", "€49", "€44.10"],
-                ].map(([what, paid, share]) => (
-                  <tr key={what}>
-                    <td className="p-4 text-gray-700">{what}</td>
-                    <td className="p-4 text-gray-700">{paid}</td>
-                    <td className="p-4 font-semibold text-gray-900">{share}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-            <div className="border-t border-pink-100 bg-pink-50/40 p-4 text-center text-sm text-gray-700">
-              30 seats at €15 plus 10 program sales at €49 ≈{" "}
-              <strong className="font-semibold text-gray-900">
-                €940 collected → ~€799 to your bank
-              </strong>{" "}
-              — and the program keeps selling after class night.
-            </div>
-          </div>
-          <p className="mt-4 text-center text-xs text-muted-foreground">
-            Every sale puts money in your pocket. On very small prices a small
-            minimum fee (~€1.50 per sale) applies so card fees don&apos;t eat
-            the sale — you still always earn.
+            You keep <strong className="font-semibold text-gray-900">85% of
+            every sale</strong> — 90% as a featured instructor. Drag the
+            sliders and see what lands in your bank.
           </p>
 
           <EarningsCalculator />

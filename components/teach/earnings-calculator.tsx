@@ -92,7 +92,7 @@ export function EarningsCalculator() {
               Try your own numbers
             </h3>
             <p className="mt-1 text-sm text-muted-foreground">
-              Drag the sliders — same math as the table above.
+              This is the whole deal — nothing hidden.
             </p>
           </div>
 
