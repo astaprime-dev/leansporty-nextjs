@@ -229,14 +229,14 @@ export default function TeachPage() {
               </p>
             </div>
 
-            <div className="relative hidden aspect-[3/4] overflow-hidden rounded-3xl md:block">
+            <div className="relative hidden aspect-[3/4] overflow-hidden rounded-3xl bg-gradient-to-br from-pink-100 via-rose-50 to-pink-100 md:block">
               <Image
                 src="/teach-hero-reach.jpg"
                 alt="Dance instructor mid-class, one arm raised"
                 fill
                 priority
                 sizes="(max-width: 768px) 0px, 400px"
-                className="object-cover"
+                className="object-cover mix-blend-multiply"
               />
             </div>
           </div>
@@ -439,12 +439,15 @@ export default function TeachPage() {
       {/* Who's behind this — small team, direct line */}
       <section className="mx-auto max-w-3xl px-4 pt-12">
         <div className="flex flex-col items-center gap-6 rounded-2xl border border-pink-100 bg-pink-50/40 p-6 text-center sm:flex-row sm:p-8 sm:text-left">
+          {/* Tight circular face crop — "a person you can talk to", not a
+              full-body pose shrunk into a thumbnail. */}
           <Image
             src="/teach-founder-team.jpg"
-            alt="Dance instructor smiling with arms crossed"
-            width={128}
-            height={170}
-            className="h-40 w-32 shrink-0 rounded-xl object-cover object-top"
+            alt="Smiling instructor"
+            width={112}
+            height={112}
+            className="h-24 w-24 shrink-0 rounded-full object-cover ring-4 ring-white"
+            style={{ objectPosition: "50% 10%" }}
           />
           <div>
             <h3 className="text-lg font-semibold text-gray-900">
@@ -479,13 +482,16 @@ export default function TeachPage() {
       <section id="apply" className="border-y border-pink-100/70 bg-pink-50/40 py-14">
         <div className="mx-auto max-w-4xl px-4">
           <div className="grid items-center gap-8 md:grid-cols-[2fr,3fr]">
-            <div className="relative hidden aspect-[3/4] overflow-hidden rounded-2xl md:block">
+            {/* The card supplies a real pink backdrop and multiply tints the
+                photo's gray studio background into it — a deliberate brand
+                portrait instead of a gray box fighting the pink band. */}
+            <div className="relative hidden aspect-[3/4] overflow-hidden rounded-3xl bg-gradient-to-br from-pink-100 via-rose-50 to-pink-100 md:block">
               <Image
                 src="/teach-apply-pointing.jpg"
                 alt="Dance instructor pointing toward the application form"
                 fill
                 sizes="(max-width: 768px) 0px, 360px"
-                className="object-cover"
+                className="object-cover mix-blend-multiply"
               />
             </div>
             <div>
