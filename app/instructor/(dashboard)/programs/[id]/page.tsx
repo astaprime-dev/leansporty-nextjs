@@ -77,12 +77,13 @@ export default async function ManageProgramPage({
   // a ready video into a lesson, so the page resumes it after navigation.
   const { data: pendingRows } = await supabase
     .from("program_uploads")
-    .select("cloudflare_uid, title")
+    .select("cloudflare_uid, title, status")
     .eq("product_id", product.id)
     .in("status", ["uploading", "processing"]);
   const pendingUploads = (pendingRows ?? []).map((r) => ({
     uid: r.cloudflare_uid,
     title: r.title,
+    status: r.status as "uploading" | "processing",
   }));
 
   const hasSales = await programHasSales(product.id);

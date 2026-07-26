@@ -114,7 +114,7 @@ export function ProgramManager({
   hasSales: boolean;
   /** Uploads still uploading/processing; polling them here is what promotes
    *  a ready video into a lesson, so it must survive page navigation. */
-  pendingUploads: { uid: string; title: string }[];
+  pendingUploads: { uid: string; title: string; status: "uploading" | "processing" }[];
 }) {
   const router = useRouter();
   const base = `/api/instructor/programs/${program.id}`;
@@ -459,7 +459,7 @@ function LessonsCard({
   program: ManagedProgram;
   lessons: ManagedLesson[];
   hasSales: boolean;
-  pendingUploads: { uid: string; title: string }[];
+  pendingUploads: { uid: string; title: string; status: "uploading" | "processing" }[];
   busyAction: string | null;
   run: (action: string, fn: () => Promise<unknown>) => Promise<void>;
   base: string;
@@ -621,18 +621,39 @@ function LessonsCard({
 
       {pendingUploads.length > 0 && (
         <Alert variant="success" hideIcon className="mb-4">
-          <div className="flex items-start gap-3">
-            <Loader2 className="mt-0.5 h-4 w-4 shrink-0 animate-spin" />
-            <div>
-              <p className="font-medium">
-                Preparing {pendingUploads.map((u) => `"${u.title}"`).join(", ")} for
-                streaming.
-              </p>
-              <p className="mt-1">
-                Meanwhile you can edit details, add more lessons, or reorder — the
-                video appears here when it&apos;s ready.
-              </p>
-            </div>
+          <div className="space-y-2">
+            {pendingUploads.map((u) => (
+              <div key={u.uid} className="flex items-center gap-3">
+                <Loader2 className="h-4 w-4 shrink-0 animate-spin" />
+                <p className="min-w-0 flex-1 font-medium">
+                  Preparing &quot;{u.title}&quot; for streaming.
+                </p>
+                {/* A tab closed mid-upload leaves the row stuck in 'uploading'
+                    forever and it keeps counting against the caps — Remove is
+                    the only way to free the slot. Processing rows are about to
+                    become lessons; the API refuses to remove those. */}
+                {u.status === "uploading" && (
+                  <button
+                    type="button"
+                    onClick={() =>
+                      run(`remove-upload-${u.uid}`, () =>
+                        api(`/api/instructor/programs/lessons/${u.uid}`, "DELETE")
+                      )
+                    }
+                    disabled={busyAction !== null}
+                    className="shrink-0 text-xs font-medium text-gray-500 transition-colors hover:text-red-600 disabled:opacity-50"
+                  >
+                    {busyAction === `remove-upload-${u.uid}` ? "Removing…" : "Remove"}
+                  </button>
+                )}
+              </div>
+            ))}
+            <p>
+              Meanwhile you can edit details, add more lessons, or reorder — the
+              video appears here when it&apos;s ready. If an upload got stuck
+              (for example the tab closed mid-upload), remove it to free the
+              slot.
+            </p>
           </div>
         </Alert>
       )}
@@ -1023,7 +1044,7 @@ function PublishCard({
       {!program.isActive ? (
         <div className="space-y-4">
           <ul className="space-y-1 text-sm text-gray-600">
-            <li>{lessonCount > 0 ? "✓" : "•"} At least one lesson</li>
+            <li>{lessonCount > 0 ? "✓" : "○"} At least one lesson</li>
             <li>✓ Price set: {formatPrice(program.priceCents, program.currency)}</li>
           </ul>
           <label className="flex items-start gap-3 text-sm text-gray-700">
@@ -1047,6 +1068,13 @@ function PublishCard({
           >
             {busyAction === "publish" ? "Publishing…" : "Publish Program"}
           </Button>
+          {!program.adminDisabled && (!canPublish || !termsAccepted) && (
+            <p className="text-xs text-gray-500">
+              {lessonCount === 0
+                ? "To publish: add at least one lesson, then tick the rights confirmation above."
+                : "To publish: tick the rights confirmation above."}
+            </p>
+          )}
           <p className="text-sm text-gray-500">
             Publishing puts the program on your public profile so students can buy it.
             You can unpublish anytime.

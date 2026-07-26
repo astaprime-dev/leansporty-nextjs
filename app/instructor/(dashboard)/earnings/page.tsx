@@ -112,11 +112,11 @@ export default async function InstructorEarningsPage() {
         ))}
       </div>
 
-      <h2 className="text-2xl font-semibold text-gray-900 mb-4">By class</h2>
+      <h2 className="text-2xl font-semibold text-gray-900 mb-4">By class &amp; program</h2>
       {classRows.length === 0 ? (
         <EmptyState
           title="No earnings yet"
-          description="Set a price on a class, and your sales will show up here."
+          description="Set a price on a class or publish a program, and your sales will show up here."
         />
       ) : (
         <div className="overflow-hidden rounded-2xl border border-pink-100 bg-white">

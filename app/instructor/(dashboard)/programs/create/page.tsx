@@ -71,9 +71,12 @@ export default function CreateProgramPage() {
       <h1 className="text-3xl font-display font-light text-gray-900 mb-2">
         Create a Program
       </h1>
+      {/* Cap numbers mirror PROGRAM_CAPS (lib/programs.ts is server-only —
+          keep these in sync by hand). */}
       <p className="text-gray-600 mb-8">
         A program is a set of videos your students buy once and follow at their
-        own pace. You add the videos in the next step.
+        own pace. You add the videos in the next step — up to 30 lessons of 45
+        minutes each, and up to 3 programs in total.
       </p>
 
       <form onSubmit={handleSubmit} className="space-y-6">

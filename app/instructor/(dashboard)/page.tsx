@@ -250,12 +250,20 @@ export default async function InstructorDashboard() {
           {upcomingList.length === 0 ? (
             <EmptyState
               title="No upcoming classes"
+              description="Schedule a live class, or sell your videos as a program instead."
               action={
-                <Link href="/instructor/streams/create">
-                  <Button variant="brand" size="sm">
-                    Schedule One
-                  </Button>
-                </Link>
+                <div className="flex flex-wrap justify-center gap-2">
+                  <Link href="/instructor/streams/create">
+                    <Button variant="brand" size="sm">
+                      Schedule One
+                    </Button>
+                  </Link>
+                  <Link href="/instructor/programs/create">
+                    <Button variant="outline" size="sm">
+                      Create a program
+                    </Button>
+                  </Link>
+                </div>
               }
             />
           ) : (

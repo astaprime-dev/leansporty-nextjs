@@ -7,6 +7,7 @@ import { EmptyState } from "@/components/empty-state";
 import { CopyLinkButton } from "@/components/instructor/copy-link-button";
 import { createClient } from "@/utils/supabase/server";
 import { formatPrice } from "@/lib/challenge";
+import { PROGRAM_CAPS } from "@/lib/programs";
 import type { ProductConfig } from "@/types/commerce";
 
 export const dynamic = "force-dynamic";
@@ -82,6 +83,11 @@ export default async function InstructorProgramsPage() {
           </h1>
           <p className="text-gray-600 mt-1">
             Video programs your students can buy and follow anytime
+          </p>
+          <p className="text-xs text-gray-400 mt-1">
+            Up to {PROGRAM_CAPS.maxProgramsPerInstructor} programs ·{" "}
+            {PROGRAM_CAPS.maxLessonsPerProgram} lessons each · lessons up to{" "}
+            {PROGRAM_CAPS.maxLessonSeconds / 60} minutes
           </p>
         </div>
         <Link href="/instructor/programs/create" className="shrink-0">
