@@ -27,13 +27,18 @@ export async function consumeInstructorInvite(
   if (!trimmed) return false;
 
   const supabase = serviceRoleClient();
+  // PostgREST quirk: on an UPDATE, `or=` filters are evaluated against the
+  // RETURNING projection — with .select("code") alone, `expires_at` "does not
+  // exist" (42703) and every consume fails. The or-filtered columns MUST be in
+  // the projection. (Went unnoticed while prod activations used the legacy
+  // shared token; caught in the 2026-07-26 funnel E2E.)
   const { data, error } = await supabase
     .from("instructor_invites")
     .update({ used_by: userId, used_at: new Date().toISOString() })
     .eq("code", trimmed)
     .is("used_by", null)
     .or(`expires_at.is.null,expires_at.gt.${new Date().toISOString()}`)
-    .select("code")
+    .select("code, used_by, expires_at")
     .maybeSingle();
 
   if (error) {
