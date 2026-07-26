@@ -17,6 +17,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { TeachApplyForm } from "@/components/teach/apply-form";
+import { EarningsCalculator } from "@/components/teach/earnings-calculator";
+import { StickyApplyBar } from "@/components/teach/sticky-apply";
 
 export const metadata: Metadata = {
   // `absolute`: the title already carries the brand — the root template
@@ -172,56 +174,72 @@ const FAQ = [
 export default function TeachPage() {
   return (
     <div className="w-full">
+      <StickyApplyBar />
       {/* Hero */}
       <section className="bg-gradient-to-b from-pink-50 to-white">
-        <div className="mx-auto max-w-5xl px-4 py-16 text-center">
-          <span className="inline-flex items-center gap-2 rounded-full bg-pink-100 px-3 py-1 text-xs font-semibold text-pink-700">
-            <Sparkles className="h-3.5 w-3.5" /> For dance &amp; fitness
-            instructors
-          </span>
-          <h1 className="font-display animate-fade-up mt-5 text-4xl font-light tracking-tight text-gray-900 sm:text-6xl">
-            You{" "}
-            <span className="bg-gradient-to-r from-pink-500 to-rose-400 bg-clip-text text-transparent">
-              teach
-            </span>
-            . We run everything else.
-          </h1>
-          <p className="mx-auto mt-4 max-w-2xl text-lg text-muted-foreground">
-            Live-stream your classes, sell your own on-demand programs, and get
-            paid monthly — while you keep{" "}
-            <strong className="font-semibold text-gray-900">
-              85% of every sale
-            </strong>
-            . No website to build, no payments to chase, no monthly fee.
-          </p>
-          <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <Button
-              asChild
-              variant="brand"
-              className="h-12 px-8 text-base font-semibold"
-            >
-              <Link href="#apply">Apply to teach</Link>
-            </Button>
-            <Button
-              asChild
-              variant="brandOutline"
-              className="h-12 px-8 text-base"
-            >
-              <Link href="#how-it-works">See how it works</Link>
-            </Button>
+        <div className="mx-auto max-w-5xl px-4 py-16">
+          <div className="grid items-center gap-10 md:grid-cols-[3fr,2fr]">
+            <div className="text-center md:text-left">
+              <span className="inline-flex items-center gap-2 rounded-full bg-pink-100 px-3 py-1 text-xs font-semibold text-pink-700">
+                <Sparkles className="h-3.5 w-3.5" /> For dance &amp; fitness
+                instructors
+              </span>
+              <h1 className="font-display animate-fade-up mt-5 text-4xl font-light tracking-tight text-gray-900 sm:text-6xl">
+                You{" "}
+                <span className="bg-gradient-to-r from-pink-500 to-rose-400 bg-clip-text text-transparent">
+                  teach
+                </span>
+                . We run everything else.
+              </h1>
+              <p className="mx-auto mt-4 max-w-2xl text-lg text-muted-foreground md:mx-0">
+                Live-stream your classes, sell your own on-demand programs, and
+                get paid monthly — while you keep{" "}
+                <strong className="font-semibold text-gray-900">
+                  85% of every sale
+                </strong>
+                . No website to build, no payments to chase, no monthly fee.
+              </p>
+              <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row md:justify-start">
+                <Button
+                  asChild
+                  variant="brand"
+                  className="h-12 px-8 text-base font-semibold"
+                >
+                  <Link href="#apply">Apply to teach</Link>
+                </Button>
+                <Button
+                  asChild
+                  variant="brandOutline"
+                  className="h-12 px-8 text-base"
+                >
+                  <Link href="#how-it-works">See how it works</Link>
+                </Button>
+              </div>
+              <p className="mt-3 text-sm text-muted-foreground">
+                Free to join · no listing fees · featured instructors keep 90%
+              </p>
+              <p className="mt-6 text-sm text-muted-foreground">
+                Already teach on Lean Sporty?{" "}
+                <Link
+                  href="/instructor"
+                  className="font-semibold text-pink-600 transition-colors hover:text-pink-500"
+                >
+                  Sign in to your Studio
+                </Link>
+              </p>
+            </div>
+
+            <div className="relative hidden aspect-[3/4] overflow-hidden rounded-3xl md:block">
+              <Image
+                src="/teach-hero-reach.jpg"
+                alt="Dance instructor mid-class, one arm raised"
+                fill
+                priority
+                sizes="(max-width: 768px) 0px, 400px"
+                className="object-cover"
+              />
+            </div>
           </div>
-          <p className="mt-3 text-sm text-muted-foreground">
-            Free to join · no listing fees · featured instructors keep 90%
-          </p>
-          <p className="mt-6 text-sm text-muted-foreground">
-            Already teach on Lean Sporty?{" "}
-            <Link
-              href="/instructor"
-              className="font-semibold text-pink-600 transition-colors hover:text-pink-500"
-            >
-              Sign in to your Studio
-            </Link>
-          </p>
         </div>
       </section>
 
@@ -356,6 +374,8 @@ export default function TeachPage() {
             minimum fee (~€1.50 per sale) applies so card fees don&apos;t eat
             the sale — you still always earn.
           </p>
+
+          <EarningsCalculator />
         </div>
       </section>
 
@@ -374,6 +394,11 @@ export default function TeachPage() {
               key={s.src}
               className="overflow-hidden rounded-2xl border border-pink-100 bg-white shadow-sm"
             >
+              <div className="flex gap-1.5 border-b border-pink-100/60 bg-pink-50/50 px-3 py-2">
+                <span className="h-2 w-2 rounded-full bg-pink-200" />
+                <span className="h-2 w-2 rounded-full bg-pink-200" />
+                <span className="h-2 w-2 rounded-full bg-pink-200" />
+              </div>
               <Image
                 src={s.src}
                 alt={s.title}
