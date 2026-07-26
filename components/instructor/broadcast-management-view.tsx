@@ -77,9 +77,9 @@ export function BroadcastManagementView({
     }
   };
 
-  // The confirmation lives in the AlertDialog around the End Stream button; the
-  // BrowserBroadcast "Stop Broadcast" control also calls this (stopping is itself
-  // the deliberate action, so no second prompt there).
+  // Both the sidebar End Stream button and BrowserBroadcast's Stop Broadcast
+  // confirm via AlertDialog before calling this — ending is permanent (restart
+  // is hard-blocked server-side), so a single misclick must never do it.
   const handleEndStream = async () => {
     setActionError(null);
     try {
@@ -277,6 +277,22 @@ export function BroadcastManagementView({
                         <li>Click Start Streaming in OBS</li>
                       </ol>
                     </div>
+
+                    {streamStatus === "scheduled" && (
+                      <div className="border-t border-blue-200 pt-3">
+                        <Button
+                          onClick={() => handleMarkLive()}
+                          className="w-full bg-green-500 hover:bg-green-600"
+                          size="sm"
+                        >
+                          I&apos;m live in OBS — mark class as live
+                        </Button>
+                        <p className="mt-2 text-xs text-gray-600">
+                          Only needed with OBS. Broadcasting from your browser
+                          marks the class live automatically.
+                        </p>
+                      </div>
+                    )}
                   </div>
                 </div>
               )}
@@ -313,12 +329,11 @@ export function BroadcastManagementView({
               </div>
 
               {streamStatus === "scheduled" && (
-                <Button
-                  onClick={() => handleMarkLive()}
-                  className="w-full bg-green-500 hover:bg-green-600"
-                >
-                  Mark as Live
-                </Button>
+                <p className="text-sm text-gray-600">
+                  Press <strong>Start Broadcast</strong> in the video panel to
+                  go live — the class is marked live automatically. Streaming
+                  with OBS instead? Use the button inside the OBS panel below.
+                </p>
               )}
 
               {streamStatus === "live" && (
@@ -390,8 +405,8 @@ export function BroadcastManagementView({
             <div className="mb-4">
               <p className="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wide">Starting Your Stream</p>
               <ol className="text-sm text-gray-700 space-y-1 ml-4 list-decimal">
+                <li>Click <strong>"Set up camera & microphone"</strong> and allow access</li>
                 <li>Click <strong>"Start Broadcast"</strong></li>
-                <li>Allow camera & microphone access</li>
                 <li>Wait for red <strong>"LIVE"</strong> badge (3-5 seconds)</li>
                 <li>You're live - students can now watch</li>
               </ol>

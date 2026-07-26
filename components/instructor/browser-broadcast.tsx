@@ -3,6 +3,17 @@
 import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Video, VideoOff, Mic, MicOff, MonitorPlay, Camera, Headphones } from "lucide-react";
 
 interface BrowserBroadcastProps {
@@ -31,6 +42,10 @@ export function BrowserBroadcast({
   const [isVideoEnabled, setIsVideoEnabled] = useState(true);
   const [isAudioEnabled, setIsAudioEnabled] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  // Camera/mic access is requested only by the explicit setup button below —
+  // never on page load (opening the page to look around must not trigger the
+  // browser permission prompt).
+  const [devicesReady, setDevicesReady] = useState(false);
 
   // Device selection state
   const [videoDevices, setVideoDevices] = useState<MediaDeviceInfo[]>([]);
@@ -41,11 +56,6 @@ export function BrowserBroadcast({
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const peerConnectionRef = useRef<RTCPeerConnection | null>(null);
-
-  // Enumerate available devices on mount
-  useEffect(() => {
-    enumerateDevices();
-  }, []);
 
   // Clean up on unmount
   useEffect(() => {
@@ -62,6 +72,8 @@ export function BrowserBroadcast({
 
   const enumerateDevices = async () => {
     try {
+      setError(null);
+
       // Request permissions first to get device labels
       const tempStream = await navigator.mediaDevices.getUserMedia({
         video: true,
@@ -98,8 +110,13 @@ export function BrowserBroadcast({
       if (audioInputs.length > 0 && !selectedAudioDevice) {
         setSelectedAudioDevice(audioInputs[0].deviceId);
       }
+
+      setDevicesReady(true);
     } catch (err) {
       console.error("Failed to enumerate devices:", err);
+      setError(
+        "We couldn't access your camera or microphone. Allow access in your browser (the camera icon near the address bar), then try again."
+      );
     }
   };
 
@@ -483,12 +500,18 @@ export function BrowserBroadcast({
             <div className="text-center text-white">
               <MonitorPlay className="w-16 h-16 mx-auto mb-4 opacity-50" />
               <p className="text-lg">
-                {isReconnection ? "Ready to reconnect" : "Ready to broadcast"}
+                {!devicesReady
+                  ? "First, set up your camera"
+                  : isReconnection
+                    ? "Ready to reconnect"
+                    : "Ready to broadcast"}
               </p>
               <p className="text-sm opacity-70 mt-2">
-                {isReconnection
-                  ? "Your stream is still live. Click to continue from this device."
-                  : "Click \"Start Broadcast\" to begin"}
+                {!devicesReady
+                  ? "Nothing is shown to students until you press Start Broadcast."
+                  : isReconnection
+                    ? "Your stream is still live. Click to continue from this device."
+                    : "Click \"Start Broadcast\" to begin"}
               </p>
             </div>
           </div>
@@ -522,17 +545,32 @@ export function BrowserBroadcast({
       {/* Controls */}
       <div className="flex items-center justify-center gap-4">
         {connectionState === "idle" ? (
-          <Button
-            onClick={startBroadcast}
-            className={
-              isReconnection
-                ? "bg-gradient-to-r from-blue-500 to-cyan-400 hover:from-blue-600 hover:to-cyan-500"
-                : "bg-gradient-to-r from-pink-500 to-rose-400 hover:from-pink-600 hover:to-rose-500"
-            }
-            size="lg"
-          >
-            {isReconnection ? "Reconnect Broadcast" : "Start Broadcast"}
-          </Button>
+          !devicesReady ? (
+            <div className="flex flex-col items-center gap-2">
+              <Button
+                onClick={enumerateDevices}
+                className="bg-gradient-to-r from-pink-500 to-rose-400 hover:from-pink-600 hover:to-rose-500"
+                size="lg"
+              >
+                <Camera className="mr-2 h-5 w-5" /> Set up camera &amp; microphone
+              </Button>
+              <p className="text-xs text-gray-500">
+                Your browser will ask for permission — nothing is broadcast yet.
+              </p>
+            </div>
+          ) : (
+            <Button
+              onClick={startBroadcast}
+              className={
+                isReconnection
+                  ? "bg-gradient-to-r from-blue-500 to-cyan-400 hover:from-blue-600 hover:to-cyan-500"
+                  : "bg-gradient-to-r from-pink-500 to-rose-400 hover:from-pink-600 hover:to-rose-500"
+              }
+              size="lg"
+            >
+              {isReconnection ? "Reconnect Broadcast" : "Start Broadcast"}
+            </Button>
+          )
         ) : connectionState === "connected" ? (
           <>
             <Button
@@ -549,9 +587,37 @@ export function BrowserBroadcast({
             >
               {isAudioEnabled ? <Mic className="w-5 h-5" /> : <MicOff className="w-5 h-5" />}
             </Button>
-            <Button onClick={stopBroadcast} variant="destructive" size="lg">
-              Stop Broadcast
-            </Button>
+            {/* Stopping ENDS the class permanently (restart is hard-blocked
+                server-side) — one misclick mid-class must not be able to do
+                that, so this confirms like the sidebar End Stream button. */}
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button variant="destructive" size="lg">
+                  Stop Broadcast
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Stop and end this class?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    It ends for everyone watching and can&apos;t be restarted.
+                    The recording is prepared automatically afterwards.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Keep teaching</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={(e) => {
+                      e.preventDefault();
+                      stopBroadcast();
+                    }}
+                    className="bg-red-600 hover:bg-red-700"
+                  >
+                    Stop broadcast
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </>
         ) : (
           <Button onClick={stopBroadcast} variant="outline" disabled>

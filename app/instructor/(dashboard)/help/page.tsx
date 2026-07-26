@@ -251,8 +251,12 @@ export default function InstructorHelpPage() {
                     <p className="text-sm text-gray-600">Go to "Classes" and click "Broadcast" on your scheduled class</p>
                   </li>
                   <li>
+                    <p className="font-semibold text-gray-900">Set up your camera</p>
+                    <p className="text-sm text-gray-600">Click "Set up camera & microphone" and allow access when your browser asks — nothing is broadcast yet</p>
+                  </li>
+                  <li>
                     <p className="font-semibold text-gray-900">Click "Start Broadcast"</p>
-                    <p className="text-sm text-gray-600">Allow camera and microphone access when your browser asks</p>
+                    <p className="text-sm text-gray-600">This is the moment your class goes live</p>
                   </li>
                   <li>
                     <p className="font-semibold text-gray-900">Wait for the connection</p>
@@ -299,12 +303,12 @@ export default function InstructorHelpPage() {
                 <p className="font-bold text-gray-900 mb-4 text-lg">How to end your class:</p>
                 <ol className="space-y-3 ml-6 list-decimal text-gray-700">
                   <li>
-                    <p className="font-semibold text-gray-900">Click "Stop Broadcast"</p>
-                    <p className="text-sm text-gray-600">Your camera and microphone turn off and your class ends — no extra popup</p>
+                    <p className="font-semibold text-gray-900">Click "Stop Broadcast" (or "End Stream" in the sidebar)</p>
+                    <p className="text-sm text-gray-600">Both ask you to confirm first — so one accidental click can't end your class</p>
                   </li>
                   <li>
-                    <p className="font-semibold text-gray-900">Or click "End Stream" in the sidebar</p>
-                    <p className="text-sm text-gray-600">A popup asks "End this stream?" — click "End stream" to confirm</p>
+                    <p className="font-semibold text-gray-900">Confirm</p>
+                    <p className="text-sm text-gray-600">Your camera and microphone turn off and the class ends for everyone</p>
                   </li>
                   <li>
                     <p className="font-semibold text-gray-900">That's it!</p>
