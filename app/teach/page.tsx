@@ -3,14 +3,20 @@ import Image from "next/image";
 import Link from "next/link";
 import {
   Banknote,
-  Check,
+  Clapperboard,
+  CreditCard,
   Film,
   Globe,
+  HardDrive,
+  Inbox,
   LifeBuoy,
   MonitorPlay,
+  PanelsTopLeft,
+  Receipt,
   Sparkles,
   Store,
   TrendingUp,
+  Tv,
   Users,
   Video,
 } from "lucide-react";
@@ -71,13 +77,13 @@ const PLATFORM_FEATURES = [
 ];
 
 const DIY_LIST = [
-  "A streaming service subscription",
-  "A payment provider and checkout setup",
-  "A website with a booking page",
-  "A course platform for your video programs",
-  "Sending invoices and chasing payments",
-  "Refunds and customer-support emails",
-  "Hosting and protecting your recordings",
+  { icon: Tv, label: "A streaming service subscription" },
+  { icon: CreditCard, label: "A payment provider and checkout setup" },
+  { icon: PanelsTopLeft, label: "A website with a booking page" },
+  { icon: Clapperboard, label: "A course platform for your video programs" },
+  { icon: Receipt, label: "Sending invoices and chasing payments" },
+  { icon: Inbox, label: "Refunds and customer-support emails" },
+  { icon: HardDrive, label: "Hosting and protecting your recordings" },
 ];
 
 const STEPS = [
@@ -270,37 +276,37 @@ export default function TeachPage() {
         </div>
       </section>
 
-      {/* DIY comparison */}
+      {/* DIY comparison — each chore gets a card of its own, then one pink
+          punchline card lands the contrast. */}
       <section className="bg-pink-50/50 py-14">
         <div className="mx-auto max-w-5xl px-4">
-          <div className="grid items-center gap-8 lg:grid-cols-2">
-            <div>
-              <h2 className="font-display text-3xl font-light text-gray-900">
-                Doing it yourself means juggling all of this
-              </h2>
-              <ul className="mt-6 space-y-3">
-                {DIY_LIST.map((line) => (
-                  <li
-                    key={line}
-                    className="flex items-start gap-2 text-sm text-gray-700"
-                  >
-                    <Check className="mt-0.5 h-4 w-4 flex-shrink-0 text-pink-400" />
-                    {line}
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div className="rounded-2xl border border-pink-100 bg-white p-8 text-center shadow-sm">
-              <p className="text-sm font-semibold uppercase tracking-wide text-pink-600">
-                On Lean Sporty
+          <h2 className="font-display text-center text-3xl font-light text-gray-900">
+            Doing it yourself means juggling all of this
+          </h2>
+          <p className="mx-auto mt-2 max-w-2xl text-center text-muted-foreground">
+            Seven subscriptions, tools, and chores — before you've taught a
+            single class online.
+          </p>
+          <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {DIY_LIST.map((item) => (
+              <div
+                key={item.label}
+                className="flex items-center gap-4 rounded-2xl border border-gray-200/80 bg-white/80 p-5"
+              >
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-gray-100 text-gray-400">
+                  <item.icon className="h-5 w-5" />
+                </div>
+                <p className="font-medium text-gray-800">{item.label}</p>
+              </div>
+            ))}
+
+            <div className="flex flex-col justify-center gap-1 rounded-2xl bg-gradient-to-r from-pink-500 to-rose-400 p-6 text-white shadow-md sm:col-span-2 sm:flex-row sm:items-center sm:justify-between sm:gap-6">
+              <p className="font-display text-2xl font-light">
+                On Lean Sporty, this whole list is our job.
               </p>
-              <p className="font-display mt-3 text-3xl font-light text-gray-900">
-                You set one price and press &ldquo;go live&rdquo;.
-              </p>
-              <p className="mt-3 text-sm text-muted-foreground">
-                Most platforms charge a monthly fee whether or not anyone shows
-                up. Here you pay nothing up front — ever. We only earn a small
-                share when you do.
+              <p className="max-w-xs text-sm text-pink-50">
+                You set one price and press &ldquo;go live&rdquo;. No monthly
+                fee, nothing up front — we only earn a small share when you do.
               </p>
             </div>
           </div>
