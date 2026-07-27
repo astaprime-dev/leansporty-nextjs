@@ -159,6 +159,8 @@ export async function POST(req: NextRequest) {
               stream_id: paidStream?.id ?? null,
               user_id: userId,
               stripe_session_id: s.id,
+              stripe_payment_intent_id:
+                typeof s.payment_intent === "string" ? s.payment_intent : null,
               gross_cents: gross,
               vat_cents: vat,
               currency: s.currency ?? "eur",
@@ -318,13 +320,67 @@ export async function POST(req: NextRequest) {
         }
       }
 
-      // Reverse the payout for this sale so a refunded class isn't paid out. (If it
-      // was already paid to the instructor, ops reconciles manually — rare.)
+      // Reverse the payout for this sale so a refunded class isn't paid out.
+      // Rows are never deleted — the ledger is the audit trail. Not yet paid →
+      // 'refunded' (excluded from payout runs). Already transferred via Connect →
+      // reverse the transfer (claws the share back from the connected account's
+      // balance). Paid manually, or the reversal fails (e.g. the instructor's
+      // balance already reached their bank) → 'reversal_failed', surfaced on the
+      // admin payouts page for manual netting.
       try {
-        await db
+        const { data: payout } = await db
           .from("instructor_payouts")
-          .delete()
-          .eq("stripe_session_id", sessionId);
+          .select("id, status, stripe_transfer_id, paid_via")
+          .eq("stripe_session_id", sessionId)
+          .maybeSingle();
+
+        if (payout?.status === "pending") {
+          await db
+            .from("instructor_payouts")
+            .update({ status: "refunded" })
+            .eq("id", payout.id)
+            .eq("status", "pending");
+        } else if (payout?.status === "paid") {
+          if (payout.paid_via === "stripe_connect" && payout.stripe_transfer_id) {
+            try {
+              await stripe.transfers.createReversal(
+                payout.stripe_transfer_id,
+                {},
+                { idempotencyKey: `payout-reversal-${payout.id}` }
+              );
+              await db
+                .from("instructor_payouts")
+                .update({ status: "reversed", transfer_error: null })
+                .eq("id", payout.id);
+              console.log(
+                `Transfer ${payout.stripe_transfer_id} reversed for refunded session ${sessionId}`
+              );
+            } catch (e) {
+              console.error(
+                `Transfer reversal FAILED for session ${sessionId}:`,
+                e
+              );
+              await db
+                .from("instructor_payouts")
+                .update({
+                  status: "reversal_failed",
+                  transfer_error: e instanceof Error ? e.message : String(e),
+                })
+                .eq("id", payout.id);
+            }
+          } else {
+            // Paid on the manual rail — nothing to reverse in Stripe; net it
+            // from the instructor's next payout.
+            await db
+              .from("instructor_payouts")
+              .update({
+                status: "reversal_failed",
+                transfer_error: "Refund after manual payout — net from next payout.",
+              })
+              .eq("id", payout.id);
+          }
+        }
+        // 'refunded' / 'reversed' / 'reversal_failed' → repeated event, no-op.
       } catch (e) {
         console.error("Payout reversal on refund failed:", e);
       }

@@ -81,6 +81,7 @@ local uses **test** values.
 |---|---|
 | `STRIPE_SECRET_KEY` | API keys (test `sk_test_…` local / live `sk_live_…` prod) |
 | `STRIPE_WEBHOOK_SECRET` | `stripe listen` (local) / the prod webhook endpoint (Vercel) |
+| `STRIPE_CONNECT_WEBHOOK_SECRET` | `stripe listen` prints a second secret for Connect events (local) / the prod **Connected accounts** webhook endpoint (Vercel) — see step 11 |
 | `SUPABASE_SERVICE_ROLE_KEY` | Supabase → Project Settings → API → `service_role` |
 
 ⚠️ **`SUPABASE_SERVICE_ROLE_KEY` is the silent killer.** Without it the webhook can't
@@ -103,7 +104,8 @@ Repeat the proven flow against the **new account's** test keys + `stripe listen`
 1. Create a €15 paid class.
 2. Buy it from a second account (card `4242 4242 4242 4242`).
 3. Confirm: one `entitlements` row + one `stream_enrollments` roster row + one
-   `instructor_payouts` row (`gross 1500, split 85, fee 225, share 1275, pending`);
+   `instructor_payouts` row (`gross 1500`, split at the product's `split_pct`
+   [default 80], `status pending`);
    buyer can watch and appears on the roster/earnings.
 4. Refund it → all three rows reverse.
 
@@ -121,3 +123,51 @@ code is proven; you're just re-pointing it at the Lean Sporty account.)
 > Note: paid **live classes** gate on the roster/entitlement at the page level, not
 > signed Cloudflare URLs — so the `ALLOW_UNSIGNED_PLAYBACK` / Cloudflare signing-key
 > work only matters for the 21-Day **Challenge** VOD, not for live-class checkout.
+
+## 11. Stripe Connect (instructor payouts — dual rail since 2026-07-27)
+
+Connect is the automated payout rail: charges stay on the platform account
+(merchant of record unchanged), and the monthly run at `/admin/payouts` creates
+**separate transfers** from the ledger to each instructor's connected account.
+Accounts are created by the app (transfers-only capability, Express dashboard,
+Stripe-hosted onboarding) — nothing to pre-create in the Dashboard. One-time setup:
+
+1. **Platform profile** — Dashboard → Settings → Connect → Platform profile:
+   charge type = **"separate charges and transfers"**, the platform collects fees
+   and is **liable for losses/negative balances** (matches the account controller
+   settings in code: `fees.payer='application'`, `losses.payments='application'`),
+   and acknowledge the loss-liability terms.
+2. **Branding** — Settings → Connect → Branding: name, icon, brand color. Shown on
+   Stripe's hosted onboarding and in the instructor's Express dashboard.
+3. **Connect webhook** — Developers → Webhooks → Add endpoint:
+   `https://leansporty.com/api/stripe/connect/webhook`, and select **"Listen to
+   events on Connected accounts"** (NOT the default "your account" — Connect events
+   sign with a different secret). Event: `account.updated`. Copy the signing secret
+   into `STRIPE_CONNECT_WEBHOOK_SECRET` (Vercel + `.env.local`).
+   Locally: **`npm run stripe:listen`** — it pins the CLI to the Lean Sporty
+   account via `--api-key` from `.env.local` and forwards BOTH webhooks.
+   ⚠️ Never run bare `stripe listen`: the CLI's default login is the old
+   22skills account (`acct_1FWqvD…`), so it silently listens on the wrong
+   account and test purchases hang on "finalizing your access" (learned
+   2026-07-27). The printed signing secret goes in BOTH
+   `STRIPE_WEBHOOK_SECRET` and `STRIPE_CONNECT_WEBHOOK_SECRET` locally
+   (`stripe listen` signs both forwards with one secret; as of 2026-07-27 it is
+   the `whsec_ee8fa2…` value already in `.env.local`). Test-mode events have NO
+   dashboard endpoint and NO retry — if the listener wasn't running during a
+   test purchase, re-deliver with `stripe events resend <evt_…> --api-key …`.
+4. **Payout schedule** — leave connected accounts on the default (daily automatic):
+   once the run transfers the money, Stripe forwards it to the instructor's bank
+   without further action.
+5. **Admin role** (one-time) — Supabase dashboard → Authentication → your own user
+   → `raw_app_meta_data` → `{"roles": ["admin"]}` — gates `/admin/payouts`.
+
+Country coverage from a PL platform: **EEA + UK (0% cross-border fee), CH/US/CA
+(0.25%)** — `lib/payout-regions.ts`. Instructors elsewhere (Ukraine, Brazil, …)
+are paid on the **manual rail** (bank details in the payout-details form, Wise/SEPA
+send + "Mark paid" on `/admin/payouts`). Full runbook: `docs/INSTRUCTOR_PAYOUTS.md`.
+
+Test-mode e2e: onboard a test instructor (DE test IBAN `DE89370400440532013000`,
+OTP `000000`), buy a class with `4242 4242 4242 4242`, run `/admin/payouts`, confirm
+the transfer in the Dashboard (linked to the charge), then refund the sale and
+confirm the row flips to `reversed`. Re-running immediately must create zero new
+transfers.

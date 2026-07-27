@@ -48,13 +48,13 @@ export async function provisionProgramProduct(
   const db = getServiceRoleClient();
 
   // Lock the instructor's split % onto the product (per-instructor default,
-  // else platform 85) so later default changes don't rewrite history.
+  // else platform 80) so later default changes don't rewrite history.
   const { data: instr } = await db
     .from("instructors")
     .select("split_pct")
     .eq("id", instructorId)
     .maybeSingle();
-  const splitPct = instr?.split_pct ?? 85;
+  const splitPct = instr?.split_pct ?? 80;
 
   const config: ProductConfig = {
     structure,

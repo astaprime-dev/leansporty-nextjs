@@ -2,6 +2,10 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { createClient } from "@/utils/supabase/server";
+import { getStripe, getServiceRoleClient } from "@/lib/stripe";
+import { deriveConnectState, syncConnectAccountRow } from "@/lib/connect-accounts";
+import { isConnectSupportedCountry } from "@/lib/payout-regions";
+import { ConnectOnboardingCard } from "@/components/instructor/connect-onboarding-card";
 import {
   PayoutDetailsForm,
   type BillingInitial,
@@ -10,8 +14,17 @@ import {
 /**
  * Payout + tax details (agreement §1/§7) — required before the first payout,
  * editable any time. RLS scopes the read/write to the instructor's own row.
+ *
+ * Instructors in countries Stripe Connect supports set up payouts on Stripe's
+ * hosted flow (the card on top); the form below then only collects tax data.
+ * Out-of-region instructors keep the bank fields — they're paid manually.
  */
-export default async function PayoutDetailsPage() {
+export default async function PayoutDetailsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ connect?: string }>;
+}) {
+  const { connect: connectParam } = await searchParams;
   const supabase = await createClient();
   const {
     data: { user },
@@ -33,6 +46,41 @@ export default async function PayoutDetailsPage() {
     .eq("instructor_id", instructor.id)
     .maybeSingle();
 
+  // Connect state for the card. When the instructor just returned from
+  // Stripe's hosted onboarding, re-sync live first — the account.updated
+  // webhook may not have landed yet and the card must not say "not finished"
+  // to someone who just finished.
+  const { data: connectRow } = await supabase
+    .from("instructor_connect_accounts")
+    .select(
+      "stripe_account_id, details_submitted, payouts_enabled, transfers_status, disabled_reason, requirements_due"
+    )
+    .eq("instructor_id", instructor.id)
+    .maybeSingle();
+
+  let connectState = deriveConnectState(connectRow ?? null);
+  if (connectParam === "return" && connectRow) {
+    try {
+      const account = await getStripe().accounts.retrieve(
+        connectRow.stripe_account_id
+      );
+      const db = getServiceRoleClient();
+      await syncConnectAccountRow(db, account);
+      const { data: fresh } = await db
+        .from("instructor_connect_accounts")
+        .select(
+          "details_submitted, payouts_enabled, transfers_status, disabled_reason, requirements_due"
+        )
+        .eq("instructor_id", instructor.id)
+        .maybeSingle();
+      connectState = deriveConnectState(fresh ?? null);
+    } catch (e) {
+      console.error("Connect return sync failed:", e);
+    }
+  }
+
+  const connectCountry = isConnectSupportedCountry(billing?.country);
+
   return (
     <div className="max-w-3xl mx-auto px-4 py-8">
       <Link
@@ -45,13 +93,19 @@ export default async function PayoutDetailsPage() {
         Payout details
       </h1>
       <p className="text-gray-600 mt-1">
-        The bank account and tax information required before your first payout —
-        used for monthly transfers, settlement statements, and statutory
-        platform reporting (DAC7). You can update it at any time.
+        {connectCountry
+          ? "Your payout account is set up with Stripe below. The tax information here is required before your first payout — used for settlement statements and statutory platform reporting (DAC7)."
+          : "The bank account and tax information required before your first payout — used for monthly transfers, settlement statements, and statutory platform reporting (DAC7). You can update it at any time."}
       </p>
       <p className="text-sm text-gray-400 mt-1">
         Visible only to you and Lean Sporty.
       </p>
+
+      {connectCountry && (
+        <div className="mt-8">
+          <ConnectOnboardingCard state={connectState} />
+        </div>
+      )}
 
       <div className="mt-8 rounded-2xl border border-pink-100 bg-white p-6 shadow-sm sm:p-8">
         <PayoutDetailsForm initial={(billing as BillingInitial) ?? null} />

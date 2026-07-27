@@ -61,13 +61,13 @@ export async function provisionStreamProduct(
 
   // First provision: slug is derived from the stream id (unique, stable, internal).
   // Lock the instructor's split % onto the product (their per-instructor default,
-  // else the platform default of 85) so later default changes don't rewrite history.
+  // else the platform default of 80) so later default changes don't rewrite history.
   const { data: instr } = await db
     .from("instructors")
     .select("split_pct")
     .eq("id", instructorId)
     .maybeSingle();
-  const splitPct = instr?.split_pct ?? 85;
+  const splitPct = instr?.split_pct ?? 80;
 
   const slug = `class-${streamId}`;
   const { data, error } = await db

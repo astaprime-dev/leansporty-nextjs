@@ -5,7 +5,8 @@
     "dev:https": "node server.js",
     "build": "next build",
     "start": "next start",
-    "smoke": "node --env-file=.env.local scripts/smoke-test-funnel.mjs"
+    "smoke": "node --env-file=.env.local scripts/smoke-test-funnel.mjs",
+    "stripe:listen": "sh -c 'export $(grep ^STRIPE_SECRET_KEY= .env.local) && exec stripe listen --api-key \"$STRIPE_SECRET_KEY\" --forward-to localhost:3000/api/stripe/webhook --forward-connect-to localhost:3000/api/stripe/connect/webhook'"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",

@@ -4,6 +4,8 @@ import { redirect } from "next/navigation";
 import { Wallet, Clock, CheckCircle2, CalendarDays } from "lucide-react";
 import { EmptyState } from "@/components/empty-state";
 import { Alert } from "@/components/ui/alert";
+import { deriveConnectState } from "@/lib/connect-accounts";
+import { isConnectSupportedCountry } from "@/lib/payout-regions";
 
 function fmt(cents: number, currency = "eur") {
   return new Intl.NumberFormat(undefined, {
@@ -27,13 +29,29 @@ export default async function InstructorEarningsPage() {
     .single();
   if (!instructorProfile) redirect("/instructor/profile");
 
-  // Payout details on file? (RLS: own row.) Missing → nudge below; payouts
-  // can't be made without them (agreement §1/§7).
+  // Payout readiness (RLS: own rows). Missing details → nudge below; payouts
+  // can't be made without them (agreement §1/§7). Connect-country instructors
+  // also need their Stripe payout account active; manual-rail (out-of-region)
+  // instructors need bank details on file.
   const { data: billing } = await supabase
     .from("instructor_billing")
-    .select("instructor_id")
+    .select("instructor_id, country, iban")
     .eq("instructor_id", instructorProfile.id)
     .maybeSingle();
+  const { data: connectRow } = await supabase
+    .from("instructor_connect_accounts")
+    .select(
+      "details_submitted, payouts_enabled, transfers_status, disabled_reason, requirements_due"
+    )
+    .eq("instructor_id", instructorProfile.id)
+    .maybeSingle();
+  const connectCountry = isConnectSupportedCountry(billing?.country);
+  const connectState = deriveConnectState(connectRow ?? null);
+  const railReady = billing
+    ? connectCountry
+      ? connectState === "active"
+      : !!billing.iban
+    : false;
 
   // Own payout rows (RLS scopes to this instructor).
   const { data: payouts } = await supabase
@@ -58,10 +76,14 @@ export default async function InstructorEarningsPage() {
     paid: 0,
   };
   for (const r of rows) {
+    // Refunded/reversed sales are undone — they don't count anywhere.
+    // reversal_failed means the money reached the instructor (netted later),
+    // so it stays in lifetime/paid.
+    if (r.status === "refunded" || r.status === "reversed") continue;
     totals.lifetime += r.instructor_share_cents;
     if (new Date(r.created_at) >= startOfMonth) totals.thisMonth += r.instructor_share_cents;
-    if (r.status === "paid") totals.paid += r.instructor_share_cents;
-    else totals.pending += r.instructor_share_cents;
+    if (r.status === "pending") totals.pending += r.instructor_share_cents;
+    else totals.paid += r.instructor_share_cents;
   }
 
   // Per-class breakdown (title merged from products — public catalog read).
@@ -79,6 +101,7 @@ export default async function InstructorEarningsPage() {
     { title: string; sales: number; gross: number; share: number; pending: number }
   >();
   for (const r of rows) {
+    if (r.status === "refunded" || r.status === "reversed") continue;
     const key = r.product_id ?? "unknown";
     const entry =
       byClass.get(key) ??
@@ -86,7 +109,7 @@ export default async function InstructorEarningsPage() {
     entry.sales += 1;
     entry.gross += r.gross_cents;
     entry.share += r.instructor_share_cents;
-    if (r.status !== "paid") entry.pending += r.instructor_share_cents;
+    if (r.status === "pending") entry.pending += r.instructor_share_cents;
     byClass.set(key, entry);
   }
   const classRows = Array.from(byClass.values()).sort((a, b) => b.share - a.share);
@@ -106,8 +129,8 @@ export default async function InstructorEarningsPage() {
         <p className="text-sm text-gray-400 mt-1">
           You keep your agreed share (80%, or 85% as a featured instructor) of
           every sale after VAT — we pay the VAT to the tax office for you.
-          Pending amounts are paid to your bank once a month by bank transfer;
-          balances under €20 simply roll into the next month.{" "}
+          Pending amounts are paid to your bank once a month; balances under
+          €20 simply roll into the next month.{" "}
           <Link
             href="/instructor/earnings/payout-details"
             className="font-medium text-pink-600 transition-colors hover:text-pink-500"
@@ -117,21 +140,41 @@ export default async function InstructorEarningsPage() {
         </p>
       </div>
 
-      {!billing && (
+      {!railReady && (
         <Alert variant="warning" className="mb-8">
-          <p className="font-semibold mb-1">Add your payout details</p>
-          <p className="text-sm">
-            Before we can send your first bank transfer, we need your bank
-            account and tax details — it takes about 3 minutes.{" "}
-            <Link
-              href="/instructor/earnings/payout-details"
-              className="font-semibold underline underline-offset-2"
-            >
-              Add them now
-            </Link>
-            . You can teach and sell in the meantime — every sale is recorded
-            here either way.
-          </p>
+          {billing && connectCountry ? (
+            <>
+              <p className="font-semibold mb-1">Finish setting up payouts</p>
+              <p className="text-sm">
+                Your tax details are saved — now activate payouts via Stripe so
+                we can send you your earnings. It takes about 5 minutes.{" "}
+                <Link
+                  href="/instructor/earnings/payout-details"
+                  className="font-semibold underline underline-offset-2"
+                >
+                  Set up payouts
+                </Link>
+                . You can teach and sell in the meantime — every sale is
+                recorded here either way.
+              </p>
+            </>
+          ) : (
+            <>
+              <p className="font-semibold mb-1">Add your payout details</p>
+              <p className="text-sm">
+                Before we can send your first payout, we need your payout and
+                tax details — it takes about 3 minutes.{" "}
+                <Link
+                  href="/instructor/earnings/payout-details"
+                  className="font-semibold underline underline-offset-2"
+                >
+                  Add them now
+                </Link>
+                . You can teach and sell in the meantime — every sale is
+                recorded here either way.
+              </p>
+            </>
+          )}
         </Alert>
       )}
 

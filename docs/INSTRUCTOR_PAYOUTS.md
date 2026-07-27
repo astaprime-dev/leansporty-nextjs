@@ -1,12 +1,26 @@
-# Instructor payouts (manual monthly)
+# Instructor payouts (monthly, dual rail)
 
-Every paid-class sale writes an `instructor_payouts` row (migration `20260705000000`)
-recording the instructor's share of the amount actually charged. While instructor
-count is small we pay by **manual monthly bank transfer** — Stripe Connect stays
-deferred until ~5 active instructors (see `INSTRUCTOR_STUDIO_PLAN.md`).
+Every paid-class sale writes an `instructor_payouts` row (migrations `20260705000000`,
+`20260727000000`, `20260728000000`) recording the instructor's share of the amount
+actually charged. Payouts run monthly from `/admin/payouts` over two rails:
 
-The webhook is the only writer. Instructors see their own totals at
-`/instructor/earnings`.
+- **Stripe rail (automatic)** — instructors in countries Stripe Connect can pay from
+  a PL platform (EEA + UK at 0% cross-border fee, CH/US/CA at 0.25% —
+  `lib/payout-regions.ts`). They onboard once via Stripe-hosted Connect onboarding
+  (`/instructor/earnings/payout-details` → "Payouts via Stripe"); the run creates one
+  Stripe **transfer per pending sale** tied to the original charge
+  (`source_transaction`), so runs never wait on platform balance and every refund can
+  be reversed against exactly one transfer.
+- **Manual rail** — instructors anywhere else (e.g. Ukraine, Brazil; Argentina is
+  hard everywhere due to currency controls — likely Payoneer/USD if it ever comes
+  up). Their bank details stay in `instructor_billing`; the founder sends the money
+  via Wise/SEPA and clicks **Mark paid** on the admin page. Automate with the Wise
+  Platform API only once ~3+ out-of-region instructors have regular sales. (The
+  platform is merchant of record with self-billing, so these are ordinary contractor
+  payments — accounts payable, not money transmission.)
+
+The Stripe webhook is the only ledger writer for sales. Instructors see their own
+totals at `/instructor/earnings`.
 
 ## The split (net of VAT since 2026-07-27)
 
@@ -29,68 +43,57 @@ left. For each sale:
 
 `split_pct` is stored per class product (default **80**; set a featured instructor's
 `instructors.split_pct` to **85** and their future classes inherit it — migration
-`20260727010000`). Refunds delete the payout row.
+`20260727010000`).
 
-## Monthly run
+## Ledger statuses (rows are never deleted)
+
+| status | meaning |
+|---|---|
+| `pending` | sale recorded, not yet paid out |
+| `paid` | paid — `paid_via` says which rail (`stripe_connect` sets `stripe_transfer_id`; `manual` = founder marked it) |
+| `refunded` | refund/chargeback arrived **before** any payout — excluded from runs, kept for audit |
+| `reversed` | refund after a Stripe transfer; the transfer reversal succeeded (money clawed back automatically) |
+| `reversal_failed` | refund after payout that could **not** be clawed back (connected balance already paid out, or the row was paid manually) — flagged on `/admin/payouts`; net it from the instructor's next payout |
+
+## Monthly run (`/admin/payouts`)
+
+Prerequisite (one-time): give your own auth user the admin role — Supabase
+dashboard → Authentication → your user → edit `raw_app_meta_data` →
+`{"roles": ["admin"]}` (the same DEF-2 guard as `/api/admin/instructor/grant`).
 
 **0. OSS threshold glance** (while not OSS-registered): in the Stripe Dashboard,
 check calendar-YTD revenue from **EU billing countries other than PL** stays under
-**€10,000**. Below it, flat PL 23% on EU sales is correct (remitted via the normal
-PL return — no OSS needed). Crossing it makes destination rates mandatory from the
-crossing transaction: register for OSS and set `VAT_DESTINATION_RATES=true`.
+**€10,000**. Below it, flat PL 23% on EU sales is correct. Crossing it makes
+destination rates mandatory from the crossing transaction: register for OSS and set
+`VAT_DESTINATION_RATES=true`.
 
-**1. Payable balance per instructor** (all pending, €20 minimum — smaller balances
-roll to the next month so we never make micro bank transfers; the instructor-facing
-copy states this):
+**1. Open `/admin/payouts`.** The preview lists every instructor with pending
+earnings, split by rail. €20 minimum per instructor — smaller balances show as
+"rolls over". Instructors without an active rail (Stripe onboarding unfinished, or
+no bank details) are listed but not payable — the Studio nudges them.
 
-```sql
-select
-  i.id                                   as instructor_id,
-  up.display_name,
-  count(*)                               as sales,
-  p.currency,
-  sum(p.instructor_share_cents) / 100.0  as owed
-from public.instructor_payouts p
-join public.instructors i        on i.id = p.instructor_id
-left join public.user_profiles up on up.user_id = i.user_id
-where p.status = 'pending'
-group by i.id, up.display_name, p.currency
-having sum(p.instructor_share_cents) >= 2000   -- €20 payout threshold
-order by owed desc;
-```
+**2. Stripe rail: click "Run payouts".** One transfer per pending sale, batch id
+defaults to `YYYY-MM`. Safe to re-run after a partial failure — paid rows are
+excluded and transfer creation is idempotent per row (`payout-transfer-<row id>`;
+transfers also carry `metadata.payout_id` for reconciliation). Per-row errors land
+in `transfer_error` and in the result panel; fix and re-run. Stripe then pays each
+instructor's bank on the connected account's own (daily) payout schedule.
 
-**2. Pay each instructor** their `owed` by bank transfer (Stripe records + your bank).
-Bank + tax details come from `instructor_billing` (filled by the instructor at
-`/instructor/earnings/payout-details`; **no row = don't pay** — the Studio nudges them):
+**3. Manual rail: send each transfer via Wise/SEPA** using the bank details shown
+(from `instructor_billing`; **no details = don't pay**), then click **Mark paid** —
+it stamps the instructor's pending rows `paid`/`paid_via='manual'` with the batch id.
 
-```sql
-select ib.legal_name, ib.business_name, ib.business_status, ib.tin, ib.vat_number,
-       ib.iban, ib.account_holder, ib.address_line, ib.city, ib.postal_code, ib.country
-from public.instructor_billing ib
-where ib.instructor_id = '<instructor uuid>';
-```
-
-**3. Mark that instructor's batch paid** (use one batch id per run, e.g. a date):
-
-```sql
-update public.instructor_payouts
-set status = 'paid',
-    payout_batch_id = '2026-07',        -- your batch label
-    paid_at = now()
-where instructor_id = '<instructor uuid>'
-  and status = 'pending';
-```
-
-After this, the instructor's "Pending payout" drops to €0 and "Paid out" reflects the
-transfer. Do steps 2–3 per instructor so a failed transfer doesn't mark others paid.
+**4. Reconcile `reversal_failed`** rows if the banner shows any: reduce the
+instructor's next manual payout by that amount, or recover directly; then update the
+row's status by hand (SQL) once settled.
 
 ## Self-billed settlement statement (samofakturowanie) — per instructor, per run
 
 Legal basis: instructor agreement §7 (prior written self-billing authorization,
 accepted at activation; acceptance procedure = 14 days to object, silence accepts).
-While instructor count is small this is **manual**, like the payout itself.
+While instructor count is small this is **manual**.
 
-**Statement lines** (run after step 3 sets the batch id):
+**Statement lines** (the run sets `payout_batch_id` on both rails):
 
 ```sql
 select p.created_at::date as sale_date,
@@ -111,10 +114,10 @@ order by p.created_at;
 - Header: **"Samofakturowanie"** (required word) + number `LS-SB/<year>/<month>/<n>`
   (sequential per instructor).
 - Supplier: instructor's legal name, address, NIP/TIN — all in `instructor_billing`
-  (query in step 2; `business_status` tells you which VAT treatment line applies).
+  (`business_status` tells you which VAT treatment line applies).
 - Recipient: Astaprime Sp. z o.o. (+ NIP).
 - Service: "Instructor teaching services provided via the Lean Sporty platform,
-  period <month>", with the lines above and the total = the bank transfer amount.
+  period <month>", with the lines above and the total = the transfer amount.
 - VAT treatment (per instructor status, confirmed by accountant):
   **exempt** (most PL instructors, "zwolnienie") · **PL VAT-registered** → VAT added
   on top of the share (deductible input VAT for us — net cost zero) ·
@@ -123,15 +126,57 @@ order by p.created_at;
   authorization in the Instructor Agreement §7. Objections within 14 days;
   otherwise the statement is accepted."
 
-Send it in the same email that announces the bank transfer. Later (≥5 instructors,
-with Stripe Connect) this becomes a generated PDF in the Studio earnings page —
-`instructor_payouts` + `payout_batch_id` already carry every number needed.
+Send it in the same email that announces the payout. Later this becomes a generated
+PDF in the Studio earnings page — `instructor_payouts` + `payout_batch_id` already
+carry every number needed.
 
-## Notes
+## Appendix: SQL fallback / reconciliation
+
+The admin page replaces the old SQL runbook; these queries remain for
+reconciliation or if the page is ever unavailable.
+
+Payable balance per instructor:
+
+```sql
+select
+  i.id                                   as instructor_id,
+  up.display_name,
+  count(*)                               as sales,
+  p.currency,
+  sum(p.instructor_share_cents) / 100.0  as owed
+from public.instructor_payouts p
+join public.instructors i        on i.id = p.instructor_id
+left join public.user_profiles up on up.user_id = i.user_id
+where p.status = 'pending'
+group by i.id, up.display_name, p.currency
+having sum(p.instructor_share_cents) >= 2000   -- €20 payout threshold
+order by owed desc;
+```
+
+Bank + tax details (manual rail):
+
+```sql
+select ib.legal_name, ib.business_name, ib.business_status, ib.tin, ib.vat_number,
+       ib.iban, ib.account_holder, ib.address_line, ib.city, ib.postal_code, ib.country
+from public.instructor_billing ib
+where ib.instructor_id = '<instructor uuid>';
+```
+
+Mark a manual batch paid (what the "Mark paid" button does):
+
+```sql
+update public.instructor_payouts
+set status = 'paid', paid_via = 'manual',
+    payout_batch_id = '2026-07', paid_at = now()
+where instructor_id = '<instructor uuid>' and status = 'pending';
+```
+
+Notes:
 
 - Amounts are the instructor's **share**, already net of VAT and the platform fee —
   transfer exactly `owed`.
 - `gross_cents` is what Stripe charged; reconcile the sum of gross against your Stripe
   payout balance if numbers look off. `vat_cents` is the VAT portion to remit — sum it
   per period for the VAT return.
-- A refund after payout is rare; handle it as a manual clawback/credit next run.
+- Find a transfer in the Stripe Dashboard by its ledger row: search transfers for
+  `metadata.payout_id = <row id>`, or use the row's `stripe_transfer_id`.

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
 import { isEUCountry } from "@/lib/countries";
+import { isConnectSupportedCountry } from "@/lib/payout-regions";
 
 export const runtime = "nodejs";
 
@@ -69,14 +70,7 @@ export async function POST(request: NextRequest) {
   const accountHolder = str(body.accountHolder, 200);
   const unregisteredConfirmed = body.unregisteredConfirmed === true;
 
-  if (
-    !legalName ||
-    !addressLine ||
-    !city ||
-    !postalCode ||
-    !country ||
-    !accountHolder
-  ) {
+  if (!legalName || !addressLine || !city || !postalCode || !country) {
     return NextResponse.json(
       { error: "Please fill in all required fields." },
       { status: 400 }
@@ -90,11 +84,24 @@ export async function POST(request: NextRequest) {
       { status: 400 }
     );
   }
-  if (!IBAN_RE.test(iban)) {
-    return NextResponse.json(
-      { error: "The IBAN appears invalid — verify it (a 2-letter country code followed by check digits and the account number)." },
-      { status: 400 }
-    );
+  // Bank details are only collected for the manual rail (countries Stripe
+  // Connect can't pay from a PL platform). Connect-country instructors add
+  // their bank account on Stripe's hosted onboarding instead — we don't store
+  // it (data minimization, and a stored copy would only go stale).
+  const connectCountry = isConnectSupportedCountry(country);
+  if (!connectCountry) {
+    if (!accountHolder) {
+      return NextResponse.json(
+        { error: "Please fill in all required fields." },
+        { status: 400 }
+      );
+    }
+    if (!IBAN_RE.test(iban)) {
+      return NextResponse.json(
+        { error: "The IBAN appears invalid — verify it (a 2-letter country code followed by check digits and the account number)." },
+        { status: 400 }
+      );
+    }
   }
 
   // Derive the stored status from country + the Poland-only answer.
@@ -130,8 +137,8 @@ export async function POST(request: NextRequest) {
       city,
       postal_code: postalCode,
       country,
-      iban,
-      account_holder: accountHolder,
+      iban: connectCountry ? null : iban,
+      account_holder: connectCountry ? null : accountHolder,
       unregistered_statement_at:
         businessStatus === "unregistered_activity" ? new Date().toISOString() : null,
       updated_at: new Date().toISOString(),
