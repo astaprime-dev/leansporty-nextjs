@@ -86,7 +86,14 @@ export function GuideCta() {
 export function GuideTeachCta() {
   return (
     <section className="relative left-1/2 mt-14 w-screen -translate-x-1/2 overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-b from-pink-50/60 to-rose-50/60" />
+      <div className="absolute inset-0 bg-gradient-to-b from-pink-50/60 to-rose-50/60 md:hidden" />
+      <Image
+        src="/teach-apply-band.jpg"
+        alt=""
+        fill
+        sizes="100vw"
+        className="hidden object-cover object-[70%_center] md:block"
+      />
       <div className="relative mx-auto max-w-5xl px-4 py-14 md:py-20">
         <div className="max-w-md rounded-2xl border-2 border-pink-200 bg-white/95 p-8 text-center shadow-lg backdrop-blur-sm">
           <span className="inline-flex items-center gap-2 rounded-full bg-pink-100 px-3 py-1 text-xs font-semibold text-pink-700">
