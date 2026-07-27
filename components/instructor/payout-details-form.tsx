@@ -174,9 +174,14 @@ export function PayoutDetailsForm({ initial }: { initial: BillingInitial }) {
         </label>
       )}
 
-      {isPoland && plRegisteredBusiness === true && (
+      {/* Shown unless the PL small-scale tier is chosen (no business to name).
+          Foreign instructors may well operate as a company — the statements
+          should carry its name. */}
+      {!(isPoland && plRegisteredBusiness === false) && (
         <div className="space-y-1.5">
-          <Label htmlFor="pd-business-name">Business name (if different)</Label>
+          <Label htmlFor="pd-business-name">
+            Business or company name (if you have one)
+          </Label>
           <Input
             id="pd-business-name"
             value={form.businessName}
