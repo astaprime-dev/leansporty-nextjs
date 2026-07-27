@@ -45,13 +45,12 @@ export default async function PayoutDetailsPage() {
         Payout details
       </h1>
       <p className="text-gray-600 mt-1">
-        Where your monthly bank transfer goes, and the tax details we need to
-        pay you. Takes about 3 minutes, once — you can change it any time.
+        The bank account and tax information required before your first payout —
+        used for monthly transfers, settlement statements, and statutory
+        platform reporting (DAC7). You can update it at any time.
       </p>
       <p className="text-sm text-gray-400 mt-1">
-        Only you and Lean Sporty can see this. We use it for your payouts, your
-        monthly settlement statements, and the reporting EU law requires of
-        platforms (DAC7).
+        Visible only to you and Lean Sporty.
       </p>
 
       <div className="mt-8 rounded-2xl border border-pink-100 bg-white p-6 shadow-sm sm:p-8">

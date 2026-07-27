@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert } from "@/components/ui/alert";
+import { COUNTRIES } from "@/lib/countries";
 
 /**
  * Payout + tax details form (agreement §1/§7) — plain-English copy, most
@@ -56,17 +57,28 @@ export function PayoutDetailsForm({ initial }: { initial: BillingInitial }) {
   const [unregisteredConfirmed, setUnregisteredConfirmed] = useState(
     initial?.business_status === "unregistered_activity"
   );
+  // Retype-to-confirm for the IBAN (a typo'd IBAN is often still a valid
+  // account — the format check can't catch it). Pasting is blocked on the
+  // confirm field on purpose. Only required when the IBAN is new or changed.
+  const [ibanConfirm, setIbanConfirm] = useState("");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
 
   const isPoland = form.country.trim().toUpperCase() === "PL";
+  const normIban = (v: string) => v.replace(/\s+/g, "").toUpperCase();
+  const ibanChanged = normIban(form.iban) !== normIban(initial?.iban ?? "");
 
   const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement>) =>
     setForm({ ...form, [k]: e.target.value });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (ibanChanged && normIban(ibanConfirm) !== normIban(form.iban)) {
+      setError("The IBAN entries do not match — re-enter the IBAN to confirm it.");
+      setSaved(false);
+      return;
+    }
     setSaving(true);
     setError(null);
     setSaved(false);
@@ -96,9 +108,9 @@ export function PayoutDetailsForm({ initial }: { initial: BillingInitial }) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      <div className="grid gap-4 sm:grid-cols-[1fr,10rem]">
+      <div className="grid gap-4 sm:grid-cols-[1fr,14rem]">
         <div className="space-y-1.5">
-          <Label htmlFor="pd-legal-name">Your full legal name *</Label>
+          <Label htmlFor="pd-legal-name">Full legal name *</Label>
           <Input
             id="pd-legal-name"
             value={form.legalName}
@@ -107,32 +119,38 @@ export function PayoutDetailsForm({ initial }: { initial: BillingInitial }) {
             required
           />
           <p className="text-xs text-gray-500">
-            As it appears on your ID and your bank account.
+            Must match your identity document and your bank account.
           </p>
         </div>
         <div className="space-y-1.5">
           <Label htmlFor="pd-country">Country *</Label>
-          <Input
+          <select
             id="pd-country"
             value={form.country}
-            onChange={set("country")}
-            maxLength={2}
-            placeholder="e.g. DE"
+            onChange={(e) => setForm({ ...form, country: e.target.value })}
             required
-          />
-          <p className="text-xs text-gray-500">
-            Where you pay taxes — 2-letter code.
-          </p>
+            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+          >
+            <option value="" disabled>
+              Choose…
+            </option>
+            {COUNTRIES.map((c) => (
+              <option key={c.code} value={c.code}>
+                {c.name}
+              </option>
+            ))}
+          </select>
+          <p className="text-xs text-gray-500">Country of tax residence.</p>
         </div>
       </div>
 
       {isPoland && (
         <div className="space-y-2">
-          <Label>Do you have a registered business? *</Label>
+          <Label>Business status *</Label>
           <div className="grid gap-2 sm:grid-cols-2">
             {[
-              { v: true, label: "Yes, I run a registered business" },
-              { v: false, label: "No, I teach on a small scale" },
+              { v: true, label: "Registered business activity" },
+              { v: false, label: "Unregistered activity (działalność nierejestrowana)" },
             ].map((o) => (
               <label
                 key={String(o.v)}
@@ -180,7 +198,7 @@ export function PayoutDetailsForm({ initial }: { initial: BillingInitial }) {
       {!(isPoland && plRegisteredBusiness === false) && (
         <div className="space-y-1.5">
           <Label htmlFor="pd-business-name">
-            Business or company name (if you have one)
+            Business / company name (optional)
           </Label>
           <Input
             id="pd-business-name"
@@ -193,18 +211,18 @@ export function PayoutDetailsForm({ initial }: { initial: BillingInitial }) {
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-1.5">
-          <Label htmlFor="pd-tin">Tax ID *</Label>
+          <Label htmlFor="pd-tin">Tax identification number (TIN) *</Label>
           <Input
             id="pd-tin"
             value={form.tin}
             onChange={set("tin")}
             maxLength={50}
-            placeholder="Your country's tax number"
+            placeholder="e.g. NIP, Steuernummer, NIF"
             required
           />
         </div>
         <div className="space-y-1.5">
-          <Label htmlFor="pd-vat">VAT number (only if VAT-registered)</Label>
+          <Label htmlFor="pd-vat">VAT number (if VAT-registered)</Label>
           <Input
             id="pd-vat"
             value={form.vatNumber}
@@ -244,7 +262,7 @@ export function PayoutDetailsForm({ initial }: { initial: BillingInitial }) {
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-1.5">
-          <Label htmlFor="pd-iban">Bank account (IBAN) *</Label>
+          <Label htmlFor="pd-iban">IBAN *</Label>
           <Input
             id="pd-iban"
             value={form.iban}
@@ -252,7 +270,28 @@ export function PayoutDetailsForm({ initial }: { initial: BillingInitial }) {
             maxLength={42}
             required
           />
+          <p className="text-xs text-gray-500">
+            Payouts are transferred to this account — verify it carefully.
+          </p>
         </div>
+        {ibanChanged && (
+          <div className="space-y-1.5">
+            <Label htmlFor="pd-iban-confirm">Confirm IBAN *</Label>
+            <Input
+              id="pd-iban-confirm"
+              value={ibanConfirm}
+              onChange={(e) => setIbanConfirm(e.target.value)}
+              onPaste={(e) => e.preventDefault()}
+              onDrop={(e) => e.preventDefault()}
+              autoComplete="off"
+              maxLength={42}
+              required
+            />
+            <p className="text-xs text-gray-500">
+              Re-enter manually — pasting is disabled in this field.
+            </p>
+          </div>
+        )}
         <div className="space-y-1.5">
           <Label htmlFor="pd-holder">Account holder name *</Label>
           <Input
@@ -263,7 +302,7 @@ export function PayoutDetailsForm({ initial }: { initial: BillingInitial }) {
             required
           />
           <p className="text-xs text-gray-500">
-            The account must be in your own name (or your business&apos;s).
+            The account must be held in your legal name or your business’s name.
           </p>
         </div>
       </div>
@@ -271,8 +310,8 @@ export function PayoutDetailsForm({ initial }: { initial: BillingInitial }) {
       {error && <Alert variant="error">{error}</Alert>}
       {saved && (
         <Alert variant="success">
-          Saved — you&apos;re all set for payouts. You can update these details
-          any time.
+          Saved. Your payout details are on file — you can update them at any
+          time.
         </Alert>
       )}
 

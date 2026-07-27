@@ -84,7 +84,7 @@ export async function POST(request: NextRequest) {
   }
   if (!IBAN_RE.test(iban)) {
     return NextResponse.json(
-      { error: "That IBAN doesn't look right — please check it (letters and digits only, starting with a 2-letter country code)." },
+      { error: "The IBAN appears invalid — verify it (a 2-letter country code followed by check digits and the account number)." },
       { status: 400 }
     );
   }
@@ -98,14 +98,14 @@ export async function POST(request: NextRequest) {
   } else if (body.plRegisteredBusiness === false) {
     if (!unregisteredConfirmed) {
       return NextResponse.json(
-        { error: "Please confirm the small-activity statement to continue." },
+        { error: "The unregistered-activity statement must be confirmed to continue." },
         { status: 400 }
       );
     }
     businessStatus = "unregistered_activity";
   } else {
     return NextResponse.json(
-      { error: "Please tell us whether you have a registered business." },
+      { error: "Business status is required." },
       { status: 400 }
     );
   }
