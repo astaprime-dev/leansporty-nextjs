@@ -60,6 +60,15 @@ order by owed desc;
 ```
 
 **2. Pay each instructor** their `owed` by bank transfer (Stripe records + your bank).
+Bank + tax details come from `instructor_billing` (filled by the instructor at
+`/instructor/earnings/payout-details`; **no row = don't pay** — the Studio nudges them):
+
+```sql
+select ib.legal_name, ib.business_name, ib.business_status, ib.tin, ib.vat_number,
+       ib.iban, ib.account_holder, ib.address_line, ib.city, ib.postal_code, ib.country
+from public.instructor_billing ib
+where ib.instructor_id = '<instructor uuid>';
+```
 
 **3. Mark that instructor's batch paid** (use one batch id per run, e.g. a date):
 
@@ -101,7 +110,8 @@ order by p.created_at;
 
 - Header: **"Samofakturowanie"** (required word) + number `LS-SB/<year>/<month>/<n>`
   (sequential per instructor).
-- Supplier: instructor's legal name, address, NIP/TIN (from onboarding data).
+- Supplier: instructor's legal name, address, NIP/TIN — all in `instructor_billing`
+  (query in step 2; `business_status` tells you which VAT treatment line applies).
 - Recipient: Astaprime Sp. z o.o. (+ NIP).
 - Service: "Instructor teaching services provided via the Lean Sporty platform,
   period <month>", with the lines above and the total = the bank transfer amount.

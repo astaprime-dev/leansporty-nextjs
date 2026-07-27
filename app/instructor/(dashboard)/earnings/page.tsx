@@ -1,7 +1,9 @@
+import Link from "next/link";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import { Wallet, Clock, CheckCircle2, CalendarDays } from "lucide-react";
 import { EmptyState } from "@/components/empty-state";
+import { Alert } from "@/components/ui/alert";
 
 function fmt(cents: number, currency = "eur") {
   return new Intl.NumberFormat(undefined, {
@@ -24,6 +26,14 @@ export default async function InstructorEarningsPage() {
     .eq("user_id", user.id)
     .single();
   if (!instructorProfile) redirect("/instructor/profile");
+
+  // Payout details on file? (RLS: own row.) Missing → nudge below; payouts
+  // can't be made without them (agreement §1/§7).
+  const { data: billing } = await supabase
+    .from("instructor_billing")
+    .select("instructor_id")
+    .eq("instructor_id", instructorProfile.id)
+    .maybeSingle();
 
   // Own payout rows (RLS scopes to this instructor).
   const { data: payouts } = await supabase
@@ -97,9 +107,33 @@ export default async function InstructorEarningsPage() {
           You keep your agreed share (80%, or 85% as a featured instructor) of
           every sale after VAT — we pay the VAT to the tax office for you.
           Pending amounts are paid to your bank once a month by bank transfer;
-          balances under €20 simply roll into the next month.
+          balances under €20 simply roll into the next month.{" "}
+          <Link
+            href="/instructor/earnings/payout-details"
+            className="font-medium text-pink-600 transition-colors hover:text-pink-500"
+          >
+            Payout details
+          </Link>
         </p>
       </div>
+
+      {!billing && (
+        <Alert variant="warning" className="mb-8">
+          <p className="font-semibold mb-1">Add your payout details</p>
+          <p className="text-sm">
+            Before we can send your first bank transfer, we need your bank
+            account and tax details — it takes about 3 minutes.{" "}
+            <Link
+              href="/instructor/earnings/payout-details"
+              className="font-semibold underline underline-offset-2"
+            >
+              Add them now
+            </Link>
+            . You can teach and sell in the meantime — every sale is recorded
+            here either way.
+          </p>
+        </Alert>
+      )}
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         {tiles.map((t) => (
