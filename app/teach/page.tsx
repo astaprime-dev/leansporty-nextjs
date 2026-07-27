@@ -158,7 +158,7 @@ const FAQ = [
   },
   {
     q: "Different countries and currencies — do I have to figure that out?",
-    a: "No. You set one price in euros, and students anywhere pay by card — their bank handles any conversion. Your percentage applies to every sale, after VAT — no minimum fees, no other deductions. (Paid prices start at €5; anything below that, just make it free.)",
+    a: "No. You set one price in euros, and students anywhere pay by card — their bank handles any conversion. Your percentage applies to every sale, after VAT — no minimum fees, no other deductions. (Paid classes start at €5 — anything below that, just make it free. Programs start at €19.)",
   },
   {
     q: "Does my share ever change?",

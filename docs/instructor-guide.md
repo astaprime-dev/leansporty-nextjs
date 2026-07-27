@@ -18,8 +18,9 @@ required. Everything here matches what you see in your Instructor Studio.
 ## 🚀 Getting started (about 10 minutes, once)
 
 1. **Open your invite link** and sign in (Google, Apple, or an email
-   sign-in link). Then click **Accept** — that one click activates your
-   instructor account. There are no codes to type.
+   sign-in link). Tick the box to agree to the Instructor Agreement — the
+   plain-English terms of the deal — and click **Accept**. That one click
+   activates your instructor account; there are no codes to type.
 2. **Create your profile:** your display name, your page address
    (`leansporty.com/@your-name`), a short bio, a photo, and social links.
    You can also add a **photo gallery** (up to 8 photos) — it makes your
@@ -113,7 +114,7 @@ received.
 A program is a set of video lessons students buy once and keep: a simple
 lesson list, or a day-by-day plan (like a "21-day challenge").
 
-1. Go to **Programs** → create a program: title, price (€5–€500),
+1. Go to **Programs** → create a program: title, price (€19–€500),
    structure, and a cover image.
 2. Add lessons: upload videos (up to 45 minutes and 20 GB each — MP4 works
    best) or reuse your class recordings.

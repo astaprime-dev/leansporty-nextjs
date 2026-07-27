@@ -414,7 +414,7 @@ function DetailsCard({
             <Input
               id="p-price"
               type="number"
-              min="5"
+              min="19"
               max="500"
               step="0.01"
               value={price}

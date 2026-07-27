@@ -119,6 +119,8 @@ CREATE TABLE instructors (
   user_id UUID NOT NULL UNIQUE REFERENCES auth.users(id) ON DELETE CASCADE,
   slug VARCHAR(255) NOT NULL UNIQUE,
   split_pct INTEGER,  -- nullable; featured instructors → 85 (default 80 lives on products.split_pct); added 20260705000000
+  agreement_version TEXT,           -- Instructor Agreement version accepted at activation; added 20260728020000
+  agreement_accepted_at TIMESTAMPTZ, -- when it was accepted (write-once via activation API)
 
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()

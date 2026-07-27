@@ -7,7 +7,8 @@ import { instructorShare } from "@/lib/instructor-share";
  * Interactive "your numbers" calculator for /teach. Pure arithmetic on the
  * prices the instructor sets — VAT comes off the (VAT-inclusive) price first,
  * then the split — the same math the payout webhook runs (no fee floor; paid
- * prices start at €5, which the seat slider minimum mirrors). Deliberately NOT an
+ * classes start at €5 and programs at €19, which the slider minimums mirror).
+ * Deliberately NOT an
  * income projection: the fine print says so, the defaults mirror the table's
  * scale, and the standard 80% tier is the default (featured is a conscious
  * upgrade tap).
@@ -191,8 +192,8 @@ export function EarningsCalculator() {
       <p className="border-t border-pink-50 bg-pink-50/40 px-6 py-3 text-xs text-muted-foreground sm:px-8">
         Simple arithmetic on prices you set: VAT (~23%, included in your price)
         goes to the tax office — we pay it for you — and your share of the rest
-        is yours, exactly. No minimum fee, no other deductions; paid prices
-        start at €5. It&apos;s math, not an income promise — how many people
+        is yours, exactly. No minimum fee, no other deductions; paid classes
+        start at €5, programs at €19. It&apos;s math, not an income promise — how many people
         show up is your superpower, not ours. Earnings are before your own
         income tax.
       </p>

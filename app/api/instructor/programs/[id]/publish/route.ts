@@ -47,7 +47,7 @@ export async function POST(
       program.price_cents > PROGRAM_PRICE_MAX_CENTS
     ) {
       return NextResponse.json(
-        { error: "Set a price between €5 and €500 before publishing." },
+        { error: "Set a price between €19 and €500 before publishing." },
         { status: 400 }
       );
     }

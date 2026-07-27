@@ -1,5 +1,4 @@
 import { getServiceRoleClient } from "@/lib/stripe";
-import { PAID_PRICE_MIN_CENTS } from "@/lib/instructor-share";
 
 /**
  * V1 cost/abuse caps for instructor programs. Storage is billed to the
@@ -17,7 +16,12 @@ export const PROGRAM_CAPS = {
   maxStoredMinutesPerInstructor: 600,
 } as const;
 
-export const PROGRAM_PRICE_MIN_CENTS = PAID_PRICE_MIN_CENTS;
+/**
+ * Programs are multi-lesson products and priced accordingly: minimum €19
+ * (founder decision 2026-07-27). Live class seats keep the €5 minimum
+ * (PAID_PRICE_MIN_CENTS in lib/instructor-share.ts).
+ */
+export const PROGRAM_PRICE_MIN_CENTS = 1900;
 export const PROGRAM_PRICE_MAX_CENTS = 50000;
 
 /**

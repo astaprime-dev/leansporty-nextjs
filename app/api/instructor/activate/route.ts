@@ -3,7 +3,9 @@ import { createClient } from "@/utils/supabase/server";
 import {
   grantInstructorRole,
   consumeInstructorInvite,
+  recordAgreementAcceptance,
 } from "@/lib/instructor-roles";
+import { INSTRUCTOR_AGREEMENT_VERSION } from "@/lib/instructor-agreement";
 
 /**
  * Best-effort per-user activation rate limiter. In-memory (per serverless instance,
@@ -58,6 +60,15 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Agreement acceptance is required BEFORE the invite is consumed — a missing
+    // checkbox must never burn a single-use code.
+    if (body?.agreementAccepted !== true) {
+      return NextResponse.json(
+        { error: "Please accept the Instructor Agreement to continue." },
+        { status: 400 }
+      );
+    }
+
     // Single-use, attributable, expirable invite code (S0.3) — the only path.
     // The legacy shared INSTRUCTOR_ACCESS_TOKEN fallback was removed 2026-07-27.
     const authorized = await consumeInstructorInvite(code, user.id);
@@ -71,6 +82,9 @@ export async function POST(request: NextRequest) {
 
     // Grant instructor role (creates profile, generates slug, sets role).
     const result = await grantInstructorRole(user.id);
+
+    // Log which agreement version was accepted (write-once, best-effort).
+    await recordAgreementAcceptance(user.id, INSTRUCTOR_AGREEMENT_VERSION);
 
     return NextResponse.json(result);
   } catch (error) {

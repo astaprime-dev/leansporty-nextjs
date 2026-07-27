@@ -141,7 +141,7 @@ Use these in DMs; the page answers must never contradict them.
 **Allowed** (all true in the product today): 80% standard / 85% featured split,
 **always stated as "of every sale after VAT"** (we're the merchant of record and
 remit VAT; the split applies to the price net of VAT) · no minimum fee — paid
-prices simply start at €5 (below that, make it free) · €15 seat → €9.76, €49
+class prices simply start at €5 (below that, make it free) and programs at €19 · €15 seat → €9.76, €49
 program → €31.87 (€33.86 featured) · **paid monthly — automatically via Stripe,
 or by bank transfer** (Stripe Connect onboarding is built; balances under €20
 roll over) · no monthly fee, no listing fee ·

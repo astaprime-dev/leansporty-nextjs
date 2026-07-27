@@ -1,4 +1,4 @@
-import { BookOpen, User, Video, Wallet, Share2, Calendar, CheckCircle, HelpCircle } from "lucide-react";
+import { BookOpen, User, Video, Wallet, Share2, Calendar, CheckCircle, HelpCircle, Film, Star } from "lucide-react";
 import { Alert } from "@/components/ui/alert";
 
 export default function InstructorHelpPage() {
@@ -30,7 +30,7 @@ export default function InstructorHelpPage() {
           </div>
           <div className="flex items-start gap-3">
             <div className="w-6 h-6 rounded-full bg-pink-500 text-white flex items-center justify-center text-sm font-bold flex-shrink-0">2</div>
-            <p className="text-gray-700">Open your invite link and sign in — it activates your Studio in one click</p>
+            <p className="text-gray-700">Open your invite link, sign in, agree to the Instructor Agreement, and click Accept — your Studio opens right away</p>
           </div>
           <div className="flex items-start gap-3">
             <div className="w-6 h-6 rounded-full bg-pink-500 text-white flex items-center justify-center text-sm font-bold flex-shrink-0">3</div>
@@ -189,13 +189,23 @@ export default function InstructorHelpPage() {
                     <li>• <strong>Date & Time:</strong> When your class will start (shown in your local timezone)</li>
                     <li>• <strong>Duration:</strong> How long the class will be, 15–180 minutes</li>
                     <li>• <strong>Price:</strong> Pick a preset or a custom amount (paid classes start at €5), or choose Free — you keep 80% of every sale after VAT (85% as a featured instructor)</li>
+                    <li>• <strong>Cover image:</strong> Optional but worth it — it&apos;s what students see on the class page and when you share the link</li>
                   </ul>
                 </li>
                 <li>
                   <p className="font-semibold text-gray-900">Click "Schedule Class"</p>
-                  <p className="text-sm text-gray-600">Your class appears immediately on the public Live Streams page and your profile.</p>
+                  <p className="text-sm text-gray-600">Your class appears immediately on the public Live Streams page and your profile, and you get a share link ready to post.</p>
                 </li>
               </ol>
+            </div>
+
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-3">Who signed up?</h3>
+              <p className="text-gray-700">
+                Every class has a <strong>roster</strong> — open the class and click &quot;Roster&quot; to see who enrolled
+                (and whether they paid or joined free). You can download it as a CSV file. Your dashboard also has a{" "}
+                <strong>Share kit</strong> with ready-to-copy links and text for Instagram.
+              </p>
             </div>
 
             <div>
@@ -259,7 +269,7 @@ export default function InstructorHelpPage() {
                   </li>
                   <li>
                     <p className="font-semibold text-gray-900">That's it! You're live</p>
-                    <p className="text-sm text-gray-600">Your class automatically becomes visible to students. Start teaching!</p>
+                    <p className="text-sm text-gray-600">Your class automatically becomes visible to students. While you teach, the broadcast page shows the live viewer count, student reactions, and their comments — glance at them between songs</p>
                   </li>
                   <li>
                     <p className="font-semibold text-gray-900">When you're done</p>
@@ -333,6 +343,15 @@ export default function InstructorHelpPage() {
                   and you can reuse it as a lesson in your paid programs.
                 </p>
               </Alert>
+
+              <div className="mt-6">
+                <h3 className="text-lg font-semibold text-gray-900 mb-3">Your numbers</h3>
+                <p className="text-gray-700">
+                  Open an ended class from &quot;Classes&quot; to see its analytics: sales and your
+                  earnings, peak viewers, watch time, and the reactions your class received. Use them
+                  to learn which formats and times work best for your audience.
+                </p>
+              </div>
             </div>
 
             <div>
@@ -389,6 +408,102 @@ export default function InstructorHelpPage() {
           </div>
         </section>
 
+        {/* Programs */}
+        <section className="bg-white rounded-2xl border border-pink-100 p-8">
+          <div className="flex items-start gap-4 mb-6">
+            <div className="w-12 h-12 bg-gradient-to-br from-pink-500 to-rose-400 rounded-xl flex items-center justify-center flex-shrink-0">
+              <Film className="w-6 h-6 text-white" strokeWidth={1.5} />
+            </div>
+            <div>
+              <h2 className="text-2xl font-semibold text-gray-900 mb-2">Programs — sell while you sleep</h2>
+              <p className="text-gray-600">Turn your videos and class recordings into products that sell around the clock</p>
+            </div>
+          </div>
+
+          <div className="space-y-6">
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-3">What a program is</h3>
+              <p className="text-gray-700">
+                A set of video lessons students buy once: a simple lesson list, or a day-by-day plan
+                (like a &quot;21-day challenge&quot;). Each program gets its own sales page on your profile
+                with checkout, reviews, and protected playback — only buyers can watch, and nothing is
+                downloadable. Buyers get 12 months of access from a one-time purchase.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-3">Creating one</h3>
+              <ol className="space-y-3 ml-6 list-decimal text-gray-700">
+                <li>
+                  <p className="font-semibold text-gray-900">Go to "Programs" and create a program</p>
+                  <p className="text-sm text-gray-600">Title, price (€19–€500), structure (list or day-by-day), and a cover image</p>
+                </li>
+                <li>
+                  <p className="font-semibold text-gray-900">Add lessons</p>
+                  <p className="text-sm text-gray-600">Upload videos (up to 45 minutes and 20GB each — MP4 works best) or reuse your class recordings. Drag to reorder</p>
+                </li>
+                <li>
+                  <p className="font-semibold text-gray-900">Set a free preview (optional)</p>
+                  <p className="text-sm text-gray-600">One lesson can be marked as a free preview — it's shown to prospective buyers and sells the rest</p>
+                </li>
+                <li>
+                  <p className="font-semibold text-gray-900">Publish</p>
+                  <p className="text-sm text-gray-600">Confirm you have the rights to all content and music, and your program goes live on your profile</p>
+                </li>
+              </ol>
+            </div>
+
+            <Alert variant="info">
+              <p className="font-semibold mb-1">Limits (just ask if you need more)</p>
+              <p className="text-sm">
+                Up to 3 programs, with up to 30 lessons each; lessons up to 45 minutes. Need more?
+                Reach out via the contact form.
+              </p>
+            </Alert>
+
+            <Alert variant="warning">
+              <p className="font-semibold mb-1">After the first sale</p>
+              <p className="text-sm">
+                Once a program has a sale, its lessons can&apos;t be removed — people paid for them. You
+                can still add lessons, edit details, and change the price for future buyers.
+                <strong> Unpublishing</strong> hides a program from new buyers; everyone who already
+                bought it keeps access.
+              </p>
+            </Alert>
+          </div>
+        </section>
+
+        {/* Reviews and feedback */}
+        <section className="bg-white rounded-2xl border border-pink-100 p-8">
+          <div className="flex items-start gap-4 mb-6">
+            <div className="w-12 h-12 bg-gradient-to-br from-pink-500 to-rose-400 rounded-xl flex items-center justify-center flex-shrink-0">
+              <Star className="w-6 h-6 text-white" strokeWidth={1.5} />
+            </div>
+            <div>
+              <h2 className="text-2xl font-semibold text-gray-900 mb-2">Reviews and feedback</h2>
+              <p className="text-gray-600">What students say — publicly and just to you</p>
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <p className="text-gray-700">
+              <strong>Live class reviews</strong> (star ratings and comments) appear on the{" "}
+              <strong>Reviews</strong> page in your Studio and on your public class pages. If a comment
+              is inappropriate, you can <strong>hide</strong> it from the Reviews page — hidden comments
+              disappear from public view.
+            </p>
+            <p className="text-gray-700">
+              <strong>Program ratings</strong> are shown publicly on each program&apos;s sales page —
+              social proof that sells for you.
+            </p>
+            <p className="text-gray-700">
+              <strong>Private per-lesson feedback</strong> from program buyers (a quick thumbs up/down
+              and a short note only you see) appears on the program&apos;s page under{" "}
+              <strong>Programs</strong>. It&apos;s the fastest way to learn what lands.
+            </p>
+          </div>
+        </section>
+
         {/* Getting paid */}
         <section className="bg-white rounded-2xl border border-pink-100 p-8">
           <div className="flex items-start gap-4 mb-6">
@@ -423,6 +538,42 @@ export default function InstructorHelpPage() {
                 transfer</strong> (balances under €20
                 roll into the next month). You&apos;re never out of pocket — you only
                 ever earn on a sale.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-3">Payout details — do this once</h3>
+              <p className="text-gray-700 mb-3">
+                Go to <strong>Earnings → Payout details</strong> and choose how you want to be paid:
+              </p>
+              <ul className="space-y-3 ml-6 list-disc text-gray-700">
+                <li>
+                  <strong>Via Stripe (recommended):</strong> pick your country and finish on
+                  Stripe&apos;s secure page — about 5 minutes. Your monthly payouts then arrive
+                  automatically in your bank account. Available in the EU/EEA countries, the UK,
+                  Switzerland, the US, and Canada.
+                </li>
+                <li>
+                  <strong>By bank transfer:</strong> fill in your legal name, country, tax
+                  information, and bank account (IBAN) — we send your earnings manually once a
+                  month. For countries where Stripe isn&apos;t available, or if you&apos;d rather
+                  skip Stripe.
+                </li>
+              </ul>
+              <p className="text-gray-700 mt-3">
+                You can teach and sell before completing this — it only gates the payout, never
+                teaching.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-3">Settlement statements</h3>
+              <p className="text-gray-700">
+                Each payout comes with a settlement statement — find it on your Earnings page under
+                payout history. It lists every sale, the VAT, and your share. If something looks
+                wrong, tell us within 14 days. You never write an invoice — with one exception: if
+                you run a VAT-registered business in Poland, the statement tells you exactly what to
+                invoice us.
               </p>
             </div>
 
@@ -611,6 +762,34 @@ export default function InstructorHelpPage() {
                 Yes! Classes are recorded automatically. The recording is usually ready within a few
                 hours (up to a day) after class ends, and enrolled students can rewatch it for 7 days.
                 This adds value to your classes as students can revisit the workout.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Can I change a program after publishing it?</h3>
+              <p className="text-gray-700">
+                Yes — title, description, cover, and price can change anytime (price changes only
+                affect new sales). You can always add lessons; removing lessons is only possible
+                while the program has no sales. Unpublishing hides it from new buyers, and everyone
+                who bought keeps access.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">How do I set up payouts?</h3>
+              <p className="text-gray-700">
+                Go to Earnings → Payout details and choose Via Stripe (recommended, about 5 minutes,
+                automatic monthly payouts) or By bank transfer. Until it's set up, your earnings
+                simply wait for you — nothing is lost, and teaching is never blocked.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Can I hide an unfair review?</h3>
+              <p className="text-gray-700">
+                You can hide any comment on your classes from the Reviews page — hidden comments
+                disappear from public view. Use it for spam or abuse; honest critical feedback is
+                usually worth answering instead.
               </p>
             </div>
 

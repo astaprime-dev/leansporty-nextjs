@@ -30,8 +30,10 @@ returning 'https://leansporty.com/welcome/' || code as invite_link;
 Use a **high-entropy, unguessable** code (e.g. a name prefix + random hex). Send the
 instructor the **personal link** the insert returns —
 `https://leansporty.com/welcome/<code>`. It greets them by name, restates the featured
-deal, and activates in one click after sign-in (no code to copy/paste). The same code
-also still works manually at `/instructor/activate`.
+deal, and activates in one click after sign-in (no code to copy/paste) — accepting the
+Instructor Agreement (`/instructor-agreement`) is a required checkbox, logged on
+`instructors.agreement_version`. The same code also still works manually at
+`/instructor/activate`.
 
 **Featured (85%) instructors:** the invite doesn't set the split (standard is 80%,
 `products.split_pct` default). After they redeem, set it once:

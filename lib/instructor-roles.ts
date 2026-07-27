@@ -310,6 +310,29 @@ export async function hasInstructorRole(userId: string): Promise<boolean> {
 }
 
 /**
+ * Record which Instructor Agreement version the user accepted at activation.
+ * Write-once: never overwrites an existing acceptance (re-activations keep the
+ * original stamp). Best-effort — activation must not fail if this write does.
+ */
+export async function recordAgreementAcceptance(
+  userId: string,
+  version: string
+): Promise<void> {
+  const supabase = serviceRoleClient();
+  const { error } = await supabase
+    .from("instructors")
+    .update({
+      agreement_version: version,
+      agreement_accepted_at: new Date().toISOString(),
+    })
+    .eq("user_id", userId)
+    .is("agreement_version", null);
+  if (error) {
+    console.error("Failed to record agreement acceptance:", error);
+  }
+}
+
+/**
  * Verify instructor profile exists in database
  * Authoritative check for actual profile existence
  */

@@ -12,6 +12,7 @@ export default function InstructorActivateForm() {
   const [token, setToken] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [agreed, setAgreed] = useState(false);
   const router = useRouter();
 
   const handleActivation = async (e: React.FormEvent) => {
@@ -23,7 +24,7 @@ export default function InstructorActivateForm() {
       const response = await fetch("/api/instructor/activate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token }),
+        body: JSON.stringify({ token, agreementAccepted: agreed }),
       });
 
       if (response.ok) {
@@ -80,6 +81,26 @@ export default function InstructorActivateForm() {
             />
           </div>
 
+          <label className="flex items-start gap-2.5 text-sm text-gray-700">
+            <input
+              type="checkbox"
+              checked={agreed}
+              onChange={(e) => setAgreed(e.target.checked)}
+              className="mt-0.5 h-4 w-4 rounded border-gray-300 text-pink-600 focus:ring-pink-500"
+            />
+            <span>
+              I agree to the{" "}
+              <Link
+                href="/instructor-agreement"
+                target="_blank"
+                className="font-semibold text-pink-600 underline hover:text-pink-500"
+              >
+                Instructor Agreement
+              </Link>
+              .
+            </span>
+          </label>
+
           {error && (
             <Alert variant="error">{error}</Alert>
           )}
@@ -88,7 +109,7 @@ export default function InstructorActivateForm() {
             type="submit"
             variant="brand"
             className="w-full"
-            disabled={isLoading}
+            disabled={isLoading || !agreed}
           >
             {isLoading ? "Activating..." : "Activate Instructor Status"}
           </Button>

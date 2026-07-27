@@ -35,7 +35,7 @@ left. For each sale:
   the instructor's share is larger on e.g. US sales).
 - `net = gross − vat` (stored: `gross_cents`, `vat_cents`).
 - `platform_fee = (100 − split_pct)% of net` and `instructor_share = net − platform_fee`.
-  No per-sale fee floor — the **€5 minimum paid price** (enforced at class/program
+  No per-sale fee floor — the **minimum paid price** (€5 classes / €19 programs, enforced at class/program
   create/update/publish) is what keeps fixed per-sale costs covered.
 - Invariant: `gross_cents = vat_cents + platform_fee_cents + instructor_share_cents`.
   (Rows from before migration `20260727000000` have `vat_cents = 0` — their split was

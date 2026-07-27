@@ -136,7 +136,7 @@ Real numbers, because you'd ask anyway:
 
 Your price includes VAT — we pay it to the tax office for you, then your share
 of the rest is yours, exactly. No minimum fees, no other deductions — you
-always earn on every sale. (Paid prices start at €5.)
+always earn on every sale. (Paid classes start at €5; programs at €19.)
 
 There's a calculator on our teaching page. Drag the sliders, use your own
 prices → link in bio.

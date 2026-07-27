@@ -98,7 +98,7 @@ export default function CreateProgramPage() {
           <Input
             id="price"
             type="number"
-            min="5"
+            min="19"
             max="500"
             step="0.01"
             value={price}
@@ -107,8 +107,8 @@ export default function CreateProgramPage() {
           />
           <EarnPreview priceEuros={price} />
           <p className="text-sm text-gray-500">
-            Between €5 and €500. You keep your usual share of every sale after
-            VAT, same as with paid classes.
+            Between €19 and €500. You keep 80% of every sale after VAT (85% as
+            a featured instructor), same as with paid classes.
           </p>
         </div>
 
