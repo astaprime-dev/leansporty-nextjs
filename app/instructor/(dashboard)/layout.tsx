@@ -54,7 +54,7 @@ export default async function InstructorLayout({
           <div className="flex items-center gap-4">
             {instructorProfile.slug && (
               <Link href={`/@${instructorProfile.slug}`} target="_blank">
-                <Button variant="outline" size="sm" className="hidden sm:inline-flex">
+                <Button variant="brandOutline" size="sm" className="hidden sm:inline-flex rounded-full">
                   View Public Profile
                 </Button>
               </Link>
