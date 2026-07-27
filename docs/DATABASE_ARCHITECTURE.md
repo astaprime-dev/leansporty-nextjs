@@ -118,6 +118,7 @@ CREATE TABLE instructors (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID NOT NULL UNIQUE REFERENCES auth.users(id) ON DELETE CASCADE,
   slug VARCHAR(255) NOT NULL UNIQUE,
+  split_pct INTEGER,  -- nullable; featured instructors → 85 (default 80 lives on products.split_pct); added 20260705000000
 
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
@@ -159,7 +160,7 @@ const fullInstructor = { ...instructor, ...profile };
 ```
 
 ### Migration History
-Originally `instructors` had duplicate fields (`display_name`, `bio`, `profile_photo_url`, etc.). These were migrated to `user_profiles` in December 2024 to establish a single source of truth for identity data.
+Originally `instructors` had duplicate fields (`display_name`, `bio`, `profile_photo_url`, etc.). These were migrated to `user_profiles` on December 27, 2025 to establish a single source of truth for identity data.
 
 **Migration**: `20251227_cleanup_instructors_table.sql`
 
@@ -419,7 +420,7 @@ The live-streaming tables predate this doc; the July 2026 Studio work (see
 - **`live_stream_sessions`** — one row per class. Public `SELECT` (discovery). Writes are owner-scoped (`20260629170000`); `DELETE` owner-scoped (`20260703000000`). Key columns: `instructor_id`, `status`, `broadcast_method`, recording columns, `thumbnail_url`, `max_viewers`, `total_enrollments` (bumped by a `SECURITY DEFINER` trigger, `20260703020000`), and **`product_id`** (null = free class; set = paid, links to `products`).
 - **`live_stream_ingest`** (`20260703000000`) — RTMPS/WHIP url+key secrets moved OUT of `live_stream_sessions` (which is publicly readable) into this **owner-only** table. RLS: only the owning instructor. Never expose to anon.
 - **`stream_enrollments`** — the class roster. `INSERT` is now **free-classes-only** (`20260704000000`); paid-class roster rows are written by the Stripe webhook (service-role). Instructors read their own classes' rosters (`20260704000000`).
-- **`products`** additions (`20260704000000`/`20260705000000`): `instructor_id` (null = platform product like the challenge), `split_pct` (default 85). **`instructors.split_pct`** (nullable; founding instructors → 90) is copied onto new products at creation.
+- **`products`** additions (`20260704000000`/`20260705000000`): `instructor_id` (null = platform product like the challenge), `split_pct` (default **80** since `20260727010000`; was 85). **`instructors.split_pct`** (nullable; featured instructors → **85**) is copied onto new products at creation.
 - **`stripe_class_prices`** (`20260704010000`) — was a pool of reusable Stripe Prices for paid classes; **dropped** (`20260710000000`) when Checkout moved to inline `price_data` (stored Price ids are test/live-mode-bound and broke cross-environment).
 - **`instructor_payouts`** (`20260705000000`, extended `20260727000000` + `20260728000000`) — per-sale ledger (gross, vat, platform_fee, instructor_share, split_pct, status, batch). Webhook-only writes; instructor reads own. Since `20260728000000`: Stripe references for Connect payouts (`stripe_payment_intent_id` captured at sale, `stripe_charge_id` resolved at payout, `stripe_transfer_id`, `transfer_error`), `paid_via ∈ {stripe_connect, manual}` (dual rail), and status widened to `pending/paid/refunded/reversed/reversal_failed` — refunds are **status transitions, not deletes** (the ledger is the audit trail). Basis for the monthly run at `/admin/payouts` (`docs/INSTRUCTOR_PAYOUTS.md`).
 - **`instructor_connect_accounts`** (`20260728000000`) — Stripe Connect account per instructor (`stripe_account_id`, country locked at creation, `details_submitted`, `payouts_enabled`, `transfers_status`, `disabled_reason`, `requirements_due`). Synced from `account.updated` (Connect webhook) and the status route. RLS: instructor reads own; writes service-role only. Transfers gate on `transfers_status='active' AND payouts_enabled`.

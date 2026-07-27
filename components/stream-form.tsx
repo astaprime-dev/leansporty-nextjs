@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Alert } from "@/components/ui/alert";
 import { EarnPreview } from "@/components/instructor/earn-preview";
+import { PAID_PRICE_MIN_CENTS } from "@/lib/instructor-share";
 
 /** Local `datetime-local` min = now, formatted in the browser's own timezone.
  *  (toISOString() would give UTC and reject valid local times near the boundary.) */
@@ -100,7 +101,7 @@ export function StreamForm({ initialData, streamId, mode }: StreamFormProps) {
     const eurosNum = parseFloat(formData.priceEuros);
     const priceCents =
       Number.isFinite(eurosNum) && eurosNum > 0 ? Math.round(eurosNum * 100) : 0;
-    if (priceCents > 0 && priceCents < 500) {
+    if (priceCents > 0 && priceCents < PAID_PRICE_MIN_CENTS) {
       setIsLoading(false);
       setError("A paid class starts at €5 — or choose Free.");
       return;
@@ -323,7 +324,8 @@ export function StreamForm({ initialData, streamId, mode }: StreamFormProps) {
           <p className="text-xs text-gray-500">
             Pick a price or set a custom amount (paid classes start at €5) —
             students pay to join, you keep 80% of the price after VAT (85% as a
-            featured instructor), and we send your share monthly by bank transfer.
+            featured instructor), and we send your share monthly — automatically
+            via Stripe, or by bank transfer.
             Choose Free to open the class to everyone.
           </p>
         </div>

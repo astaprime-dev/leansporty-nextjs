@@ -33,12 +33,12 @@ instructor the **personal link** the insert returns —
 deal, and activates in one click after sign-in (no code to copy/paste). The same code
 also still works manually at `/instructor/activate`.
 
-**Featured (90%) instructors:** the invite doesn't set the split. After they redeem,
-set it once:
+**Featured (85%) instructors:** the invite doesn't set the split (standard is 80%,
+`products.split_pct` default). After they redeem, set it once:
 
 ```sql
 update public.instructors i
-set split_pct = 90
+set split_pct = 85
 from public.instructor_invites v
 where v.code = 'ls-anna-7c3f9a2b' and i.user_id = v.used_by;
 ```
@@ -57,7 +57,6 @@ already set, or past `expires_at`, is rejected.
 ## Retiring the legacy shared token
 
 **Retired 2026-07-27**: `INSTRUCTOR_ACCESS_TOKEN` was removed from Vercel,
-`.env.local`, and `.env.example`. The activation route's fallback branch only ran
-while that env var was set, so every activation now goes through a single-use,
-attributable invite code. (If the var is ever set again, the shared-secret path
-silently revives — don't.)
+`.env.local`, and `.env.example`, and the activation route's fallback branch was
+deleted from the code. Every activation now goes through a single-use, attributable
+invite code — there is no shared-secret path anymore.

@@ -89,14 +89,15 @@ write — checkout "succeeds" but grants nothing. It must be set in Vercel too.
 
 Restart the dev server after editing `.env.local` (Next reads env at boot).
 
-## 8. VAT / tax (decide before the first live sale)
+## 8. VAT / tax — DECIDED & implemented (2026-07-27)
 
-EU digital-goods VAT/OSS applies from sale #1 (Astaprime is PL). Two options (OD-1):
-- **Stripe Tax** (`automatic_tax`, flip `STRIPE_AUTOMATIC_TAX=true`) — you remain
-  merchant of record and file.
-- **Merchant-of-record** (Paddle/Lemon Squeezy, ~5%) — they handle all VAT.
-
-For a solo operator, MoR removes the most admin. Decide, then wire it.
+OD-1 is resolved: **we are the merchant of record** and back VAT out ourselves via
+`lib/vat-rates.ts` (home-rate `PAYOUT_VAT_PCT`, default 23, on every EU sale while
+under the €10k/yr OSS cross-border threshold; per-country rates once
+`VAT_DESTINATION_RATES=true`; non-EU → 0). The instructor split applies to the
+net-of-VAT amount — full math in `INSTRUCTOR_PAYOUTS.md`. **Stripe Tax**
+(`automatic_tax`, flip `STRIPE_AUTOMATIC_TAX=true`) remains available as an upgrade
+path — the webhook already prefers `total_details.amount_tax` when present.
 
 ## 9. Validate in the new account (test mode)
 

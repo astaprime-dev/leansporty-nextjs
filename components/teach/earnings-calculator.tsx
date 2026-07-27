@@ -183,7 +183,7 @@ export function EarningsCalculator() {
 
           <p className="text-sm text-pink-100">
             {fmtCents(seatShare)} per seat · {fmtCents(programShare)} per
-            program sale — after VAT, paid monthly by bank transfer.
+            program sale — after VAT, paid out monthly.
           </p>
         </div>
       </div>

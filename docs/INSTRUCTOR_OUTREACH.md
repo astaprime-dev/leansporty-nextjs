@@ -118,7 +118,7 @@ returning 'https://leansporty.com/welcome/' || code as invite_link;
 ```
 
 Send the returned link. After she redeems a **featured** invite, set her split
-once (`update public.instructors … set split_pct = 90` — exact SQL in
+once (`update public.instructors … set split_pct = 85` — exact SQL in
 `INSTRUCTOR_INVITES.md`).
 
 ## Objections → answers (keyed to the /teach FAQ)
@@ -133,7 +133,7 @@ Use these in DMs; the page answers must never contradict them.
 | "Could I end up losing money?" | No. No monthly fee, no listing fee — your share is a percentage of sales, so you're always positive. Worst case you've spent time. (FAQ #1) |
 | "I don't want to handle refunds/support" | You don't. Failed cards, refunds, "I can't log in" — our job. (FAQ #2) |
 | "My audience pays in złoty" | You set one price in euros; students pay by card anywhere and their bank converts. (FAQ #3) |
-| "When do I actually see the money?" | Every sale shows in your dashboard immediately; we pay your share once a month by bank transfer (balances under €20 roll to the next month). (FAQ #7) |
+| "When do I actually see the money?" | Every sale shows in your dashboard immediately; we pay your share once a month — automatically via Stripe, or by bank transfer (balances under €20 roll to the next month). (FAQ #7) |
 | "Why should I trust a new platform?" | Fair. That's why the first instructors are featured: 85%, direct line to the founder, and you shape the product. We need your classes more than a fee. |
 
 ## Claims discipline
@@ -142,17 +142,17 @@ Use these in DMs; the page answers must never contradict them.
 **always stated as "of every sale after VAT"** (we're the merchant of record and
 remit VAT; the split applies to the price net of VAT) · no minimum fee — paid
 prices simply start at €5 (below that, make it free) · €15 seat → €9.76, €49
-program → €31.87 (€33.86 featured) · paid monthly by bank transfer, balances
-under €20 roll over · no monthly fee, no listing fee ·
+program → €31.87 (€33.86 featured) · **paid monthly — automatically via Stripe,
+or by bank transfer** (Stripe Connect onboarding is built; balances under €20
+roll over) · no monthly fee, no listing fee ·
 automatic recording of live classes · watermarked, protected, non-downloadable
-playback · storefront/checkout/receipts/reviews run for you · **paid monthly by
-bank transfer** · ~10-minute profile setup.
+playback · storefront/checkout/receipts/reviews run for you · ~10-minute
+profile setup.
 
 **Forbidden** (not built — one skeptical prospect checking = credibility gone):
-"connect your bank account" / Stripe Connect · "automatic payouts" or payout
-timing other than monthly · notifications to her followers when she goes live ·
-any audience-size or earnings promise from our side · membership revenue ·
-"apps" (web only today).
+payout timing other than monthly · notifications to her followers when she goes
+live · any audience-size or earnings promise from our side · membership
+revenue · "apps" (web only today).
 
 If a claim isn't in the allowed list, it doesn't go in a DM until it ships.
 

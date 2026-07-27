@@ -26,22 +26,18 @@ export default function InstructorHelpPage() {
         <div className="space-y-3">
           <div className="flex items-start gap-3">
             <div className="w-6 h-6 rounded-full bg-pink-500 text-white flex items-center justify-center text-sm font-bold flex-shrink-0">1</div>
-            <p className="text-gray-700">Get your instructor invite code from the Lean Sporty team</p>
+            <p className="text-gray-700">Get your personal invite link from the Lean Sporty team (apply at leansporty.com/teach)</p>
           </div>
           <div className="flex items-start gap-3">
             <div className="w-6 h-6 rounded-full bg-pink-500 text-white flex items-center justify-center text-sm font-bold flex-shrink-0">2</div>
-            <p className="text-gray-700">Log in with Google or Apple</p>
+            <p className="text-gray-700">Open your invite link and sign in — it activates your Studio in one click</p>
           </div>
           <div className="flex items-start gap-3">
             <div className="w-6 h-6 rounded-full bg-pink-500 text-white flex items-center justify-center text-sm font-bold flex-shrink-0">3</div>
-            <p className="text-gray-700">Enter your invite code on the instructor login page</p>
-          </div>
-          <div className="flex items-start gap-3">
-            <div className="w-6 h-6 rounded-full bg-pink-500 text-white flex items-center justify-center text-sm font-bold flex-shrink-0">4</div>
             <p className="text-gray-700">Create your instructor profile</p>
           </div>
           <div className="flex items-start gap-3">
-            <div className="w-6 h-6 rounded-full bg-pink-500 text-white flex items-center justify-center text-sm font-bold flex-shrink-0">5</div>
+            <div className="w-6 h-6 rounded-full bg-pink-500 text-white flex items-center justify-center text-sm font-bold flex-shrink-0">4</div>
             <p className="text-gray-700">Schedule your first live class</p>
           </div>
         </div>
@@ -69,11 +65,10 @@ export default function InstructorHelpPage() {
                 Lean Sporty uses an invite-only system to ensure quality instruction. To become an instructor:
               </p>
               <ol className="space-y-2 ml-6 list-decimal text-gray-700">
-                <li>Contact the Lean Sporty team to request an instructor invite code</li>
-                <li>Once approved, you'll receive a unique access code</li>
-                <li>Visit the instructor login page (link in the footer)</li>
-                <li>Sign in with your Google or Apple account</li>
-                <li>Enter your instructor access code</li>
+                <li>Apply at leansporty.com/teach — or get in touch with the Lean Sporty team</li>
+                <li>Once approved, you'll receive a personal invite link (leansporty.com/welcome/...)</li>
+                <li>Open the link and sign in — your Studio activates in one click</li>
+                <li>Got a plain invite code instead? Enter it on the instructor activation page</li>
                 <li>Complete your instructor profile setup</li>
               </ol>
             </div>
@@ -81,8 +76,8 @@ export default function InstructorHelpPage() {
             <Alert variant="info">
               <p className="font-semibold mb-1">Important Note</p>
               <p className="text-sm">
-                You only need the invite code once. After creating your profile, you can access the instructor
-                dashboard anytime by signing in with your Google or Apple account.
+                You only need the invite once. After creating your profile, you can access the instructor
+                dashboard anytime just by signing in to your account.
               </p>
             </Alert>
           </div>
@@ -334,8 +329,8 @@ export default function InstructorHelpPage() {
                   Your class is automatically recorded while you broadcast. After you end the class,
                   the recording is prepared automatically — usually ready within a few hours (up to
                   a day) — and is then available to enrolled students for <strong>7 days</strong>. After that,
-                  it's automatically deleted. This gives students time to re-watch the class while keeping
-                  your content exclusive!
+                  the replay closes and the recording may join the Lean Sporty on-demand library —
+                  and you can reuse it as a lesson in your paid programs.
                 </p>
               </Alert>
             </div>
@@ -423,8 +418,9 @@ export default function InstructorHelpPage() {
                 You <strong>keep 80% of every sale after VAT</strong> (85% as a
                 featured instructor) — your price includes VAT, which we pay to the
                 tax office for you. Every sale shows up on your Earnings page the
-                moment it happens, and we send your share to your bank{" "}
-                <strong>once a month, by bank transfer</strong> (balances under €20
+                moment it happens, and we send your share{" "}
+                <strong>once a month — automatically via Stripe, or by bank
+                transfer</strong> (balances under €20
                 roll into the next month). You&apos;re never out of pocket — you only
                 ever earn on a sale.
               </p>

@@ -58,21 +58,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Primary path: single-use, attributable, expirable invite code (S0.3).
-    let authorized = await consumeInstructorInvite(code, user.id);
-
-    // Legacy fallback: the old shared INSTRUCTOR_ACCESS_TOKEN, honored ONLY while the
-    // env var is still set. Retire it (unset the var) once invite codes are issued —
-    // then this branch is dead and the shared secret is fully gone.
-    if (!authorized) {
-      const legacy = process.env.INSTRUCTOR_ACCESS_TOKEN?.trim();
-      if (legacy && code === legacy) {
-        authorized = true;
-        console.warn(
-          "Instructor activation used the LEGACY shared token — issue per-user invite codes and retire INSTRUCTOR_ACCESS_TOKEN."
-        );
-      }
-    }
+    // Single-use, attributable, expirable invite code (S0.3) — the only path.
+    // The legacy shared INSTRUCTOR_ACCESS_TOKEN fallback was removed 2026-07-27.
+    const authorized = await consumeInstructorInvite(code, user.id);
 
     if (!authorized) {
       return NextResponse.json(

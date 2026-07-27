@@ -38,7 +38,8 @@ export const metadata: Metadata = {
 
 /**
  * Instructor recruiting landing page. Copy source of truth: INSTRUCTOR_PITCH.md
- * (repo root) — keep numbers and promises in sync when the deal changes.
+ * (workspace root, one level above this repo, next to iOS/) — keep numbers and
+ * promises in sync when the deal changes.
  * CTA is an application (leads table, source 'teach-apply'), not self-serve
  * signup: instructor activation stays curated/invite-only.
  */
@@ -90,7 +91,7 @@ const STEPS = [
   {
     n: "1",
     title: "Set up once — about 10 minutes",
-    body: "Create your profile — a photo, a few lines about you — and claim your page address (leansporty.com/@your-name). No bank forms, no paperwork.",
+    body: "Create your profile — a photo, a few lines about you — and claim your page address (leansporty.com/@your-name). No upfront paperwork — you add payout details later, when you're ready to get paid.",
   },
   {
     n: "2",
@@ -105,7 +106,7 @@ const STEPS = [
   {
     n: "4",
     title: "Get paid monthly",
-    body: "Every sale appears in your earnings dashboard the moment it happens, and we send your share to your bank once a month by bank transfer.",
+    body: "Every sale appears in your earnings dashboard the moment it happens, and we send your share once a month — automatically via Stripe, or by bank transfer.",
   },
 ];
 
@@ -165,7 +166,7 @@ const FAQ = [
   },
   {
     q: "When do I actually get paid?",
-    a: "Once a month, by bank transfer, for everything you earned that month (balances under €20 roll into the next month). You see every sale in your earnings dashboard the moment it happens — the monthly transfer is just when the money moves.",
+    a: "Once a month — automatically via Stripe, or by bank transfer — for everything you earned that month (balances under €20 roll into the next month). You see every sale in your earnings dashboard the moment it happens — the monthly payout is just when the money moves.",
   },
   {
     q: "Why do you keep the recordings?",

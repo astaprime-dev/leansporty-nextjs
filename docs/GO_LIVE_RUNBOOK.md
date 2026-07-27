@@ -58,12 +58,17 @@ Fill the placeholders already stubbed in `.env.local` / `.env.example`:
 - `STRIPE_SECRET_KEY`, `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` — 🖥️ Stripe → Developers → API keys.
 - `CLOUDFLARE_STREAM_KEY_ID`, `CLOUDFLARE_STREAM_KEY_PEM` — from step 2.
 - `STRIPE_WEBHOOK_SECRET` — from step 5.
-- (`STRIPE_AUTOMATIC_TAX` stays `false` until the VAT decision OD-1 is settled — E1.8.)
+- (`STRIPE_AUTOMATIC_TAX` stays `false` — OD-1 was settled 2026-07-27: we back VAT out
+  ourselves via `lib/vat-rates.ts`; flipping this to `true` is a later upgrade path.
+  See `STRIPE_ACCOUNT_SETUP.md` §8.)
 
 ---
 
-## 4. Create the Stripe product + price
-🖥️ Stripe → Products → add **21-Day Dance Challenge**, a **one-time €49** price. Copy the **Price ID** (`price_…`).
+## 4. Stripe product + price — nothing to create
+🖥️ Since `20260710000000`, checkout uses **inline `price_data`** — no Product or Price
+is pre-created in the Stripe dashboard, and `products` has no `stripe_price_id`
+column. The Stripe Product id equals our product slug (`ensureStripeProduct`). See
+`STRIPE_ACCOUNT_SETUP.md` §4.
 
 ---
 
@@ -72,16 +77,18 @@ Fill the placeholders already stubbed in `.env.local` / `.env.example`:
 events: `checkout.session.completed`, `charge.refunded`, `charge.dispute.created`.
 Copy the **Signing secret** → `STRIPE_WEBHOOK_SECRET` (step 3).
 
-🔧 Local testing alternative:
+🔧 Local testing alternative — use the npm script (never bare `stripe listen`: the
+CLI's default login is the old 22 Skills account, see `STRIPE_ACCOUNT_SETUP.md`):
 ```
-stripe listen --forward-to localhost:3000/api/stripe/webhook
+npm run stripe:listen
 ```
 
 ---
 
 ## 6. Seed the product
-🖥️ Edit `supabase/seed_challenge.sql`: set `<STRIPE_PRICE_ID>` (step 4) and the 15
-`<W…>` workout IDs (each `workouts` row must have its `cloudflare_uid` set). Run it.
+🖥️ Edit `supabase/seed_challenge.sql`: set the 15 `<W…>` workout IDs (each `workouts`
+row must have its `cloudflare_uid` set). No Stripe Price ID is needed (see step 4 —
+inline `price_data`). Run it.
 
 ✅ `select get_playable_uid('<a-non-preview-workout-id>')` returns **null** for an
 un-entitled session, and the Day-1 (preview) workout returns its UID.

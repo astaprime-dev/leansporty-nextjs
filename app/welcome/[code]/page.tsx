@@ -28,11 +28,11 @@ export const metadata: Metadata = {
 };
 
 const DEAL_POINTS = [
-  "Featured instructors keep 85% of every sale after VAT — live class seats and on-demand programs",
+  "Keep 80% of every sale after VAT — 85% as a featured instructor — on live class seats and on-demand programs",
   "Your own page at leansporty.com/@your-name — sales pages, checkout, receipts, and reviews all run for you",
   "Go live from your browser, no software to learn — every class is recorded automatically",
   "Turn recordings and uploads into paid programs that sell while you sleep",
-  "Paid monthly by bank transfer — no monthly fee, no listing fee, no risk",
+  "Paid monthly — automatically via Stripe, or by bank transfer. No monthly fee, no listing fee, no risk",
 ];
 
 export default async function WelcomeInvitePage({
