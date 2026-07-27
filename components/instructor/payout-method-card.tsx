@@ -52,20 +52,28 @@ export function PayoutMethodCard({
   const countryName =
     COUNTRIES.find((c) => c.code === initial?.country)?.name ?? initial?.country;
 
-  // Click = switch: persist the choice right away (once a row exists to
-  // attach it to) and refresh so the "Used for your payouts" badge follows.
+  // Opening a card is just looking — it never changes how payouts are sent.
+  // The method switches only when the instructor COMPLETES something (finishes
+  // Stripe onboarding / saves a bank account) or presses an explicit
+  // "Use … for my payouts" button below.
   const selectMethod = (key: "stripe" | "manual") => {
     setMethod(key);
     setEditing(false);
     setStripeError(null);
-    if (initial) {
-      fetch("/api/instructor/payout-method", {
+  };
+
+  const [switching, setSwitching] = useState(false);
+  const switchTo = async (key: "stripe" | "manual") => {
+    setSwitching(true);
+    try {
+      await fetch("/api/instructor/payout-method", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ method: key }),
-      })
-        .then(() => router.refresh())
-        .catch(() => {});
+      });
+      router.refresh();
+    } finally {
+      setSwitching(false);
     }
   };
 
@@ -99,7 +107,7 @@ export function PayoutMethodCard({
       label: "Via Stripe",
       recommended: true,
       description:
-        "Automatic monthly payouts straight to your bank. Available in the EU/EEA countries, the UK, Switzerland, the US, and Canada.",
+        "Automatic monthly payouts straight to your bank, through your own free Stripe account. Available in the EU/EEA countries, the UK, Switzerland, the US, and Canada.",
       done: connectState === "active",
       doneLabel: "Active",
     },
@@ -108,7 +116,7 @@ export function PayoutMethodCard({
       label: "By bank transfer",
       recommended: false,
       description:
-        "For countries where Stripe payouts aren't available — we send your earnings to your bank account manually once a month.",
+        "We send your earnings to your bank account manually once a month — for countries where Stripe isn't available, or if you'd rather skip Stripe.",
       done: bankOnFile,
       doneLabel: "Bank account added",
     },
@@ -174,11 +182,32 @@ export function PayoutMethodCard({
       &ldquo;By bank transfer&rdquo; below instead — we&apos;ll send your
       earnings to your bank account manually.
     </Alert>
+  ) : connectState === "active" && activeMethod === "manual" ? (
+    <div className="space-y-4">
+      <p className="text-sm text-gray-600">
+        Your Stripe account is ready, but your payouts currently go by bank
+        transfer.
+      </p>
+      <Button
+        type="button"
+        variant="brand"
+        disabled={switching}
+        onClick={() => switchTo("stripe")}
+      >
+        {switching ? "Switching…" : "Use Stripe for my payouts"}
+      </Button>
+    </div>
   ) : (
     <div className="space-y-3">
       {initial && (
         <p className="text-sm text-gray-500">
           Payout account country: {countryName}.
+        </p>
+      )}
+      {activeMethod === "manual" && connectState !== "active" && (
+        <p className="text-sm text-gray-600">
+          Your payouts go by bank transfer for now — they&apos;ll switch to
+          Stripe when you finish this setup.
         </p>
       )}
       <ConnectOnboardingCard state={connectState} />
@@ -188,24 +217,51 @@ export function PayoutMethodCard({
   const manualContent = !editing ? (
     <div className="space-y-4">
       {bankOnFile && initial ? (
-        <p className="text-sm text-gray-600">
-          We send your earnings to{" "}
-          <span className="font-mono">•••• {last4}</span> (
-          {initial.account_holder}) once a month.
-        </p>
+        activeMethod === "stripe" ? (
+          <p className="text-sm text-gray-600">
+            Your bank account <span className="font-mono">•••• {last4}</span>{" "}
+            is saved, but your payouts currently go through Stripe.
+          </p>
+        ) : (
+          <p className="text-sm text-gray-600">
+            We send your earnings to{" "}
+            <span className="font-mono">•••• {last4}</span> (
+            {initial.account_holder}) once a month.
+          </p>
+        )
       ) : (
-        <p className="text-sm text-gray-600">
-          Your bank account and the details we need for the payout paperwork —
-          one form, about 3 minutes.
-        </p>
+        <>
+          <p className="text-sm text-gray-600">
+            Your bank account and the details we need for the payout paperwork
+            — one form, about 3 minutes.
+          </p>
+          {activeMethod === "stripe" && (
+            <p className="text-sm text-gray-600">
+              Your payouts currently go through Stripe. If you save a bank
+              account here, we&apos;ll switch to bank transfers.
+            </p>
+          )}
+        </>
       )}
-      <Button
-        type="button"
-        variant={bankOnFile ? "outline" : "brand"}
-        onClick={() => setEditing(true)}
-      >
-        {bankOnFile ? "Update details" : "Add bank account"}
-      </Button>
+      <div className="flex flex-wrap gap-3">
+        {bankOnFile && activeMethod === "stripe" && (
+          <Button
+            type="button"
+            variant="brand"
+            disabled={switching}
+            onClick={() => switchTo("manual")}
+          >
+            {switching ? "Switching…" : "Use bank transfer for my payouts"}
+          </Button>
+        )}
+        <Button
+          type="button"
+          variant={bankOnFile ? "outline" : "brand"}
+          onClick={() => setEditing(true)}
+        >
+          {bankOnFile ? "Update details" : "Add bank account"}
+        </Button>
+      </div>
     </div>
   ) : (
     <PayoutDetailsForm

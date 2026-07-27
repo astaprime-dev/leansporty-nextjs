@@ -132,5 +132,18 @@ export async function syncConnectAccountRow(
     );
     throw new Error(error.message);
   }
+
+  // Completing Stripe onboarding IS choosing Stripe: record the payout-method
+  // choice on the first transition to active. (Merely opening the Stripe card
+  // or abandoning onboarding never changes the method.)
+  if (active && !existing.onboarding_completed_at) {
+    const { error: methodErr } = await db
+      .from("instructor_billing")
+      .update({ payout_method: "stripe", updated_at: new Date().toISOString() })
+      .eq("instructor_id", existing.instructor_id);
+    if (methodErr) {
+      console.error("payout_method set on Stripe activation failed:", methodErr);
+    }
+  }
   return true;
 }

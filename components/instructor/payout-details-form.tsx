@@ -205,8 +205,12 @@ export function PayoutDetailsForm({
           <Label>Business status *</Label>
           <div className="grid gap-2 sm:grid-cols-2">
             {[
-              { v: true, label: "Registered business activity" },
-              { v: false, label: "Unregistered activity (działalność nierejestrowana)" },
+              { v: true, label: "Registered business activity", hint: null },
+              {
+                v: false,
+                label: "Unregistered activity (działalność nierejestrowana)",
+                hint: "Most new instructors without a registered company choose this.",
+              },
             ].map((o) => (
               <label
                 key={String(o.v)}
@@ -224,7 +228,14 @@ export function PayoutDetailsForm({
                   className="accent-pink-500"
                   required
                 />
-                <span className="font-medium text-gray-900">{o.label}</span>
+                <span>
+                  <span className="font-medium text-gray-900">{o.label}</span>
+                  {o.hint && (
+                    <span className="mt-0.5 block text-xs text-gray-500">
+                      {o.hint}
+                    </span>
+                  )}
+                </span>
               </label>
             ))}
           </div>

@@ -91,16 +91,6 @@ export default async function PayoutDetailsPage({
     billing?.payout_method === "stripe" || billing?.payout_method === "manual"
       ? billing.payout_method
       : null;
-  const defaultMethod: "stripe" | "manual" =
-    savedMethod ??
-    (connectRow
-      ? "stripe"
-      : billing?.iban
-        ? "manual"
-        : billing && !isConnectSupportedCountry(billing.country)
-          ? "manual"
-          : "stripe");
-
   // Which method the payout run would ACTUALLY use right now (mirrors
   // lib/payouts.ts): an explicit 'manual' choice overrides an active Stripe
   // account; otherwise Stripe when active, else the saved bank account.
@@ -116,6 +106,17 @@ export default async function PayoutDetailsPage({
         : bankReady
           ? "manual"
           : null;
+
+  // Open the card of the method that actually pays them, so the expanded card
+  // and the "Used for your payouts" badge always agree at first glance.
+  const defaultMethod: "stripe" | "manual" =
+    activeMethod ??
+    savedMethod ??
+    (connectRow
+      ? "stripe"
+      : billing && !isConnectSupportedCountry(billing.country)
+        ? "manual"
+        : "stripe");
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-8">

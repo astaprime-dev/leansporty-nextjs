@@ -74,11 +74,13 @@ export async function POST(req: NextRequest) {
     // (name/address are imported from Stripe after onboarding; TIN is asked
     // separately — Stripe doesn't share tax numbers).
     if (!billing) {
+      // payout_method stays null here — the choice is recorded only when
+      // onboarding actually COMPLETES (see syncConnectAccountRow), so an
+      // abandoned Stripe attempt never claims the instructor's payout method.
       const { error } = await db.from("instructor_billing").insert({
         instructor_id: instructor.id,
         country,
         business_status: country !== "PL" ? "foreign" : null,
-        payout_method: "stripe",
       });
       if (error && !`${error.code}`.startsWith("23")) {
         console.error("instructor_billing minimal insert failed:", error);
