@@ -92,7 +92,7 @@ export function GuideTeachCta() {
         alt=""
         fill
         sizes="100vw"
-        className="hidden object-cover object-[70%_center] md:block"
+        className="hidden object-cover object-[70%_15%] md:block"
       />
       <div className="relative mx-auto max-w-5xl px-4 py-14 md:py-20">
         <div className="max-w-md rounded-2xl border-2 border-pink-200 bg-white/95 p-8 text-center shadow-lg backdrop-blur-sm">
