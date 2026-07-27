@@ -13,6 +13,7 @@ import {
   type BillingInitial,
 } from "@/components/instructor/payout-details-form";
 import { COUNTRIES } from "@/lib/countries";
+import { isConnectSupportedCountry } from "@/lib/payout-regions";
 import type { ConnectState } from "@/lib/connect-accounts";
 
 /**
@@ -115,6 +116,14 @@ export function PayoutMethodCard({
 
   const stripeFirstTime = !initial && connectState === "not_started";
 
+  const chosenCountrySupported = !country || isConnectSupportedCountry(country);
+  const chosenCountryName =
+    COUNTRIES.find((c) => c.code === country)?.name ?? country;
+  const savedCountryUnsupported =
+    !!initial &&
+    connectState === "not_started" &&
+    !isConnectSupportedCountry(initial.country);
+
   const stripeContent = stripeFirstTime ? (
     <div className="space-y-4">
       <p className="text-sm text-gray-600">
@@ -144,14 +153,27 @@ export function PayoutMethodCard({
         <Button
           type="button"
           variant="brand"
-          disabled={!country || starting}
+          disabled={!country || !chosenCountrySupported || starting}
           onClick={startStripeOnboarding}
         >
           {starting ? "Opening Stripe…" : "Continue to Stripe"}
           {!starting && <ExternalLink className="ml-1.5 h-4 w-4" />}
         </Button>
       </div>
+      {!chosenCountrySupported && (
+        <Alert variant="warning">
+          Stripe payouts aren&apos;t available in {chosenCountryName} yet.
+          Choose &ldquo;By bank transfer&rdquo; below instead — we&apos;ll send
+          your earnings to your bank account manually.
+        </Alert>
+      )}
     </div>
+  ) : savedCountryUnsupported ? (
+    <Alert variant="warning">
+      Stripe payouts aren&apos;t available in {countryName} yet. Choose
+      &ldquo;By bank transfer&rdquo; below instead — we&apos;ll send your
+      earnings to your bank account manually.
+    </Alert>
   ) : (
     <div className="space-y-3">
       {initial && (
