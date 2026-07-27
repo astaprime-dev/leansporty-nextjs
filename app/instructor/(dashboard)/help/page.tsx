@@ -1,5 +1,6 @@
 import { BookOpen, User, Video, Wallet, Share2, Calendar, CheckCircle, HelpCircle, Film, Star } from "lucide-react";
 import { Alert } from "@/components/ui/alert";
+import { HelpChat } from "@/components/help-chat";
 
 export default function InstructorHelpPage() {
   return (
@@ -15,6 +16,11 @@ export default function InstructorHelpPage() {
         <p className="text-lg text-gray-600 max-w-2xl mx-auto">
           Everything you need to know about teaching on Lean Sporty, from setting up your profile to running your first live class
         </p>
+      </div>
+
+      {/* Ask the help assistant */}
+      <div className="mb-8">
+        <HelpChat audience="instructor" />
       </div>
 
       {/* Quick Start Section */}

@@ -8,6 +8,12 @@ const nextConfig: NextConfig = {
   turbopack: {
     root: path.join(__dirname),
   },
+  // The help-chat API reads these markdown guides from disk at runtime
+  // (lib/help-chat.ts) — file tracing won't detect fs reads, so include them
+  // in the serverless bundle explicitly.
+  outputFileTracingIncludes: {
+    "/api/help-chat": ["./docs/instructor-guide.md", "./docs/buyer-guide.md"],
+  },
   images: {
     remotePatterns: [
       {

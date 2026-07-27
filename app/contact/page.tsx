@@ -1,4 +1,5 @@
 import { ContactForm } from "./contact-form";
+import { HelpChat } from "@/components/help-chat";
 
 export const metadata = {
   title: "Contact us",
@@ -25,7 +26,8 @@ export default function ContactPage() {
           </p>
         </div>
       </section>
-      <div className="mx-auto max-w-2xl px-4 pb-16">
+      <div className="mx-auto max-w-2xl space-y-8 px-4 pb-16">
+        <HelpChat />
         <ContactForm />
       </div>
     </div>
