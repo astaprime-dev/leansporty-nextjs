@@ -84,7 +84,7 @@ export function PayoutMethodCard({
       description:
         "For countries where Stripe payouts aren't available — we send your earnings to your bank account manually once a month.",
       done: bankOnFile,
-      doneLabel: "Bank account on file",
+      doneLabel: "Bank account added",
     },
   ];
 
@@ -120,8 +120,8 @@ export function PayoutMethodCard({
             <div className="space-y-4">
               <ConnectOnboardingCard state={connectState} />
               <p className="text-sm text-gray-500">
-                Details for tax reporting on file for {initial.legal_name} (
-                {countryName}).{" "}
+                Your tax details are saved ({initial.legal_name}, {countryName}
+                ).{" "}
                 <button
                   type="button"
                   onClick={() => setEditing(true)}
@@ -139,8 +139,8 @@ export function PayoutMethodCard({
         <p className="text-sm text-gray-600">
           We send your earnings to{" "}
           <span className="font-mono">•••• {last4}</span> (
-          {initial.account_holder}) once a month. Details for tax reporting on
-          file for {initial.legal_name} ({countryName}).
+          {initial.account_holder}) once a month. Your tax details are saved (
+          {initial.legal_name}, {countryName}).
         </p>
         <Button type="button" variant="outline" onClick={() => setEditing(true)}>
           Update details
