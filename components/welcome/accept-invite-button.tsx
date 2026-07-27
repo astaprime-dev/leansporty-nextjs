@@ -41,12 +41,12 @@ export function AcceptInviteButton({ code }: { code: string }) {
       } else {
         setError(
           body.error ||
-            "This invite couldn't be accepted. Email instructors@leansporty.com and we'll sort it out."
+            "This invite couldn't be accepted. Email inquiries@astaprime.com and we'll sort it out."
         );
       }
     } catch {
       setError(
-        "Something went wrong. Please try again, or email instructors@leansporty.com."
+        "Something went wrong. Please try again, or email inquiries@astaprime.com."
       );
     } finally {
       setIsLoading(false);

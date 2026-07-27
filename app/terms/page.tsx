@@ -79,8 +79,8 @@ export default function TermsOfServicePage() {
                 email sign-in link. You are
                 responsible for maintaining the security of your account credentials and for all activities that occur
                 under your account. Please notify us immediately at{" "}
-                <a href="mailto:team@leansporty.com" className="text-pink-600 hover:text-pink-700 font-medium">
-                  team@leansporty.com
+                <a href="mailto:inquiries@astaprime.com" className="text-pink-600 hover:text-pink-700 font-medium">
+                  inquiries@astaprime.com
                 </a>{" "}
                 if you suspect unauthorized access to your account.
               </p>
@@ -297,8 +297,8 @@ export default function TermsOfServicePage() {
               <h2 className="text-2xl font-semibold text-gray-900 mb-4">17. Dispute Resolution</h2>
               <p className="text-gray-700 leading-relaxed">
                 If you have any concerns or disputes, please contact us first at{" "}
-                <a href="mailto:team@leansporty.com" className="text-pink-600 hover:text-pink-700 font-medium">
-                  team@leansporty.com
+                <a href="mailto:inquiries@astaprime.com" className="text-pink-600 hover:text-pink-700 font-medium">
+                  inquiries@astaprime.com
                 </a>
                 . We will attempt to resolve the issue informally before pursuing formal legal action.
               </p>
@@ -334,8 +334,8 @@ export default function TermsOfServicePage() {
                 <p className="text-gray-900 font-medium">Astaprime Sp. z o.o.</p>
                 <p className="text-gray-700 mt-2">
                   Email:{" "}
-                  <a href="mailto:team@leansporty.com" className="text-pink-600 hover:text-pink-700 font-medium">
-                    team@leansporty.com
+                  <a href="mailto:inquiries@astaprime.com" className="text-pink-600 hover:text-pink-700 font-medium">
+                    inquiries@astaprime.com
                   </a>
                 </p>
                 <p className="text-gray-700">

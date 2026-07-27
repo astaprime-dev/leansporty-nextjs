@@ -41,10 +41,10 @@ export default function PrivacyPolicyPage() {
             If you have any questions or concerns about our privacy practices,
             please contact us at{" "}
             <a
-              href="mailto:team@leansporty.com"
+              href="mailto:inquiries@astaprime.com"
               className="text-pink-600 hover:text-pink-700 font-medium"
             >
-              team@leansporty.com
+              inquiries@astaprime.com
             </a>
           </p>
         </div>

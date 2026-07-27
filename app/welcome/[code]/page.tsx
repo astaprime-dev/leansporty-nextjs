@@ -142,10 +142,10 @@ export default async function WelcomeInvitePage({
           </Link>{" "}
           · Questions?{" "}
           <a
-            href="mailto:instructors@leansporty.com"
+            href="mailto:inquiries@astaprime.com"
             className="font-semibold text-pink-600 hover:text-pink-500"
           >
-            instructors@leansporty.com
+            inquiries@astaprime.com
           </a>
         </p>
       </div>
@@ -166,8 +166,8 @@ function InviteInactive() {
         </p>
         <div className="mt-6 flex flex-col items-center gap-3">
           <Button asChild variant="brand" className="w-full">
-            <a href="mailto:instructors@leansporty.com">
-              Email instructors@leansporty.com
+            <a href="mailto:inquiries@astaprime.com">
+              Email inquiries@astaprime.com
             </a>
           </Button>
           <Button asChild variant="brandOutline" className="w-full">
