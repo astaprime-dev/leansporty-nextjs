@@ -5,8 +5,7 @@ import { createClient } from "@/utils/supabase/server";
 import { getStripe, getServiceRoleClient } from "@/lib/stripe";
 import { deriveConnectState, syncConnectAccountRow } from "@/lib/connect-accounts";
 import { isConnectSupportedCountry } from "@/lib/payout-regions";
-import { ConnectOnboardingCard } from "@/components/instructor/connect-onboarding-card";
-import { ManualPayoutCard } from "@/components/instructor/manual-payout-card";
+import { PayoutMethodCard } from "@/components/instructor/payout-method-card";
 import {
   PayoutDetailsForm,
   type BillingInitial,
@@ -80,7 +79,15 @@ export default async function PayoutDetailsPage({
     }
   }
 
-  const connectCountry = isConnectSupportedCountry(billing?.country);
+  // Preselect the option that matches what the instructor already has (Stripe
+  // account > saved bank account > country fit); they can switch freely.
+  const defaultMethod: "stripe" | "manual" = connectRow
+    ? "stripe"
+    : billing?.iban
+      ? "manual"
+      : billing && !isConnectSupportedCountry(billing.country)
+        ? "manual"
+        : "stripe";
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-8">
@@ -94,29 +101,24 @@ export default async function PayoutDetailsPage({
         Payout details
       </h1>
       <p className="text-gray-600 mt-1">
-        {connectCountry
-          ? "Your payout account is set up with Stripe below. The tax information here is required before your first payout — used for settlement statements and statutory platform reporting (DAC7)."
-          : "The bank account and tax information required before your first payout — used for monthly transfers, settlement statements, and statutory platform reporting (DAC7). You can update it at any time."}
+        How you get paid, plus the tax information required before your first
+        payout — used for settlement statements and statutory platform
+        reporting (DAC7). You can update everything at any time.
       </p>
       <p className="text-sm text-gray-400 mt-1">
         Visible only to you and Lean Sporty.
       </p>
 
-      {connectCountry && (
-        <div className="mt-8">
-          <ConnectOnboardingCard state={connectState} />
-        </div>
-      )}
-      {billing && !connectCountry && (
-        <div className="mt-8">
-          <ManualPayoutCard
-            initialIban={billing.iban}
-            initialHolder={billing.account_holder}
-          />
-        </div>
-      )}
+      <div className="mt-8">
+        <PayoutMethodCard
+          defaultMethod={defaultMethod}
+          connectState={connectState}
+          initialIban={billing?.iban ?? null}
+          initialHolder={billing?.account_holder ?? null}
+        />
+      </div>
 
-      <div className="mt-8 rounded-2xl border border-pink-100 bg-white p-6 shadow-sm sm:p-8">
+      <div className="mt-8">
         <PayoutDetailsForm initial={(billing as BillingInitial) ?? null} />
       </div>
     </div>

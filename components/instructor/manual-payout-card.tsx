@@ -2,20 +2,17 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert } from "@/components/ui/alert";
-import { Badge } from "@/components/ui/badge";
 
 /**
- * "Payouts by bank transfer" card — the manual-rail counterpart of the
- * ConnectOnboardingCard, shown on payout-details when the instructor's country
- * isn't reachable by Stripe payouts. Same card look and feel; the bank form
- * stays collapsed behind one button so the page reads as a single clear step.
- * Saves via POST /api/instructor/billing with bankOnly (updates only the bank
- * columns of the instructor's existing row).
+ * The bank-transfer option inside the "How you get paid" card
+ * (payout-method-card) — the manual rail. The bank form stays collapsed
+ * behind one button so the page reads as a single clear step. Saves via POST
+ * /api/instructor/billing with bankOnly (updates only the bank columns of the
+ * instructor's existing row).
  */
 export function ManualPayoutCard({
   initialIban,
@@ -67,24 +64,10 @@ export function ManualPayoutCard({
   };
 
   return (
-    <div className="rounded-2xl border border-pink-100 bg-white p-6 shadow-sm sm:p-8">
-      <div className="flex items-center justify-between gap-3">
-        <h2 className="text-xl font-semibold text-gray-900">
-          Payouts by bank transfer
-        </h2>
-        {hasBank && !expanded && (
-          <Badge variant="free" className="flex items-center gap-1">
-            <CheckCircle2 className="h-3 w-3" /> Bank account on file
-          </Badge>
-        )}
-      </div>
-
-      <p className="mt-3 text-sm text-gray-600">
-        Payouts via Stripe aren&apos;t available in your country yet — Stripe
-        supports the EU/EEA countries, the United Kingdom, Switzerland, the
-        United States, and Canada. Instead, we send your earnings straight to
-        your bank account once a month (€20 minimum — smaller balances roll
-        over to the next month).
+    <div>
+      <p className="text-sm text-gray-600">
+        We send your earnings straight to your bank account once a month. Add
+        the account you want to be paid to — you can change it at any time.
       </p>
 
       {!expanded && (

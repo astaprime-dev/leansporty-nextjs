@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
 import { isEUCountry } from "@/lib/countries";
-import { isConnectSupportedCountry } from "@/lib/payout-regions";
 
 export const runtime = "nodejs";
 
@@ -75,18 +74,12 @@ export async function POST(request: NextRequest) {
     }
     const { data: existing } = await supabase
       .from("instructor_billing")
-      .select("country")
+      .select("instructor_id")
       .eq("instructor_id", instructor.id)
       .maybeSingle();
     if (!existing) {
       return NextResponse.json(
         { error: "Please save your tax details first." },
-        { status: 409 }
-      );
-    }
-    if (isConnectSupportedCountry(existing.country)) {
-      return NextResponse.json(
-        { error: "Your country uses payouts via Stripe — no bank details are needed here." },
         { status: 409 }
       );
     }
@@ -135,13 +128,10 @@ export async function POST(request: NextRequest) {
       { status: 400 }
     );
   }
-  // Bank details are NOT collected here on either rail: Connect-country
-  // instructors add their bank account on Stripe's hosted onboarding (we don't
-  // store it — data minimization, and a stored copy would only go stale), and
-  // manual-rail instructors use the "Payouts by bank transfer" card, which
-  // saves via the bankOnly branch above. On the manual rail we preserve any
-  // stored bank columns; on the Connect rail we clear them.
-  const connectCountry = isConnectSupportedCountry(country);
+  // Bank details are NOT collected here — the payout method is the
+  // instructor's explicit choice in the "How you get paid" card (Stripe
+  // onboarding, or the bank form saving via the bankOnly branch above), so
+  // this save never touches the stored bank columns.
 
   // Derive the stored status from country + the Poland-only answer.
   let businessStatus: string;
@@ -176,7 +166,6 @@ export async function POST(request: NextRequest) {
       city,
       postal_code: postalCode,
       country,
-      ...(connectCountry ? { iban: null, account_holder: null } : {}),
       unregistered_statement_at:
         businessStatus === "unregistered_activity" ? new Date().toISOString() : null,
       updated_at: new Date().toISOString(),

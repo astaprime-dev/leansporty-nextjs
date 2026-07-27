@@ -5,7 +5,6 @@ import { Wallet, Clock, CheckCircle2, CalendarDays } from "lucide-react";
 import { EmptyState } from "@/components/empty-state";
 import { Alert } from "@/components/ui/alert";
 import { deriveConnectState } from "@/lib/connect-accounts";
-import { isConnectSupportedCountry } from "@/lib/payout-regions";
 
 function fmt(cents: number, currency = "eur") {
   return new Intl.NumberFormat(undefined, {
@@ -30,9 +29,9 @@ export default async function InstructorEarningsPage() {
   if (!instructorProfile) redirect("/instructor/profile");
 
   // Payout readiness (RLS: own rows). Missing details → nudge below; payouts
-  // can't be made without them (agreement §1/§7). Connect-country instructors
-  // also need their Stripe payout account active; manual-rail (out-of-region)
-  // instructors need bank details on file.
+  // can't be made without them (agreement §1/§7). Ready = tax details saved
+  // AND one payout method set up (active Stripe payouts, or a bank account on
+  // file for manual transfers).
   const { data: billing } = await supabase
     .from("instructor_billing")
     .select("instructor_id, country, iban")
@@ -45,13 +44,9 @@ export default async function InstructorEarningsPage() {
     )
     .eq("instructor_id", instructorProfile.id)
     .maybeSingle();
-  const connectCountry = isConnectSupportedCountry(billing?.country);
   const connectState = deriveConnectState(connectRow ?? null);
-  const railReady = billing
-    ? connectCountry
-      ? connectState === "active"
-      : !!billing.iban
-    : false;
+  const railReady =
+    !!billing && (connectState === "active" || !!billing.iban);
 
   // Own payout rows (RLS scopes to this instructor).
   const { data: payouts } = await supabase
@@ -142,12 +137,13 @@ export default async function InstructorEarningsPage() {
 
       {!railReady && (
         <Alert variant="warning" className="mb-8">
-          {billing && connectCountry ? (
+          {billing ? (
             <>
               <p className="font-semibold mb-1">Finish setting up payouts</p>
               <p className="text-sm">
-                Your tax details are saved — now activate payouts via Stripe so
-                we can send you your earnings. It takes about 5 minutes.{" "}
+                Your tax details are saved — now choose how you get paid
+                (payouts via Stripe, or your bank account for manual
+                transfers).{" "}
                 <Link
                   href="/instructor/earnings/payout-details"
                   className="font-semibold underline underline-offset-2"

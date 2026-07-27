@@ -2,21 +2,23 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
 import { COUNTRIES, isEUCountry } from "@/lib/countries";
-import { isConnectSupportedCountry } from "@/lib/payout-regions";
 
 /**
- * Payout + tax details form (agreement §1/§7) — plain-English copy, most
- * instructors are non-native speakers. The country of tax residence drives the
- * one legal question we must ask: only Polish residents see the
- * registered-business question (it decides B2B vs unregistered-activity
- * handling); everyone else just enters bank + tax details. The server derives
- * the stored business_status from country + answer. Posts to
- * /api/instructor/billing (RLS-scoped upsert of the caller's own row).
+ * "Tax details" card (agreement §1/§7) — same look and feel as the payout
+ * cards above it: title, short explainer, and the form only opens on press.
+ * Plain-English copy, most instructors are non-native speakers. The country of
+ * tax residence drives the one legal question we must ask: only Polish
+ * residents see the registered-business question (it decides B2B vs
+ * unregistered-activity handling). The server derives the stored
+ * business_status from country + answer. Posts to /api/instructor/billing
+ * (RLS-scoped upsert of the caller's own row).
  */
 
 export type BillingInitial = {
@@ -56,15 +58,16 @@ export function PayoutDetailsForm({ initial }: { initial: BillingInitial }) {
   const [unregisteredConfirmed, setUnregisteredConfirmed] = useState(
     initial?.business_status === "unregistered_activity"
   );
+  const [expanded, setExpanded] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
 
+  const hasDetails = !!initial;
+  const countryName =
+    COUNTRIES.find((c) => c.code === initial?.country)?.name ?? initial?.country;
+
   const isPoland = form.country.trim().toUpperCase() === "PL";
-  // Bank details never live in this form: Connect-supported countries add
-  // their bank account on Stripe's hosted onboarding, everyone else in the
-  // "Payouts by bank transfer" card — both appear above once details are saved.
-  const connectCountry = isConnectSupportedCountry(form.country);
 
   const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement>) =>
     setForm({ ...form, [k]: e.target.value });
@@ -90,6 +93,7 @@ export function PayoutDetailsForm({ initial }: { initial: BillingInitial }) {
         return;
       }
       setSaved(true);
+      setExpanded(false);
       router.refresh();
     } catch {
       setError("Could not save your details. Please try again.");
@@ -99,7 +103,54 @@ export function PayoutDetailsForm({ initial }: { initial: BillingInitial }) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <div className="rounded-2xl border border-pink-100 bg-white p-6 shadow-sm sm:p-8">
+      <div className="flex items-center justify-between gap-3">
+        <h2 className="text-xl font-semibold text-gray-900">Tax details</h2>
+        {hasDetails && !expanded && (
+          <Badge variant="free" className="flex items-center gap-1">
+            <CheckCircle2 className="h-3 w-3" /> On file
+          </Badge>
+        )}
+      </div>
+
+      {!expanded && (
+        <div className="mt-3 space-y-4">
+          <p className="text-sm text-gray-600">
+            {hasDetails ? (
+              <>
+                Saved for {initial?.legal_name} ({countryName}). We use these
+                details for your settlement statements and statutory platform
+                reporting (DAC7).
+              </>
+            ) : (
+              <>
+                Your legal name, address, and tax number — required before your
+                first payout, used for settlement statements and statutory
+                platform reporting (DAC7). Takes about 3 minutes.
+              </>
+            )}
+          </p>
+          {saved && (
+            <Alert variant="success">
+              Saved. Your tax details are on file — you can update them at any
+              time.
+            </Alert>
+          )}
+          <Button
+            type="button"
+            variant={hasDetails ? "outline" : "brand"}
+            onClick={() => {
+              setExpanded(true);
+              setSaved(false);
+            }}
+          >
+            {hasDetails ? "Update tax details" : "Add tax details"}
+          </Button>
+        </div>
+      )}
+
+      {expanded && (
+    <form onSubmit={handleSubmit} className="mt-4 space-y-6">
       <div className="grid gap-4 sm:grid-cols-[1fr,14rem]">
         <div className="space-y-1.5">
           <Label htmlFor="pd-legal-name">Full legal name *</Label>
@@ -259,36 +310,25 @@ export function PayoutDetailsForm({ initial }: { initial: BillingInitial }) {
         </div>
       </div>
 
-      {form.country !== "" && (
-        <p className="rounded-2xl border border-pink-100 bg-pink-50/40 p-4 text-sm text-gray-600">
-          {connectCountry ? (
-            <>
-              Your bank account is added on Stripe&apos;s secure page — see
-              &ldquo;Payouts via Stripe&rdquo; above. No bank details are
-              needed here.
-            </>
-          ) : (
-            <>
-              Payouts via Stripe are available in the EU/EEA, the UK,
-              Switzerland, the US, and Canada. In your country we pay by bank
-              transfer instead — after saving, add your bank account in the
-              &ldquo;Payouts by bank transfer&rdquo; section above.
-            </>
-          )}
-        </p>
-      )}
-
       {error && <Alert variant="error">{error}</Alert>}
-      {saved && (
-        <Alert variant="success">
-          Saved. Your payout details are on file — you can update them at any
-          time.
-        </Alert>
-      )}
 
-      <Button type="submit" variant="brand" disabled={saving}>
-        {saving ? "Saving…" : "Save payout details"}
-      </Button>
+      <div className="flex gap-3">
+        <Button type="submit" variant="brand" disabled={saving}>
+          {saving ? "Saving…" : "Save tax details"}
+        </Button>
+        <Button
+          type="button"
+          variant="outline"
+          onClick={() => {
+            setExpanded(false);
+            setError(null);
+          }}
+        >
+          Cancel
+        </Button>
+      </div>
     </form>
+      )}
+    </div>
   );
 }
