@@ -1,9 +1,10 @@
 import Link from "next/link";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
-import { Wallet, Clock, CheckCircle2, CalendarDays } from "lucide-react";
+import { Wallet, Clock, CheckCircle2, CalendarDays, Settings } from "lucide-react";
 import { EmptyState } from "@/components/empty-state";
 import { Alert } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
 import { deriveConnectState } from "@/lib/connect-accounts";
 
 function fmt(cents: number, currency = "eur") {
@@ -143,21 +144,22 @@ export default async function InstructorEarningsPage() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
-      <div className="mb-8">
-        <h1 className="text-3xl sm:text-4xl font-display font-light text-gray-900">Earnings</h1>
-        <p className="text-gray-600 mt-1">Your share of every sale, and what&apos;s owed to you.</p>
-        <p className="text-sm text-gray-400 mt-1">
-          You keep your agreed share (80%, or 85% as a featured instructor) of
-          every sale after VAT — we pay the VAT to the tax office for you.
-          Pending amounts are paid to your bank once a month; balances under
-          €20 simply roll into the next month.{" "}
-          <Link
-            href="/instructor/earnings/payout-details"
-            className="font-medium text-pink-600 transition-colors hover:text-pink-500"
-          >
-            Payout details
+      <div className="mb-8 flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <h1 className="text-3xl sm:text-4xl font-display font-light text-gray-900">Earnings</h1>
+          <p className="text-gray-600 mt-1">Your share of every sale, and what&apos;s owed to you.</p>
+          <p className="text-sm text-gray-400 mt-1 max-w-2xl">
+            You keep your agreed share (80%, or 85% as a featured instructor) of
+            every sale after VAT — we pay the VAT to the tax office for you.
+            Pending amounts are paid to your bank once a month; balances under
+            €20 simply roll into the next month.
+          </p>
+        </div>
+        <Button asChild variant="brandOutline">
+          <Link href="/instructor/earnings/payout-details">
+            <Settings className="mr-1.5 h-4 w-4" /> Payout settings
           </Link>
-        </p>
+        </Button>
       </div>
 
       {!railReady && (
