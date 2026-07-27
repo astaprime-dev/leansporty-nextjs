@@ -159,9 +159,8 @@ space cleared.
 ## 📞 Getting help
 
 1. The **Help page in your Studio** covers everything in more detail.
-2. Use the contact form at **leansporty.com/contact**, or email
-   **inquiries@astaprime.com** — you're talking directly to the founder,
-   not a ticket queue.
+2. Use the contact form at **leansporty.com/contact** — you're talking
+   directly to the founder, not a ticket queue.
 
 When writing, include what you were doing, what you saw (a screenshot
 helps), and which browser you use.

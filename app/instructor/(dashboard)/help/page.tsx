@@ -643,7 +643,7 @@ export default function InstructorHelpPage() {
             We're here to help! Reach out to the Lean Sporty team for support, feedback, or suggestions.
           </p>
           <a
-            href="mailto:inquiries@astaprime.com"
+            href="/contact"
             className="inline-flex items-center gap-2 bg-white text-pink-600 px-6 py-3 rounded-full font-semibold hover:shadow-lg transition-shadow"
           >
             Contact Support

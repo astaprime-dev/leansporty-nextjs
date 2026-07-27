@@ -141,12 +141,12 @@ export default async function WelcomeInvitePage({
             Read how teaching works
           </Link>{" "}
           · Questions?{" "}
-          <a
-            href="mailto:inquiries@astaprime.com"
+          <Link
+            href="/contact"
             className="font-semibold text-pink-600 hover:text-pink-500"
           >
-            inquiries@astaprime.com
-          </a>
+            Contact us
+          </Link>
         </p>
       </div>
     </div>
@@ -162,13 +162,11 @@ function InviteInactive() {
         </h1>
         <p className="mt-3 text-sm text-gray-600">
           It may have been used already or expired. If it was meant for you,
-          email us and we&apos;ll send you a fresh one.
+          write to us and we&apos;ll send you a fresh one.
         </p>
         <div className="mt-6 flex flex-col items-center gap-3">
           <Button asChild variant="brand" className="w-full">
-            <a href="mailto:inquiries@astaprime.com">
-              Email inquiries@astaprime.com
-            </a>
+            <Link href="/contact">Contact us</Link>
           </Button>
           <Button asChild variant="brandOutline" className="w-full">
             <Link href="/teach">See how teaching works</Link>

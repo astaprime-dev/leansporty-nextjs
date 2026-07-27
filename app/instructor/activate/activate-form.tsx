@@ -43,7 +43,7 @@ export default function InstructorActivateForm() {
           );
         } else {
           setError(
-            "Something went wrong on our side — please try again, or email inquiries@astaprime.com."
+            "Something went wrong on our side — please try again, or reach us via leansporty.com/contact."
           );
         }
       }
@@ -103,13 +103,13 @@ export default function InstructorActivateForm() {
             >
               Apply to teach
             </Link>{" "}
-            or email{" "}
-            <a
-              href="mailto:inquiries@astaprime.com"
+            or{" "}
+            <Link
+              href="/contact"
               className="font-semibold text-pink-600 hover:text-pink-500"
             >
-              inquiries@astaprime.com
-            </a>
+              contact us
+            </Link>
             .
           </p>
         </div>
