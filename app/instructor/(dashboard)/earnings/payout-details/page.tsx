@@ -6,10 +6,7 @@ import { getStripe, getServiceRoleClient } from "@/lib/stripe";
 import { deriveConnectState, syncConnectAccountRow } from "@/lib/connect-accounts";
 import { isConnectSupportedCountry } from "@/lib/payout-regions";
 import { PayoutMethodCard } from "@/components/instructor/payout-method-card";
-import {
-  PayoutDetailsForm,
-  type BillingInitial,
-} from "@/components/instructor/payout-details-form";
+import { type BillingInitial } from "@/components/instructor/payout-details-form";
 
 /**
  * Payout + tax details (agreement §1/§7) — required before the first payout,
@@ -101,9 +98,10 @@ export default async function PayoutDetailsPage({
         Payout details
       </h1>
       <p className="text-gray-600 mt-1">
-        How you get paid, plus the tax information required before your first
-        payout — used for settlement statements and statutory platform
-        reporting (DAC7). You can update everything at any time.
+        Choose how we send you your earnings — payouts go out once a month, €20
+        minimum (smaller balances roll over). The tax information here is
+        required before your first payout and used for settlement statements
+        and statutory platform reporting (DAC7).
       </p>
       <p className="text-sm text-gray-400 mt-1">
         Visible only to you and Lean Sporty.
@@ -113,13 +111,8 @@ export default async function PayoutDetailsPage({
         <PayoutMethodCard
           defaultMethod={defaultMethod}
           connectState={connectState}
-          initialIban={billing?.iban ?? null}
-          initialHolder={billing?.account_holder ?? null}
+          initial={(billing as BillingInitial) ?? null}
         />
-      </div>
-
-      <div className="mt-8">
-        <PayoutDetailsForm initial={(billing as BillingInitial) ?? null} />
       </div>
     </div>
   );

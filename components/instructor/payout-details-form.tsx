@@ -1,24 +1,22 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert } from "@/components/ui/alert";
-import { Badge } from "@/components/ui/badge";
 import { COUNTRIES, isEUCountry } from "@/lib/countries";
 
 /**
- * "Tax details" card (agreement §1/§7) — same look and feel as the payout
- * cards above it: title, short explainer, and the form only opens on press.
- * Plain-English copy, most instructors are non-native speakers. The country of
- * tax residence drives the one legal question we must ask: only Polish
- * residents see the registered-business question (it decides B2B vs
- * unregistered-activity handling). The server derives the stored
- * business_status from country + answer. Posts to /api/instructor/billing
- * (RLS-scoped upsert of the caller's own row).
+ * The payout-details form fields (agreement §1/§7) — rendered INSIDE the
+ * "How you get paid" card (payout-method-card), never as its own card. One
+ * form, one save: tax fields always, bank fields included when the instructor
+ * chose the bank-transfer method. Plain-English copy, most instructors are
+ * non-native speakers. The country of tax residence drives the one legal
+ * question we must ask: only Polish residents see the registered-business
+ * question. The server derives the stored business_status from country +
+ * answer. Posts to /api/instructor/billing (RLS-scoped upsert of the caller's
+ * own row).
  */
 
 export type BillingInitial = {
@@ -35,8 +33,19 @@ export type BillingInitial = {
   account_holder: string | null;
 } | null;
 
-export function PayoutDetailsForm({ initial }: { initial: BillingInitial }) {
-  const router = useRouter();
+export function PayoutDetailsForm({
+  initial,
+  includeBank,
+  submitLabel,
+  onSaved,
+  onCancel,
+}: {
+  initial: BillingInitial;
+  includeBank: boolean;
+  submitLabel: string;
+  onSaved: () => void | Promise<void>;
+  onCancel?: () => void;
+}) {
   const [form, setForm] = useState({
     legalName: initial?.legal_name ?? "",
     businessName: initial?.business_name ?? "",
@@ -46,6 +55,8 @@ export function PayoutDetailsForm({ initial }: { initial: BillingInitial }) {
     city: initial?.city ?? "",
     postalCode: initial?.postal_code ?? "",
     country: initial?.country ?? "",
+    iban: initial?.iban ?? "",
+    accountHolder: initial?.account_holder ?? "",
   });
   // Poland-only question, prefilled from a previously saved status.
   const [plRegisteredBusiness, setPlRegisteredBusiness] = useState<boolean | null>(
@@ -58,31 +69,36 @@ export function PayoutDetailsForm({ initial }: { initial: BillingInitial }) {
   const [unregisteredConfirmed, setUnregisteredConfirmed] = useState(
     initial?.business_status === "unregistered_activity"
   );
-  const [expanded, setExpanded] = useState(false);
+  // Retype-to-confirm for the IBAN (a typo'd IBAN is often still a valid
+  // account — the format check can't catch it). Pasting is blocked on the
+  // confirm field on purpose. Only required when the IBAN is new or changed.
+  const [ibanConfirm, setIbanConfirm] = useState("");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [saved, setSaved] = useState(false);
-
-  const hasDetails = !!initial;
-  const countryName =
-    COUNTRIES.find((c) => c.code === initial?.country)?.name ?? initial?.country;
 
   const isPoland = form.country.trim().toUpperCase() === "PL";
+  const normIban = (v: string) => v.replace(/\s+/g, "").toUpperCase();
+  const ibanChanged = normIban(form.iban) !== normIban(initial?.iban ?? "");
 
   const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement>) =>
     setForm({ ...form, [k]: e.target.value });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (includeBank && ibanChanged && normIban(ibanConfirm) !== normIban(form.iban)) {
+      setError("The IBAN entries do not match — re-enter the IBAN to confirm it.");
+      return;
+    }
     setSaving(true);
     setError(null);
-    setSaved(false);
     try {
       const res = await fetch("/api/instructor/billing", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...form,
+          iban: includeBank ? form.iban : "",
+          accountHolder: includeBank ? form.accountHolder : "",
           plRegisteredBusiness: isPoland ? plRegisteredBusiness : null,
           unregisteredConfirmed,
         }),
@@ -92,9 +108,7 @@ export function PayoutDetailsForm({ initial }: { initial: BillingInitial }) {
         setError(data.error ?? "Could not save your details. Please try again.");
         return;
       }
-      setSaved(true);
-      setExpanded(false);
-      router.refresh();
+      await onSaved();
     } catch {
       setError("Could not save your details. Please try again.");
     } finally {
@@ -103,54 +117,56 @@ export function PayoutDetailsForm({ initial }: { initial: BillingInitial }) {
   };
 
   return (
-    <div className="rounded-2xl border border-pink-100 bg-white p-6 shadow-sm sm:p-8">
-      <div className="flex items-center justify-between gap-3">
-        <h2 className="text-xl font-semibold text-gray-900">Tax details</h2>
-        {hasDetails && !expanded && (
-          <Badge variant="free" className="flex items-center gap-1">
-            <CheckCircle2 className="h-3 w-3" /> On file
-          </Badge>
-        )}
-      </div>
-
-      {!expanded && (
-        <div className="mt-3 space-y-4">
-          <p className="text-sm text-gray-600">
-            {hasDetails ? (
-              <>
-                Saved for {initial?.legal_name} ({countryName}). We use these
-                details for your settlement statements and statutory platform
-                reporting (DAC7).
-              </>
-            ) : (
-              <>
-                Your legal name, address, and tax number — required before your
-                first payout, used for settlement statements and statutory
-                platform reporting (DAC7). Takes about 3 minutes.
-              </>
-            )}
-          </p>
-          {saved && (
-            <Alert variant="success">
-              Saved. Your tax details are on file — you can update them at any
-              time.
-            </Alert>
+    <form onSubmit={handleSubmit} className="space-y-6">
+      {includeBank && (
+        <div className="grid gap-4 sm:grid-cols-2">
+          <div className="space-y-1.5">
+            <Label htmlFor="pd-iban">IBAN *</Label>
+            <Input
+              id="pd-iban"
+              value={form.iban}
+              onChange={set("iban")}
+              maxLength={42}
+              required
+            />
+            <p className="text-xs text-gray-500">
+              Payouts are transferred to this account — verify it carefully.
+            </p>
+          </div>
+          {ibanChanged && (
+            <div className="space-y-1.5">
+              <Label htmlFor="pd-iban-confirm">Confirm IBAN *</Label>
+              <Input
+                id="pd-iban-confirm"
+                value={ibanConfirm}
+                onChange={(e) => setIbanConfirm(e.target.value)}
+                onPaste={(e) => e.preventDefault()}
+                onDrop={(e) => e.preventDefault()}
+                autoComplete="off"
+                maxLength={42}
+                required
+              />
+              <p className="text-xs text-gray-500">
+                Re-enter manually — pasting is disabled in this field.
+              </p>
+            </div>
           )}
-          <Button
-            type="button"
-            variant={hasDetails ? "outline" : "brand"}
-            onClick={() => {
-              setExpanded(true);
-              setSaved(false);
-            }}
-          >
-            {hasDetails ? "Update tax details" : "Add tax details"}
-          </Button>
+          <div className="space-y-1.5">
+            <Label htmlFor="pd-holder">Account holder name *</Label>
+            <Input
+              id="pd-holder"
+              value={form.accountHolder}
+              onChange={set("accountHolder")}
+              maxLength={200}
+              required
+            />
+            <p className="text-xs text-gray-500">
+              The account must be held in your legal name or your business&apos;s name.
+            </p>
+          </div>
         </div>
       )}
 
-      {expanded && (
-    <form onSubmit={handleSubmit} className="mt-4 space-y-6">
       <div className="grid gap-4 sm:grid-cols-[1fr,14rem]">
         <div className="space-y-1.5">
           <Label htmlFor="pd-legal-name">Full legal name *</Label>
@@ -314,21 +330,14 @@ export function PayoutDetailsForm({ initial }: { initial: BillingInitial }) {
 
       <div className="flex gap-3">
         <Button type="submit" variant="brand" disabled={saving}>
-          {saving ? "Saving…" : "Save tax details"}
+          {saving ? "Saving…" : submitLabel}
         </Button>
-        <Button
-          type="button"
-          variant="outline"
-          onClick={() => {
-            setExpanded(false);
-            setError(null);
-          }}
-        >
-          Cancel
-        </Button>
+        {onCancel && (
+          <Button type="button" variant="outline" onClick={onCancel}>
+            Cancel
+          </Button>
+        )}
       </div>
     </form>
-      )}
-    </div>
   );
 }

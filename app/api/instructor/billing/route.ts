@@ -51,56 +51,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "not an instructor" }, { status: 403 });
   }
 
-  // Bank-only update — the "Payouts by bank transfer" card on payout-details
-  // (manual rail: countries Stripe payouts can't reach). Updates just the bank
-  // columns of the instructor's existing row; tax details are saved separately.
-  if (body.bankOnly === true) {
-    const iban =
-      typeof body.iban === "string"
-        ? body.iban.replace(/\s+/g, "").toUpperCase()
-        : "";
-    const accountHolder = str(body.accountHolder, 200);
-    if (!accountHolder) {
-      return NextResponse.json(
-        { error: "Please fill in all required fields." },
-        { status: 400 }
-      );
-    }
-    if (!IBAN_RE.test(iban)) {
-      return NextResponse.json(
-        { error: "The IBAN appears invalid — verify it (a 2-letter country code followed by check digits and the account number)." },
-        { status: 400 }
-      );
-    }
-    const { data: existing } = await supabase
-      .from("instructor_billing")
-      .select("instructor_id")
-      .eq("instructor_id", instructor.id)
-      .maybeSingle();
-    if (!existing) {
-      return NextResponse.json(
-        { error: "Please save your tax details first." },
-        { status: 409 }
-      );
-    }
-    const { error } = await supabase
-      .from("instructor_billing")
-      .update({
-        iban,
-        account_holder: accountHolder,
-        updated_at: new Date().toISOString(),
-      })
-      .eq("instructor_id", instructor.id);
-    if (error) {
-      console.error("instructor_billing bank update failed:", error);
-      return NextResponse.json(
-        { error: "Could not save your bank account. Please try again." },
-        { status: 500 }
-      );
-    }
-    return NextResponse.json({ success: true });
-  }
-
   const legalName = str(body.legalName, 200);
   const businessName = str(body.businessName, 200); // optional
   const tin = str(body.tin, 50);
@@ -128,10 +78,29 @@ export async function POST(request: NextRequest) {
       { status: 400 }
     );
   }
-  // Bank details are NOT collected here — the payout method is the
-  // instructor's explicit choice in the "How you get paid" card (Stripe
-  // onboarding, or the bank form saving via the bankOnly branch above), so
-  // this save never touches the stored bank columns.
+  // Bank fields ride along ONLY when the bank-transfer path's combined form
+  // submits them (the Stripe path sends them empty). Empty → the stored bank
+  // columns are left untouched, so a tax-details update never wipes a saved
+  // account.
+  let bankColumns: Record<string, string> = {};
+  const rawIban = typeof body.iban === "string" ? body.iban.trim() : "";
+  if (rawIban !== "") {
+    const iban = rawIban.replace(/\s+/g, "").toUpperCase();
+    const accountHolder = str(body.accountHolder, 200);
+    if (!IBAN_RE.test(iban)) {
+      return NextResponse.json(
+        { error: "The IBAN appears invalid — verify it (a 2-letter country code followed by check digits and the account number)." },
+        { status: 400 }
+      );
+    }
+    if (!accountHolder) {
+      return NextResponse.json(
+        { error: "Please fill in all required fields." },
+        { status: 400 }
+      );
+    }
+    bankColumns = { iban, account_holder: accountHolder };
+  }
 
   // Derive the stored status from country + the Poland-only answer.
   let businessStatus: string;
@@ -166,6 +135,7 @@ export async function POST(request: NextRequest) {
       city,
       postal_code: postalCode,
       country,
+      ...bankColumns,
       unregistered_statement_at:
         businessStatus === "unregistered_activity" ? new Date().toISOString() : null,
       updated_at: new Date().toISOString(),

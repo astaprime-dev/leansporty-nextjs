@@ -1,31 +1,71 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { CheckCircle2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Alert } from "@/components/ui/alert";
 import { ConnectOnboardingCard } from "@/components/instructor/connect-onboarding-card";
-import { ManualPayoutCard } from "@/components/instructor/manual-payout-card";
+import {
+  PayoutDetailsForm,
+  type BillingInitial,
+} from "@/components/instructor/payout-details-form";
+import { COUNTRIES } from "@/lib/countries";
 import type { ConnectState } from "@/lib/connect-accounts";
 
 /**
- * "How you get paid" — the first card on payout-details. Both payout options
- * are always visible so nothing depends invisibly on the chosen country:
- * Stripe (recommended, automatic) and bank transfer (manual monthly). Picking
- * an option reveals its flow below the tiles; validation (e.g. Stripe not
- * supporting a country) speaks up in plain English when the button is pressed.
+ * "How you get paid" — the single card on payout-details. Both payout options
+ * are always visible; picking one opens ONE combined form for that path:
+ *
+ * - Via Stripe: tax details first (required before any payout), then straight
+ *   on to Stripe's hosted onboarding for bank + identity.
+ * - By bank transfer: tax details + bank account together, one save.
+ *
+ * The instructor's country is ONLY what they declare in the form's
+ * country-of-tax-residence selector — never the browser, IP, or locale.
+ * Stripe availability is enforced server-side with a plain-English message
+ * when onboarding is attempted from an unsupported declared country.
  */
 export function PayoutMethodCard({
   defaultMethod,
   connectState,
-  initialIban,
-  initialHolder,
+  initial,
 }: {
   defaultMethod: "stripe" | "manual";
   connectState: ConnectState;
-  initialIban: string | null;
-  initialHolder: string | null;
+  initial: BillingInitial;
 }) {
+  const router = useRouter();
   const [method, setMethod] = useState<"stripe" | "manual">(defaultMethod);
+  const [editing, setEditing] = useState(false);
+  const [stripeError, setStripeError] = useState<string | null>(null);
+
+  const countryName =
+    COUNTRIES.find((c) => c.code === initial?.country)?.name ?? initial?.country;
+  const bankOnFile = !!initial?.iban;
+  const last4 = (initial?.iban ?? "").replace(/\s+/g, "").slice(-4);
+
+  // After tax details are saved on the Stripe path, continue straight to
+  // Stripe's hosted onboarding — one flow, no second step to find.
+  const startStripeOnboarding = async () => {
+    setStripeError(null);
+    try {
+      const res = await fetch("/api/instructor/connect/onboarding", {
+        method: "POST",
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.url) {
+        setStripeError(data.error ?? "Could not open Stripe. Please try again.");
+        router.refresh();
+        return;
+      }
+      window.location.href = data.url;
+    } catch {
+      setStripeError("Could not open Stripe. Please try again.");
+      router.refresh();
+    }
+  };
 
   const options = [
     {
@@ -43,66 +83,144 @@ export function PayoutMethodCard({
       recommended: false,
       description:
         "For countries where Stripe payouts aren't available — we send your earnings to your bank account manually once a month.",
-      done: !!initialIban,
+      done: bankOnFile,
       doneLabel: "Bank account on file",
     },
   ];
 
-  return (
-    <div className="rounded-2xl border border-pink-100 bg-white p-6 shadow-sm sm:p-8">
-      <h2 className="text-xl font-semibold text-gray-900">How you get paid</h2>
-      <p className="mt-1 text-sm text-gray-600">
-        Choose how we send you your earnings (€20 minimum per payout — smaller
-        balances roll over to the next month).
-      </p>
+  const stripeContent =
+    !initial || editing ? (
+            <div className="space-y-4">
+              {!initial && (
+                <p className="text-sm text-gray-600">
+                  First, your details for tax reporting — required before any
+                  payout. Save them and you&apos;ll continue on Stripe&apos;s
+                  secure page to add your bank account and confirm your
+                  identity (about 5 minutes).
+                </p>
+              )}
+              <PayoutDetailsForm
+                initial={initial}
+                includeBank={false}
+                submitLabel={
+                  initial ? "Save details" : "Save and continue to Stripe"
+                }
+                onSaved={async () => {
+                  if (initial) {
+                    setEditing(false);
+                    router.refresh();
+                  } else {
+                    await startStripeOnboarding();
+                  }
+                }}
+                onCancel={initial ? () => setEditing(false) : undefined}
+              />
+            </div>
+          ) : (
+            <div className="space-y-4">
+              <ConnectOnboardingCard state={connectState} />
+              <p className="text-sm text-gray-500">
+                Details for tax reporting on file for {initial.legal_name} (
+                {countryName}).{" "}
+                <button
+                  type="button"
+                  onClick={() => setEditing(true)}
+                  className="font-medium text-pink-600 underline underline-offset-2 transition-colors hover:text-pink-500"
+                >
+                  Update
+                </button>
+              </p>
+            </div>
+          );
 
-      <div className="mt-4 grid gap-2 sm:grid-cols-2">
-        {options.map((o) => (
-          <label
+  const manualContent =
+    initial && bankOnFile && !editing ? (
+      <div className="space-y-4">
+        <p className="text-sm text-gray-600">
+          We send your earnings to{" "}
+          <span className="font-mono">•••• {last4}</span> (
+          {initial.account_holder}) once a month. Details for tax reporting on
+          file for {initial.legal_name} ({countryName}).
+        </p>
+        <Button type="button" variant="outline" onClick={() => setEditing(true)}>
+          Update details
+        </Button>
+      </div>
+    ) : (
+      <div className="space-y-4">
+        {!(initial && bankOnFile) && (
+          <p className="text-sm text-gray-600">
+            Your bank account and your details for tax reporting — one form,
+            required before your first payout (about 3 minutes).
+          </p>
+        )}
+        <PayoutDetailsForm
+          initial={initial}
+          includeBank
+          submitLabel="Save payout details"
+          onSaved={() => {
+            setEditing(false);
+            router.refresh();
+          }}
+          onCancel={initial && bankOnFile ? () => setEditing(false) : undefined}
+        />
+      </div>
+    );
+
+  return (
+    <div className="space-y-4">
+      {options.map((o) => {
+        const selected = method === o.key;
+        return (
+          <div
             key={o.key}
-            className={`flex cursor-pointer items-start gap-3 rounded-2xl border p-4 transition-all ${
-              method === o.key
-                ? "border-pink-400 bg-pink-50"
-                : "border-pink-100 bg-white hover:border-pink-200"
+            className={`rounded-2xl border bg-white p-6 shadow-sm transition-all sm:p-8 ${
+              selected ? "border-pink-400" : "border-pink-100 hover:border-pink-200"
             }`}
           >
-            <input
-              type="radio"
-              name="payout-method"
-              checked={method === o.key}
-              onChange={() => setMethod(o.key)}
-              className="mt-1 accent-pink-500"
-            />
-            <span className="min-w-0">
-              <span className="flex flex-wrap items-center gap-2">
-                <span className="font-medium text-gray-900">{o.label}</span>
-                {o.recommended && (
-                  <Badge variant="brand">Recommended</Badge>
-                )}
-                {o.done && (
-                  <Badge variant="free" className="flex items-center gap-1">
-                    <CheckCircle2 className="h-3 w-3" /> {o.doneLabel}
-                  </Badge>
-                )}
+            <label className="flex cursor-pointer items-start gap-3">
+              <input
+                type="radio"
+                name="payout-method"
+                checked={selected}
+                onChange={() => {
+                  setMethod(o.key);
+                  setEditing(false);
+                  setStripeError(null);
+                }}
+                className="mt-1.5 accent-pink-500"
+              />
+              <span className="min-w-0">
+                <span className="flex flex-wrap items-center gap-2">
+                  <span className="text-lg font-semibold text-gray-900">
+                    {o.label}
+                  </span>
+                  {o.recommended && <Badge variant="brand">Recommended</Badge>}
+                  {o.done && (
+                    <Badge variant="free" className="flex items-center gap-1">
+                      <CheckCircle2 className="h-3 w-3" /> {o.doneLabel}
+                    </Badge>
+                  )}
+                </span>
+                <span className="mt-1 block text-sm text-gray-600">
+                  {o.description}
+                </span>
               </span>
-              <span className="mt-1 block text-sm text-gray-600">
-                {o.description}
-              </span>
-            </span>
-          </label>
-        ))}
-      </div>
+            </label>
 
-      <div className="mt-5">
-        {method === "stripe" ? (
-          <ConnectOnboardingCard state={connectState} />
-        ) : (
-          <ManualPayoutCard
-            initialIban={initialIban}
-            initialHolder={initialHolder}
-          />
-        )}
-      </div>
+            {selected && (
+              <div className="mt-5 sm:pl-7">
+                {o.key === "stripe" ? stripeContent : manualContent}
+                {o.key === "stripe" && stripeError && (
+                  <div className="mt-4">
+                    <Alert variant="error">{stripeError}</Alert>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        );
+      })}
     </div>
   );
 }
