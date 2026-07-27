@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
+import { isEUCountry } from "@/lib/countries";
 
 export const runtime = "nodejs";
 
@@ -70,7 +71,6 @@ export async function POST(request: NextRequest) {
 
   if (
     !legalName ||
-    !tin ||
     !addressLine ||
     !city ||
     !postalCode ||
@@ -79,6 +79,14 @@ export async function POST(request: NextRequest) {
   ) {
     return NextResponse.json(
       { error: "Please fill in all required fields." },
+      { status: 400 }
+    );
+  }
+  // TIN: mandatory for EU residents (DAC7 — no de-minimis for services);
+  // optional outside the EU (outside DAC7 scope — do not demand e.g. a US SSN).
+  if (isEUCountry(country) && !tin) {
+    return NextResponse.json(
+      { error: "A tax identification number is required for EU residents." },
       { status: 400 }
     );
   }

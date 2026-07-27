@@ -7,6 +7,17 @@
  * what we store (instructor_billing.country) and what the VAT/status logic
  * reads. Sorted by English name.
  */
+/** EU member states — DAC7 scope: TIN is mandatory only for these. */
+const EU_CODES = new Set([
+  "AT", "BE", "BG", "HR", "CY", "CZ", "DK", "EE", "FI", "FR", "DE", "GR",
+  "HU", "IE", "IT", "LV", "LT", "LU", "MT", "NL", "PL", "PT", "RO", "SK",
+  "SI", "ES", "SE",
+]);
+
+export function isEUCountry(code: string | null | undefined): boolean {
+  return !!code && EU_CODES.has(code.trim().toUpperCase());
+}
+
 export const COUNTRIES: { code: string; name: string }[] = [
   { code: "AF", name: "Afghanistan" },
   { code: "AX", name: "Åland Islands" },

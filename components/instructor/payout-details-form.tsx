@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert } from "@/components/ui/alert";
-import { COUNTRIES } from "@/lib/countries";
+import { COUNTRIES, isEUCountry } from "@/lib/countries";
 
 /**
  * Payout + tax details form (agreement §1/§7) — plain-English copy, most
@@ -211,15 +211,22 @@ export function PayoutDetailsForm({ initial }: { initial: BillingInitial }) {
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-1.5">
-          <Label htmlFor="pd-tin">Tax identification number (TIN) *</Label>
+          <Label htmlFor="pd-tin">
+            Tax identification number (TIN){isEUCountry(form.country) ? " *" : ""}
+          </Label>
           <Input
             id="pd-tin"
             value={form.tin}
             onChange={set("tin")}
             maxLength={50}
             placeholder="e.g. NIP, Steuernummer, NIF"
-            required
+            required={isEUCountry(form.country)}
           />
+          {!isEUCountry(form.country) && form.country !== "" && (
+            <p className="text-xs text-gray-500">
+              Optional outside the EU (EU platform reporting does not apply).
+            </p>
+          )}
         </div>
         <div className="space-y-1.5">
           <Label htmlFor="pd-vat">VAT number (if VAT-registered)</Label>
