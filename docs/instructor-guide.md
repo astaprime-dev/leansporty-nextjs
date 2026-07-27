@@ -1,442 +1,170 @@
-# Instructor Guide: How to Stream Your Dance Workouts
+# Instructor Guide
 
-**Simple step-by-step guide for dance instructors** - No technical knowledge required!
+**Step-by-step guide for teaching on Lean Sporty** — no technical knowledge
+required. Everything here matches what you see in your Instructor Studio.
 
 ---
 
-## 📋 What You'll Need
+## 📋 What you'll need
 
 - ✅ A laptop or computer with a webcam
 - ✅ Good lighting in your dance space
-- ✅ Stable internet connection (at least 5 Mbps upload speed)
-- ✅ Chrome or Safari browser (recommended)
-- ✅ Your instructor access code (provided by LeanSporty team)
+- ✅ Stable internet (at least 5 Mbps upload)
+- ✅ Chrome or Safari browser
+- ✅ Your **personal invite link** (sent to you by the founder)
 
 ---
 
-## 🚀 Quick Start: Your First Stream in 5 Minutes
+## 🚀 Getting started (about 10 minutes, once)
 
-### Step 1: Log In
+1. **Open your invite link.** It signs you in and activates your instructor
+   account — there are no codes to type.
+2. **Create your profile:** your display name, your page address
+   (`leansporty.com/@your-name`), a short bio, a photo, and social links.
+3. That's it. You land in your **Instructor Studio** — the navigation shows
+   Dashboard, Classes, Programs, Reviews, Earnings, Profile, and Help.
 
-1. First, sign in to your account:
-   - Click "Sign in with Apple" or "Sign in with Google"
-   - Complete the authentication
-
-2. Then, activate your instructor status by going to:
-   ```
-   https://leansporty.com/instructor/activate
-   ```
-
-3. You'll see an activation page with one field:
-   - **Enter your Instructor Activation Code** (the code we provided you)
-   - Click **"Activate Instructor Status"**
-
-4. After successful activation, you'll be taken to **Create Your Profile**:
-   - Enter your display name
-   - Choose your unique instructor URL (slug)
-   - Write a bio about yourself
-   - Add profile photo and social links (optional)
-   - Click **"Save Profile"**
-
-5. Once your profile is complete, you'll see the Instructor Dashboard
+Your public page at `leansporty.com/@your-name` is the link you share with
+your followers. Every class and program you create appears on it, with
+checkout and receipts handled for you.
 
 ---
 
-### Step 2: Create Your Stream
+## 📅 Schedule a live class
 
-1. On the dashboard, click the **"Create New Stream"** button
+1. Go to **Classes** → **Schedule a Class**.
+2. Fill in:
+   - **Title** — short and clear, e.g. "30-Min Dance Cardio".
+   - **Description** — what to expect, level, equipment.
+   - **Date & time** — shown in your local timezone. Scheduling 2–3 days
+     ahead gives students time to join.
+   - **Duration** — 15 to 180 minutes.
+   - **Price** — in euros. Pick a preset (€5–€49), enter a custom amount, or
+     choose **Free**. Paid classes start at €5. As you set the price, the
+     form shows exactly what you'll receive per sale.
+3. Click **Schedule Class**. It appears immediately on the public Live
+   Classes page and on your profile.
 
-2. Fill in the stream details:
-
-   **📝 Stream Title** (required)
-   - Example: "Morning Dance Cardio" or "Latin Dance Workout"
-   - Keep it short and exciting!
-
-   **📄 Description** (optional but recommended)
-   - Example: "High-energy 60-minute dance cardio session. No experience needed!"
-   - Tell students what to expect
-
-   **👤 Your Name** (optional)
-   - Example: "Sarah" or "Instructor Sarah"
-   - This shows up on the stream card
-
-   **📅 Scheduled Date & Time** (required)
-   - Pick when you want to stream
-   - Time is shown in your local timezone
-   - You can schedule days or weeks ahead
-
-   **⏱️ Duration** (required)
-   - How many minutes your stream will be
-   - Example: 30, 45, or 60 minutes
-   - Students will see this when browsing
-
-   **💰 Price** (required)
-   - How many tokens students need to join
-   - Example: 50 tokens for a 60-minute class
-   - Set to 0 for free streams
-
-3. Click **"Create Stream"**
-
-4. You'll be taken to your **Broadcast Control Page**
+**Pricing tips:** a first free class is a great way to bring your audience
+in; typical paid classes run €9–€19. You always keep **80% of every sale
+after VAT** (85% as a featured instructor) — the price form and your
+Earnings page show the exact numbers, nothing hidden.
 
 ---
 
-### Step 3: Start Broadcasting
+## 🎥 Broadcast your class
 
-**⏰ On the day of your stream:**
+On class day, open your class from the Studio — you'll see the broadcast
+page.
 
-1. Go to your stream's broadcast page:
-   - Click on your stream in the dashboard
-   - Or use the link we sent you
+1. Click **Start Broadcast**.
+2. Your browser asks for permissions — click **Allow** for camera and
+   microphone.
+3. Check your preview: camera angle, lighting, audio. Nothing is shown to
+   students until you press Start Broadcast, so take your time.
+4. Teach! Students who paid can watch live; you'll see the enrolled count.
+5. When you finish: click **Stop Broadcast**, then **End Stream**.
 
-2. You'll see a **"Start Broadcast"** button
+**Prefer OBS?** On the broadcast page, open **"Advanced: stream with OBS
+instead"** — it shows your RTMPS address and stream key. Paste them into OBS
+and stream from there instead of the browser. Everything else works the same.
 
-3. Click **"Start Broadcast"**
-
-4. Your browser will ask for permissions:
-   - ✅ Click **"Allow"** for Camera
-   - ✅ Click **"Allow"** for Microphone
-
-5. You'll see yourself on screen (preview)
-   - Check your camera angle
-   - Make sure you're well-lit
-   - Test your audio
-
-6. When ready, click **"Mark as Live"** button
-   - This tells students the stream has started
-   - They can now join and watch
+**Camera setup that works:** laptop 2–3 meters away at chest height, light
+in front of you (never behind), enough floor space to move in frame.
 
 ---
 
-### Step 4: During Your Stream
+## 🎬 After the class — your recording keeps working
 
-**What you'll see:**
-- Your camera feed (how you look on stream)
-- Connection status (green = good, red = problem)
-- Number of students enrolled
-- Stream timer
-
-**Tips for a great stream:**
-- 🎥 Stay in camera view
-- 🔊 Speak clearly - students can hear you!
-- 💃 Have fun and be energetic
-- ⏱️ Keep track of time
-
-**If something goes wrong:**
-- Red "Disconnected" message? Click **"Reconnect"**
-- Camera frozen? Click **"Stop Broadcast"** then **"Start Broadcast"** again
-- No audio? Check your microphone isn't muted
+- Your class is **recorded automatically**. The recording appears in your
+  Studio within a few hours.
+- Students who joined can **rewatch it for 7 days**.
+- The recording joins the Lean Sporty members' library — that's the heart of
+  the deal, and why the platform fee is 20% instead of the 30–50% other
+  platforms take.
+- **You can reuse any recording as a lesson in your own paid programs** — one
+  night of teaching keeps earning.
 
 ---
 
-### Step 5: End Your Stream
+## 📦 Programs — sell while you sleep
 
-**When you're done:**
+A program is a set of video lessons students buy once and keep: a simple
+lesson list, or a day-by-day plan (like a "21-day challenge").
 
-1. Click the **"Stop Broadcast"** button
-   - This stops your camera/microphone
+1. Go to **Programs** → create a program: title, price (€5–€500), structure.
+2. Add lessons: upload videos or reuse your class recordings.
+3. Set a free preview lesson if you like — it's shown to prospective buyers.
+4. Publish. The program gets its own sales page on your profile, with
+   checkout, reviews, and protected playback (only buyers can watch;
+   nothing is downloadable).
 
-2. Click the **"End Stream"** button
-   - This officially ends the session
-   - Recording becomes available for students (7 days)
-
-3. You're done! Great job! 🎉
-
----
-
-## 📱 Detailed Walkthrough
-
-### Finding Your Stream After Creating It
-
-1. Go to: `https://leansporty.com/instructor/streams`
-2. You'll see all your streams:
-   - **Scheduled** - upcoming streams you created
-   - **Live** - currently broadcasting
-   - **Ended** - past streams
-
-3. Click on any stream to:
-   - See details
-   - Start broadcasting (if scheduled)
-   - View statistics (enrollments, revenue)
+Buyers can rate your program publicly and send you **private per-lesson
+feedback** only you see — check the Reviews page.
 
 ---
 
-### Understanding the Broadcast Page
+## 💰 Your money
 
-When you open a stream, you'll see:
-
-**Left Side - Broadcast Controls:**
-- 🎥 **Camera preview** - how you look
-- 🟢 **Start Broadcast** button - click to go live
-- 🔴 **Stop Broadcast** button - click to pause/stop
-- 📊 **Connection status** - green = good, yellow = slow, red = problem
-
-**Right Side - Stream Info:**
-- ℹ️ **Stream details** - title, date, duration
-- 📈 **Statistics** - how many students enrolled
-- 💰 **Revenue** - total tokens earned
-- ⚙️ **Stream status** - Scheduled / Live / Ended
-
-**Buttons:**
-- **Mark as Live** - Click when you start (tells students it's live)
-- **End Stream** - Click when completely done
+- **Your share:** 80% of every sale after VAT — 85% as a featured
+  instructor. Your price includes VAT (sales tax); we pay it to the tax
+  office for you. No listing fee, no monthly fee, no minimum fee.
+- **Earnings page:** every sale appears the moment it happens, with the
+  exact breakdown per class and program.
+- **Payout details — do this once, before your first payout:** go to
+  **Earnings → Payout details** and fill in your legal name, country, tax
+  information, and bank account (IBAN). You can teach and sell before
+  completing it — it only gates the transfer, never teaching.
+- **Getting paid:** once a month, by bank transfer, for everything you
+  earned that month. Balances under €20 roll into the next month. With each
+  transfer you receive a settlement statement — you never write an invoice.
+- **Refunds and support:** failed cards, refunds, "I can't log in" emails —
+  our job, not yours. A refunded sale is simply removed from your balance.
 
 ---
 
-### Camera and Microphone Settings
+## ⚠️ Troubleshooting
 
-**Before you start broadcasting:**
+**Camera not working** — close other apps using the camera (Zoom, Teams),
+refresh the page, or try Chrome.
 
-1. **Test your setup:**
-   - Click "Start Broadcast"
-   - Look at the preview - can you see yourself?
-   - Speak - you should see audio levels moving
+**No one can hear me** — check the microphone isn't muted, and that the
+browser's 🔒 permissions allow the microphone. Don't stand too far from the
+laptop.
 
-2. **Position your camera:**
-   - Place laptop 6-10 feet away
-   - Camera should be at chest/head height
-   - Make sure you have space to move
+**Connection keeps dropping** — close other tabs, move closer to the router,
+pause other downloads/streaming in your home. Use the **Reconnect** button if
+the broadcast page shows you as disconnected.
 
-3. **Check lighting:**
-   - Face a window or light source
-   - Avoid backlighting (light behind you)
-   - Students should see you clearly
+**Video frozen for students** — click **Stop Broadcast**, wait 5 seconds,
+click **Start Broadcast** again. This fixes most freezes.
 
-4. **Audio check:**
-   - Speak at normal volume
-   - Make sure microphone isn't muted
-   - Avoid loud background music that drowns you out
+**Can't find your class** — Studio → **Classes** lists everything:
+scheduled, live, and ended.
 
 ---
 
-### Scheduling Tips
+## ✅ Pre-class checklist
 
-**When to schedule streams:**
-- ✅ 2-3 days ahead - gives students time to enroll
-- ✅ Same day/time each week - builds routine
-- ✅ Popular times: Early morning (6-8 AM) or evening (6-8 PM)
+**15 minutes before:** signed in · broadcast page open · camera and audio
+tested in the preview · good lighting · water nearby · phone on silent ·
+space cleared.
 
-**How many streams:**
-- Start with 1-2 per week
-- Once comfortable, increase to 3-5 per week
-- Consistency is more important than quantity!
+**At class time:** Start Broadcast → allow camera/mic → teach.
+
+**After:** Stop Broadcast → End Stream → announce your next class.
 
 ---
 
-### Pricing Your Streams
+## 📞 Getting help
 
-**Token pricing guide:**
-- 30-minute class: 30-40 tokens
-- 45-minute class: 40-50 tokens
-- 60-minute class: 50-60 tokens
-- Special workshops: 75-100 tokens
+1. The **Help page in your Studio** covers everything in more detail.
+2. Email **instructors@leansporty.com** — you're talking directly to the
+   founder, not a ticket queue.
 
-**Tips:**
-- Your first stream? Consider making it FREE (0 tokens) to attract students
-- Beginner classes? Price slightly lower
-- Advanced/specialty classes? Price slightly higher
+When writing, include what you were doing, what you saw (a screenshot
+helps), and which browser you use.
 
 ---
 
-## ⚠️ Troubleshooting Common Issues
-
-### "Camera not working"
-
-**Solution:**
-1. Make sure camera is connected
-2. Close other apps using camera (Zoom, Skype, etc.)
-3. Refresh the browser page
-4. Try a different browser (Chrome recommended)
-
-### "No one can hear me"
-
-**Solution:**
-1. Check microphone isn't muted
-2. Check browser permissions:
-   - Click the 🔒 lock icon in browser address bar
-   - Make sure "Microphone" is set to "Allow"
-3. Speak louder - you might be too far from laptop
-
-### "Connection keeps dropping"
-
-**Solution:**
-1. Check your internet:
-   - Close other tabs/apps using internet
-   - Move closer to WiFi router
-   - Ask family to pause downloads/streaming
-2. Reduce video quality (if option available)
-3. Restart your router if problem persists
-
-### "I can't find my stream"
-
-**Solution:**
-1. Go to: `https://leansporty.com/instructor/streams`
-2. Look under "Scheduled Streams"
-3. Use the search or scroll to find it
-4. If still missing, create a new one
-
-### "Students say stream is frozen"
-
-**Solution:**
-1. Stop and restart broadcast:
-   - Click "Stop Broadcast"
-   - Wait 5 seconds
-   - Click "Start Broadcast" again
-2. This usually fixes video freezing
-
-### "I forgot to click 'Mark as Live'"
-
-**Solution:**
-- No problem! Just click it whenever you remember
-- Students will get notified and can join
-
----
-
-## 📊 After Your Stream
-
-**What happens automatically:**
-- ✅ Recording is saved for 7 days
-- ✅ Students who enrolled can watch replay
-- ✅ After 7 days, recording is deleted (saves storage)
-- ✅ After 2-3 months, popular streams move to workout library
-
-**Statistics you can view:**
-- Total students enrolled
-- Revenue earned (in tokens)
-- Peak viewer count (coming soon)
-
----
-
-## 💡 Pro Tips for Success
-
-### Before Streaming:
-1. ✅ Test your setup 15 minutes early
-2. ✅ Have water nearby
-3. ✅ Prepare your playlist (if using music)
-4. ✅ Announce stream on social media
-5. ✅ Set phone to silent
-
-### During Streaming:
-1. ✅ Greet students as they join
-2. ✅ Introduce yourself and what you'll do
-3. ✅ Give clear instructions
-4. ✅ Show modifications for beginners
-5. ✅ Keep energy high!
-
-### After Streaming:
-1. ✅ Thank students for joining
-2. ✅ Announce your next stream
-3. ✅ Stay on 2-3 minutes for questions
-4. ✅ Review your stats
-5. ✅ Schedule your next stream while inspired!
-
----
-
-## 🎯 Sample Stream Schedule
-
-**Week 1 - Getting Started:**
-- Monday 7 PM: "Beginner Dance Basics" (FREE)
-- Thursday 7 PM: "Cardio Dance Party" (40 tokens)
-
-**Week 2 - Building Momentum:**
-- Monday 7 PM: "Morning Energy Boost" (30 tokens)
-- Wednesday 6 PM: "Latin Dance Workout" (50 tokens)
-- Friday 7 PM: "Friday Night Dance Party" (40 tokens)
-
-**Week 3+:**
-- Add more streams as you're comfortable
-- Try different times to see what works
-- Listen to student feedback
-
----
-
-## 📞 Getting Help
-
-**If you have questions:**
-1. Check this guide first
-2. Try the troubleshooting section
-3. Contact LeanSporty support:
-   - Email: support@leansporty.com
-   - We typically respond within 24 hours
-
-**Before contacting support, have ready:**
-- Your instructor name
-- What you were trying to do
-- What error message you saw (screenshot helps!)
-- What browser you're using
-
----
-
-## ✅ Pre-Stream Checklist
-
-**Print this and check before every stream!**
-
-**Setup (15 minutes before):**
-- [ ] Logged into instructor dashboard
-- [ ] Found my stream and opened broadcast page
-- [ ] Tested camera - I can see myself clearly
-- [ ] Tested microphone - audio levels moving when I speak
-- [ ] Good lighting - students can see me
-- [ ] Water bottle nearby
-- [ ] Phone on silent
-- [ ] Space cleared for dancing
-
-**5 Minutes Before:**
-- [ ] Clicked "Start Broadcast"
-- [ ] Camera and microphone working
-- [ ] Clicked "Mark as Live" to notify students
-
-**During Stream:**
-- [ ] Greeted students
-- [ ] Staying in camera frame
-- [ ] Having fun!
-
-**After Stream:**
-- [ ] Clicked "Stop Broadcast"
-- [ ] Clicked "End Stream"
-- [ ] Thanked students
-
----
-
-## 🎓 Quick Reference Card
-
-**Copy this to your phone notes:**
-
-```
-📱 INSTRUCTOR QUICK REFERENCE
-
-Activate: leansporty.com/instructor/activate
-Dashboard: leansporty.com/instructor/streams
-
-STREAMING STEPS:
-1. Open stream → Click "Start Broadcast"
-2. Allow camera & microphone
-3. Click "Mark as Live"
-4. Stream your class!
-5. Click "Stop Broadcast" when done
-6. Click "End Stream"
-
-HELP: support@leansporty.com
-Access Code: [write yours here]
-```
-
----
-
-## 🌟 You're Ready!
-
-Congratulations! You now know everything you need to stream dance workouts on LeanSporty.
-
-**Remember:**
-- Your first stream will feel new - that's normal!
-- Every instructor started where you are
-- Technical issues happen - students are understanding
-- Focus on having fun and sharing your love of dance
-- The more you stream, the easier it gets
-
-**Now go create your first stream!** 🎉💃🕺
-
----
-
-**Document Version:** 1.0
-**Last Updated:** January 2025
-**Questions?** support@leansporty.com
+**Document version:** 2.0 · **Last updated:** July 2026
