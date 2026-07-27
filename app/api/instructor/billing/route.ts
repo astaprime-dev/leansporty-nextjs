@@ -11,9 +11,13 @@ export const runtime = "nodejs";
  * is the instructor's data, no service role involved. Required before the
  * first payout (agreement §1/§7); the founder reads it for the monthly run,
  * self-billed statements, and DAC7.
+ *
+ * business_status is DERIVED, not asked: non-PL country → 'foreign'; PL +
+ * registered business → 'business'; PL without one → 'unregistered_activity'
+ * (requires the confirmed statement). Keeps the form country-neutral while the
+ * stored tiers still match the agreement.
  */
 
-const STATUSES = new Set(["business", "unregistered_activity", "foreign"]);
 // Broad structural check (country prefix + length); real validation is the
 // founder's bank rejecting a bad IBAN — this only catches typos early.
 const IBAN_RE = /^[A-Z]{2}[0-9]{2}[A-Z0-9]{10,30}$/;
@@ -48,10 +52,6 @@ export async function POST(request: NextRequest) {
 
   const legalName = str(body.legalName, 200);
   const businessName = str(body.businessName, 200); // optional
-  const businessStatus =
-    typeof body.businessStatus === "string" && STATUSES.has(body.businessStatus)
-      ? body.businessStatus
-      : null;
   const tin = str(body.tin, 50);
   const vatNumber = str(body.vatNumber, 50); // optional
   const addressLine = str(body.addressLine, 300);
@@ -70,7 +70,6 @@ export async function POST(request: NextRequest) {
 
   if (
     !legalName ||
-    !businessStatus ||
     !tin ||
     !addressLine ||
     !city ||
@@ -89,9 +88,24 @@ export async function POST(request: NextRequest) {
       { status: 400 }
     );
   }
-  if (businessStatus === "unregistered_activity" && !unregisteredConfirmed) {
+
+  // Derive the stored status from country + the Poland-only answer.
+  let businessStatus: string;
+  if (country !== "PL") {
+    businessStatus = "foreign";
+  } else if (body.plRegisteredBusiness === true) {
+    businessStatus = "business";
+  } else if (body.plRegisteredBusiness === false) {
+    if (!unregisteredConfirmed) {
+      return NextResponse.json(
+        { error: "Please confirm the small-activity statement to continue." },
+        { status: 400 }
+      );
+    }
+    businessStatus = "unregistered_activity";
+  } else {
     return NextResponse.json(
-      { error: "Please confirm the small-activity statement to continue." },
+      { error: "Please tell us whether you have a registered business." },
       { status: 400 }
     );
   }
