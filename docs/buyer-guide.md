@@ -78,6 +78,16 @@ your web browser — on a phone, tablet, or computer. No software to install.
 - You can delete your account yourself from the Settings page — or contact us
   and we'll take care of it.
 
+## Want to teach on Lean Sporty?
+
+- Lean Sporty is invite-only for instructors. Start at
+  **leansporty.com/teach** — it explains the whole deal and has a short
+  application form (your name, where you teach, a few lines about you).
+- Instructors keep **80% of every sale after VAT** (featured instructors 85%),
+  with no listing fee and no monthly fee. Everything is run for you: your own
+  page, live streaming from the browser, checkout, receipts, and support.
+- Applications are read personally — you'll hear back within a few days.
+
 ## Contact
 
 For anything this guide doesn't answer: use the contact form at
