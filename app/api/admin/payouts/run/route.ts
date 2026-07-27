@@ -4,8 +4,10 @@ import { getStripe, getServiceRoleClient } from "@/lib/stripe";
 import { runConnectPayouts } from "@/lib/payouts";
 
 export const runtime = "nodejs";
-// Transfers are one Stripe call per ledger row — allow a long run.
-export const maxDuration = 300;
+// Transfers are one Stripe call per ledger row. 60s is the Vercel hobby-plan
+// ceiling; a run that ever exceeds it is simply re-run — paid rows are
+// excluded and transfer creation is idempotent per row.
+export const maxDuration = 60;
 
 /**
  * POST /api/admin/payouts/run   Body: { batchId?: string }
