@@ -4,6 +4,8 @@ export type GuideMeta = {
   slug: string;
   title: string;
   blurb: string;
+  /** Audience: "move" = people who work out (default), "teach" = instructors. */
+  category?: "move" | "teach";
 };
 
 /**
@@ -88,6 +90,27 @@ export const GUIDES: GuideMeta[] = [
     title: "Do free YouTube dance challenges actually work?",
     blurb:
       "A fair answer: what free playlists genuinely offer, why finishing is the hard part, and when structure is worth paying for.",
+  },
+  {
+    slug: "instructor-extra-income",
+    title: "How dance and fitness instructors earn extra income online",
+    blurb:
+      "The four realistic options compared honestly — extra studio hours, YouTube, 1:1 coaching, and selling your own classes online — with real numbers.",
+    category: "teach",
+  },
+  {
+    slug: "teaching-dance-online-income",
+    title: "How much can you earn teaching dance online?",
+    blurb:
+      "The honest math: what a €15 class seat actually pays you, how many students €500/month takes, and how platform cuts compare.",
+    category: "teach",
+  },
+  {
+    slug: "sell-online-dance-classes",
+    title: "How to sell online dance classes: a practical guide",
+    blurb:
+      "What you need (less than you think), live vs recorded, what to charge, and who handles payments, VAT, and invoices.",
+    category: "teach",
   },
 ];
 

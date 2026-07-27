@@ -40,7 +40,7 @@ export default function GuidesIndex() {
         </p>
 
         <ul className="mt-10 space-y-4">
-          {GUIDES.map((g) => (
+          {GUIDES.filter((g) => (g.category ?? "move") === "move").map((g) => (
             <li key={g.slug}>
               <Link
                 href={`/guides/${g.slug}`}
@@ -49,6 +49,31 @@ export default function GuidesIndex() {
                 <h2 className="text-lg font-semibold text-gray-900">
                   {g.title}
                 </h2>
+                <p className="mt-2 font-light leading-relaxed text-gray-600">
+                  {g.blurb}
+                </p>
+              </Link>
+            </li>
+          ))}
+        </ul>
+
+        <h2 className="font-display mt-14 text-balance text-3xl font-light text-gray-900">
+          For instructors
+        </h2>
+        <p className="mt-3 max-w-2xl font-light leading-relaxed text-gray-600">
+          Honest answers for dance and fitness teachers who want to earn more
+          from what they already know how to do.
+        </p>
+        <ul className="mt-6 space-y-4">
+          {GUIDES.filter((g) => g.category === "teach").map((g) => (
+            <li key={g.slug}>
+              <Link
+                href={`/guides/${g.slug}`}
+                className="block rounded-2xl border border-pink-100 p-6 transition-colors hover:border-pink-300"
+              >
+                <h3 className="text-lg font-semibold text-gray-900">
+                  {g.title}
+                </h3>
                 <p className="mt-2 font-light leading-relaxed text-gray-600">
                   {g.blurb}
                 </p>

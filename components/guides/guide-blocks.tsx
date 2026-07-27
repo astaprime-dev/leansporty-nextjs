@@ -79,6 +79,36 @@ export function GuideCta() {
   );
 }
 
+/**
+ * The CTA for instructor-facing guides: teach on Lean Sporty. Same card
+ * treatment as GuideCta, gradient background on all breakpoints.
+ */
+export function GuideTeachCta() {
+  return (
+    <section className="relative left-1/2 mt-14 w-screen -translate-x-1/2 overflow-hidden">
+      <div className="absolute inset-0 bg-gradient-to-b from-pink-50/60 to-rose-50/60" />
+      <div className="relative mx-auto max-w-5xl px-4 py-14 md:py-20">
+        <div className="max-w-md rounded-2xl border-2 border-pink-200 bg-white/95 p-8 text-center shadow-lg backdrop-blur-sm">
+          <span className="inline-flex items-center gap-2 rounded-full bg-pink-100 px-3 py-1 text-xs font-semibold text-pink-700">
+            <Sparkles className="h-3.5 w-3.5" /> For instructors
+          </span>
+          <h2 className="font-display mt-4 text-balance text-3xl font-light text-gray-900">
+            Teach on Lean&nbsp;Sporty
+          </h2>
+          <p className="mt-3 font-light text-gray-600">
+            Keep 80% of every sale after VAT (featured instructors 85%), paid
+            to your bank once a month. You teach and keep your audience — we
+            handle checkout, VAT, streaming, and hosting. Free to join.
+          </p>
+          <Button asChild variant="brand" size="pill" className="mt-6">
+            <Link href="/teach">See how teaching works</Link>
+          </Button>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 /** On-page FAQ — keep in sync with the FAQPage JSON-LD (guideJsonLd). */
 export function GuideFaq({ faq }: { faq: GuideFaqItem[] }) {
   return (
@@ -100,9 +130,13 @@ export function GuideFaq({ faq }: { faq: GuideFaqItem[] }) {
   );
 }
 
-/** Internal links to the other guides — crawlable cross-linking. */
+/** Internal links to the other guides — crawlable cross-linking, same audience. */
 export function GuideRelated({ currentSlug }: { currentSlug: string }) {
-  const others = GUIDES.filter((g) => g.slug !== currentSlug);
+  const category =
+    GUIDES.find((g) => g.slug === currentSlug)?.category ?? "move";
+  const others = GUIDES.filter(
+    (g) => g.slug !== currentSlug && (g.category ?? "move") === category
+  );
   return (
     <nav aria-label="More guides" className="mt-14 border-t border-pink-100 pt-8">
       <h2 className="text-2xl font-semibold text-gray-900">More guides</h2>
