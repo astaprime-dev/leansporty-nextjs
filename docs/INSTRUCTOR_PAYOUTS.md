@@ -128,12 +128,26 @@ order by p.created_at;
 
 **The statement is now auto-generated in the Studio**: after a payout run, each
 instructor sees the batch under "Payout history" on `/instructor/earnings`, and
-"View statement" renders the numbered self-billed document
+"View statement" renders the numbered document
 (`/instructor/earnings/statements/<batch>`, print → PDF). Set `ASTAPRIME_NIP` in
 the environment to print the company NIP on it. Emailing a copy is optional —
-same YouTube/OnlyFans pattern of self-serve monthly earnings statements, with
-the samofakturowanie wording kept for PL cost documentation. The SQL below
-remains for reconciliation.
+same YouTube/OnlyFans pattern of self-serve monthly earnings statements. The
+SQL below remains for reconciliation.
+
+**Documentation path per instructor status (KSeF-aware — confirm with the
+accountant):**
+- `unregistered_activity` (PL, no business): outside KSeF — the statement itself
+  carries the samofakturowanie wording and serves as the settlement document.
+- `business` (PL JDG/company): mandatory KSeF applies. The statement instructs
+  them to issue a KSeF invoice to Astaprime for the paid amount, referencing the
+  statement number, and warns the next payout may be held until it arrives.
+  **Before each run, check KSeF for last batch's invoices from `business`-status
+  instructors** — if one is missing, skip that instructor (their balance rolls
+  over) and remind them. If an instructor repeatedly forgets, set up KSeF
+  self-billing with them once (they grant Astaprime the samofakturowanie
+  permission in KSeF) and the platform document becomes the invoice again.
+- `foreign`: outside KSeF; the statement notes reverse charge and stands as the
+  settlement record.
 
 ## Appendix: SQL fallback / reconciliation
 

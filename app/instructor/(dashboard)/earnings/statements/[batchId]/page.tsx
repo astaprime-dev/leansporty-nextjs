@@ -117,6 +117,14 @@ export default async function PayoutStatementPage({
     billing?.country ??
     "";
   const nip = process.env.ASTAPRIME_NIP;
+  // Documentation path depends on the instructor's status (KSeF-aware):
+  // PL registered businesses issue their own KSeF invoice (self-billing via
+  // KSeF would require them to grant permissions there — more bureaucracy,
+  // not less); unregistered-activity instructors are outside KSeF, so the
+  // self-billed statement itself is the document; foreign instructors are
+  // outside KSeF too (reverse charge).
+  const isPlBusiness = billing?.business_status === "business";
+  const isSelfBilled = billing?.business_status === "unregistered_activity";
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-8">
@@ -140,7 +148,7 @@ export default async function PayoutStatementPage({
               Payout statement
             </h1>
             <p className="text-sm text-gray-500">
-              Samofakturowanie · No. {statementNumber}
+              {isSelfBilled ? "Samofakturowanie · " : ""}No. {statementNumber}
             </p>
           </div>
           <div className="text-right text-sm text-gray-600">
@@ -254,11 +262,20 @@ export default async function PayoutStatementPage({
           to the tax office by the platform as merchant of record.
         </p>
 
+        {isPlBusiness && (
+          <p className="mt-4 rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900 print:border print:bg-white">
+            Please issue an invoice to Astaprime Sp. z o.o. for the amount paid
+            ({fmt(totals.share, currency)}) through the National e-Invoicing
+            System (KSeF), referencing statement no. {statementNumber}. Your
+            next payout may be held until the invoice for this statement is
+            received.
+          </p>
+        )}
+
         <p className="mt-8 border-t border-gray-100 pt-4 text-xs text-gray-500">
-          Issued by the recipient on behalf of the supplier under the
-          self-billing authorization in the Instructor Agreement §7. Objections
-          within 14 days of receipt; otherwise the statement is deemed
-          accepted.
+          {isSelfBilled
+            ? "Issued by the recipient on behalf of the supplier under the self-billing authorization in the Instructor Agreement §7. Objections within 14 days of receipt; otherwise the statement is deemed accepted."
+            : "Settlement statement issued by Astaprime Sp. z o.o. from the platform ledger (Instructor Agreement §7). Objections within 14 days of receipt; otherwise the statement is deemed accepted."}
         </p>
       </div>
     </div>
