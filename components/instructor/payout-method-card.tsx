@@ -48,6 +48,8 @@ export function PayoutMethodCard({
 
   const bankOnFile = !!initial?.iban;
   const last4 = (initial?.iban ?? "").replace(/\s+/g, "").slice(-4);
+  const countryName =
+    COUNTRIES.find((c) => c.code === initial?.country)?.name ?? initial?.country;
 
   // Click = switch: persist the choice right away (once a row exists to
   // attach it to) and refresh so the "Used for your payouts" badge follows.
@@ -151,7 +153,14 @@ export function PayoutMethodCard({
       </div>
     </div>
   ) : (
-    <ConnectOnboardingCard state={connectState} />
+    <div className="space-y-3">
+      {initial && (
+        <p className="text-sm text-gray-500">
+          Payout account country: {countryName}.
+        </p>
+      )}
+      <ConnectOnboardingCard state={connectState} />
+    </div>
   );
 
   const manualContent = !editing ? (
