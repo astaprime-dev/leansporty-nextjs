@@ -6,6 +6,7 @@ import { getStripe, getServiceRoleClient } from "@/lib/stripe";
 import { deriveConnectState, syncConnectAccountRow } from "@/lib/connect-accounts";
 import { isConnectSupportedCountry } from "@/lib/payout-regions";
 import { ConnectOnboardingCard } from "@/components/instructor/connect-onboarding-card";
+import { ManualPayoutCard } from "@/components/instructor/manual-payout-card";
 import {
   PayoutDetailsForm,
   type BillingInitial,
@@ -104,6 +105,14 @@ export default async function PayoutDetailsPage({
       {connectCountry && (
         <div className="mt-8">
           <ConnectOnboardingCard state={connectState} />
+        </div>
+      )}
+      {billing && !connectCountry && (
+        <div className="mt-8">
+          <ManualPayoutCard
+            initialIban={billing.iban}
+            initialHolder={billing.account_holder}
+          />
         </div>
       )}
 

@@ -52,6 +52,62 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "not an instructor" }, { status: 403 });
   }
 
+  // Bank-only update — the "Payouts by bank transfer" card on payout-details
+  // (manual rail: countries Stripe payouts can't reach). Updates just the bank
+  // columns of the instructor's existing row; tax details are saved separately.
+  if (body.bankOnly === true) {
+    const iban =
+      typeof body.iban === "string"
+        ? body.iban.replace(/\s+/g, "").toUpperCase()
+        : "";
+    const accountHolder = str(body.accountHolder, 200);
+    if (!accountHolder) {
+      return NextResponse.json(
+        { error: "Please fill in all required fields." },
+        { status: 400 }
+      );
+    }
+    if (!IBAN_RE.test(iban)) {
+      return NextResponse.json(
+        { error: "The IBAN appears invalid — verify it (a 2-letter country code followed by check digits and the account number)." },
+        { status: 400 }
+      );
+    }
+    const { data: existing } = await supabase
+      .from("instructor_billing")
+      .select("country")
+      .eq("instructor_id", instructor.id)
+      .maybeSingle();
+    if (!existing) {
+      return NextResponse.json(
+        { error: "Please save your tax details first." },
+        { status: 409 }
+      );
+    }
+    if (isConnectSupportedCountry(existing.country)) {
+      return NextResponse.json(
+        { error: "Your country uses payouts via Stripe — no bank details are needed here." },
+        { status: 409 }
+      );
+    }
+    const { error } = await supabase
+      .from("instructor_billing")
+      .update({
+        iban,
+        account_holder: accountHolder,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("instructor_id", instructor.id);
+    if (error) {
+      console.error("instructor_billing bank update failed:", error);
+      return NextResponse.json(
+        { error: "Could not save your bank account. Please try again." },
+        { status: 500 }
+      );
+    }
+    return NextResponse.json({ success: true });
+  }
+
   const legalName = str(body.legalName, 200);
   const businessName = str(body.businessName, 200); // optional
   const tin = str(body.tin, 50);
@@ -63,11 +119,6 @@ export async function POST(request: NextRequest) {
     typeof body.country === "string" && /^[A-Za-z]{2}$/.test(body.country.trim())
       ? body.country.trim().toUpperCase()
       : null;
-  const iban =
-    typeof body.iban === "string"
-      ? body.iban.replace(/\s+/g, "").toUpperCase()
-      : "";
-  const accountHolder = str(body.accountHolder, 200);
   const unregisteredConfirmed = body.unregisteredConfirmed === true;
 
   if (!legalName || !addressLine || !city || !postalCode || !country) {
@@ -84,25 +135,13 @@ export async function POST(request: NextRequest) {
       { status: 400 }
     );
   }
-  // Bank details are only collected for the manual rail (countries Stripe
-  // Connect can't pay from a PL platform). Connect-country instructors add
-  // their bank account on Stripe's hosted onboarding instead — we don't store
-  // it (data minimization, and a stored copy would only go stale).
+  // Bank details are NOT collected here on either rail: Connect-country
+  // instructors add their bank account on Stripe's hosted onboarding (we don't
+  // store it — data minimization, and a stored copy would only go stale), and
+  // manual-rail instructors use the "Payouts by bank transfer" card, which
+  // saves via the bankOnly branch above. On the manual rail we preserve any
+  // stored bank columns; on the Connect rail we clear them.
   const connectCountry = isConnectSupportedCountry(country);
-  if (!connectCountry) {
-    if (!accountHolder) {
-      return NextResponse.json(
-        { error: "Please fill in all required fields." },
-        { status: 400 }
-      );
-    }
-    if (!IBAN_RE.test(iban)) {
-      return NextResponse.json(
-        { error: "The IBAN appears invalid — verify it (a 2-letter country code followed by check digits and the account number)." },
-        { status: 400 }
-      );
-    }
-  }
 
   // Derive the stored status from country + the Poland-only answer.
   let businessStatus: string;
@@ -137,8 +176,7 @@ export async function POST(request: NextRequest) {
       city,
       postal_code: postalCode,
       country,
-      iban: connectCountry ? null : iban,
-      account_holder: connectCountry ? null : accountHolder,
+      ...(connectCountry ? { iban: null, account_holder: null } : {}),
       unregistered_statement_at:
         businessStatus === "unregistered_activity" ? new Date().toISOString() : null,
       updated_at: new Date().toISOString(),

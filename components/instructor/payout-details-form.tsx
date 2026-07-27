@@ -44,8 +44,6 @@ export function PayoutDetailsForm({ initial }: { initial: BillingInitial }) {
     city: initial?.city ?? "",
     postalCode: initial?.postal_code ?? "",
     country: initial?.country ?? "",
-    iban: initial?.iban ?? "",
-    accountHolder: initial?.account_holder ?? "",
   });
   // Poland-only question, prefilled from a previously saved status.
   const [plRegisteredBusiness, setPlRegisteredBusiness] = useState<boolean | null>(
@@ -58,32 +56,21 @@ export function PayoutDetailsForm({ initial }: { initial: BillingInitial }) {
   const [unregisteredConfirmed, setUnregisteredConfirmed] = useState(
     initial?.business_status === "unregistered_activity"
   );
-  // Retype-to-confirm for the IBAN (a typo'd IBAN is often still a valid
-  // account — the format check can't catch it). Pasting is blocked on the
-  // confirm field on purpose. Only required when the IBAN is new or changed.
-  const [ibanConfirm, setIbanConfirm] = useState("");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
 
   const isPoland = form.country.trim().toUpperCase() === "PL";
-  // Countries Stripe Connect can pay get their bank account collected on
-  // Stripe's hosted onboarding (the card above the form) — no bank fields
-  // here. Everywhere else we pay by manual bank transfer and need them.
+  // Bank details never live in this form: Connect-supported countries add
+  // their bank account on Stripe's hosted onboarding, everyone else in the
+  // "Payouts by bank transfer" card — both appear above once details are saved.
   const connectCountry = isConnectSupportedCountry(form.country);
-  const normIban = (v: string) => v.replace(/\s+/g, "").toUpperCase();
-  const ibanChanged = normIban(form.iban) !== normIban(initial?.iban ?? "");
 
   const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement>) =>
     setForm({ ...form, [k]: e.target.value });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!connectCountry && ibanChanged && normIban(ibanConfirm) !== normIban(form.iban)) {
-      setError("The IBAN entries do not match — re-enter the IBAN to confirm it.");
-      setSaved(false);
-      return;
-    }
     setSaving(true);
     setError(null);
     setSaved(false);
@@ -272,67 +259,23 @@ export function PayoutDetailsForm({ initial }: { initial: BillingInitial }) {
         </div>
       </div>
 
-      {connectCountry && (
+      {form.country !== "" && (
         <p className="rounded-2xl border border-pink-100 bg-pink-50/40 p-4 text-sm text-gray-600">
-          Your bank account is added on Stripe&apos;s secure page — see
-          &ldquo;Payouts via Stripe&rdquo; above. No bank details are needed
-          here.
+          {connectCountry ? (
+            <>
+              Your bank account is added on Stripe&apos;s secure page — see
+              &ldquo;Payouts via Stripe&rdquo; above. No bank details are
+              needed here.
+            </>
+          ) : (
+            <>
+              Payouts via Stripe are available in the EU/EEA, the UK,
+              Switzerland, the US, and Canada. In your country we pay by bank
+              transfer instead — after saving, add your bank account in the
+              &ldquo;Payouts by bank transfer&rdquo; section above.
+            </>
+          )}
         </p>
-      )}
-
-      {!connectCountry && form.country !== "" && (
-        <>
-          <p className="text-sm text-gray-600">
-            We send your earnings by bank transfer once a month (€20 minimum —
-            smaller balances roll over to the next month).
-          </p>
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div className="space-y-1.5">
-              <Label htmlFor="pd-iban">IBAN *</Label>
-              <Input
-                id="pd-iban"
-                value={form.iban}
-                onChange={set("iban")}
-                maxLength={42}
-                required
-              />
-              <p className="text-xs text-gray-500">
-                Payouts are transferred to this account — verify it carefully.
-              </p>
-            </div>
-            {ibanChanged && (
-              <div className="space-y-1.5">
-                <Label htmlFor="pd-iban-confirm">Confirm IBAN *</Label>
-                <Input
-                  id="pd-iban-confirm"
-                  value={ibanConfirm}
-                  onChange={(e) => setIbanConfirm(e.target.value)}
-                  onPaste={(e) => e.preventDefault()}
-                  onDrop={(e) => e.preventDefault()}
-                  autoComplete="off"
-                  maxLength={42}
-                  required
-                />
-                <p className="text-xs text-gray-500">
-                  Re-enter manually — pasting is disabled in this field.
-                </p>
-              </div>
-            )}
-            <div className="space-y-1.5">
-              <Label htmlFor="pd-holder">Account holder name *</Label>
-              <Input
-                id="pd-holder"
-                value={form.accountHolder}
-                onChange={set("accountHolder")}
-                maxLength={200}
-                required
-              />
-              <p className="text-xs text-gray-500">
-                The account must be held in your legal name or your business’s name.
-              </p>
-            </div>
-          </div>
-        </>
       )}
 
       {error && <Alert variant="error">{error}</Alert>}
