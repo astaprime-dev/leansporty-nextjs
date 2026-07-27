@@ -17,16 +17,20 @@ required. Everything here matches what you see in your Instructor Studio.
 
 ## 🚀 Getting started (about 10 minutes, once)
 
-1. **Open your invite link.** It signs you in and activates your instructor
-   account — there are no codes to type.
+1. **Open your invite link** and sign in (Google, Apple, or an email
+   sign-in link). Then click **Accept** — that one click activates your
+   instructor account. There are no codes to type.
 2. **Create your profile:** your display name, your page address
    (`leansporty.com/@your-name`), a short bio, a photo, and social links.
+   You can also add a **photo gallery** (up to 8 photos) — it makes your
+   public page feel alive.
 3. That's it. You land in your **Instructor Studio** — the navigation shows
    Dashboard, Classes, Programs, Reviews, Earnings, Profile, and Help.
 
 Your public page at `leansporty.com/@your-name` is the link you share with
 your followers. Every class and program you create appears on it, with
-checkout and receipts handled for you.
+checkout and receipts handled for you. The Dashboard has a **Share kit**
+with ready-to-copy links and text for Instagram.
 
 ---
 
@@ -42,13 +46,22 @@ checkout and receipts handled for you.
    - **Price** — in euros. Pick a preset (€5–€49), enter a custom amount, or
      choose **Free**. Paid classes start at €5. As you set the price, the
      form shows exactly what you'll receive per sale.
+   - **Cover image** — optional but worth it; it's what students see on the
+     class page and when you share the link.
 3. Click **Schedule Class**. It appears immediately on the public Live
-   Classes page and on your profile.
+   Classes page and on your profile, and you get a share link to post.
+
+**Changed your mind?** While a class is still scheduled you can **Edit** it
+(title, time, price, cover) or **Cancel** it from the Classes list. Once a
+class has gone live it can't be edited or cancelled anymore.
 
 **Pricing tips:** a first free class is a great way to bring your audience
 in; typical paid classes run €9–€19. You always keep **80% of every sale
 after VAT** (85% as a featured instructor) — the price form and your
 Earnings page show the exact numbers, nothing hidden.
+
+**Who signed up?** Each class has a **roster** — the list of enrolled
+students — which you can download as a CSV file.
 
 ---
 
@@ -57,13 +70,17 @@ Earnings page show the exact numbers, nothing hidden.
 On class day, open your class from the Studio — you'll see the broadcast
 page.
 
-1. Click **Start Broadcast**.
-2. Your browser asks for permissions — click **Allow** for camera and
-   microphone.
-3. Check your preview: camera angle, lighting, audio. Nothing is shown to
-   students until you press Start Broadcast, so take your time.
-4. Teach! Students who paid can watch live; you'll see the enrolled count.
-5. When you finish: click **Stop Broadcast**, then **End Stream**.
+1. Click **Set up camera & microphone**. Your browser asks for permission —
+   click **Allow**. Nothing is broadcast yet.
+2. Check your preview: camera angle, lighting, audio. Take your time —
+   students see nothing until the next step.
+3. Click **Start Broadcast**. Now you're live.
+4. Teach! Students who paid can watch live. During class you'll see the
+   **live viewer count**, student **reactions** (hearts and emojis floating
+   on screen), and their **comments** — glance at them between songs.
+5. When you finish, click **Stop Broadcast** and confirm. **This ends the
+   class for everyone and it can't be restarted** — that's why it asks you
+   to confirm first. The recording is prepared automatically afterwards.
 
 **Prefer OBS?** On the broadcast page, open **"Advanced: stream with OBS
 instead"** — it shows your RTMPS address and stream key. Paste them into OBS
@@ -78,12 +95,16 @@ in front of you (never behind), enough floor space to move in frame.
 
 - Your class is **recorded automatically**. The recording appears in your
   Studio within a few hours.
-- Students who joined can **rewatch it for 7 days**.
-- The recording joins the Lean Sporty members' library — that's the heart of
-  the deal, and why the platform fee is 20% instead of the 30–50% other
-  platforms take.
+- Students who joined can **rewatch it for 7 days**. After that, the replay
+  closes and the recording may join the Lean Sporty on-demand library.
+- The recording joining the members' library is the heart of the deal — and
+  why the platform fee is 20% instead of the 30–50% other platforms take.
 - **You can reuse any recording as a lesson in your own paid programs** — one
   night of teaching keeps earning.
+
+**Your numbers:** open an ended class in the Studio to see its analytics —
+sales and earnings, peak viewers, watch time, and the reactions your class
+received.
 
 ---
 
@@ -92,15 +113,38 @@ in front of you (never behind), enough floor space to move in frame.
 A program is a set of video lessons students buy once and keep: a simple
 lesson list, or a day-by-day plan (like a "21-day challenge").
 
-1. Go to **Programs** → create a program: title, price (€5–€500), structure.
-2. Add lessons: upload videos or reuse your class recordings.
-3. Set a free preview lesson if you like — it's shown to prospective buyers.
+1. Go to **Programs** → create a program: title, price (€5–€500),
+   structure, and a cover image.
+2. Add lessons: upload videos (up to 45 minutes and 20 GB each — MP4 works
+   best) or reuse your class recordings.
+3. Set one lesson as a **free preview** if you like — it's shown to
+   prospective buyers.
 4. Publish. The program gets its own sales page on your profile, with
    checkout, reviews, and protected playback (only buyers can watch;
    nothing is downloadable).
 
-Buyers can rate your program publicly and send you **private per-lesson
-feedback** only you see — check the Reviews page.
+**Good to know:**
+- You can have up to **3 programs**, with up to **30 lessons** each. Need
+  more? Just ask via the contact form.
+- Buyers get **12 months of access** from a one-time purchase.
+- Once a program has its first sale, its lessons can't be removed (people
+  paid for them) — you can still add lessons, edit details, and change the
+  price for future buyers.
+- **Unpublishing** hides a program from new buyers; everyone who already
+  bought it keeps access.
+
+---
+
+## ⭐ Reviews and feedback
+
+- **Live class reviews** (star ratings and comments) appear on the
+  **Reviews** page in your Studio. If a comment is inappropriate, you can
+  **hide** it there — hidden comments disappear from your public page.
+- **Program ratings** are shown publicly on the program's sales page —
+  social proof that sells for you.
+- **Private per-lesson feedback** from program buyers (a thumbs up/down and
+  a short note only you see) appears on **Programs → your program's page**
+  in the Studio. It's the fastest way to learn what lands.
 
 ---
 
@@ -112,12 +156,27 @@ feedback** only you see — check the Reviews page.
 - **Earnings page:** every sale appears the moment it happens, with the
   exact breakdown per class and program.
 - **Payout details — do this once, before your first payout:** go to
-  **Earnings → Payout details** and fill in your legal name, country, tax
-  information, and bank account (IBAN). You can teach and sell before
-  completing it — it only gates the transfer, never teaching.
-- **Getting paid:** once a month, by bank transfer, for everything you
-  earned that month. Balances under €20 roll into the next month. With each
-  transfer you receive a settlement statement — you never write an invoice.
+  **Earnings → Payout details** and choose how you want to be paid:
+  - **Via Stripe (recommended):** pick your country and finish on Stripe's
+    secure page — about 5 minutes. Your monthly payouts then arrive
+    **automatically** in your bank account. Available in the EU/EEA
+    countries, the UK, Switzerland, the US, and Canada.
+  - **By bank transfer:** fill in your legal name, country, tax
+    information, and bank account (IBAN) — we send your earnings manually
+    once a month. For countries where Stripe isn't available, or if you'd
+    rather skip Stripe.
+
+  You can teach and sell before completing this — it only gates the
+  payout, never teaching.
+- **Getting paid:** once a month — automatically via Stripe, or by bank
+  transfer — for everything you earned that month. Balances under €20 roll
+  into the next month.
+- **Settlement statements:** each payout comes with a settlement statement —
+  find it on your **Earnings** page under payout history. It lists every
+  sale, the VAT, and your share. If something looks wrong, tell us within
+  14 days. You never write an invoice — with one exception: if you run a
+  VAT-registered business in Poland, the statement tells you exactly what
+  to invoice us.
 - **Refunds and support:** failed cards, refunds, "I can't log in" emails —
   our job, not yours. A refunded sale is simply removed from your balance.
 
@@ -136,8 +195,13 @@ laptop.
 pause other downloads/streaming in your home. Use the **Reconnect** button if
 the broadcast page shows you as disconnected.
 
-**Video frozen for students** — click **Stop Broadcast**, wait 5 seconds,
-click **Start Broadcast** again. This fixes most freezes.
+**Video frozen for students** — refresh the broadcast page and click
+**Reconnect Broadcast**. Your class keeps running while you reconnect.
+(Don't click Stop Broadcast — that ends the class permanently.)
+
+**Browser crashed or battery died mid-class** — your class is still live.
+Open the broadcast page again (any device) and click **Reconnect
+Broadcast** to continue where you left off.
 
 **Can't find your class** — Studio → **Classes** lists everything:
 scheduled, live, and ended.
@@ -150,9 +214,11 @@ scheduled, live, and ended.
 tested in the preview · good lighting · water nearby · phone on silent ·
 space cleared.
 
-**At class time:** Start Broadcast → allow camera/mic → teach.
+**At class time:** Set up camera & microphone → check preview → Start
+Broadcast → teach.
 
-**After:** Stop Broadcast → End Stream → announce your next class.
+**After:** Stop Broadcast (and confirm — this ends the class) → announce
+your next class.
 
 ---
 
@@ -167,4 +233,4 @@ helps), and which browser you use.
 
 ---
 
-**Document version:** 2.0 · **Last updated:** July 2026
+**Document version:** 2.1 · **Last updated:** July 2026
