@@ -99,7 +99,9 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
-    bankColumns = { iban, account_holder: accountHolder };
+    // Saving a bank account happens on the bank-transfer path — record the
+    // method choice with it so the payout run follows the instructor's intent.
+    bankColumns = { iban, account_holder: accountHolder, payout_method: "manual" };
   }
 
   // Derive the stored status from country + the Poland-only answer.

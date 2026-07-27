@@ -3,7 +3,11 @@ import { redirect } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { createClient } from "@/utils/supabase/server";
 import { getStripe, getServiceRoleClient } from "@/lib/stripe";
-import { deriveConnectState, syncConnectAccountRow } from "@/lib/connect-accounts";
+import {
+  backfillBillingFromAccount,
+  deriveConnectState,
+  syncConnectAccountRow,
+} from "@/lib/connect-accounts";
 import { isConnectSupportedCountry } from "@/lib/payout-regions";
 import { PayoutMethodCard } from "@/components/instructor/payout-method-card";
 import { type BillingInitial } from "@/components/instructor/payout-details-form";
@@ -38,7 +42,7 @@ export default async function PayoutDetailsPage({
   const { data: billing } = await supabase
     .from("instructor_billing")
     .select(
-      "legal_name, business_name, business_status, tin, vat_number, address_line, city, postal_code, country, iban, account_holder"
+      "legal_name, business_name, business_status, tin, vat_number, address_line, city, postal_code, country, iban, account_holder, payout_method"
     )
     .eq("instructor_id", instructor.id)
     .maybeSingle();
@@ -59,10 +63,14 @@ export default async function PayoutDetailsPage({
   if (connectParam === "return" && connectRow) {
     try {
       const account = await getStripe().accounts.retrieve(
-        connectRow.stripe_account_id
+        connectRow.stripe_account_id,
+        { expand: ["individual"] }
       );
       const db = getServiceRoleClient();
       await syncConnectAccountRow(db, account);
+      // Import name/address collected by Stripe during onboarding — the app
+      // never asks for what Stripe already has.
+      await backfillBillingFromAccount(db, instructor.id, account);
       const { data: fresh } = await db
         .from("instructor_connect_accounts")
         .select(
@@ -76,15 +84,38 @@ export default async function PayoutDetailsPage({
     }
   }
 
-  // Preselect the option that matches what the instructor already has (Stripe
-  // account > saved bank account > country fit); they can switch freely.
-  const defaultMethod: "stripe" | "manual" = connectRow
-    ? "stripe"
-    : billing?.iban
-      ? "manual"
-      : billing && !isConnectSupportedCountry(billing.country)
+  // The instructor's saved choice wins; before any choice, preselect what
+  // matches what exists (Stripe account > saved bank account > country fit).
+  // Country here is ONLY their declared tax residence — never browser/IP.
+  const savedMethod =
+    billing?.payout_method === "stripe" || billing?.payout_method === "manual"
+      ? billing.payout_method
+      : null;
+  const defaultMethod: "stripe" | "manual" =
+    savedMethod ??
+    (connectRow
+      ? "stripe"
+      : billing?.iban
         ? "manual"
-        : "stripe";
+        : billing && !isConnectSupportedCountry(billing.country)
+          ? "manual"
+          : "stripe");
+
+  // Which method the payout run would ACTUALLY use right now (mirrors
+  // lib/payouts.ts): an explicit 'manual' choice overrides an active Stripe
+  // account; otherwise Stripe when active, else the saved bank account.
+  const stripeReady = connectState === "active";
+  const bankReady = !!billing?.iban;
+  const activeMethod: "stripe" | "manual" | null =
+    savedMethod === "manual"
+      ? bankReady
+        ? "manual"
+        : null
+      : stripeReady
+        ? "stripe"
+        : bankReady
+          ? "manual"
+          : null;
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-8">
@@ -99,9 +130,8 @@ export default async function PayoutDetailsPage({
       </h1>
       <p className="text-gray-600 mt-1">
         Choose how we send you your earnings — payouts go out once a month, €20
-        minimum (smaller balances roll over). The tax information here is
-        required before your first payout and used for settlement statements
-        and statutory platform reporting (DAC7).
+        minimum (smaller balances roll over). You can change everything here at
+        any time.
       </p>
       <p className="text-sm text-gray-400 mt-1">
         Visible only to you and Lean Sporty.
@@ -110,6 +140,7 @@ export default async function PayoutDetailsPage({
       <div className="mt-8">
         <PayoutMethodCard
           defaultMethod={defaultMethod}
+          activeMethod={activeMethod}
           connectState={connectState}
           initial={(billing as BillingInitial) ?? null}
         />

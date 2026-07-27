@@ -37,25 +37,31 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "not an instructor" }, { status: 403 });
     }
 
+    // Country of tax residence: from the saved row, or — on first setup —
+    // declared right in the Stripe option (one dropdown; everything else is
+    // collected by Stripe). NEVER inferred from browser/IP.
+    const body = await req.json().catch(() => ({}));
     const { data: billing } = await supabase
       .from("instructor_billing")
       .select("country")
       .eq("instructor_id", instructor.id)
       .maybeSingle();
-    if (!billing) {
+    const bodyCountry =
+      typeof body?.country === "string" && /^[A-Za-z]{2}$/.test(body.country.trim())
+        ? body.country.trim().toUpperCase()
+        : null;
+    const country = billing?.country ?? bodyCountry;
+    if (!country) {
       return NextResponse.json(
-        {
-          error:
-            "Please save your tax details first — we need your country before Stripe can set up your payout account.",
-        },
+        { error: "Please choose your country of tax residence first." },
         { status: 409 }
       );
     }
-    if (!isConnectSupportedCountry(billing.country)) {
+    if (!isConnectSupportedCountry(country)) {
       return NextResponse.json(
         {
           error:
-            "Stripe payouts aren't available in your country yet. We'll send your earnings by bank transfer instead — make sure your bank details below are complete.",
+            "Stripe payouts aren't available in your country yet. Choose “By bank transfer” instead — we'll send your earnings manually.",
         },
         { status: 409 }
       );
@@ -63,6 +69,21 @@ export async function POST(req: NextRequest) {
 
     const stripe = getStripe();
     const db = getServiceRoleClient();
+
+    // First setup without a saved row: create it with the declared country
+    // (name/address are imported from Stripe after onboarding; TIN is asked
+    // separately — Stripe doesn't share tax numbers).
+    if (!billing) {
+      const { error } = await db.from("instructor_billing").insert({
+        instructor_id: instructor.id,
+        country,
+        business_status: country !== "PL" ? "foreign" : null,
+        payout_method: "stripe",
+      });
+      if (error && !`${error.code}`.startsWith("23")) {
+        console.error("instructor_billing minimal insert failed:", error);
+      }
+    }
 
     // Reuse the existing connected account, or create one on first call.
     const { data: existing } = await supabase
@@ -74,7 +95,7 @@ export async function POST(req: NextRequest) {
     let accountId = existing?.stripe_account_id ?? null;
     if (!accountId) {
       const account = await stripe.accounts.create({
-        country: billing.country,
+        country,
         email: user.email ?? undefined,
         controller: {
           fees: { payer: "application" },
@@ -90,7 +111,7 @@ export async function POST(req: NextRequest) {
       const { error } = await db.from("instructor_connect_accounts").insert({
         instructor_id: instructor.id,
         stripe_account_id: account.id,
-        country: billing.country,
+        country,
       });
       if (error) {
         // A concurrent call may have inserted first — fall back to its account

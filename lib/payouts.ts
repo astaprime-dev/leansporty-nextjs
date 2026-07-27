@@ -115,7 +115,7 @@ export async function buildPayoutPreview(
     ids.length
       ? db
           .from("instructor_billing")
-          .select("instructor_id, country, iban, account_holder")
+          .select("instructor_id, country, iban, account_holder, payout_method")
           .in("instructor_id", ids)
       : Promise.resolve({ data: [] as any[] }),
   ]);
@@ -130,17 +130,21 @@ export async function buildPayoutPreview(
     const billing = billingById.get(instructorId);
     const connectActive =
       connect?.transfers_status === "active" && connect?.payouts_enabled === true;
-    const rail: "stripe_connect" | "manual" = connectActive
-      ? "stripe_connect"
-      : "manual";
-    const railReady = connectActive || !!billing?.iban;
-    const railNote = connectActive
-      ? "Stripe transfer (automatic)"
-      : billing?.iban
-        ? "Manual transfer (Wise/SEPA) — mark paid after sending"
-        : connect
-          ? "Stripe onboarding not finished"
-          : "No payout details on file — do not pay";
+    // The instructor's explicit choice wins: 'manual' routes to the manual
+    // rail even when their Stripe account is active. Otherwise Stripe when
+    // it's ready, else the bank account.
+    const choseManual = billing?.payout_method === "manual";
+    const rail: "stripe_connect" | "manual" =
+      !choseManual && connectActive ? "stripe_connect" : "manual";
+    const railReady = rail === "stripe_connect" || !!billing?.iban;
+    const railNote =
+      rail === "stripe_connect"
+        ? "Stripe transfer (automatic)"
+        : billing?.iban
+          ? "Manual transfer (Wise/SEPA) — mark paid after sending"
+          : connect
+            ? "Stripe onboarding not finished"
+            : "No payout details on file — do not pay";
     const overThreshold = agg.pendingCents >= PAYOUT_MIN_CENTS;
 
     totalPendingCents += agg.pendingCents;
@@ -241,10 +245,18 @@ export async function runConnectPayouts(
       .filter((c) => c.transfers_status === "active" && c.payouts_enabled)
       .map((c) => [c.instructor_id, c.stripe_account_id as string])
   );
+  // An explicit 'manual' choice keeps an instructor off the Stripe rail even
+  // with an active connected account — they're paid via the manual list.
+  const { data: choices } = await db
+    .from("instructor_billing")
+    .select("instructor_id, payout_method")
+    .eq("payout_method", "manual");
+  const choseManual = new Set((choices ?? []).map((b) => b.instructor_id));
 
   const byInstructor = new Map<string, LedgerRow[]>();
   for (const r of (rows ?? []) as LedgerRow[]) {
     if (!accountByInstructor.has(r.instructor_id)) continue; // manual rail or not onboarded
+    if (choseManual.has(r.instructor_id)) continue; // instructor chose bank transfer
     const list = byInstructor.get(r.instructor_id) ?? [];
     list.push(r);
     byInstructor.set(r.instructor_id, list);

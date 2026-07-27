@@ -1,7 +1,11 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
 import { getStripe, getServiceRoleClient } from "@/lib/stripe";
-import { deriveConnectState, syncConnectAccountRow } from "@/lib/connect-accounts";
+import {
+  backfillBillingFromAccount,
+  deriveConnectState,
+  syncConnectAccountRow,
+} from "@/lib/connect-accounts";
 
 export const runtime = "nodejs";
 
@@ -39,10 +43,12 @@ export async function GET() {
     if (!connect) return NextResponse.json({ state: "not_started" });
 
     const account = await getStripe().accounts.retrieve(
-      connect.stripe_account_id
+      connect.stripe_account_id,
+      { expand: ["individual"] }
     );
     const db = getServiceRoleClient();
     await syncConnectAccountRow(db, account);
+    await backfillBillingFromAccount(db, instructor.id, account);
 
     const { data: row } = await db
       .from("instructor_connect_accounts")

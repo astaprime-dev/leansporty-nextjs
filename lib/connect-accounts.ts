@@ -49,6 +49,44 @@ export function deriveConnectState(
 }
 
 /**
+ * Import the instructor's name/address from their Stripe account into
+ * instructor_billing (needed for the payout paperwork) — fills only columns
+ * that are still empty, never overwrites anything the instructor typed.
+ * Stripe collects this during hosted onboarding, so the app never asks twice.
+ * (Tax numbers are NOT available from Stripe.)
+ */
+export async function backfillBillingFromAccount(
+  db: SupabaseClient,
+  instructorId: string,
+  account: Stripe.Account
+): Promise<void> {
+  if (!account.details_submitted) return;
+  const person = account.individual;
+  if (!person || typeof person === "string") return;
+  const { data: row } = await db
+    .from("instructor_billing")
+    .select("legal_name, address_line, city, postal_code")
+    .eq("instructor_id", instructorId)
+    .maybeSingle();
+  if (!row) return;
+  const patch: Record<string, string> = {};
+  const name = [person.first_name, person.last_name].filter(Boolean).join(" ");
+  if (!row.legal_name && name) patch.legal_name = name;
+  const addr = person.address;
+  if (!row.address_line && addr?.line1) {
+    patch.address_line = [addr.line1, addr.line2].filter(Boolean).join(", ");
+  }
+  if (!row.city && addr?.city) patch.city = addr.city;
+  if (!row.postal_code && addr?.postal_code) patch.postal_code = addr.postal_code;
+  if (Object.keys(patch).length === 0) return;
+  const { error } = await db
+    .from("instructor_billing")
+    .update({ ...patch, updated_at: new Date().toISOString() })
+    .eq("instructor_id", instructorId);
+  if (error) console.error("billing backfill from Stripe failed:", error);
+}
+
+/**
  * Map a Stripe Account object onto the instructor_connect_accounts row keyed
  * by stripe_account_id. No-op (returns false) when the account isn't ours —
  * the Stripe account is shared with another app, same hygiene as the payment

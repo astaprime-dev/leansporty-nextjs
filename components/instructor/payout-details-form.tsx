@@ -8,26 +8,26 @@ import { Alert } from "@/components/ui/alert";
 import { COUNTRIES, isEUCountry } from "@/lib/countries";
 
 /**
- * The payout-details form fields (agreement §1/§7) — rendered INSIDE the
+ * The bank-transfer payout form (agreement §1/§7) — rendered INSIDE the
  * "How you get paid" card (payout-method-card), never as its own card. One
- * form, one save: tax fields always, bank fields included when the instructor
- * chose the bank-transfer method. Plain-English copy, most instructors are
- * non-native speakers. The country of tax residence drives the one legal
- * question we must ask: only Polish residents see the registered-business
- * question. The server derives the stored business_status from country +
- * answer. Posts to /api/instructor/billing (RLS-scoped upsert of the caller's
- * own row).
+ * form, one save: bank account + the details needed for the payout paperwork.
+ * (The Stripe path never uses this — Stripe collects everything itself.)
+ * Plain-English copy, most instructors are non-native speakers. The country
+ * of tax residence drives the one legal question we must ask: only Polish
+ * residents see the registered-business question. The server derives the
+ * stored business_status from country + answer. Posts to
+ * /api/instructor/billing (RLS-scoped upsert of the caller's own row).
  */
 
 export type BillingInitial = {
-  legal_name: string;
+  legal_name: string | null;
   business_name: string | null;
-  business_status: string;
-  tin: string;
+  business_status: string | null;
+  tin: string | null;
   vat_number: string | null;
-  address_line: string;
-  city: string;
-  postal_code: string;
+  address_line: string | null;
+  city: string | null;
+  postal_code: string | null;
   country: string;
   iban: string | null;
   account_holder: string | null;
@@ -35,13 +35,11 @@ export type BillingInitial = {
 
 export function PayoutDetailsForm({
   initial,
-  includeBank,
   submitLabel,
   onSaved,
   onCancel,
 }: {
   initial: BillingInitial;
-  includeBank: boolean;
   submitLabel: string;
   onSaved: () => void | Promise<void>;
   onCancel?: () => void;
@@ -85,7 +83,7 @@ export function PayoutDetailsForm({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (includeBank && ibanChanged && normIban(ibanConfirm) !== normIban(form.iban)) {
+    if (ibanChanged && normIban(ibanConfirm) !== normIban(form.iban)) {
       setError("The IBAN entries do not match — re-enter the IBAN to confirm it.");
       return;
     }
@@ -97,8 +95,8 @@ export function PayoutDetailsForm({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...form,
-          iban: includeBank ? form.iban : "",
-          accountHolder: includeBank ? form.accountHolder : "",
+          iban: form.iban,
+          accountHolder: form.accountHolder,
           plRegisteredBusiness: isPoland ? plRegisteredBusiness : null,
           unregisteredConfirmed,
         }),
@@ -118,8 +116,7 @@ export function PayoutDetailsForm({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      {includeBank && (
-        <div className="grid gap-4 sm:grid-cols-2">
+      <div className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-1.5">
             <Label htmlFor="pd-iban">IBAN *</Label>
             <Input
@@ -165,7 +162,7 @@ export function PayoutDetailsForm({
             </p>
           </div>
         </div>
-      )}
+
 
       <div className="grid gap-4 sm:grid-cols-[1fr,14rem]">
         <div className="space-y-1.5">
