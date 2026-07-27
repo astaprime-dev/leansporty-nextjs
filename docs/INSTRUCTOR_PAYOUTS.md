@@ -126,9 +126,14 @@ order by p.created_at;
   authorization in the Instructor Agreement §7. Objections within 14 days;
   otherwise the statement is accepted."
 
-Send it in the same email that announces the payout. Later this becomes a generated
-PDF in the Studio earnings page — `instructor_payouts` + `payout_batch_id` already
-carry every number needed.
+**The statement is now auto-generated in the Studio**: after a payout run, each
+instructor sees the batch under "Payout history" on `/instructor/earnings`, and
+"View statement" renders the numbered self-billed document
+(`/instructor/earnings/statements/<batch>`, print → PDF). Set `ASTAPRIME_NIP` in
+the environment to print the company NIP on it. Emailing a copy is optional —
+same YouTube/OnlyFans pattern of self-serve monthly earnings statements, with
+the samofakturowanie wording kept for PL cost documentation. The SQL below
+remains for reconciliation.
 
 ## Appendix: SQL fallback / reconciliation
 

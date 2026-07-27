@@ -52,7 +52,7 @@ export default async function InstructorEarningsPage() {
   const { data: payouts } = await supabase
     .from("instructor_payouts")
     .select(
-      "product_id, gross_cents, currency, instructor_share_cents, status, created_at"
+      "product_id, gross_cents, currency, instructor_share_cents, status, created_at, payout_batch_id, paid_at, paid_via"
     )
     .eq("instructor_id", instructorProfile.id)
     .order("created_at", { ascending: false });
@@ -108,6 +108,31 @@ export default async function InstructorEarningsPage() {
     byClass.set(key, entry);
   }
   const classRows = Array.from(byClass.values()).sort((a, b) => b.share - a.share);
+
+  // Payout history: one row per payout batch, linking to the statement
+  // (the YouTube-style monthly earnings statement / self-billed settlement doc).
+  const byBatch = new Map<
+    string,
+    { total: number; paidAt: string | null; method: string }
+  >();
+  for (const r of rows) {
+    if (!r.payout_batch_id) continue;
+    const entry =
+      byBatch.get(r.payout_batch_id) ??
+      {
+        total: 0,
+        paidAt: null as string | null,
+        method: r.paid_via === "stripe_connect" ? "Stripe payout" : "Bank transfer",
+      };
+    entry.total += r.instructor_share_cents;
+    if (r.paid_at && (!entry.paidAt || r.paid_at > entry.paidAt)) {
+      entry.paidAt = r.paid_at;
+    }
+    byBatch.set(r.payout_batch_id, entry);
+  }
+  const batchRows = Array.from(byBatch.entries()).sort((a, b) =>
+    a[0] < b[0] ? 1 : -1
+  );
 
   const tiles = [
     { label: "This month", value: totals.thisMonth, icon: CalendarDays },
@@ -185,6 +210,51 @@ export default async function InstructorEarningsPage() {
           </div>
         ))}
       </div>
+
+      {batchRows.length > 0 && (
+        <div className="mb-8">
+          <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+            Payout history
+          </h2>
+          <div className="overflow-hidden rounded-2xl border border-pink-100 bg-white">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-pink-100 bg-pink-50/60 text-left">
+                  <th className="p-4 font-semibold text-gray-900">Period</th>
+                  <th className="p-4 font-semibold text-gray-900">Paid on</th>
+                  <th className="p-4 font-semibold text-gray-900">Method</th>
+                  <th className="p-4 font-semibold text-gray-900">Amount</th>
+                  <th className="p-4" />
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-pink-50">
+                {batchRows.map(([batchId, b]) => (
+                  <tr key={batchId}>
+                    <td className="p-4 text-gray-900">{batchId}</td>
+                    <td className="p-4 text-gray-600">
+                      {b.paidAt
+                        ? new Date(b.paidAt).toLocaleDateString("en-GB")
+                        : "—"}
+                    </td>
+                    <td className="p-4 text-gray-600">{b.method}</td>
+                    <td className="p-4 font-semibold text-gray-900">
+                      {fmt(b.total, currency)}
+                    </td>
+                    <td className="p-4 text-right">
+                      <Link
+                        href={`/instructor/earnings/statements/${encodeURIComponent(batchId)}`}
+                        className="font-medium text-pink-600 transition-colors hover:text-pink-500"
+                      >
+                        View statement
+                      </Link>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
 
       <h2 className="text-2xl font-semibold text-gray-900 mb-4">By class &amp; program</h2>
       {classRows.length === 0 ? (
