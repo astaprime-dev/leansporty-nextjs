@@ -243,6 +243,18 @@ video with the **"fast start"** (also called **"web optimized"**) option
 turned on — in most video editors it's a single checkbox — and upload
 again. If it still fails, contact us and we'll sort it out.
 
+**The video looks blurry right after uploading** — this is almost always
+normal, and it fixes itself. A video becomes watchable before it has
+finished processing, so the first minutes play at a lower quality while the
+sharper versions are still being prepared. When you preview a replacement,
+the line under the player tells you exactly what you're watching ("Playing
+at up to 720p — sharper quality is still being prepared") and whether more
+is coming. Wait for it to say "this is the final quality" before judging
+the file. Two other things are normal: the picture always starts soft for
+the first few seconds of any video while the player measures your internet
+speed, and we deliver up to 1080p — so a 4K file will never play back at
+its original sharpness.
+
 **You uploaded the wrong video to a lesson** — no harm done. Click the
 **circular arrows** icon on the lesson and upload the right one. Your
 students keep watching the current video until you apply the new one, so
