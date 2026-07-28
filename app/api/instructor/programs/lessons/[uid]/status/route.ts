@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getInstructorContext } from "@/lib/program-auth";
 import { getServiceRoleClient } from "@/lib/stripe";
-import { getVideoDetails, getStreamPlaybackURL } from "@/lib/cloudflare-stream";
+import { getVideoDetails, getStreamPlaybackURL, signStreamToken } from "@/lib/cloudflare-stream";
+import { uploadImage } from "@/lib/cloudflare-images";
 
 export const runtime = "nodejs";
 
@@ -80,9 +81,29 @@ export async function GET(
       const durationSeconds = Math.round(video.duration ?? 0);
       const hls = getStreamPlaybackURL(uid).hls;
       const customerCode = process.env.NEXT_PUBLIC_CLOUDFLARE_STREAM_CUSTOMER_CODE;
-      // Auto-thumbnails 404 behind requireSignedURLs; grids fall back to the
-      // gradient placeholder. Stored anyway for a future signed-thumbnail pass.
-      const thumbnailUrl = `https://customer-${customerCode}.cloudflarestream.com/${uid}/thumbnails/thumbnail.jpg`;
+      // Default thumbnail: a real mid-workout frame (2:00 in, or the midpoint
+      // of shorter videos) copied to Cloudflare Images. Frame 0 is often a
+      // blank fade-in, and the Stream auto-thumbnail 404s behind
+      // requireSignedURLs; a stored copy sidesteps both. The instructor can
+      // replace it from the lesson row afterwards.
+      let thumbnailUrl = `https://customer-${customerCode}.cloudflarestream.com/${uid}/thumbnails/thumbnail.jpg`;
+      try {
+        const frameAt = Math.min(120, Math.max(1, Math.round(durationSeconds / 2)));
+        const token = await signStreamToken(uid, { ttlSeconds: 300 });
+        const frame = await fetch(
+          `https://customer-${customerCode}.cloudflarestream.com/${token}/thumbnails/thumbnail.jpg?time=${frameAt}s&height=1080`
+        );
+        if (frame.ok) {
+          const image = await uploadImage(
+            Buffer.from(await frame.arrayBuffer()),
+            `lesson-${uid}.jpg`,
+            { instructorId: upload.instructor_id }
+          );
+          thumbnailUrl = image.imageUrl;
+        }
+      } catch {
+        // Keep the Stream auto-thumbnail; grids fall back to the gradient.
+      }
 
       // Same camelCase column set as the migrate cron (iOS-shared schema).
       const { data: workout, error: insErr } = await db
