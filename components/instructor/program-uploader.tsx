@@ -27,9 +27,13 @@ function formatTimeLeft(seconds: number): string {
 export function ProgramUploader({
   programId,
   onLessonReady,
+  onUploadComplete,
 }: {
   programId: string;
   onLessonReady: () => void;
+  /** When set, a finished upload hands off to the parent (which shows the
+   *  pending row and polls) instead of this form's own processing state. */
+  onUploadComplete?: () => void;
 }) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [file, setFile] = useState<File | null>(null);
@@ -127,7 +131,11 @@ export function ProgramUploader({
         setError("The upload failed. Please check your connection and try again.");
       },
       onSuccess: () => {
-        void pollUntilReady(uid);
+        if (onUploadComplete) {
+          onUploadComplete();
+        } else {
+          void pollUntilReady(uid);
+        }
       },
     });
     upload.start();

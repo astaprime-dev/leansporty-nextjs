@@ -10,6 +10,7 @@ import {
   Film,
   Loader2,
   Pencil,
+  Plus,
   SlidersHorizontal,
   Trash2,
   X,
@@ -484,8 +485,16 @@ function LessonsCard({
   base: string;
 }) {
   const router = useRouter();
+  const [addOpen, setAddOpen] = useState(false);
   const [addMode, setAddMode] = useState<"upload" | "link" | "reuse">("upload");
   const [reuseTitle, setReuseTitle] = useState("");
+
+  // Success = the new item showing up in the list above, so the form closes
+  // itself instead of announcing next to a reset form.
+  function collapseAdd() {
+    setAddOpen(false);
+    router.refresh();
+  }
   const [recordings, setRecordings] = useState<Recording[] | null>(null);
   const [renaming, setRenaming] = useState<{ contentId: string; value: string } | null>(null);
   const [uploadingThumbFor, setUploadingThumbFor] = useState<string | null>(null);
@@ -1000,9 +1009,27 @@ function LessonsCard({
         />
       )}
 
-      {/* Add lesson */}
+      {/* Add lesson — collapsed by default; success collapses it again so the
+          pending row in the list above is what draws the eye. */}
       <div className="mt-6 border-t border-pink-100 pt-6">
-        <h3 className="mb-3 font-medium text-gray-900">Add a lesson</h3>
+        {!addOpen ? (
+          <Button type="button" variant="brand" onClick={() => setAddOpen(true)}>
+            <Plus className="mr-2 h-4 w-4" />
+            Add a lesson
+          </Button>
+        ) : (
+        <>
+        <div className="mb-3 flex items-center justify-between">
+          <h3 className="font-medium text-gray-900">Add a lesson</h3>
+          <button
+            type="button"
+            title="Close"
+            onClick={() => setAddOpen(false)}
+            className="text-gray-400 transition-colors hover:text-gray-600"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        </div>
         <div className="mb-4 flex gap-6 border-b border-pink-100" role="tablist">
           {(
             [
@@ -1029,9 +1056,13 @@ function LessonsCard({
         </div>
 
         {addMode === "upload" ? (
-          <ProgramUploader programId={program.id} onLessonReady={() => router.refresh()} />
+          <ProgramUploader
+            programId={program.id}
+            onLessonReady={() => router.refresh()}
+            onUploadComplete={collapseAdd}
+          />
         ) : addMode === "link" ? (
-          <LinkImporter base={base} onStarted={() => router.refresh()} />
+          <LinkImporter base={base} onStarted={collapseAdd} />
         ) : (
           <div className="space-y-4">
             <div className="space-y-2">
@@ -1085,7 +1116,7 @@ function LessonsCard({
                               workoutId: r.id,
                               ...(label ? { itemLabel: label } : {}),
                             })
-                          );
+                          ).then(() => setAddOpen(false));
                         }}
                       >
                         Add
@@ -1095,6 +1126,8 @@ function LessonsCard({
               </ul>
             )}
           </div>
+        )}
+        </>
         )}
       </div>
     </section>
@@ -1382,25 +1415,19 @@ function LinkImporter({
   const [url, setUrl] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [started, setStarted] = useState(false);
 
   async function start() {
     if (!title.trim() || !url.trim()) return;
     setBusy(true);
     setError(null);
-    setStarted(false);
     try {
       await api(`${base}/lessons/link`, "POST", {
         title: title.trim(),
         url: url.trim(),
       });
-      setTitle("");
-      setUrl("");
-      setStarted(true);
       onStarted();
     } catch (e) {
       setError(e instanceof Error ? e.message : "Failed to start the import.");
-    } finally {
       setBusy(false);
     }
   }
@@ -1436,13 +1463,6 @@ function LinkImporter({
           away.
         </p>
       </div>
-
-      {started && (
-        <Alert variant="success">
-          Import started — the video appears in the lesson list above with its
-          progress, and becomes a lesson when it&apos;s ready.
-        </Alert>
-      )}
 
       {error && <Alert variant="error">{error}</Alert>}
 
