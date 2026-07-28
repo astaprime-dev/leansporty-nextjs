@@ -171,8 +171,7 @@ export function ProgramUploader({
           </div>
           <p className="mt-2 text-sm text-gray-600">
             Uploading… {progressPct}%{etaSeconds !== null && ` · ${formatTimeLeft(etaSeconds)}`}.
-            Please keep this tab open until the upload finishes — after that
-            you can leave.
+            Please keep this tab open until the upload finishes.
           </p>
         </div>
       )}
