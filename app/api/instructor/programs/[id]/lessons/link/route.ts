@@ -5,6 +5,9 @@ import { copyStreamFromUrl } from "@/lib/cloudflare-stream";
 import { PROGRAM_CAPS, storedUploadSeconds } from "@/lib/programs";
 
 export const runtime = "nodejs";
+// Google can take a while to answer for multi-GB files; the default 10s
+// function budget timed out on the first real import attempt.
+export const maxDuration = 60;
 
 /**
  * POST /api/instructor/programs/[id]/lessons/link  { title, url }
@@ -90,21 +93,29 @@ export async function POST(
       } else {
         const candidate = `https://drive.usercontent.google.com/download?id=${fileId}&export=download&confirm=t`;
         // Probe the first KB: link-public files stream bytes; private files
-        // and interstitial pages come back as HTML.
-        const probe = await fetch(candidate, {
-          headers: { Range: "bytes=0-1023" },
-          redirect: "follow",
-        });
-        const contentType = probe.headers.get("content-type") ?? "";
-        await probe.body?.cancel().catch(() => {});
-        if (!probe.ok || contentType.includes("text/html")) {
-          return NextResponse.json(
-            {
-              error:
-                'We can\'t fetch that Google Drive file. Check it\'s shared as "Anyone with the link" — and if it still fails, contact us.',
-            },
-            { status: 400 }
-          );
+        // and interstitial pages come back as HTML. Google can be slow to
+        // answer for huge files — on probe timeout we hand the URL to
+        // Cloudflare anyway (it has no such time limits) rather than fail.
+        try {
+          const probe = await fetch(candidate, {
+            headers: { Range: "bytes=0-1023" },
+            redirect: "follow",
+            signal: AbortSignal.timeout(8000),
+          });
+          const contentType = probe.headers.get("content-type") ?? "";
+          await probe.body?.cancel().catch(() => {});
+          if (!probe.ok || contentType.includes("text/html")) {
+            return NextResponse.json(
+              {
+                error:
+                  'We can\'t fetch that Google Drive file. Check it\'s shared as "Anyone with the link" — and if it still fails, contact us.',
+              },
+              { status: 400 }
+            );
+          }
+        } catch {
+          // Timeout — proceed optimistically; Cloudflare reports a download
+          // failure through the normal status flow if the URL turns out bad.
         }
         fetchUrl = candidate;
       }
