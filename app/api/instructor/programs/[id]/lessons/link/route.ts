@@ -63,35 +63,51 @@ export async function POST(
       );
     }
 
-    // Google Drive share link → direct download via the Drive API.
+    // Google Drive share link → direct download. Preferred: the official
+    // Drive API (stable, needs GOOGLE_API_KEY). Fallback: Google's direct
+    // download endpoint, which currently serves link-public files without a
+    // key but is unofficial and may change under us.
     let fetchUrl = url.toString();
     const fileId = driveFileId(url);
     if (fileId) {
       const apiKey = process.env.GOOGLE_API_KEY;
-      if (!apiKey) {
-        return NextResponse.json(
-          {
-            error:
-              "Google Drive links aren't set up yet. Please paste a direct video link instead.",
-          },
-          { status: 400 }
+      if (apiKey) {
+        // Confirm the file is link-public before handing it to Cloudflare, so
+        // the instructor gets a clear message instead of a silent failure.
+        const meta = await fetch(
+          `https://www.googleapis.com/drive/v3/files/${fileId}?fields=name,size,mimeType&key=${apiKey}`
         );
+        if (!meta.ok) {
+          return NextResponse.json(
+            {
+              error:
+                'We can\'t read that Google Drive file. In Drive, set the video to "Anyone with the link" and try again.',
+            },
+            { status: 400 }
+          );
+        }
+        fetchUrl = `https://www.googleapis.com/drive/v3/files/${fileId}?alt=media&key=${apiKey}`;
+      } else {
+        const candidate = `https://drive.usercontent.google.com/download?id=${fileId}&export=download&confirm=t`;
+        // Probe the first KB: link-public files stream bytes; private files
+        // and interstitial pages come back as HTML.
+        const probe = await fetch(candidate, {
+          headers: { Range: "bytes=0-1023" },
+          redirect: "follow",
+        });
+        const contentType = probe.headers.get("content-type") ?? "";
+        await probe.body?.cancel().catch(() => {});
+        if (!probe.ok || contentType.includes("text/html")) {
+          return NextResponse.json(
+            {
+              error:
+                'We can\'t fetch that Google Drive file. Check it\'s shared as "Anyone with the link" — and if it still fails, contact us.',
+            },
+            { status: 400 }
+          );
+        }
+        fetchUrl = candidate;
       }
-      // Confirm the file is link-public before handing it to Cloudflare, so
-      // the instructor gets a clear message instead of a silent failure.
-      const meta = await fetch(
-        `https://www.googleapis.com/drive/v3/files/${fileId}?fields=name,size,mimeType&key=${apiKey}`
-      );
-      if (!meta.ok) {
-        return NextResponse.json(
-          {
-            error:
-              'We can\'t read that Google Drive file. In Drive, set the video to "Anyone with the link" and try again.',
-          },
-          { status: 400 }
-        );
-      }
-      fetchUrl = `https://www.googleapis.com/drive/v3/files/${fileId}?alt=media&key=${apiKey}`;
     }
 
     const db = getServiceRoleClient();
