@@ -484,7 +484,8 @@ function LessonsCard({
   base: string;
 }) {
   const router = useRouter();
-  const [addMode, setAddMode] = useState<"upload" | "reuse">("upload");
+  const [addMode, setAddMode] = useState<"upload" | "link" | "reuse">("upload");
+  const [reuseTitle, setReuseTitle] = useState("");
   const [recordings, setRecordings] = useState<Recording[] | null>(null);
   const [renaming, setRenaming] = useState<{ contentId: string; value: string } | null>(null);
   const [uploadingThumbFor, setUploadingThumbFor] = useState<string | null>(null);
@@ -1006,6 +1007,7 @@ function LessonsCard({
           {(
             [
               { key: "upload", label: "Upload a video" },
+              { key: "link", label: "From a link" },
               { key: "reuse", label: "Use a class recording" },
             ] as const
           ).map((tab) => (
@@ -1028,47 +1030,71 @@ function LessonsCard({
 
         {addMode === "upload" ? (
           <ProgramUploader programId={program.id} onLessonReady={() => router.refresh()} />
-        ) : recordings === null ? (
-          <p className="text-sm text-gray-500">Loading your recordings…</p>
-        ) : recordings.length === 0 ? (
-          <p className="text-sm text-gray-500">
-            No recordings yet. Recordings of your past live classes appear here after
-            they end.
-          </p>
+        ) : addMode === "link" ? (
+          <LinkImporter base={base} onStarted={() => router.refresh()} />
         ) : (
-          <ul className="space-y-2">
-            {recordings
-              .filter((r) => !view.some((l) => l.contentId === r.id))
-              .map((r) => (
-                <li
-                  key={r.id}
-                  className="flex items-center gap-3 rounded-xl border border-pink-100 px-4 py-3"
-                >
-                  <Film className="h-4 w-4 shrink-0 text-pink-400" />
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate font-medium text-gray-900">
-                      {r.title || "Untitled recording"}
-                    </p>
-                    <p className="text-sm text-gray-500">
-                      {formatDuration(r.durationInSeconds)}
-                    </p>
-                  </div>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    disabled={busyAction !== null}
-                    onClick={() =>
-                      run("add-recording", () =>
-                        api(`${base}/lessons`, "POST", { workoutId: r.id })
-                      )
-                    }
-                  >
-                    Add
-                  </Button>
-                </li>
-              ))}
-          </ul>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="reuse-title">Lesson title</Label>
+              <Input
+                id="reuse-title"
+                value={reuseTitle}
+                onChange={(e) => setReuseTitle(e.target.value)}
+                placeholder="e.g. Day 1 — Warm up and basics"
+                maxLength={255}
+              />
+              <p className="text-sm text-gray-500">
+                Optional — leave empty to keep the recording&apos;s own name.
+              </p>
+            </div>
+            {recordings === null ? (
+              <p className="text-sm text-gray-500">Loading your recordings…</p>
+            ) : recordings.length === 0 ? (
+              <p className="text-sm text-gray-500">
+                No recordings yet. Recordings of your past live classes appear here after
+                they end.
+              </p>
+            ) : (
+              <ul className="space-y-2">
+                {recordings
+                  .filter((r) => !view.some((l) => l.contentId === r.id))
+                  .map((r) => (
+                    <li
+                      key={r.id}
+                      className="flex items-center gap-3 rounded-xl border border-pink-100 px-4 py-3"
+                    >
+                      <Film className="h-4 w-4 shrink-0 text-pink-400" />
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate font-medium text-gray-900">
+                          {r.title || "Untitled recording"}
+                        </p>
+                        <p className="text-sm text-gray-500">
+                          {formatDuration(r.durationInSeconds)}
+                        </p>
+                      </div>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        disabled={busyAction !== null}
+                        onClick={() => {
+                          const label = reuseTitle.trim();
+                          setReuseTitle("");
+                          void run("add-recording", () =>
+                            api(`${base}/lessons`, "POST", {
+                              workoutId: r.id,
+                              ...(label ? { itemLabel: label } : {}),
+                            })
+                          );
+                        }}
+                      >
+                        Add
+                      </Button>
+                    </li>
+                  ))}
+              </ul>
+            )}
+          </div>
         )}
       </div>
     </section>
@@ -1336,5 +1362,98 @@ function FramePickerDialog({
         </DialogFooter>
       </DialogContent>
     </Dialog>
+  );
+}
+
+/**
+ * "From a link" lesson import: paste a Google Drive share link (or any direct
+ * video URL) and Cloudflare pulls the file server-side — nothing goes through
+ * the instructor's device. Mirrors the uploader's layout (same Lesson title
+ * field first) so all three add-lesson modes feel identical.
+ */
+function LinkImporter({
+  base,
+  onStarted,
+}: {
+  base: string;
+  onStarted: () => void;
+}) {
+  const [title, setTitle] = useState("");
+  const [url, setUrl] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [started, setStarted] = useState(false);
+
+  async function start() {
+    if (!title.trim() || !url.trim()) return;
+    setBusy(true);
+    setError(null);
+    setStarted(false);
+    try {
+      await api(`${base}/lessons/link`, "POST", {
+        title: title.trim(),
+        url: url.trim(),
+      });
+      setTitle("");
+      setUrl("");
+      setStarted(true);
+      onStarted();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Failed to start the import.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <div className="space-y-4">
+      <div className="space-y-2">
+        <Label htmlFor="link-title">Lesson title</Label>
+        <Input
+          id="link-title"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          placeholder="e.g. Day 1 — Warm up and basics"
+          maxLength={255}
+          disabled={busy}
+        />
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="link-url">Video link</Label>
+        <Input
+          id="link-url"
+          type="url"
+          value={url}
+          onChange={(e) => setUrl(e.target.value)}
+          placeholder="https://drive.google.com/file/d/…"
+          disabled={busy}
+        />
+        <p className="text-sm text-gray-500">
+          Paste a Google Drive share link (set the file to &quot;Anyone with the
+          link&quot;) or a direct video link. We fetch the video for you — no
+          download or upload on your side, and you can close this page right
+          away.
+        </p>
+      </div>
+
+      {started && (
+        <Alert variant="success">
+          Import started — the video appears in the lesson list above with its
+          progress, and becomes a lesson when it&apos;s ready.
+        </Alert>
+      )}
+
+      {error && <Alert variant="error">{error}</Alert>}
+
+      <Button
+        type="button"
+        variant="brand"
+        onClick={start}
+        disabled={busy || !title.trim() || !url.trim()}
+      >
+        {busy ? "Starting…" : "Import Video"}
+      </Button>
+    </div>
   );
 }

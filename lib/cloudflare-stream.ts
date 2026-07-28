@@ -288,6 +288,51 @@ export async function createDirectUploadTus(opts: {
 }
 
 /**
+ * Ask Cloudflare to pull a video from a URL server-side ("upload via link") —
+ * nothing passes through our servers or the instructor's machine. Same
+ * settings as direct uploads: signed playback, duration cap, allowed origins.
+ * The download+encode progress surfaces through the normal status polling.
+ */
+export async function copyStreamFromUrl(opts: {
+  url: string;
+  maxDurationSeconds: number;
+  creator: string;
+  name: string;
+}): Promise<{ uid: string }> {
+  const accountId = process.env.CLOUDFLARE_ACCOUNT_ID;
+  const apiToken = process.env.CLOUDFLARE_API_TOKEN;
+  if (!accountId || !apiToken) {
+    throw new Error('Missing Cloudflare credentials in environment variables');
+  }
+
+  const response = await fetch(`${CLOUDFLARE_API_BASE}/accounts/${accountId}/stream/copy`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${apiToken}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      url: opts.url,
+      meta: { name: opts.name },
+      creator: opts.creator,
+      requireSignedURLs: true,
+      allowedOrigins: ALLOWED_ORIGINS,
+      maxDurationSeconds: opts.maxDurationSeconds,
+    }),
+  });
+
+  const data = await response.json().catch(() => null);
+  const uid = data?.result?.uid;
+  if (!response.ok || !uid) {
+    throw new Error(
+      `Cloudflare copy-from-url failed (${response.status}): ${JSON.stringify(data?.errors ?? '').slice(0, 300)}`
+    );
+  }
+
+  return { uid };
+}
+
+/**
  * Mint a short-lived, signed playback token for a Cloudflare Stream UID.
  *
  * The video MUST have `requireSignedURLs = true` set on Cloudflare for this to
