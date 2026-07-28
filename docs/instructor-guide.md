@@ -116,11 +116,26 @@ lesson list, or a day-by-day plan (like a "21-day challenge").
 
 1. Go to **Programs** → create a program: title, price (€19–€500),
    structure, and a cover image.
-2. Add lessons: upload videos (up to 45 minutes and 20 GB each — MP4 works
-   best) or reuse your class recordings.
-3. Set one lesson as a **free preview** if you like — it's shown to
+2. Add lessons with the **Add a lesson** button on your program's page —
+   three ways:
+   - **Upload a video** from your device (up to 45 minutes and 20 GB each —
+     MP4 works best). You see the progress and the time left; keep the tab
+     open until the upload finishes — after that you can leave.
+   - **From a link** — paste a Google Drive share link (set the file to
+     "Anyone with the link") or a direct video link. We fetch the video for
+     you: nothing to download or upload on your side, and you can close the
+     page right away. The easiest option for big files or slow home
+     internet.
+   - **Use a class recording** — turn a past live class into a lesson.
+   While a video is being prepared, it appears in the lesson list with a
+   progress badge and becomes a lesson automatically when it's ready.
+3. **Lesson images:** every lesson gets an image automatically (a frame
+   from the middle of the video). To change it, hover over the image in the
+   lesson list: **Upload image** (your own wide 16:9 photo) or **From
+   video** (pick the exact moment with a slider and small step buttons).
+4. Set one lesson as a **free preview** if you like — it's shown to
    prospective buyers.
-4. Publish. The program gets its own sales page on your profile, with
+5. Publish. The program gets its own sales page on your profile, with
    checkout, reviews, and protected playback (only buyers can watch;
    nothing is downloadable).
 
@@ -206,6 +221,13 @@ Broadcast** to continue where you left off.
 
 **Can't find your class** — Studio → **Classes** lists everything:
 scheduled, live, and ended.
+
+**"The video could not be processed" after a lesson upload** — your file
+arrived safely, but the video service couldn't read it. This can happen
+with very large MP4 files that weren't exported for the web. Re-export the
+video with the **"fast start"** (also called **"web optimized"**) option
+turned on — in most video editors it's a single checkbox — and upload
+again. If it still fails, contact us and we'll sort it out.
 
 ---
 
