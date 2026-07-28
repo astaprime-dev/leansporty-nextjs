@@ -133,9 +133,23 @@ lesson list, or a day-by-day plan (like a "21-day challenge").
    from the middle of the video). To change it, hover over the image in the
    lesson list: **Upload image** (your own wide 16:9 photo) or **From
    video** (pick the exact moment with a slider and small step buttons).
-4. Set one lesson as a **free preview** if you like — it's shown to
+4. **Replacing a lesson's video:** filmed a better version? Click the
+   **circular arrows** icon on the lesson and upload a file or paste a link
+   (the same two ways as adding a lesson). Nothing changes for your students
+   while it uploads — they keep watching the current video. When the new one
+   is ready, a preview player appears on the lesson so you can **watch it
+   first**, then **Apply new video** to switch your students over. Changed
+   your mind before applying? **Cancel replacement** deletes the new video
+   and leaves the lesson exactly as it was. After applying, your old video
+   is still saved: **Go back to the old video** restores it in one click,
+   and **Delete the old video** removes it for good once you're sure. The
+   lesson keeps its day number, free preview setting, reviews, and your
+   students' progress. Lessons added from a class recording can't be
+   replaced this way — that video is also your class recording, so add the
+   new video as a lesson instead.
+5. Set one lesson as a **free preview** if you like — it's shown to
    prospective buyers.
-5. Publish. The program gets its own sales page on your profile, with
+6. Publish. The program gets its own sales page on your profile, with
    checkout, reviews, and protected playback (only buyers can watch;
    nothing is downloadable).
 
@@ -144,8 +158,8 @@ lesson list, or a day-by-day plan (like a "21-day challenge").
   more? Just ask via the contact form.
 - Buyers get **12 months of access** from a one-time purchase.
 - Once a program has its first sale, its lessons can't be removed (people
-  paid for them) — you can still add lessons, edit details, and change the
-  price for future buyers.
+  paid for them) — you can still add lessons, replace a lesson's video with
+  a better version, edit details, and change the price for future buyers.
 - **Unpublishing** hides a program from new buyers; everyone who already
   bought it keeps access.
 
@@ -229,6 +243,11 @@ video with the **"fast start"** (also called **"web optimized"**) option
 turned on — in most video editors it's a single checkbox — and upload
 again. If it still fails, contact us and we'll sort it out.
 
+**You uploaded the wrong video to a lesson** — no harm done. Click the
+**circular arrows** icon on the lesson and upload the right one. Your
+students keep watching the current video until you apply the new one, so
+there's nothing to undo in a hurry.
+
 ---
 
 ## ✅ Pre-class checklist
@@ -256,4 +275,4 @@ helps), and which browser you use.
 
 ---
 
-**Document version:** 2.1 · **Last updated:** July 2026
+**Document version:** 2.2 · **Last updated:** July 2026

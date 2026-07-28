@@ -446,7 +446,7 @@ export default function InstructorHelpPage() {
                 </li>
                 <li>
                   <p className="font-semibold text-gray-900">Add lessons</p>
-                  <p className="text-sm text-gray-600">Upload videos (up to 45 minutes and 20GB each — MP4 works best) or reuse your class recordings. Drag to reorder</p>
+                  <p className="text-sm text-gray-600">Three ways: upload a video file (up to 45 minutes and 20GB each — MP4 works best), paste a Google Drive or direct video link and we fetch it for you, or reuse one of your class recordings. Drag to reorder</p>
                 </li>
                 <li>
                   <p className="font-semibold text-gray-900">Set a free preview (optional)</p>
@@ -457,6 +457,40 @@ export default function InstructorHelpPage() {
                   <p className="text-sm text-gray-600">Confirm you have the rights to all content and music, and your program goes live on your profile</p>
                 </li>
               </ol>
+            </div>
+
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-3">Replacing a lesson video</h3>
+              <p className="text-gray-700 mb-3">
+                Filmed a better version of a lesson? You can swap the video without creating a new
+                lesson — the day number, free-preview setting, reviews and your students&apos;
+                progress all stay exactly as they are. Click the{" "}
+                <strong>circular arrows icon</strong> on the lesson, then upload a file or paste a
+                link, the same two ways you add any lesson.
+              </p>
+              <ol className="space-y-3 ml-6 list-decimal text-gray-700">
+                <li>
+                  <p className="font-semibold text-gray-900">The new video uploads in the background</p>
+                  <p className="text-sm text-gray-600">Your students keep watching the current video the whole time — nothing changes for them yet</p>
+                </li>
+                <li>
+                  <p className="font-semibold text-gray-900">Watch it first</p>
+                  <p className="text-sm text-gray-600">When it&apos;s ready, a preview player appears on the lesson. Only you can see it</p>
+                </li>
+                <li>
+                  <p className="font-semibold text-gray-900">Apply it when you&apos;re happy</p>
+                  <p className="text-sm text-gray-600">Now your students see the new video. Not happy? &quot;Cancel replacement&quot; deletes the new video and leaves the lesson untouched</p>
+                </li>
+                <li>
+                  <p className="font-semibold text-gray-900">Your old video is still saved</p>
+                  <p className="text-sm text-gray-600">&quot;Go back to the old video&quot; restores it in one click. When you&apos;re sure, &quot;Delete the old video&quot; removes it for good</p>
+                </li>
+              </ol>
+              <p className="text-sm text-gray-600 mt-3">
+                Lessons you added from a class recording work differently — that video is also your
+                class recording, so it can&apos;t be swapped here. Add the new video as a lesson
+                instead.
+              </p>
             </div>
 
             <Alert variant="info">
@@ -471,7 +505,8 @@ export default function InstructorHelpPage() {
               <p className="font-semibold mb-1">After the first sale</p>
               <p className="text-sm">
                 Once a program has a sale, its lessons can&apos;t be removed — people paid for them. You
-                can still add lessons, edit details, and change the price for future buyers.
+                can still add lessons, replace a lesson&apos;s video with a better version, edit
+                details, and change the price for future buyers.
                 <strong> Unpublishing</strong> hides a program from new buyers; everyone who already
                 bought it keeps access.
               </p>
@@ -775,9 +810,10 @@ export default function InstructorHelpPage() {
               <h3 className="text-lg font-semibold text-gray-900 mb-2">Can I change a program after publishing it?</h3>
               <p className="text-gray-700">
                 Yes — title, description, cover, and price can change anytime (price changes only
-                affect new sales). You can always add lessons; removing lessons is only possible
-                while the program has no sales. Unpublishing hides it from new buyers, and everyone
-                who bought keeps access.
+                affect new sales). You can always add lessons, and you can replace any lesson&apos;s
+                video with a better version — your students keep watching the old one until you
+                apply the new one. Removing lessons is only possible while the program has no
+                sales. Unpublishing hides it from new buyers, and everyone who bought keeps access.
               </p>
             </div>
 
