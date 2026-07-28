@@ -6,6 +6,7 @@ import {
   ArrowDown,
   ArrowUp,
   Check,
+  ChevronRight,
   Eye,
   Film,
   Loader2,
@@ -1156,6 +1157,9 @@ function PublishCard({
   onDeleted: () => void;
 }) {
   const [termsAccepted, setTermsAccepted] = useState(false);
+  // Unpublish/delete live behind a disclosure — rarely used, shouldn't
+  // compete with the everyday actions.
+  const [dangerOpen, setDangerOpen] = useState(false);
   const canPublish = lessonCount > 0 && !program.adminDisabled;
 
   return (
@@ -1222,49 +1226,69 @@ function PublishCard({
               }}
             />
           </div>
-          <Button
-            type="button"
-            variant="outline"
-            disabled={busyAction !== null}
-            onClick={() => run("unpublish", () => api(`${base}/unpublish`, "POST"))}
-          >
-            {busyAction === "unpublish" ? "Working…" : "Unpublish"}
-          </Button>
-          <p className="text-sm text-gray-500">
-            Unpublishing removes it from sale. Students who already bought it keep
-            access.
-          </p>
         </div>
       )}
 
-      <div className="mt-6 border-t border-pink-100 pt-6">
-        <Button
+      <div className="mt-6 border-t border-pink-100 pt-4">
+        <button
           type="button"
-          variant="ghost"
-          className="text-red-500 hover:text-red-600"
-          disabled={hasSales || busyAction !== null}
-          title={hasSales ? "Programs with sales can't be deleted" : undefined}
-          onClick={() => {
-            if (
-              window.confirm(
-                "Delete this program and its uploaded videos? This cannot be undone."
-              )
-            ) {
-              void run("delete", async () => {
-                await api(`${base}/delete`, "POST");
-                onDeleted();
-              });
-            }
-          }}
+          onClick={() => setDangerOpen((v) => !v)}
+          className="flex items-center gap-1 text-sm font-medium text-gray-400 transition-colors hover:text-gray-600"
         >
-          <Trash2 className="mr-2 h-4 w-4" />
-          Delete Program
-        </Button>
-        {hasSales && (
-          <p className="mt-2 text-sm text-gray-500">
-            This program has sales, so it can&apos;t be deleted — your students keep
-            access to what they bought.
-          </p>
+          <ChevronRight
+            className={`h-4 w-4 transition-transform ${dangerOpen ? "rotate-90" : ""}`}
+          />
+          {program.isActive ? "Unpublish or delete" : "Delete this program"}
+        </button>
+        {dangerOpen && (
+          <div className="mt-4 space-y-4">
+            {program.isActive && (
+              <div>
+                <Button
+                  type="button"
+                  variant="outline"
+                  disabled={busyAction !== null}
+                  onClick={() => run("unpublish", () => api(`${base}/unpublish`, "POST"))}
+                >
+                  {busyAction === "unpublish" ? "Working…" : "Unpublish"}
+                </Button>
+                <p className="mt-2 text-sm text-gray-500">
+                  Unpublishing removes it from sale. Students who already bought it
+                  keep access.
+                </p>
+              </div>
+            )}
+            <div>
+              <Button
+                type="button"
+                variant="ghost"
+                className="text-red-500 hover:text-red-600"
+                disabled={hasSales || busyAction !== null}
+                title={hasSales ? "Programs with sales can't be deleted" : undefined}
+                onClick={() => {
+                  if (
+                    window.confirm(
+                      "Delete this program and its uploaded videos? This cannot be undone."
+                    )
+                  ) {
+                    void run("delete", async () => {
+                      await api(`${base}/delete`, "POST");
+                      onDeleted();
+                    });
+                  }
+                }}
+              >
+                <Trash2 className="mr-2 h-4 w-4" />
+                Delete Program
+              </Button>
+              {hasSales && (
+                <p className="mt-2 text-sm text-gray-500">
+                  This program has sales, so it can&apos;t be deleted — your students
+                  keep access to what they bought.
+                </p>
+              )}
+            </div>
+          </div>
         )}
       </div>
     </section>
@@ -1341,6 +1365,11 @@ function FramePickerDialog({
     }
   }
 
+  function nudge(step: number) {
+    const max = info ? Math.max(0, Math.floor(info.durationSeconds) - 1) : 0;
+    setTime((t) => Math.min(max, Math.max(0, t + step)));
+  }
+
   return (
     <Dialog
       open
@@ -1348,7 +1377,7 @@ function FramePickerDialog({
         if (!open && !saving) onClose();
       }}
     >
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-3xl">
         <DialogHeader>
           <DialogTitle>Pick a frame from the video</DialogTitle>
         </DialogHeader>
@@ -1361,7 +1390,7 @@ function FramePickerDialog({
             <div className="aspect-video w-full overflow-hidden rounded-lg bg-gradient-to-br from-pink-50 to-rose-50">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src={`${info.previewBase}?time=${time}s&height=360`}
+                src={`${info.previewBase}?time=${time}s&height=720`}
                 alt=""
                 className="h-full w-full object-cover"
               />
@@ -1375,9 +1404,33 @@ function FramePickerDialog({
               onChange={(e) => setTime(Number(e.target.value))}
               className="w-full accent-pink-500"
             />
-            <p className="text-center text-sm text-gray-600">
-              {formatDuration(time) || "0:00"} / {formatDuration(info.durationSeconds)}
-            </p>
+            <div className="flex items-center justify-center gap-2">
+              {[-60, -10, -1].map((step) => (
+                <Button
+                  key={step}
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => nudge(step)}
+                >
+                  −{Math.abs(step) === 60 ? "1m" : `${Math.abs(step)}s`}
+                </Button>
+              ))}
+              <span className="min-w-28 text-center text-sm font-medium text-gray-700">
+                {formatDuration(time) || "0:00"} / {formatDuration(info.durationSeconds)}
+              </span>
+              {[1, 10, 60].map((step) => (
+                <Button
+                  key={step}
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => nudge(step)}
+                >
+                  +{step === 60 ? "1m" : `${step}s`}
+                </Button>
+              ))}
+            </div>
           </div>
         )}
         <DialogFooter>
