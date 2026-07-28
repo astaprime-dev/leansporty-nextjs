@@ -49,6 +49,7 @@ export function LessonReplacementPanel({
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [previewError, setPreviewError] = useState<string | null>(null);
   const [loadingPreview, setLoadingPreview] = useState(false);
+  const [quality, setQuality] = useState<PreviewQuality | null>(null);
 
   const act = (action: "apply" | "revert" | "discard") =>
     run(`replace-${action}-${contentId}`, () =>
@@ -70,6 +71,11 @@ export function LessonReplacementPanel({
       const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data.error ?? "Preview is not available.");
       setPreviewUrl(data.iframe);
+      setQuality({
+        maxHeight: data.maxHeight ?? null,
+        sourceHeight: data.sourceHeight ?? null,
+        encoding: data.encoding ?? null,
+      });
     } catch (e) {
       setPreviewError(e instanceof Error ? e.message : "Preview is not available.");
     } finally {
@@ -163,13 +169,20 @@ export function LessonReplacementPanel({
           </Alert>
 
           {previewUrl ? (
-            <div className="aspect-video w-full overflow-hidden rounded-xl bg-black">
-              <iframe
-                src={previewUrl}
-                className="h-full w-full"
-                allow="accelerometer; gyroscope; encrypted-media; picture-in-picture;"
-                allowFullScreen
-                title="New video preview"
+            <div className="space-y-2">
+              <div className="aspect-video w-full overflow-hidden rounded-xl bg-black">
+                <iframe
+                  src={previewUrl}
+                  className="h-full w-full"
+                  allow="accelerometer; gyroscope; encrypted-media; picture-in-picture;"
+                  allowFullScreen
+                  title="New video preview"
+                />
+              </div>
+              <QualityNote
+                quality={quality}
+                onRecheck={loadPreview}
+                rechecking={loadingPreview}
               />
             </div>
           ) : (
@@ -263,6 +276,75 @@ export function LessonReplacementPanel({
             </Button>
           </div>
         </div>
+      )}
+    </div>
+  );
+}
+
+type PreviewQuality = {
+  /** Best picture height playable right now, from the HLS manifest. */
+  maxHeight: number | null;
+  /** Height of the file the instructor gave us. */
+  sourceHeight: number | null;
+  encoding: { done: boolean; pctComplete: number | string | null } | null;
+};
+
+/**
+ * What the instructor is actually judging.
+ *
+ * A video plays before Cloudflare has finished the sharper renditions, so
+ * "it looks soft" right after upload is usually encoding, not the file. Saying
+ * so — with the quality that exists right now — is the difference between
+ * waiting two minutes and re-exporting a 10GB master for nothing.
+ */
+function QualityNote({
+  quality,
+  onRecheck,
+  rechecking,
+}: {
+  quality: PreviewQuality | null;
+  onRecheck: () => void;
+  rechecking: boolean;
+}) {
+  if (!quality?.maxHeight) return null;
+
+  const stillEncoding = quality.encoding ? !quality.encoding.done : false;
+  const pct = Number(quality.encoding?.pctComplete);
+  const pctLabel = Number.isFinite(pct) ? ` (${Math.round(pct)}%)` : "";
+  // Cloudflare's ladder tops out below 4K, so a 4K master never plays back at
+  // source quality — worth saying once, rather than leaving them waiting for a
+  // sharpness that isn't coming.
+  const cappedFromSource =
+    !stillEncoding &&
+    quality.sourceHeight != null &&
+    quality.sourceHeight > quality.maxHeight;
+
+  return (
+    <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
+      <span className="text-gray-700">
+        Playing at up to <strong>{quality.maxHeight}p</strong>
+      </span>
+      {stillEncoding ? (
+        <>
+          <span className="text-gray-500">
+            — sharper quality is still being prepared{pctLabel}, so judge it
+            after this finishes
+          </span>
+          <button
+            type="button"
+            onClick={onRecheck}
+            disabled={rechecking}
+            className="font-medium text-pink-600 transition-colors hover:text-pink-700 disabled:opacity-50"
+          >
+            {rechecking ? "Checking…" : "Check again"}
+          </button>
+        </>
+      ) : (
+        <span className="text-gray-500">
+          — this is the final quality
+          {cappedFromSource &&
+            `, the most we deliver (your file is ${quality.sourceHeight}p)`}
+        </span>
       )}
     </div>
   );

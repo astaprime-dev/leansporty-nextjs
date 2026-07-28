@@ -397,3 +397,33 @@ export function getSignedPlaybackURLs(token: string): {
     iframe: `${base}/iframe`,
   };
 }
+
+/**
+ * Which picture heights (1080, 720, …) can actually be played right now.
+ *
+ * `readyToStream` only promises that SOME rendition exists — Cloudflare keeps
+ * encoding the higher ones afterwards, which is why a just-uploaded video can
+ * look soft and then improve on its own. The details API doesn't expose the
+ * ladder, but the HLS master playlist lists every variant that exists, so
+ * that's what we read.
+ *
+ * Best-effort: returns [] if the manifest can't be read. Pass the HLS URL —
+ * signed (from getSignedPlaybackURLs) or public (getStreamPlaybackURL).
+ */
+export async function getAvailableHeights(hlsUrl: string): Promise<number[]> {
+  try {
+    const res = await fetch(hlsUrl, { cache: 'no-store' });
+    if (!res.ok) return [];
+    const manifest = await res.text();
+    const pattern = /RESOLUTION=\d+x(\d+)/g;
+    const heights: number[] = [];
+    let match: RegExpExecArray | null;
+    while ((match = pattern.exec(manifest)) !== null) {
+      const height = Number(match[1]);
+      if (!heights.includes(height)) heights.push(height);
+    }
+    return heights.sort((a, b) => b - a);
+  } catch {
+    return [];
+  }
+}

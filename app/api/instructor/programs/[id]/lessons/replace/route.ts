@@ -5,6 +5,8 @@ import {
   signStreamToken,
   getSignedPlaybackURLs,
   getStreamPlaybackURL,
+  getAvailableHeights,
+  getVideoDetails,
 } from "@/lib/cloudflare-stream";
 import { discardReplacedVideo } from "@/lib/programs";
 
@@ -75,6 +77,12 @@ async function loadReplacement(programId: string, contentId: string) {
  * applied. It has no workouts row yet, so get_playable_uid (which every
  * student-facing player goes through) can't authorize it — this route is the
  * owner-only equivalent, and it never leaks the uid to the client.
+ *
+ * Also reports what the instructor is actually judging: a video becomes
+ * watchable before Cloudflare has finished the higher-quality renditions, so
+ * without this you can watch a half-encoded video and conclude the file is
+ * bad. `maxHeight` is the best picture available RIGHT NOW; `encoding` says
+ * whether more is still coming.
  */
 export async function GET(
   request: NextRequest,
@@ -103,24 +111,37 @@ export async function GET(
       !!process.env.CLOUDFLARE_STREAM_KEY_ID &&
       !!process.env.CLOUDFLARE_STREAM_KEY_PEM;
 
-    if (!haveSigningKey) {
-      if (process.env.ALLOW_UNSIGNED_PLAYBACK === "true") {
-        return NextResponse.json({
-          iframe: getStreamPlaybackURL(row.cloudflare_uid).iframe,
-          durationSeconds: row.duration_seconds,
-          expiresAt: Date.now() + 60 * 60 * 1000,
-        });
-      }
+    let urls: { iframe: string; hls: string };
+    if (haveSigningKey) {
+      const token = await signStreamToken(row.cloudflare_uid, { ttlSeconds: 3600 });
+      urls = getSignedPlaybackURLs(token);
+    } else if (process.env.ALLOW_UNSIGNED_PLAYBACK === "true") {
+      urls = getStreamPlaybackURL(row.cloudflare_uid);
+    } else {
       return NextResponse.json(
         { error: "Preview is not available right now." },
         { status: 500 }
       );
     }
 
-    const token = await signStreamToken(row.cloudflare_uid, { ttlSeconds: 3600 });
+    // Both best-effort: a preview that can't report its quality is still a
+    // usable preview.
+    const [heights, details] = await Promise.all([
+      getAvailableHeights(urls.hls),
+      getVideoDetails(row.cloudflare_uid).catch(() => null),
+    ]);
+
     return NextResponse.json({
-      iframe: getSignedPlaybackURLs(token).iframe,
+      iframe: urls.iframe,
       durationSeconds: row.duration_seconds,
+      maxHeight: heights[0] ?? null,
+      sourceHeight: details?.input?.height ?? null,
+      encoding: details
+        ? {
+            done: details.status.state === "ready",
+            pctComplete: details.status.pctComplete ?? null,
+          }
+        : null,
       expiresAt: Date.now() + 60 * 60 * 1000,
     });
   } catch (error) {
