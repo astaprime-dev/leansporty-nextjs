@@ -123,6 +123,8 @@ export function ProgramManager({
 
   const [busyAction, setBusyAction] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  // Cloudflare encoding progress per pending upload uid (0–100).
+  const [pendingPct, setPendingPct] = useState<Record<string, number>>({});
 
   // Resume ready-polling for uploads that were started earlier (possibly in a
   // closed tab). The status route is what promotes a processed video into a
@@ -138,6 +140,10 @@ export function ProgramManager({
           if (!cancelled && (data.status === "ready" || data.status === "error")) {
             router.refresh();
             return;
+          }
+          if (!cancelled && data.status === "processing" && data.pctComplete != null) {
+            const pct = Math.min(100, Math.round(Number(data.pctComplete)));
+            setPendingPct((prev) => ({ ...prev, [u.uid]: pct }));
           }
         } catch {
           /* transient — retry next tick */
@@ -201,6 +207,7 @@ export function ProgramManager({
             lessons={lessons}
             hasSales={hasSales}
             pendingUploads={pendingUploads}
+            pendingPct={pendingPct}
             busyAction={busyAction}
             run={run}
             base={base}
@@ -455,6 +462,7 @@ function LessonsCard({
   lessons,
   hasSales,
   pendingUploads,
+  pendingPct,
   busyAction,
   run,
   base,
@@ -463,6 +471,7 @@ function LessonsCard({
   lessons: ManagedLesson[];
   hasSales: boolean;
   pendingUploads: { uid: string; title: string; status: "uploading" | "processing" }[];
+  pendingPct: Record<string, number>;
   busyAction: string | null;
   run: (action: string, fn: () => Promise<unknown>) => Promise<void>;
   base: string;
@@ -629,7 +638,8 @@ function LessonsCard({
               <div key={u.uid} className="flex items-center gap-3">
                 <Loader2 className="h-4 w-4 shrink-0 animate-spin" />
                 <p className="min-w-0 flex-1 font-medium">
-                  Preparing &quot;{u.title}&quot; for streaming.
+                  Preparing &quot;{u.title}&quot; for streaming
+                  {pendingPct[u.uid] !== undefined && ` — ${pendingPct[u.uid]}% done`}.
                 </p>
                 {/* A tab closed mid-upload leaves the row stuck in 'uploading'
                     forever and it keeps counting against the caps — Remove is

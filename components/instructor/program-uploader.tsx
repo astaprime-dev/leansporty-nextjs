@@ -37,6 +37,7 @@ export function ProgramUploader({
   const [phase, setPhase] = useState<Phase>("idle");
   const [progressPct, setProgressPct] = useState(0);
   const [etaSeconds, setEtaSeconds] = useState<number | null>(null);
+  const [processingPct, setProcessingPct] = useState<number | null>(null);
   // Recent (time, bytes-sent) samples for the time-left estimate; a ~30s
   // window keeps it responsive to real speed changes without jitter.
   const speedSamples = useRef<{ t: number; sent: number }[]>([]);
@@ -44,11 +45,15 @@ export function ProgramUploader({
 
   async function pollUntilReady(uid: string) {
     setPhase("processing");
+    setProcessingPct(null);
     for (;;) {
       await new Promise((r) => setTimeout(r, 5000));
       try {
         const res = await fetch(`/api/instructor/programs/lessons/${uid}/status`);
         const data = await res.json();
+        if (data.status === "processing" && data.pctComplete != null) {
+          setProcessingPct(Math.min(100, Math.round(Number(data.pctComplete))));
+        }
         if (data.status === "ready") {
           setPhase("done");
           setFile(null);
@@ -183,10 +188,11 @@ export function ProgramUploader({
             <div>
               <p className="font-medium">Upload complete — your video is safe.</p>
               <p className="mt-1">
-                We&apos;re preparing it for streaming. Small videos take a few
-                minutes; very large ones can take a while. You can leave this
-                page or add another lesson — it will appear in the list when
-                it&apos;s ready.
+                We&apos;re preparing it for streaming
+                {processingPct !== null && ` — ${processingPct}% done`}. Small
+                videos take a few minutes; very large ones can take a while. You
+                can leave this page or add another lesson — it will appear in
+                the list when it&apos;s ready.
               </p>
             </div>
           </div>
