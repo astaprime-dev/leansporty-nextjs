@@ -631,47 +631,7 @@ function LessonsCard({
         </span>
       </div>
 
-      {pendingUploads.length > 0 && (
-        <Alert variant="success" hideIcon className="mb-4">
-          <div className="space-y-2">
-            {pendingUploads.map((u) => (
-              <div key={u.uid} className="flex items-center gap-3">
-                <Loader2 className="h-4 w-4 shrink-0 animate-spin" />
-                <p className="min-w-0 flex-1 font-medium">
-                  Preparing &quot;{u.title}&quot; for streaming
-                  {pendingPct[u.uid] !== undefined && ` — ${pendingPct[u.uid]}% done`}.
-                </p>
-                {/* A tab closed mid-upload leaves the row stuck in 'uploading'
-                    forever and it keeps counting against the caps — Remove is
-                    the only way to free the slot. Processing rows are about to
-                    become lessons; the API refuses to remove those. */}
-                {u.status === "uploading" && (
-                  <button
-                    type="button"
-                    onClick={() =>
-                      run(`remove-upload-${u.uid}`, () =>
-                        api(`/api/instructor/programs/lessons/${u.uid}`, "DELETE")
-                      )
-                    }
-                    disabled={busyAction !== null}
-                    className="shrink-0 text-xs font-medium text-gray-500 transition-colors hover:text-red-600 disabled:opacity-50"
-                  >
-                    {busyAction === `remove-upload-${u.uid}` ? "Removing…" : "Remove"}
-                  </button>
-                )}
-              </div>
-            ))}
-            <p>
-              Meanwhile you can edit details, add more lessons, or reorder — the
-              video appears here when it&apos;s ready. If an upload got stuck
-              (for example the tab closed mid-upload), remove it to free the
-              slot.
-            </p>
-          </div>
-        </Alert>
-      )}
-
-      {view.length === 0 ? (
+      {view.length === 0 && pendingUploads.length === 0 ? (
         <EmptyState
           title="No lessons yet"
           description="Upload a video or add a recording of one of your past classes below."
@@ -943,7 +903,59 @@ function LessonsCard({
               )}
             </li>
           ))}
+          {/* In-flight uploads, styled like the lesson rows they will become. */}
+          {pendingUploads.map((u) => (
+            <li key={u.uid} className="rounded-xl border border-pink-100 px-4 py-3">
+              <div className="flex flex-wrap items-center gap-3">
+                <div className="flex h-14 w-24 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-pink-50 to-rose-50">
+                  <Film className="h-4 w-4 text-pink-300" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="truncate font-medium text-gray-900">{u.title}</p>
+                  <div className="mt-1">
+                    <Badge
+                      variant="secondary"
+                      className="gap-1.5 border-transparent bg-pink-50 text-pink-600"
+                    >
+                      <Loader2 className="h-3 w-3 animate-spin" />
+                      {u.status === "uploading"
+                        ? "Uploading"
+                        : pendingPct[u.uid] !== undefined
+                          ? `Processing (${pendingPct[u.uid]}%)`
+                          : "Processing"}
+                    </Badge>
+                  </div>
+                </div>
+                {/* A tab closed mid-upload leaves the row stuck in 'uploading'
+                    forever and it keeps counting against the caps — Remove is
+                    the only way to free the slot. Processing rows are about to
+                    become lessons; the API refuses to remove those. */}
+                {u.status === "uploading" && (
+                  <button
+                    type="button"
+                    onClick={() =>
+                      run(`remove-upload-${u.uid}`, () =>
+                        api(`/api/instructor/programs/lessons/${u.uid}`, "DELETE")
+                      )
+                    }
+                    disabled={busyAction !== null}
+                    className="shrink-0 text-xs font-medium text-gray-500 transition-colors hover:text-red-600 disabled:opacity-50"
+                  >
+                    {busyAction === `remove-upload-${u.uid}` ? "Removing…" : "Remove"}
+                  </button>
+                )}
+              </div>
+            </li>
+          ))}
         </ul>
+      )}
+
+      {pendingUploads.length > 0 && (
+        <p className="mt-3 text-sm text-gray-500">
+          Videos become lessons when processing finishes — meanwhile you can
+          edit details or add more. If an upload got stuck (for example the tab
+          closed mid-upload), remove it to free the slot.
+        </p>
       )}
 
       {/* Add lesson */}
