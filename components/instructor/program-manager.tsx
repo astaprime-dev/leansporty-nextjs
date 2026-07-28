@@ -939,23 +939,28 @@ function LessonsCard({
       {/* Add lesson */}
       <div className="mt-6 border-t border-pink-100 pt-6">
         <h3 className="mb-3 font-medium text-gray-900">Add a lesson</h3>
-        <div className="mb-4 flex gap-2">
-          <Button
-            type="button"
-            variant={addMode === "upload" ? "brand" : "outline"}
-            size="sm"
-            onClick={() => setAddMode("upload")}
-          >
-            Upload a video
-          </Button>
-          <Button
-            type="button"
-            variant={addMode === "reuse" ? "brand" : "outline"}
-            size="sm"
-            onClick={() => setAddMode("reuse")}
-          >
-            Use a class recording
-          </Button>
+        <div className="mb-4 flex gap-6 border-b border-pink-100" role="tablist">
+          {(
+            [
+              { key: "upload", label: "Upload a video" },
+              { key: "reuse", label: "Use a class recording" },
+            ] as const
+          ).map((tab) => (
+            <button
+              key={tab.key}
+              type="button"
+              role="tab"
+              aria-selected={addMode === tab.key}
+              onClick={() => setAddMode(tab.key)}
+              className={`-mb-px border-b-2 pb-2 text-sm font-medium transition-colors ${
+                addMode === tab.key
+                  ? "border-pink-500 text-pink-600"
+                  : "border-transparent text-gray-500 hover:text-gray-700"
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
         </div>
 
         {addMode === "upload" ? (
