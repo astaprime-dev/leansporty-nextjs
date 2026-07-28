@@ -21,6 +21,13 @@ import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Alert } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { EmptyState } from "@/components/empty-state";
 import { EarnPreview } from "@/components/instructor/earn-preview";
 import { ProgramUploader } from "@/components/instructor/program-uploader";
@@ -481,6 +488,7 @@ function LessonsCard({
   const [recordings, setRecordings] = useState<Recording[] | null>(null);
   const [renaming, setRenaming] = useState<{ contentId: string; value: string } | null>(null);
   const [uploadingThumbFor, setUploadingThumbFor] = useState<string | null>(null);
+  const [framePickerFor, setFramePickerFor] = useState<string | null>(null);
   const [details, setDetails] = useState<{
     contentId: string;
     styles: string;
@@ -646,35 +654,51 @@ function LessonsCard({
             >
               <div className="flex flex-wrap items-center gap-3">
               <div className="group/thumb relative h-14 w-24 shrink-0 overflow-hidden rounded-lg bg-gradient-to-br from-pink-50 to-rose-50">
-                <label
-                  className="absolute inset-0 cursor-pointer"
-                  title={
-                    (l.thumbnailUrl ? "Change the lesson image" : "Add a lesson image") +
-                    " — wide 16:9 photo, at least 1280×720. JPG, PNG or WebP, up to 5MB."
-                  }
-                >
-                  {l.thumbnailUrl ? (
-                    <ThumbImg key={l.thumbnailUrl} src={l.thumbnailUrl} />
-                  ) : (
-                    <span className="flex h-full w-full items-center justify-center">
-                      <Film className="h-4 w-4 text-pink-300" />
-                    </span>
-                  )}
-                  <span className="absolute inset-0 flex items-center justify-center bg-black/40 text-[10px] font-medium text-white opacity-0 transition group-hover/thumb:opacity-100">
-                    {uploadingThumbFor === l.contentId ? "Uploading…" : "Change image"}
+                {l.thumbnailUrl ? (
+                  <ThumbImg key={l.thumbnailUrl} src={l.thumbnailUrl} />
+                ) : (
+                  <span className="flex h-full w-full items-center justify-center">
+                    <Film className="h-4 w-4 text-pink-300" />
                   </span>
-                  <input
-                    type="file"
-                    accept="image/jpeg,image/png,image/webp"
-                    className="hidden"
-                    disabled={uploadingThumbFor !== null}
-                    onChange={(e) => {
-                      const f = e.target.files?.[0];
-                      if (f) void uploadLessonThumb(l.contentId, f);
-                      e.target.value = "";
-                    }}
-                  />
-                </label>
+                )}
+                <div className="absolute inset-0 flex flex-col items-stretch justify-center bg-black/50 opacity-0 transition group-hover/thumb:opacity-100">
+                  {uploadingThumbFor === l.contentId ? (
+                    <span className="text-center text-[10px] font-medium text-white">
+                      Uploading…
+                    </span>
+                  ) : (
+                    <>
+                      <label
+                        className="cursor-pointer py-1 text-center text-[10px] font-medium leading-none text-white hover:bg-black/30"
+                        title={
+                          (l.thumbnailUrl ? "Change the lesson image" : "Add a lesson image") +
+                          " — wide 16:9 photo, at least 1280×720. JPG, PNG or WebP, up to 5MB."
+                        }
+                      >
+                        Upload image
+                        <input
+                          type="file"
+                          accept="image/jpeg,image/png,image/webp"
+                          className="hidden"
+                          disabled={uploadingThumbFor !== null}
+                          onChange={(e) => {
+                            const f = e.target.files?.[0];
+                            if (f) void uploadLessonThumb(l.contentId, f);
+                            e.target.value = "";
+                          }}
+                        />
+                      </label>
+                      <button
+                        type="button"
+                        className="py-1 text-center text-[10px] font-medium leading-none text-white hover:bg-black/30"
+                        title="Pick a frame from the video as the lesson image"
+                        onClick={() => setFramePickerFor(l.contentId)}
+                      >
+                        From video
+                      </button>
+                    </>
+                  )}
+                </div>
                 {l.thumbnailUrl && (
                   <button
                     type="button"
@@ -958,6 +982,23 @@ function LessonsCard({
         </p>
       )}
 
+      {framePickerFor && (
+        <FramePickerDialog
+          base={base}
+          contentId={framePickerFor}
+          onClose={() => setFramePickerFor(null)}
+          onSaved={(url) => {
+            setView((prev) =>
+              prev.map((l) =>
+                l.contentId === framePickerFor ? { ...l, thumbnailUrl: url } : l
+              )
+            );
+            setFramePickerFor(null);
+            router.refresh();
+          }}
+        />
+      )}
+
       {/* Add lesson */}
       <div className="mt-6 border-t border-pink-100 pt-6">
         <h3 className="mb-3 font-medium text-gray-900">Add a lesson</h3>
@@ -1168,5 +1209,132 @@ function PublishCard({
         )}
       </div>
     </section>
+  );
+}
+
+/**
+ * Pick a lesson thumbnail straight from the video: slider + live frame
+ * preview via Cloudflare Stream's ?time= thumbnails (the preview base is
+ * minted server-side so signed videos work too). Saving copies the chosen
+ * frame to Cloudflare Images.
+ */
+function FramePickerDialog({
+  base,
+  contentId,
+  onClose,
+  onSaved,
+}: {
+  base: string;
+  contentId: string;
+  onClose: () => void;
+  onSaved: (url: string) => void;
+}) {
+  const [info, setInfo] = useState<{
+    previewBase: string;
+    durationSeconds: number;
+  } | null>(null);
+  const [time, setTime] = useState(0);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch(
+          `${base}/lessons/frame-thumbnail?contentId=${contentId}`
+        );
+        const data = await res.json();
+        if (!res.ok) {
+          throw new Error(data.error ?? "Could not load the video preview.");
+        }
+        if (!cancelled) {
+          setInfo(data);
+          setTime(
+            Math.min(120, Math.max(1, Math.round((data.durationSeconds || 2) / 2)))
+          );
+        }
+      } catch (e) {
+        if (!cancelled) {
+          setError(
+            e instanceof Error ? e.message : "Could not load the video preview."
+          );
+        }
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [base, contentId]);
+
+  async function save() {
+    setSaving(true);
+    setError(null);
+    try {
+      const data = await api(`${base}/lessons/frame-thumbnail`, "POST", {
+        contentId,
+        timeSeconds: time,
+      });
+      onSaved(data.url);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Failed to set the image.");
+      setSaving(false);
+    }
+  }
+
+  return (
+    <Dialog
+      open
+      onOpenChange={(open) => {
+        if (!open && !saving) onClose();
+      }}
+    >
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle>Pick a frame from the video</DialogTitle>
+        </DialogHeader>
+        {error && <Alert variant="error">{error}</Alert>}
+        {!info && !error && (
+          <p className="text-sm text-gray-500">Loading the video preview…</p>
+        )}
+        {info && (
+          <div className="space-y-3">
+            <div className="aspect-video w-full overflow-hidden rounded-lg bg-gradient-to-br from-pink-50 to-rose-50">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={`${info.previewBase}?time=${time}s&height=360`}
+                alt=""
+                className="h-full w-full object-cover"
+              />
+            </div>
+            <input
+              type="range"
+              min={0}
+              max={Math.max(0, Math.floor(info.durationSeconds) - 1)}
+              step={1}
+              value={time}
+              onChange={(e) => setTime(Number(e.target.value))}
+              className="w-full accent-pink-500"
+            />
+            <p className="text-center text-sm text-gray-600">
+              {formatDuration(time) || "0:00"} / {formatDuration(info.durationSeconds)}
+            </p>
+          </div>
+        )}
+        <DialogFooter>
+          <Button type="button" variant="outline" onClick={onClose} disabled={saving}>
+            Cancel
+          </Button>
+          <Button
+            type="button"
+            variant="brand"
+            onClick={save}
+            disabled={saving || !info}
+          >
+            {saving ? "Saving…" : "Use this frame"}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }
