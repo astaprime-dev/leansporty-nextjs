@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getOwnedProgram } from "@/lib/program-auth";
 import { getServiceRoleClient } from "@/lib/stripe";
 import { createDirectUploadTus } from "@/lib/cloudflare-stream";
-import { PROGRAM_CAPS, storedUploadSeconds } from "@/lib/programs";
+import { PROGRAM_CAPS, storedUploadSeconds, assertReplaceable } from "@/lib/programs";
 
 export const runtime = "nodejs";
 
@@ -15,12 +15,17 @@ const MAX_UPLOAD_BYTES = 20 * 1024 * 1024 * 1024;
 
 /**
  * POST /api/instructor/programs/[id]/lessons/upload-url
- * { title, fileSizeBytes }
+ * { title, fileSizeBytes, replacesWorkoutId? }
  *
  * Checks the caps, mints a one-time Cloudflare tus upload URL (with
  * requireSignedURLs + max duration locked in), and records the attempt in
  * program_uploads. The browser uploads directly to Cloudflare; the lesson
  * appears via the status route once Cloudflare reports it ready.
+ *
+ * With replacesWorkoutId, the upload is a NEW VIDEO FOR AN EXISTING LESSON: it
+ * adds no lesson (so the per-program cap doesn't apply), the status route
+ * leaves it staged instead of promoting it, and the lesson keeps playing its
+ * current video until the instructor applies the replacement.
  */
 export async function POST(
   request: NextRequest,
@@ -53,25 +58,39 @@ export async function POST(
       );
     }
 
+    const replacesWorkoutId =
+      typeof data?.replacesWorkoutId === "string" && data.replacesWorkoutId
+        ? data.replacesWorkoutId
+        : null;
+
     const db = getServiceRoleClient();
 
-    // Cap: lessons per program (uploads in flight count via program_uploads).
-    const [{ count: itemCount }, { count: inflightCount }] = await Promise.all([
-      db
-        .from("product_items")
-        .select("content_id", { count: "exact", head: true })
-        .eq("product_id", program.id),
-      db
-        .from("program_uploads")
-        .select("id", { count: "exact", head: true })
-        .eq("product_id", program.id)
-        .in("status", ["uploading", "processing"]),
-    ]);
-    if ((itemCount ?? 0) + (inflightCount ?? 0) >= PROGRAM_CAPS.maxLessonsPerProgram) {
-      return NextResponse.json(
-        { error: `A program can have up to ${PROGRAM_CAPS.maxLessonsPerProgram} lessons.` },
-        { status: 400 }
-      );
+    if (replacesWorkoutId) {
+      const guard = await assertReplaceable(program.id, replacesWorkoutId);
+      if (!guard.ok) {
+        return NextResponse.json({ error: guard.error }, { status: guard.status });
+      }
+    } else {
+      // Cap: lessons per program (uploads in flight count via program_uploads).
+      // Replacements are excluded — they become no new lesson.
+      const [{ count: itemCount }, { count: inflightCount }] = await Promise.all([
+        db
+          .from("product_items")
+          .select("content_id", { count: "exact", head: true })
+          .eq("product_id", program.id),
+        db
+          .from("program_uploads")
+          .select("id", { count: "exact", head: true })
+          .eq("product_id", program.id)
+          .in("status", ["uploading", "processing"])
+          .is("replaces_workout_id", null),
+      ]);
+      if ((itemCount ?? 0) + (inflightCount ?? 0) >= PROGRAM_CAPS.maxLessonsPerProgram) {
+        return NextResponse.json(
+          { error: `A program can have up to ${PROGRAM_CAPS.maxLessonsPerProgram} lessons.` },
+          { status: 400 }
+        );
+      }
     }
 
     // Cap: stored minutes per instructor.
@@ -98,6 +117,7 @@ export async function POST(
       cloudflare_uid: uid,
       title,
       status: "uploading",
+      replaces_workout_id: replacesWorkoutId,
     });
     if (error) {
       console.error("program_uploads insert failed:", error);

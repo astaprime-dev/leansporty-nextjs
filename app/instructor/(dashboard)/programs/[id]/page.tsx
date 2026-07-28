@@ -7,6 +7,7 @@ import {
   ProgramManager,
   type ManagedLesson,
   type ManagedProgram,
+  type LessonReplacement,
 } from "@/components/instructor/program-manager";
 import type { ProductConfig } from "@/types/commerce";
 
@@ -75,15 +76,31 @@ export default async function ManageProgramPage({
   // In-flight uploads (uploading/processing) — instructor-readable via RLS.
   // Passed down so the manager can poll their status; polling is what promotes
   // a ready video into a lesson, so the page resumes it after navigation.
+  // Replacements are excluded: they belong to a lesson that already exists.
   const { data: pendingRows } = await supabase
     .from("program_uploads")
     .select("cloudflare_uid, title, status")
     .eq("product_id", product.id)
-    .in("status", ["uploading", "processing"]);
+    .in("status", ["uploading", "processing"])
+    .is("replaces_workout_id", null);
   const pendingUploads = (pendingRows ?? []).map((r) => ({
     uid: r.cloudflare_uid,
     title: r.title,
     status: r.status as "uploading" | "processing",
+  }));
+
+  // New videos staged for existing lessons, at any stage — including 'applied',
+  // where the lesson is already using the new video but the old one is kept
+  // until the instructor discards it.
+  const { data: replacementRows } = await supabase
+    .from("program_uploads")
+    .select("cloudflare_uid, status, replaces_workout_id")
+    .eq("product_id", product.id)
+    .not("replaces_workout_id", "is", null);
+  const replacements: LessonReplacement[] = (replacementRows ?? []).map((r) => ({
+    uid: r.cloudflare_uid,
+    contentId: r.replaces_workout_id as string,
+    status: r.status as LessonReplacement["status"],
   }));
 
   const hasSales = await programHasSales(product.id);
@@ -123,6 +140,7 @@ export default async function ManageProgramPage({
         lessons={lessons}
         hasSales={hasSales}
         pendingUploads={pendingUploads}
+        replacements={replacements}
       />
 
       <StudentFeedback productId={product.id} lessons={lessons} />

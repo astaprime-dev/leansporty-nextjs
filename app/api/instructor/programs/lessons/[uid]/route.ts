@@ -14,6 +14,11 @@ export const runtime = "nodejs";
  * may be removed: 'processing' is refused (the status poller is about to
  * promote it — deleting would race the workouts insert), and promoted rows
  * are real lessons, removed via the program's lessons DELETE instead.
+ *
+ * This is also "cancel the new video" for a pending replacement. Those are
+ * safe to cancel at any point before they're applied, including while
+ * processing: there is no promotion to race, and the lesson is still playing
+ * its current video regardless.
  */
 export async function DELETE(
   _request: NextRequest,
@@ -29,7 +34,7 @@ export async function DELETE(
     const db = getServiceRoleClient();
     const { data: upload } = await db
       .from("program_uploads")
-      .select("id, instructor_id, status, workout_id")
+      .select("id, instructor_id, status, workout_id, replaces_workout_id")
       .eq("cloudflare_uid", uid)
       .maybeSingle();
     if (!upload || upload.instructor_id !== auth.instructorId) {
@@ -37,11 +42,15 @@ export async function DELETE(
     }
     if (upload.workout_id) {
       return NextResponse.json(
-        { error: "This video is already a lesson — remove the lesson instead." },
+        {
+          error: upload.replaces_workout_id
+            ? "This video is already in use. Go back to the old video first."
+            : "This video is already a lesson — remove the lesson instead.",
+        },
         { status: 409 }
       );
     }
-    if (upload.status === "processing") {
+    if (upload.status === "processing" && !upload.replaces_workout_id) {
       return NextResponse.json(
         { error: "This video is processing and will appear as a lesson shortly." },
         { status: 409 }

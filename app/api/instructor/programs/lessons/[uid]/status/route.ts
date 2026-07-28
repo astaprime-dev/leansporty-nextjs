@@ -31,7 +31,9 @@ export async function GET(
     const db = getServiceRoleClient();
     const { data: upload } = await db
       .from("program_uploads")
-      .select("id, instructor_id, product_id, title, status, workout_id")
+      .select(
+        "id, instructor_id, product_id, title, status, workout_id, replaces_workout_id"
+      )
       .eq("cloudflare_uid", uid)
       .maybeSingle();
     if (!upload || upload.instructor_id !== auth.instructorId) {
@@ -43,6 +45,11 @@ export async function GET(
     }
     if (upload.status === "error") {
       return NextResponse.json({ status: "error" });
+    }
+    // A replacement already swapped in; its lifecycle continues via the
+    // replace route (revert / discard), not here.
+    if (upload.status === "applied") {
+      return NextResponse.json({ status: "applied", workoutId: upload.workout_id });
     }
 
     let video;
@@ -74,6 +81,21 @@ export async function GET(
         status: "processing",
         pctComplete: video.status.pctComplete ?? null,
       });
+    }
+
+    // A replacement is NOT promoted: the lesson it targets already exists and
+    // keeps its current video until the instructor previews this one and
+    // applies it. Just record that it's ready to be applied.
+    if (upload.replaces_workout_id) {
+      await db
+        .from("program_uploads")
+        .update({
+          status: "ready",
+          duration_seconds: Math.round(video.duration ?? 0),
+        })
+        .eq("id", upload.id)
+        .in("status", ["uploading", "processing"]);
+      return NextResponse.json({ status: "ready" });
     }
 
     // Ready → promote once.

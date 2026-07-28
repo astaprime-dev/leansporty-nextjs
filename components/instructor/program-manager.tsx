@@ -12,6 +12,7 @@ import {
   Loader2,
   Pencil,
   Plus,
+  RefreshCcw,
   SlidersHorizontal,
   Trash2,
   X,
@@ -33,8 +34,15 @@ import {
 import { EmptyState } from "@/components/empty-state";
 import { EarnPreview } from "@/components/instructor/earn-preview";
 import { ProgramUploader } from "@/components/instructor/program-uploader";
+import { LinkImporter } from "@/components/instructor/link-importer";
+import {
+  LessonReplacementPanel,
+  type LessonReplacement,
+} from "@/components/instructor/lesson-replacement";
 import { ShareKit } from "@/components/instructor/share-kit";
 import { formatDuration, formatPrice } from "@/lib/challenge";
+
+export type { LessonReplacement };
 
 export type ManagedLesson = {
   contentId: string;
@@ -119,6 +127,7 @@ export function ProgramManager({
   lessons,
   hasSales,
   pendingUploads,
+  replacements,
 }: {
   program: ManagedProgram;
   lessons: ManagedLesson[];
@@ -126,6 +135,9 @@ export function ProgramManager({
   /** Uploads still uploading/processing; polling them here is what promotes
    *  a ready video into a lesson, so it must survive page navigation. */
   pendingUploads: { uid: string; title: string; status: "uploading" | "processing" }[];
+  /** New videos staged for existing lessons, at every stage of the replace
+   *  lifecycle. Never become lessons of their own. */
+  replacements: LessonReplacement[];
 }) {
   const router = useRouter();
   const base = `/api/instructor/programs/${program.id}`;
@@ -137,12 +149,20 @@ export function ProgramManager({
 
   // Resume ready-polling for uploads that were started earlier (possibly in a
   // closed tab). The status route is what promotes a processed video into a
-  // lesson, so this keeps "you can leave this page" true.
+  // lesson, so this keeps "you can leave this page" true. Replacements ride
+  // the same route — polling is what moves them to "ready to apply".
+  const inFlight = [
+    ...pendingUploads,
+    ...replacements.filter(
+      (r) => r.status === "uploading" || r.status === "processing"
+    ),
+  ];
+  const inFlightKey = inFlight.map((u) => `${u.uid}:${u.status}`).join(",");
   useEffect(() => {
-    if (pendingUploads.length === 0) return;
+    if (inFlight.length === 0) return;
     let cancelled = false;
     const timer = setInterval(async () => {
-      for (const u of pendingUploads) {
+      for (const u of inFlight) {
         try {
           const res = await fetch(`/api/instructor/programs/lessons/${u.uid}/status`);
           const data = await res.json();
@@ -163,7 +183,9 @@ export function ProgramManager({
       cancelled = true;
       clearInterval(timer);
     };
-  }, [pendingUploads, router]);
+    // inFlight is rebuilt each render; key on its contents, not its identity.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [inFlightKey, router]);
 
   async function run(action: string, fn: () => Promise<unknown>) {
     setError(null);
@@ -216,6 +238,7 @@ export function ProgramManager({
             lessons={lessons}
             hasSales={hasSales}
             pendingUploads={pendingUploads}
+            replacements={replacements}
             pendingPct={pendingPct}
             busyAction={busyAction}
             run={run}
@@ -471,6 +494,7 @@ function LessonsCard({
   lessons,
   hasSales,
   pendingUploads,
+  replacements,
   pendingPct,
   busyAction,
   run,
@@ -480,6 +504,7 @@ function LessonsCard({
   lessons: ManagedLesson[];
   hasSales: boolean;
   pendingUploads: { uid: string; title: string; status: "uploading" | "processing" }[];
+  replacements: LessonReplacement[];
   pendingPct: Record<string, number>;
   busyAction: string | null;
   run: (action: string, fn: () => Promise<unknown>) => Promise<void>;
@@ -489,6 +514,10 @@ function LessonsCard({
   const [addOpen, setAddOpen] = useState(false);
   const [addMode, setAddMode] = useState<"upload" | "link" | "reuse">("upload");
   const [reuseTitle, setReuseTitle] = useState("");
+  // Lesson whose replace panel is expanded. A lesson with a replacement in
+  // any state shows the panel regardless, so its status is never hidden.
+  const [replaceOpenFor, setReplaceOpenFor] = useState<string | null>(null);
+  const replacementByLesson = new Map(replacements.map((r) => [r.contentId, r]));
 
   // Success = the new item showing up in the list above, so the form closes
   // itself instead of announcing next to a reset form.
@@ -820,6 +849,25 @@ function LessonsCard({
                   type="button"
                   variant="ghost"
                   size="sm"
+                  title="Replace the video (the current one keeps playing until you apply)"
+                  onClick={() =>
+                    setReplaceOpenFor(
+                      replaceOpenFor === l.contentId ? null : l.contentId
+                    )
+                  }
+                  className={
+                    replacementByLesson.has(l.contentId) ||
+                    replaceOpenFor === l.contentId
+                      ? "text-pink-500"
+                      : "text-gray-400"
+                  }
+                >
+                  <RefreshCcw className="h-4 w-4" />
+                </Button>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
                   title={l.isPreview ? "Remove free preview" : "Make free preview"}
                   onClick={() => setPreview(l.contentId)}
                   disabled={busyAction !== null}
@@ -935,6 +983,30 @@ function LessonsCard({
                     </Button>
                   </div>
                 </div>
+              )}
+
+              {/* Replace the lesson's video. Stays open on its own whenever a
+                  replacement exists, so its state is never hidden behind a
+                  click the instructor doesn't know to make. */}
+              {(replaceOpenFor === l.contentId ||
+                replacementByLesson.has(l.contentId)) && (
+                <LessonReplacementPanel
+                  base={base}
+                  programId={program.id}
+                  contentId={l.contentId}
+                  lessonTitle={l.itemLabel || l.title || "Untitled lesson"}
+                  replacement={replacementByLesson.get(l.contentId) ?? null}
+                  processingPct={
+                    pendingPct[replacementByLesson.get(l.contentId)?.uid ?? ""]
+                  }
+                  busyAction={busyAction}
+                  run={run}
+                  onClose={() => setReplaceOpenFor(null)}
+                  onRefresh={() => {
+                    setReplaceOpenFor(l.contentId);
+                    router.refresh();
+                  }}
+                />
               )}
             </li>
           ))}
@@ -1451,82 +1523,3 @@ function FramePickerDialog({
   );
 }
 
-/**
- * "From a link" lesson import: paste a Google Drive share link (or any direct
- * video URL) and Cloudflare pulls the file server-side — nothing goes through
- * the instructor's device. Mirrors the uploader's layout (same Lesson title
- * field first) so all three add-lesson modes feel identical.
- */
-function LinkImporter({
-  base,
-  onStarted,
-}: {
-  base: string;
-  onStarted: () => void;
-}) {
-  const [title, setTitle] = useState("");
-  const [url, setUrl] = useState("");
-  const [busy, setBusy] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  async function start() {
-    if (!title.trim() || !url.trim()) return;
-    setBusy(true);
-    setError(null);
-    try {
-      await api(`${base}/lessons/link`, "POST", {
-        title: title.trim(),
-        url: url.trim(),
-      });
-      onStarted();
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "Failed to start the import.");
-      setBusy(false);
-    }
-  }
-
-  return (
-    <div className="space-y-4">
-      <div className="space-y-2">
-        <Label htmlFor="link-title">Lesson title</Label>
-        <Input
-          id="link-title"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          placeholder="e.g. Day 1 — Warm up and basics"
-          maxLength={255}
-          disabled={busy}
-        />
-      </div>
-
-      <div className="space-y-2">
-        <Label htmlFor="link-url">Video link</Label>
-        <Input
-          id="link-url"
-          type="url"
-          value={url}
-          onChange={(e) => setUrl(e.target.value)}
-          placeholder="https://drive.google.com/file/d/…"
-          disabled={busy}
-        />
-        <p className="text-sm text-gray-500">
-          Paste a Google Drive share link (set the file to &quot;Anyone with the
-          link&quot;) or a direct video link. We fetch the video for you — no
-          download or upload on your side, and you can close this page right
-          away.
-        </p>
-      </div>
-
-      {error && <Alert variant="error">{error}</Alert>}
-
-      <Button
-        type="button"
-        variant="brand"
-        onClick={start}
-        disabled={busy || !title.trim() || !url.trim()}
-      >
-        {busy ? "Starting…" : "Import Video"}
-      </Button>
-    </div>
-  );
-}

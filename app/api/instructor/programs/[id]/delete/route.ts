@@ -42,11 +42,14 @@ export async function POST(
     // their workouts rows. (Reused recordings have no program_uploads row.)
     const { data: uploads } = await db
       .from("program_uploads")
-      .select("cloudflare_uid, workout_id")
+      .select("cloudflare_uid, workout_id, replaced_uid")
       .eq("product_id", program.id);
 
     for (const u of uploads ?? []) {
       await deleteVideo(u.cloudflare_uid); // best-effort; logs internally
+      // A lesson whose video was replaced still holds the video it replaced,
+      // kept so the instructor could go back. Nothing else reclaims it.
+      if (u.replaced_uid) await deleteVideo(u.replaced_uid);
     }
     const workoutIds = (uploads ?? [])
       .map((u) => u.workout_id)

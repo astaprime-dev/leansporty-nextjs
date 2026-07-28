@@ -1,7 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getOwnedProgram } from "@/lib/program-auth";
 import { getServiceRoleClient } from "@/lib/stripe";
-import { PROGRAM_CAPS, programHasSales } from "@/lib/programs";
+import { deleteVideo } from "@/lib/cloudflare-stream";
+import {
+  PROGRAM_CAPS,
+  programHasSales,
+  discardReplacedVideo,
+} from "@/lib/programs";
 
 export const runtime = "nodejs";
 
@@ -147,6 +152,24 @@ export async function DELETE(
     }
 
     const db = getServiceRoleClient();
+
+    // Reclaim any replacement video staged for this lesson — nothing else
+    // garbage-collects Cloudflare objects, and the lesson is about to go away.
+    const { data: replacements } = await db
+      .from("program_uploads")
+      .select("id, cloudflare_uid, status, replaced_uid")
+      .eq("replaces_workout_id", contentId);
+    for (const r of replacements ?? []) {
+      if (r.status === "applied") {
+        // The lesson is running this video and still holds the original;
+        // drop the original, then let the row fall away with the lesson.
+        await discardReplacedVideo(r);
+      } else {
+        await deleteVideo(r.cloudflare_uid);
+        await db.from("program_uploads").delete().eq("id", r.id);
+      }
+    }
+
     const { error } = await db
       .from("product_items")
       .delete()

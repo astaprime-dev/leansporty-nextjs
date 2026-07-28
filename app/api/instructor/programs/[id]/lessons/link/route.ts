@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getOwnedProgram } from "@/lib/program-auth";
 import { getServiceRoleClient } from "@/lib/stripe";
 import { copyStreamFromUrl } from "@/lib/cloudflare-stream";
-import { PROGRAM_CAPS, storedUploadSeconds } from "@/lib/programs";
+import { PROGRAM_CAPS, storedUploadSeconds, assertReplaceable } from "@/lib/programs";
 
 export const runtime = "nodejs";
 // Google can take a while to answer for multi-GB files; the default 10s
@@ -10,7 +10,7 @@ export const runtime = "nodejs";
 export const maxDuration = 60;
 
 /**
- * POST /api/instructor/programs/[id]/lessons/link  { title, url }
+ * POST /api/instructor/programs/[id]/lessons/link  { title, url, replacesWorkoutId? }
  *
  * "Add a lesson from a link": Cloudflare pulls the video from the URL
  * server-side (nothing passes through us or the instructor's device). Google
@@ -18,6 +18,9 @@ export const maxDuration = 60;
  * the file must be shared "anyone with the link". Everything downstream
  * (processing badge, promotion to a lesson, auto-thumbnail) is the same
  * pipeline as a direct upload.
+ *
+ * With replacesWorkoutId, the import is a new video for an EXISTING lesson —
+ * staged, not promoted, and applied only when the instructor says so.
  */
 
 /** Extract the file id from the common Drive share-link shapes. */
@@ -121,25 +124,38 @@ export async function POST(
       }
     }
 
+    const replacesWorkoutId =
+      typeof data?.replacesWorkoutId === "string" && data.replacesWorkoutId
+        ? data.replacesWorkoutId
+        : null;
+
     const db = getServiceRoleClient();
 
-    // Same caps as direct uploads.
-    const [{ count: itemCount }, { count: inflightCount }] = await Promise.all([
-      db
-        .from("product_items")
-        .select("content_id", { count: "exact", head: true })
-        .eq("product_id", program.id),
-      db
-        .from("program_uploads")
-        .select("id", { count: "exact", head: true })
-        .eq("product_id", program.id)
-        .in("status", ["uploading", "processing"]),
-    ]);
-    if ((itemCount ?? 0) + (inflightCount ?? 0) >= PROGRAM_CAPS.maxLessonsPerProgram) {
-      return NextResponse.json(
-        { error: `A program can have up to ${PROGRAM_CAPS.maxLessonsPerProgram} lessons.` },
-        { status: 400 }
-      );
+    // Same caps as direct uploads — except a replacement adds no lesson.
+    if (replacesWorkoutId) {
+      const guard = await assertReplaceable(program.id, replacesWorkoutId);
+      if (!guard.ok) {
+        return NextResponse.json({ error: guard.error }, { status: guard.status });
+      }
+    } else {
+      const [{ count: itemCount }, { count: inflightCount }] = await Promise.all([
+        db
+          .from("product_items")
+          .select("content_id", { count: "exact", head: true })
+          .eq("product_id", program.id),
+        db
+          .from("program_uploads")
+          .select("id", { count: "exact", head: true })
+          .eq("product_id", program.id)
+          .in("status", ["uploading", "processing"])
+          .is("replaces_workout_id", null),
+      ]);
+      if ((itemCount ?? 0) + (inflightCount ?? 0) >= PROGRAM_CAPS.maxLessonsPerProgram) {
+        return NextResponse.json(
+          { error: `A program can have up to ${PROGRAM_CAPS.maxLessonsPerProgram} lessons.` },
+          { status: 400 }
+        );
+      }
     }
     const usedSeconds = await storedUploadSeconds(instructorId);
     if (usedSeconds >= PROGRAM_CAPS.maxStoredMinutesPerInstructor * 60) {
@@ -164,6 +180,7 @@ export async function POST(
       cloudflare_uid: uid,
       title,
       status: "processing",
+      replaces_workout_id: replacesWorkoutId,
     });
     if (error) {
       console.error("program_uploads insert failed:", error);

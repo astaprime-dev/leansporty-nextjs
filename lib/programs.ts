@@ -1,4 +1,5 @@
 import { getServiceRoleClient } from "@/lib/stripe";
+import { deleteVideo } from "@/lib/cloudflare-stream";
 
 /**
  * V1 cost/abuse caps for instructor programs. Storage is billed to the
@@ -61,4 +62,102 @@ export async function storedUploadSeconds(instructorId: string): Promise<number>
     total += row.duration_seconds ?? PROGRAM_CAPS.maxLessonSeconds;
   }
   return total;
+}
+
+/* ------------------------------------------------------------------ */
+/* Replace video                                                       */
+/* ------------------------------------------------------------------ */
+
+/** Statuses that mean a replacement is still in play for a lesson. */
+export const ACTIVE_REPLACEMENT_STATUSES = [
+  "uploading",
+  "processing",
+  "ready",
+  "applied",
+] as const;
+
+type ReplaceGuard = { ok: true } | { ok: false; status: 404 | 409; error: string };
+
+/**
+ * May this lesson's video be replaced right now?
+ *
+ * Authorization is by PROGRAM ownership plus lesson membership — deliberately
+ * not workouts.instructor_id, which is null on the seeded Challenge lessons
+ * (they predate the column and were never backfilled). The caller has already
+ * proven it owns the program.
+ */
+export async function assertReplaceable(
+  productId: string,
+  workoutId: string
+): Promise<ReplaceGuard> {
+  const db = getServiceRoleClient();
+
+  const { data: item } = await db
+    .from("product_items")
+    .select("content_id")
+    .eq("product_id", productId)
+    .eq("content_id", workoutId)
+    .maybeSingle();
+  if (!item) return { ok: false, status: 404, error: "Lesson not found." };
+
+  // A lesson added from "Use a class recording" shares its workouts row with
+  // the public catalog and the stream's own page. Swapping its video would
+  // silently change the recording everywhere, and discarding would delete a
+  // stream recording — so that path adds a new lesson instead.
+  const { data: recording } = await db
+    .from("live_stream_sessions")
+    .select("id")
+    .eq("migrated_to_workout_id", workoutId)
+    .maybeSingle();
+  if (recording) {
+    return {
+      ok: false,
+      status: 409,
+      error:
+        "This lesson uses a recording of one of your classes, so its video can't be replaced here. Add the new video as a lesson instead.",
+    };
+  }
+
+  const { data: existing } = await db
+    .from("program_uploads")
+    .select("id")
+    .eq("replaces_workout_id", workoutId)
+    .in("status", ACTIVE_REPLACEMENT_STATUSES as unknown as string[])
+    .maybeSingle();
+  if (existing) {
+    return {
+      ok: false,
+      status: 409,
+      error:
+        "A new video for this lesson is already in progress. Finish or cancel it first.",
+    };
+  }
+
+  return { ok: true };
+}
+
+/**
+ * Let go of the video a replacement replaced: delete it from Cloudflare, drop
+ * its own upload row (seeded Challenge lessons have none — nothing to drop),
+ * and turn the replacement row into an ordinary promoted upload so nothing
+ * downstream has to know a replacement ever happened.
+ */
+export async function discardReplacedVideo(row: {
+  id: string;
+  replaced_uid: string | null;
+}): Promise<void> {
+  const db = getServiceRoleClient();
+  if (row.replaced_uid) {
+    await deleteVideo(row.replaced_uid);
+    await db.from("program_uploads").delete().eq("cloudflare_uid", row.replaced_uid);
+  }
+  await db
+    .from("program_uploads")
+    .update({
+      status: "ready",
+      replaces_workout_id: null,
+      replaced_uid: null,
+      replaced_duration_seconds: null,
+    })
+    .eq("id", row.id);
 }

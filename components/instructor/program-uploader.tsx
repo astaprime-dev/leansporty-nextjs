@@ -23,17 +23,24 @@ function formatTimeLeft(seconds: number): string {
  * then uploads straight from the browser (resumable, ~50MB chunks). After the
  * bytes land, polls the status route until Cloudflare finishes processing and
  * the lesson row appears.
+ *
+ * With `replace`, the upload is a new video for an EXISTING lesson: it inherits
+ * that lesson's title, and students keep watching the current video until the
+ * instructor previews the new one and applies it.
  */
 export function ProgramUploader({
   programId,
   onLessonReady,
   onUploadComplete,
+  replace,
 }: {
   programId: string;
   onLessonReady: () => void;
   /** When set, a finished upload hands off to the parent (which shows the
    *  pending row and polls) instead of this form's own processing state. */
   onUploadComplete?: () => void;
+  /** Replace the video of this lesson instead of adding a new one. */
+  replace?: { workoutId: string; title: string };
 }) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [file, setFile] = useState<File | null>(null);
@@ -78,8 +85,10 @@ export function ProgramUploader({
     }
   }
 
+  const effectiveTitle = replace ? replace.title : title.trim();
+
   async function startUpload() {
-    if (!file || !title.trim()) return;
+    if (!file || !effectiveTitle) return;
     setError(null);
     setPhase("uploading");
     setProgressPct(0);
@@ -93,7 +102,11 @@ export function ProgramUploader({
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ title: title.trim(), fileSizeBytes: file.size }),
+          body: JSON.stringify({
+            title: effectiveTitle,
+            fileSizeBytes: file.size,
+            ...(replace ? { replacesWorkoutId: replace.workoutId } : {}),
+          }),
         }
       );
       const data = await res.json();
@@ -145,17 +158,19 @@ export function ProgramUploader({
 
   return (
     <div className="space-y-4">
-      <div className="space-y-2">
-        <Label htmlFor="lesson-title">Lesson title</Label>
-        <Input
-          id="lesson-title"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          placeholder="e.g. Day 1 — Warm up and basics"
-          maxLength={255}
-          disabled={busy}
-        />
-      </div>
+      {!replace && (
+        <div className="space-y-2">
+          <Label htmlFor="lesson-title">Lesson title</Label>
+          <Input
+            id="lesson-title"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder="e.g. Day 1 — Warm up and basics"
+            maxLength={255}
+            disabled={busy}
+          />
+        </div>
+      )}
 
       <div className="space-y-2">
         <Label htmlFor="lesson-file">Video file</Label>
@@ -171,6 +186,8 @@ export function ProgramUploader({
         <p className="text-sm text-gray-500">
           Up to 45 minutes and 20GB. MP4 works best. Big files can take a while
           on home wifi — the upload resumes by itself if the connection drops.
+          {replace &&
+            " Students keep watching the current video until you apply the new one."}
         </p>
       </div>
 
@@ -207,7 +224,9 @@ export function ProgramUploader({
         </Alert>
       )}
 
-      {phase === "done" && <Alert variant="success">Lesson added.</Alert>}
+      {phase === "done" && (
+        <Alert variant="success">{replace ? "New video uploaded." : "Lesson added."}</Alert>
+      )}
 
       {error && <Alert variant="error">{error}</Alert>}
 
@@ -215,10 +234,10 @@ export function ProgramUploader({
         type="button"
         variant="brand"
         onClick={startUpload}
-        disabled={busy || !file || !title.trim()}
+        disabled={busy || !file || !effectiveTitle}
       >
         <UploadIcon className="w-4 h-4 mr-2" />
-        {busy ? "Working…" : "Upload Lesson"}
+        {busy ? "Working…" : replace ? "Upload New Video" : "Upload Lesson"}
       </Button>
     </div>
   );
