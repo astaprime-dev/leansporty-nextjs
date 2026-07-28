@@ -10,6 +10,14 @@ import { Alert } from "@/components/ui/alert";
 
 type Phase = "idle" | "uploading" | "processing" | "done" | "error";
 
+function formatTimeLeft(seconds: number): string {
+  if (seconds < 60) return "less than a minute left";
+  if (seconds < 3600) return `about ${Math.round(seconds / 60)} min left`;
+  const h = Math.floor(seconds / 3600);
+  const m = Math.round((seconds % 3600) / 60);
+  return m > 0 ? `about ${h} h ${m} min left` : `about ${h} h left`;
+}
+
 /**
  * Direct-to-Cloudflare lesson upload: asks our API for a one-time tus URL,
  * then uploads straight from the browser (resumable, ~50MB chunks). After the
@@ -28,6 +36,10 @@ export function ProgramUploader({
   const [title, setTitle] = useState("");
   const [phase, setPhase] = useState<Phase>("idle");
   const [progressPct, setProgressPct] = useState(0);
+  const [etaSeconds, setEtaSeconds] = useState<number | null>(null);
+  // Recent (time, bytes-sent) samples for the time-left estimate; a ~30s
+  // window keeps it responsive to real speed changes without jitter.
+  const speedSamples = useRef<{ t: number; sent: number }[]>([]);
   const [error, setError] = useState<string | null>(null);
 
   async function pollUntilReady(uid: string) {
@@ -62,6 +74,8 @@ export function ProgramUploader({
     setError(null);
     setPhase("uploading");
     setProgressPct(0);
+    setEtaSeconds(null);
+    speedSamples.current = [];
 
     let uploadUrl: string, uid: string;
     try {
@@ -92,6 +106,16 @@ export function ProgramUploader({
       retryDelays: [0, 3000, 5000, 10000, 20000],
       onProgress: (sent, total) => {
         setProgressPct(Math.round((sent / total) * 100));
+        const now = Date.now();
+        const samples = speedSamples.current;
+        samples.push({ t: now, sent });
+        while (samples.length > 2 && samples[0].t < now - 30_000) samples.shift();
+        const first = samples[0];
+        // Wait a few seconds before showing an estimate so it starts sane.
+        if (now - first.t > 5_000 && sent > first.sent) {
+          const bytesPerSec = (sent - first.sent) / ((now - first.t) / 1000);
+          setEtaSeconds((total - sent) / bytesPerSec);
+        }
       },
       onError: () => {
         setPhase("error");
@@ -146,8 +170,9 @@ export function ProgramUploader({
             />
           </div>
           <p className="mt-2 text-sm text-gray-600">
-            Uploading… {progressPct}%. Please keep this tab open until the
-            upload finishes — after that you can leave.
+            Uploading… {progressPct}%{etaSeconds !== null && ` · ${formatTimeLeft(etaSeconds)}`}.
+            Please keep this tab open until the upload finishes — after that
+            you can leave.
           </p>
         </div>
       )}
