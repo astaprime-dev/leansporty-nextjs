@@ -963,9 +963,9 @@ function ProspectCard({
     ? `${typeof window !== "undefined" ? window.location.origin : ""}/welcome/${p.invite_code}`
     : null;
 
-  // The stages where the founder is actively working her: personalization
-  // fields and the due touch live here. 'new' shows only fits/pass; 'replied'
-  // only the invite; terminal states show nothing.
+  // The stages of active outreach to her: personalization fields and the due
+  // touch live here. 'new' shows only Start/Pass; 'replied' only the invite;
+  // terminal states show nothing.
   const working = ["qualified", "contacted", "invited"].includes(p.status);
 
   const slots = {
