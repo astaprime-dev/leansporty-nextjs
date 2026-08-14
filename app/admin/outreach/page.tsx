@@ -28,18 +28,20 @@ export default async function AdminOutreachPage() {
   if (!user || !user.app_metadata?.roles?.includes("admin")) redirect("/");
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-8">
-      <h1 className="text-3xl sm:text-4xl font-display font-light text-gray-900">
+    <div className="max-w-5xl mx-auto px-4 py-5 sm:py-8">
+      <h1 className="text-2xl sm:text-4xl font-display font-light text-gray-900">
         Outreach
       </h1>
-      <p className="text-gray-600 mt-1">
+      {/* The flow is spelled out for desktop; on a phone the 1·Find / 2·Review
+          / 3·Send tabs already say it, so this is hidden to save the fold. */}
+      <p className="hidden sm:block text-gray-600 mt-1">
         <span className="font-medium text-gray-800">Find</span> leads city by
         city · <span className="font-medium text-gray-800">Review</span> who
         fits · <span className="font-medium text-gray-800">Send</span> by hand.
         One deduplicated list underneath; messages are copied to your clipboard
         — you send them yourself.
       </p>
-      <div className="mt-8">
+      <div className="mt-4 sm:mt-8">
         <OutreachPanel />
       </div>
     </div>

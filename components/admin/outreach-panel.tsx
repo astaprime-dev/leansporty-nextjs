@@ -317,7 +317,7 @@ function StatusStrip({ counts }: { counts: Record<string, number> }) {
   const any = order.some(([k]) => (counts[k] ?? 0) > 0);
   if (!any) return null;
   return (
-    <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-gray-600">
+    <div className="flex flex-wrap gap-x-3 gap-y-0.5 text-xs sm:text-sm text-gray-600">
       {order.map(([key, label]) => (
         <span key={key}>
           {label}: <span className="font-semibold text-gray-900">{counts[key] ?? 0}</span>
@@ -994,7 +994,11 @@ function ProspectCard({
   const [specificThing, setSpecificThing] = useState(p.specific_thing ?? "");
   const [name, setName] = useState(p.display_name ?? "");
   const [notes, setNotes] = useState(p.notes ?? "");
-  const [showNotes, setShowNotes] = useState(!!p.notes);
+  const [editingNote, setEditingNote] = useState(false);
+  const saveNote = () => {
+    setEditingNote(false);
+    if ((p.notes ?? "") !== notes) onPatch(p.id, { notes });
+  };
   // Inline, not window.alert(): a modal dialog blocks the page (and would block
   // an automated session outright), and you'd have to dismiss it every time.
   const [warning, setWarning] = useState<string | null>(null);
@@ -1089,24 +1093,30 @@ function ProspectCard({
         </p>
       )}
 
-      {/* Notes — approach/angle the founder jots on the go. Collapsed by
-          default (unless it already has content) to keep the card scannable on
-          a phone; the field is the same `notes` column the PATCH route saves. */}
-      {showNotes ? (
+      {/* Notes — approach/angle. Shown as readable text (not an always-open
+          textarea, which cut off on a phone); tap to edit. Same `notes` column
+          the PATCH route saves. */}
+      {editingNote ? (
         <Textarea
+          autoFocus
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
-          onBlur={() => {
-            if ((p.notes ?? "") !== notes) onPatch(p.id, { notes });
-          }}
-          rows={2}
-          placeholder="Notes — approach, angle, anything you spot. Saved automatically."
+          onBlur={saveNote}
+          rows={4}
+          placeholder="Approach, angle, anything you spot. Saved when you tap away."
           className="mt-2 text-sm"
         />
+      ) : notes ? (
+        <p
+          onClick={() => setEditingNote(true)}
+          className="mt-2 text-sm text-gray-700 bg-amber-50 rounded-lg px-3 py-2 whitespace-pre-wrap cursor-text"
+        >
+          {notes}
+        </p>
       ) : (
         <button
           type="button"
-          onClick={() => setShowNotes(true)}
+          onClick={() => setEditingNote(true)}
           className="mt-2 text-xs text-gray-400 hover:text-pink-600"
         >
           + note
