@@ -701,45 +701,10 @@ function TerritoriesView({
     }
   };
 
-  /**
-   * The no-AI lane: walks every Google-index query for one city. Same walker
-   * shape as the Places sweep, but the interesting number is how many results
-   * survived the rules into the review queue.
-   */
-  const sweepGoogle = async (t: TerritoryRow) => {
-    setSweeping(`g-${t.id}`);
-    setSweepError(null);
-    setSweepResult(null);
-    let added = 0;
-    let duplicates = 0;
-    let toReview = 0;
-    let autoRejected = 0;
-    let queryIndex: number | null = 0;
-    try {
-      while (queryIndex !== null) {
-        const res = await fetch("/api/admin/outreach/sweep/google-index", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ territoryId: t.id, queryIndex }),
-        });
-        if (!res.ok) throw new Error(`Sweep failed (${res.status})`);
-        const data: SweepResponse = await res.json();
-        added += data.added ?? 0;
-        duplicates += data.duplicates ?? 0;
-        toReview += data.toReview ?? 0;
-        autoRejected += data.autoRejected ?? 0;
-        queryIndex = data.nextQueryIndex;
-      }
-      setSweepResult(
-        `${t.city ?? t.country}: ${added} new — ${toReview} to review, ${autoRejected} auto-filtered, ${duplicates} already had`
-      );
-      onSwept();
-    } catch (e) {
-      setSweepError(e instanceof Error ? e.message : "Sweep failed");
-    } finally {
-      setSweeping(null);
-    }
-  };
+  // Google-index sweep button was removed — it needs a search provider the
+  // founder declined (it 503s in prod). Discovery is the browser bookmarklet /
+  // Claude-driven Google sweep (docs/OUTREACH_SWEEPS.md), plus "Sweep studios".
+
   // The city list is the founder's own, added one at a time — no imposed
   // priority bands, just his cities in a flat grid, worked in order.
   const rows = useMemo(
@@ -829,15 +794,6 @@ function TerritoriesView({
                     onClick={() => sweep(t)}
                   >
                     {sweeping === t.id ? "Sweeping…" : "Sweep studios"}
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    disabled={sweeping !== null}
-                    onClick={() => sweepGoogle(t)}
-                  >
-                    {sweeping === `g-${t.id}` ? "Sweeping…" : "Sweep Google"}
                   </Button>
                 </div>
               </div>
@@ -1180,7 +1136,7 @@ function ProspectCard({
             disabled={busy}
             onClick={() => onPatch(p.id, { status: "qualified" })}
           >
-            {busy ? "Saving…" : "She fits"}
+            {busy ? "Saving…" : "Start"}
           </Button>
         )}
 
