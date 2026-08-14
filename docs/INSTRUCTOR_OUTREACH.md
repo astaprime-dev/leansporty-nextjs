@@ -29,6 +29,35 @@ From `BUSINESS_MODEL.md`: **2–3 instructors with real audiences** are the wedg
 
 **Skip:** mega-influencers (they want guarantees), instructors with no teaching
 content (nothing to sell), anyone whose audience is mostly other instructors.
+**Russia-based accounts** (a `.ru` site is the tell) — excluded on principle:
+we may start working with Russian clients only after the war ends and Russia
+has paid out all reparations to Ukraine. (Payment rails being unavailable is
+incidental, not the reason.) Russian-*speaking* instructors elsewhere (Prague,
+Warsaw diaspora) are fine — location, not language. Also skip anyone who already runs her own platform (an app, an
+online school): our pitch is infrastructure, and she has it — "duct-tape
+monetizers" (Google Forms, DM-me-to-book) are the ideal profile.
+
+**Studios are NOT a skip (founder correction 2026-08-14).** The disqualifier is
+a content-format test, not an org test: *can a member do the class at home?* A
+dance-fitness / zumba / stretching / movement **studio with an audience is a
+first-class lead** — it brings the distribution a solo instructor lacks and
+already wants online revenue (VM Stretching, Rhytmio, the Cvičky Onlajn
+competitor all prove Czech women pay for this). It onboards as one brand page
+today; per-teacher sub-accounts are buildable if a studio signs and needs them
+— but don't promise that in a cold DM, offer "we'll set that up for you" only
+once she's interested. The only studios to skip are **equipment/venue-format**
+ones whose classes need a machine/rig/pool: reformer-pilates, pole, aerial,
+aqua. Gyms and gym *chains* are out for a practical reason (a facility brand
+won't onboard on a new platform), not a purity one.
+
+**Skip especially: dance as an art form rather than as fitness.** Ballroom and
+partner-dance academies, children's and youth schools, competition/exam-track
+technique, ballet, contemporary, street crews, wedding-first-dance coaching.
+They are real dance teachers, but their students come to get *better at
+dancing*; ours come to move, sweat and feel good. If her class needs a partner,
+a studio floor or a syllabus, she is not a fit. The test: could a 38-year-old
+with no dance background follow it in her living room and finish it feeling like
+she worked out?
 
 ## Channels
 
@@ -102,8 +131,12 @@ mint the invite (below) and send:
 
 ## Minting an invite
 
-Full detail in `INSTRUCTOR_INVITES.md`. Short version (Supabase SQL editor —
-make sure you're on the **Lean Sporty** project):
+**Easiest: the Mint invite button on her card in `/admin/outreach`.** Same code
+convention and 30-day expiry as the SQL below, and it links the code to her
+prospect row so activation is attributed automatically.
+
+Full detail in `INSTRUCTOR_INVITES.md`. By hand (Supabase SQL editor — make sure
+you're on the **Lean Sporty** project):
 
 ```sql
 insert into public.instructor_invites (code, email, invited_name, note, expires_at)
@@ -158,9 +191,25 @@ If a claim isn't in the allowed list, it doesn't go in a DM until it ships.
 
 ## Tracking
 
-A spreadsheet is enough at this scale. One row per prospect:
-`name · IG handle · followers · style · specific_thing · T1 date · T2 date ·
-T3 date · invite code · status (cold / talking / invited / activated / passed)`.
+**`/admin/outreach`** is the list (founder-only, works on a phone). It replaced
+the spreadsheet this doc used to recommend, because the spreadsheet never got
+written and the same accounts kept resurfacing.
 
-The activation side is queryable: `select code, invited_name, used_at from
+- **Add handles** — paste anything (`@name`, bare names, share-sheet URLs, all
+  mixed) and it tells you immediately what's new, what you already had, and who
+  already applied through `/teach`. Handles are deduplicated on a unique index,
+  so finding the same instructor twice is a no-op.
+- **Queue** — who's due today, best ICP fit first. Fill in `{specific_thing}`,
+  copy the touch, send it by hand, mark it sent. Touch 2 schedules +3 days,
+  Touch 3 +4 more, exactly as above.
+- **Mint invite** — replaces the SQL below and links the code to her row, so
+  redeeming it flips her to `activated` automatically.
+- **Cities** — the seeded territory queue, so sweeps are systematic rather than
+  random. Filling the list is `OUTREACH_SWEEPS.md`.
+
+Nothing sends automatically, and it never will: Meta blocks business-initiated
+DMs outside a 24-hour reply window and prohibits cold outreach. The tool does
+everything around the send.
+
+The activation side is still queryable: `select code, invited_name, used_at from
 public.instructor_invites order by created_at desc;`

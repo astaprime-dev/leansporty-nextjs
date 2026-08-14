@@ -26,6 +26,16 @@ export function TeachApplyForm({ className }: { className?: string }) {
 
   return (
     <form action={formAction} className={className}>
+      {/* Honeypot — invisible to humans, irresistible to bots. Same pattern
+          as the contact form; the action silently "succeeds" when filled. */}
+      <input
+        type="text"
+        name="website"
+        tabIndex={-1}
+        autoComplete="off"
+        className="hidden"
+        aria-hidden="true"
+      />
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-1.5">
           <Label htmlFor="teach-name">Your name</Label>

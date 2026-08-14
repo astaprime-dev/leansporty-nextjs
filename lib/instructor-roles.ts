@@ -45,7 +45,37 @@ export async function consumeInstructorInvite(
     console.error("consumeInstructorInvite error:", error.message);
     return false;
   }
+  if (data) await markOutreachProspectActivated(trimmed, userId);
   return !!data;
+}
+
+/**
+ * Close the outreach loop: if this invite came from a prospect in
+ * /admin/outreach, mark her activated. Best-effort and deliberately swallowed —
+ * outreach bookkeeping must never be able to break an activation, which is the
+ * one moment in the funnel we cannot afford to fail.
+ */
+async function markOutreachProspectActivated(
+  code: string,
+  userId: string
+): Promise<void> {
+  try {
+    // supabase-js resolves rather than throws on a DB error, so check both.
+    const { error } = await serviceRoleClient()
+      .from("outreach_prospects")
+      .update({
+        status: "activated",
+        user_id: userId,
+        next_touch_at: null,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("invite_code", code);
+    if (error) {
+      console.error("outreach attribution failed (non-fatal):", error.message);
+    }
+  } catch (e) {
+    console.error("outreach attribution threw (non-fatal):", e);
+  }
 }
 
 /**

@@ -11,7 +11,7 @@ Post 9 (the "apply now" flagship) ends up in the top row.
 rules (never post an original; `sips -Z 2000` is plenty for IG). Log each use in
 PHOTOS.md when posted.
 
-**Cards** (Posts 1, 3, 7 + carousel): make in Canva, square 1080×1080, matching
+**Cards** (Posts 1, 3, 8 + carousel): make in Canva, square 1080×1080, matching
 the site: background blush `#FDF2F8`, text ink `#111827`, accent pink `#EC4899`,
 big serif for headlines/numbers (Playfair Display or similar), lots of air.
 
@@ -21,9 +21,19 @@ big serif for headlines/numbers (Playfair Display or similar), lots of air.
 > 🔗 leansporty.com/teach
 
 **Hashtags**: paste as the first comment, not in the caption. Core set:
-`#dancefitness #fitnessinstructor #danceinstructor #groupfitness #dancework0ut
+`#dancefitness #fitnessinstructor #danceinstructor #groupfitness #danceworkout
 #onlinefitness #fitnessbusiness #teachonline` — add the local-language tags you'd
 actually search for; they matter more than these.
+
+**Two captions ask for a comment.** Posts 3 and 8 end with a keyword CTA
+(`SPLIT` / `NUMBERS`) rather than "link in bio". Commenting is a much smaller ask
+than leaving the app, comments are the strongest ranking signal Instagram has,
+and every commenter is a self-identified warm lead landing in the DM flow
+`INSTRUCTOR_OUTREACH.md` otherwise builds by hand. Reply publicly *and* DM the
+link — the public reply is what keeps the post ranking.
+
+**Each post has an A/B variant** below its primary caption. Post the primary
+first; keep the variant for a re-run or a paid test.
 
 ---
 
@@ -35,27 +45,48 @@ actually search for; they matter more than these.
 > studios and living rooms.
 
 **Caption:**
-Hi, we're Lean Sporty 👋
+You teach the class. You keep 80% of every sale, after VAT.
 
-A small platform where dance & fitness instructors teach live classes and sell
-their own video programs — and keep 80–85% of every sale after VAT.
+That's the whole idea behind Lean Sporty. Dance and fitness instructors teach
+live classes here and sell their own video programs. No monthly fee, no listing
+fee. 85% if you're one of our featured instructors.
 
-We're opening our doors and featuring our first instructors right now.
+We're taking on our first instructors right now.
 
-The whole deal, in plain words → link in bio.
+The whole deal in plain words → link in bio.
+
+**Variant** *(founder angle — more warmth, arguably the better first post):*
+We built this because instructors kept telling us the same thing: I'd teach
+online if I didn't have to become a web developer to do it.
+
+So that part is ours — the website, the streaming, the payments, the tax. You
+teach, and you keep 80% of every sale after VAT (85% as a featured instructor).
+No monthly fee.
+
+We're taking on our first instructors now → link in bio.
 
 ---
 
 ## Post 2 — Photo: IMG_3498 (star pose, arms wide, direct to camera)
 
 **Caption:**
-Your living room is a studio.
-Your phone is a front-row seat.
+Your living room is already a studio. It just isn't earning yet.
 
-Teaching online shouldn't require a tech team. That's our job — the website,
-the streaming, the payments, the support.
+Teaching online shouldn't need a tech team. That's our job — the website, the
+streaming, the payments, the support.
 
 You bring the part no platform can: the way you teach.
+
+See how it works → link in bio.
+
+**Variant** *(objection-first):*
+"I don't have a space for this."
+
+You have a wall, a floor and a phone. That's every studio our instructors
+stream from.
+
+The website, the streaming, the payments, the support — ours. The way you
+teach — yours. → link in bio
 
 ---
 
@@ -66,27 +97,48 @@ You bring the part no platform can: the way you teach.
 > *(featured instructors keep 85%)*
 
 **Caption:**
+If it doesn't sell, you've spent your time — never your money.
+
 No monthly fee. No listing fee. No minimum fee. No "premium plan".
 
-You set the price for your live classes and your video programs. We run the
-website, payments, streaming, the sales tax, and support. You keep 80% of
-every sale after VAT — 85% as a featured instructor.
+You set the prices. We run the website, the streaming, the payments and the
+sales tax. You keep 80% of every sale after VAT — 85% as a featured instructor.
 
-And if something doesn't sell? You've spent your time, never your money.
+Comment **SPLIT** and I'll send you the full breakdown, or it's in the bio.
 
-Full breakdown → link in bio.
+**Variant** *(comparison angle):*
+Most platforms want a monthly fee before you've earned a cent.
+
+We want 20% of what you actually sell. Nothing else — no monthly fee, no
+listing fee, no minimum fee. 15% if you're featured.
+
+You set the prices. We run the website, the streaming, the payments and the
+sales tax.
+
+If it doesn't sell, you've spent your time, never your money → link in bio.
 
 ---
 
 ## Post 4 — Photo: IMG_3266 (mid-jump, both feet off the ground)
 
 **Caption:**
-Every live class you teach on Lean Sporty is recorded automatically.
+Teach one class on a Tuesday. Get paid for it again at 2am on a Sunday.
 
-That recording can become a lesson in your own paid program — so one night of
-teaching keeps earning long after everyone's showered and gone to bed.
+Every live class on Lean Sporty records itself. That recording can become a
+lesson in your own paid program — priced by you, bought any time.
 
-Record once. Sell forever.
+One night of teaching keeps earning long after everyone's showered and gone to
+bed.
+
+Record once. Sell forever → link in bio.
+
+**Variant** *(arithmetic angle, harder-nosed):*
+You've taught the same 45-minute class maybe 200 times. You got paid 200 times.
+
+On Lean Sporty every live class records itself, and that recording can become a
+lesson in your own paid program — sold at your price, for as long as you want.
+
+Same class. Paid once, then paid again while you sleep. → link in bio
 
 ---
 
@@ -101,52 +153,57 @@ automatically.
 **Slide 5:** 4 — You keep **80–85%** after VAT. Paid monthly, straight to your bank.
 
 **Caption:**
-From "I want to teach online" to your first paid class — without building
-anything.
+Four steps between "I want to teach online" and your first paid class. About 10
+minutes of setup — and you don't build anything.
 
-Four steps. About 10 minutes of setup. The full walkthrough is on our teaching
-page → link in bio.
+1 — Your page. 2 — Go live from your browser. 3 — Turn the recording into a
+paid program. 4 — Get paid.
+
+Swipe → the last slide is the one about money.
+
+**Variant** *(skeptic angle):*
+"Setting it up" is the part everyone dreads. Here's all of it.
+
+Swipe through four steps: your own page, going live from a browser, turning the
+recording into a paid program, and what lands in your bank.
+
+About 10 minutes, start to finish. Nothing to build → swipe.
 
 ---
 
 ## Post 6 — Photo: IMG_3163 (wide lunge, calm strength)
 
 **Caption:**
-Your in-person class holds 20 people.
+Your in-person class holds 20 people. Then the room is full.
 
-Online, your audience is anyone, anywhere — your Tuesday evening class can be
-someone's Thursday morning workout three time zones away.
+Online there's no cap. Your Tuesday evening class is someone's Thursday morning
+workout, three time zones away.
 
 Same you. Bigger room.
 
----
+→ link in bio
 
-## Post 7 — Real numbers (card)
+**Variant** *(loss framing):*
+Every week you turn people away, or they turn up and you're teaching to a wall
+of shoulders.
 
-**Card text:**
-> Your €49 program
-> → **€33.86 to you**
-> *(featured instructor, 85% after VAT)*
+Online, the room doesn't fill up. Your Tuesday evening class can be someone's
+Thursday morning workout, three time zones away — same class, same you.
 
-**Caption:**
-Real numbers, because you'd ask anyway:
-
-€49 program → €33.86 to you (featured, 85%)
-€15 class seat → €9.76 to you (standard, 80%)
-
-Your price includes VAT — we pay it to the tax office for you, then your share
-of the rest is yours, exactly. No minimum fees, no other deductions — you
-always earn on every sale. (Paid classes start at €5; programs at €19.)
-
-There's a calculator on our teaching page. Drag the sliders, use your own
-prices → link in bio.
+Bigger room → link in bio.
 
 ---
 
-## Post 8 — Photo: IMG_3355 (forearms crossed toward lens, near-square)
+## Post 7 — Photo: IMG_3355 (forearms crossed toward lens, near-square)
+
+*(Posts 7 and 8 were swapped here to match the built kit — `ig-kit/` names the
+photo `07-` and the card `08-`, which is also what keeps the grid alternating
+card/photo. Post in the order below.)*
 
 **Caption:**
-Things you will never do here:
+You will never send another invoice.
+
+Things you'll never do as an instructor on Lean Sporty:
 
 ✗ build a website
 ✗ send invoices
@@ -154,22 +211,76 @@ Things you will never do here:
 ✗ answer "I can't log in" emails
 ✗ pay a monthly fee
 
-You teach. We run everything else.
+You teach. We run everything else → link in bio.
+
+**Variant** *(inverted, positive framing):*
+Here's your entire admin list as a Lean Sporty instructor:
+
+✓ teach the class
+
+That's it. No website to build, no invoices, no chasing payments, no "I can't
+log in" emails, no monthly fee.
+
+We run the rest → link in bio.
+
+---
+
+## Post 8 — Real numbers (card)
+
+**Card text:**
+> Sell a €49 program
+> → **≈ €33.86 is yours**
+> *(featured instructor, 85% after VAT)*
+
+**Caption:**
+Sell a €49 program and €33.86 lands in your account. That's the featured rate —
+85% after VAT.
+
+On the standard 80%: a €15 seat in your live class pays you €9.76.
+
+Your price includes VAT, we pay that to the tax office, and your share of the
+rest is yours. No minimum fee, nothing else deducted.
+
+Want it to the cent with your own prices? Comment **NUMBERS** or use the
+calculator on our teaching page → link in bio.
+
+**Variant** *(transparency angle — carries the extra fine print):*
+Nobody in this industry publishes their numbers. Here are ours.
+
+€49 program → €33.86 to you (featured, 85% after VAT)
+€15 class seat → €9.76 to you (standard, 80% after VAT)
+
+Your price includes VAT — we pay it to the tax office. What's left splits as
+above. No minimum fee, nothing else deducted. Paid classes start at €5,
+programs at €19.
+
+Run your own prices through the calculator → link in bio.
 
 ---
 
 ## Post 9 — The invitation (photo: IMG_3526, pointing sideways with a grin)
 
 **Caption:**
-We're featuring our FIRST instructors right now.
+If your students would follow you anywhere, this one's for you.
 
-Featured means: you keep 85% of every sale after VAT, you talk directly to the
-founder, and the platform gets shaped around how *you* teach.
+We're choosing our first featured instructors now. Featured means you keep 85%
+of every sale after VAT, you talk directly to the founder, and the platform
+gets shaped around how *you* teach.
 
-If you teach dance or fitness and your students would follow you anywhere —
-this is the moment the door is wide open.
+There's only a first group once.
 
 Applying takes a minute and commits you to nothing → link in bio.
+
+**Variant** *(direct address / DM-first — swaps the bio link for a DM keyword):*
+This is an actual invitation, not an ad.
+
+We're picking our first featured instructors: 85% of every sale after VAT, a
+direct line to the founder, and a product built around how you teach.
+
+If you teach dance or fitness and you've been meaning to take it online — apply,
+or just DM me the word **TEACH** and I'll tell you honestly whether it's a fit.
+
+Takes a minute. Commits you to nothing.
 
 ---
 
@@ -216,7 +327,7 @@ Link sticker → label **"Apply — takes 1 minute"**
 
 ## Sequence B — real numbers
 
-**B1 — reshare Post 7 (€33.86 card)**
+**B1 — reshare Post 8 (€33.86 card)**
 Overlay: "Your price. Your math."
 Link sticker → label **"Try the calculator"**
 

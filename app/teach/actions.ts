@@ -28,6 +28,18 @@ export const applyToTeachAction = async (
   _prevState: TeachApplyState,
   formData: FormData
 ): Promise<TeachApplyState> => {
+  // Honeypot (same convention as the contact form): a hidden field humans
+  // never see. Bots fill it — pretend to succeed so they learn nothing, and
+  // send NO emails: the confirmation send otherwise makes this form a free
+  // mail relay for whatever address the bot submitted.
+  if (formData.get("website")?.toString().trim()) {
+    return {
+      status: "success",
+      message:
+        "Application received — we read every one personally and will get back to you within a few days.",
+    };
+  }
+
   const name = formData.get("name")?.toString().trim().slice(0, MAX_FIELD);
   const email = formData.get("email")?.toString().trim();
   const social = formData.get("social")?.toString().trim().slice(0, MAX_FIELD);

@@ -332,3 +332,47 @@ export function renderTeachApplyFounderAlert(ctx: {
     html,
   };
 }
+
+/**
+ * Daily outreach digest — what's due in /admin/outreach today.
+ *
+ * The prospect list only works if it's opened; this is the nudge. Sent by the
+ * outreach-due cron, and only when there is actually something to do (a digest
+ * that says "nothing today" every day trains you to ignore it).
+ */
+export function renderOutreachDigestEmail(ctx: {
+  due: number;
+  unscored: number;
+  samples: { handle: string; touch: number }[];
+}): { subject: string; html: string } {
+  const body = [
+    `<strong>${ctx.due}</strong> prospect${ctx.due === 1 ? "" : "s"} due a touch today.`,
+  ];
+  if (ctx.samples.length > 0) {
+    body.push(
+      ctx.samples
+        .map(
+          (s) =>
+            `@${escapeHtml(s.handle)} — Touch ${s.touch}`
+        )
+        .join("<br>")
+    );
+  }
+  if (ctx.unscored > 0) {
+    body.push(
+      `${ctx.unscored} newly imported ${ctx.unscored === 1 ? "account is" : "accounts are"} waiting to be scored.`
+    );
+  }
+  const html = layout({
+    preheader: `${ctx.due} due today`,
+    heading: "Outreach: today's queue",
+    body,
+    cta: "Open the queue",
+    ctaUrl: `${siteUrl()}/admin/outreach`,
+    footerNote: "Internal notification. Nothing is sent automatically — you send every message yourself.",
+  });
+  return {
+    subject: `Outreach: ${ctx.due} due today`,
+    html,
+  };
+}
